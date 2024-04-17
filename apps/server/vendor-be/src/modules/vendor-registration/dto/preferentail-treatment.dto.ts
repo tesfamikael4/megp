@@ -5,12 +5,25 @@ export class CreatePTDto {
   @ApiProperty()
   @IsNotEmpty()
   serviceId: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  status: string;
+
   @ApiProperty()
   @IsNotEmpty()
   certiNumber: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  category: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  type: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  certificateValidityPeriod: Date;
+  @ApiProperty()
+  @IsNotEmpty()
+  certificateIssuedDate: Date;
+  @ApiProperty()
+  @IsNotEmpty()
+  status: string;
 
   static fromDto(dto: CreatePTDto): PreferentialTreatmentsEntity {
     const entity = new PreferentialTreatmentsEntity();
@@ -19,6 +32,11 @@ export class CreatePTDto {
     }
     entity.serviceId = dto.serviceId;
     entity.certiNumber = dto.certiNumber;
+    entity.category = dto.category;
+    entity.type = dto.type;
+    entity.certificateIssuedDate = dto.certificateIssuedDate;
+    entity.certificateValidityPeriod = dto.certificateValidityPeriod;
+
     return entity;
   }
 }
@@ -33,6 +51,11 @@ export class UpdatePTDto extends CreatePTDto {
     }
 
     entity.serviceId = dto.serviceId;
+    entity.certiNumber = dto.certiNumber;
+    entity.category = dto.category;
+    entity.type = dto.type;
+    entity.certificateIssuedDate = dto.certificateIssuedDate;
+    entity.certificateValidityPeriod = dto.certificateValidityPeriod;
     return entity;
   }
 }
@@ -49,6 +72,12 @@ export class PTResponse extends UpdatePTDto {
     response.serviceId = entity.serviceId;
     response.status = entity.status;
     response.certificateUrl = entity.certificateUrl;
+    response.serviceId = entity.serviceId;
+    response.certiNumber = entity.certiNumber;
+    response.category = entity.category;
+    response.type = entity.type;
+    response.certificateIssuedDate = entity.certificateIssuedDate;
+    response.certificateValidityPeriod = entity.certificateValidityPeriod;
     return response;
   }
 }

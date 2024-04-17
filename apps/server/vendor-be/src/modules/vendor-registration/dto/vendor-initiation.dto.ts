@@ -8,24 +8,14 @@ export class VendorInitiationDto {
   // @IsNotEmpty()
   userId: string;
   @ApiProperty()
-  // @IsNotEmpty()
-  status: string;
-  @ApiProperty()
   @IsOptional()
   name: string;
-  level: string;
   @ApiProperty()
   @IsOptional()
   businessType: string;
   @ApiProperty()
-  @IsOptional()
-  origin: string;
-  @ApiProperty()
-  // @IsNotEmpty()
-  district: string;
-  @ApiProperty()
-  @IsOptional()
-  country: string;
+  @IsNotEmpty()
+  countryOfRegistration: string;
   @ApiProperty()
   @IsOptional()
   tinNumber?: string;
@@ -48,7 +38,9 @@ export class VendorInitiationDto {
   @IsString()
   @IsOptional()
   registrationIssuedDate: string;
-
+  @ApiProperty()
+  status: string
+  level: string
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -64,9 +56,6 @@ export class VendorInitiationDto {
     entity.status = dto.name;
     entity.name = dto.name;
     entity.formOfEntity = dto.businessType;
-    entity.origin = dto.origin;
-    entity.district = dto.district;
-    entity.origin = dto?.origin;
     return entity;
   }
 
@@ -98,9 +87,7 @@ export class UpdateVendorInitiationDto extends VendorInitiationDto {
     entity.status = dto.name;
     entity.name = dto.name;
     entity.formOfEntity = dto.businessType;
-    entity.origin = dto.origin;
-    entity.district = dto.district;
-    entity.origin = dto.origin;
+
     console.log(entity);
     return entity;
   }
@@ -113,12 +100,8 @@ export class VendorInitiationResponseDto extends VendorInitiationDto {
     const response = new VendorInitiationResponseDto();
     response.id = regDto.id;
     response.userId = regDto.userId;
-    response.status = regDto.status;
     response.name = regDto.name;
     response.businessType = regDto.formOfEntity;
-    response.origin = regDto.origin;
-    response.district = regDto.district;
-    response.origin = regDto.origin;
     return response;
   }
 }

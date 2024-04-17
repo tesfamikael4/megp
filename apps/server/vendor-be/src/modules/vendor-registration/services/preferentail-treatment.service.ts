@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
-import { CreatePTDto } from '../../preferentials/dto/preferentail-treatment.dto';
+
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import {
   CreateWorkflowInstanceDto,
@@ -20,6 +20,7 @@ import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 import { BpServiceService } from 'src/modules/services/services/service.service';
+import { CreatePTDto } from '../dto/preferentail-treatment.dto';
 
 @Injectable()
 export class PreferentailTreatmentService extends EntityCrudService<PreferentialTreatmentsEntity> {
@@ -76,6 +77,8 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           category: ServiceKeyEnum.MSME,
           type: row.service.key,
           certificateUrl: row.certificateUrl,
+          certificateValidityPeriod: row.certificateValidityPeriod,
+          certificateIssuedDate: row.certificateIssuedDate
         });
       } else {
         response.push({
@@ -83,6 +86,8 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           category: row.service.key,
           type: row.service.key,
           certificateUrl: row.certificateUrl,
+          certificateValidityPeriod: row.certificateValidityPeriod,
+          certificateIssuedDate: row.certificateIssuedDate
         });
       }
     }

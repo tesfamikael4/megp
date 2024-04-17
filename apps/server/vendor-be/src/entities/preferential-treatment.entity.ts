@@ -17,13 +17,20 @@ export class PreferentialTreatmentsEntity extends Audit {
   serviceId: string;
   @Column({ type: 'uuid' })
   userId: string;
-  @Column({ default: 'Submitted' })
-  status: string;
-
   @Column({ nullable: true })
   certificateUrl: string;
   @Column()
   certiNumber: string;
+  @Column({ nullable: true })
+  category: string;
+  @Column({ nullable: true })
+  type: string;
+  @Column({ nullable: true })
+  certificateValidityPeriod: Date;
+  @Column({ nullable: true })
+  certificateIssuedDate: Date;
+  @Column({ default: 'Submitted' })
+  status: string;
   @ManyToOne(() => BpServiceEntity, (service) => service.prerentials)
   @JoinColumn({ name: 'serviceId' })
   service: BpServiceEntity;

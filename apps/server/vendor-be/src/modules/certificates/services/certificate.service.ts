@@ -9,6 +9,7 @@ import { ApplicationStatus } from 'src/modules/handling/enums/application-status
 import RegistrationCertificate from '../templates/certificate';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
+import PdfDocumentTemplate from '../templates/pdf-tamplate';
 
 @Injectable()
 export class CertificateService {
@@ -72,7 +73,7 @@ export class CertificateService {
         },
         {
           label: 'Tax Identification No',
-          value: vendorInfo.tin,
+          value: vendorInfo.tinNumber,
         },
         {
           label: 'Vendor Name',
@@ -80,7 +81,7 @@ export class CertificateService {
         },
         {
           label: 'Country of Registration',
-          value: vendorInfo.origin,
+          value: vendorInfo.countryOfRegistration,
         },
         {
           label: 'Address',
@@ -112,5 +113,6 @@ export class CertificateService {
       throw new Error('Internal Server Error' + err);
     }
   }
+
 
 }

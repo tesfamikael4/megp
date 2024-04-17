@@ -2,12 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VendorRegistrationsController } from './controllers/vendor-registration.controller';
 import { VendorRegistrationsService } from './services/vendor-registration.service';
-import { BankAccountDetailService } from './services/bank-account-detail.service';
-import { BankAccountDetailController } from './controllers/bank-account-detail.controller';
-import { ShareholderService } from './services/shareholder.service';
-import { ShareholderController } from './controllers/shareholder.controller';
-import { BeneficialOwnershipController } from './controllers/beneficial-ownership.controller';
-import { BeneficialOwnershipService } from './services/beneficial-ownership.service';
+
 import { AreasOfBusinessInterestController } from './controllers/areas-of-business-interest.controller';
 import { AreasOfBusinessInterestService } from './services/areas-of-business-interest.service';
 import { UploadController } from './controllers/file.controller';
@@ -18,7 +13,7 @@ import {
   AreasOfBusinessInterestEntity,
   BankAccountDetailEntity,
   BanksEntity,
-  BeneficialOwnership,
+  BeneficialOwnershipShares,
   BpServiceEntity,
   BusinessAreaEntity,
   BusinessCategoryEntity,
@@ -29,7 +24,6 @@ import {
   IsrVendorsEntity,
   PaymentReceiptEntity,
   ServicePrice,
-  ShareholdersEntity,
   TaskAssignmentEntity,
   TaskHandlerEntity,
   TaskTrackerEntity,
@@ -64,6 +58,8 @@ import { CertificateModule } from '../certificates/certificate.module';
 import { VendorDiscoveryController } from './controllers/vendor-discovery.controller';
 import { VendorDiscoveryService } from './services/vendor-discovery.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { BankAccountDetailController } from './controllers/bank-account-detail.controller';
+import { BankAccountDetailService } from './services/bank-account-detail.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -71,10 +67,9 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       CustomCategoryEntity,
       VendorsEntity,
       BanksEntity,
-      ShareholdersEntity,
+      BeneficialOwnershipShares,
       FilesEntity,
       BankAccountDetailEntity,
-      BeneficialOwnership,
       AreasOfBusinessInterestEntity,
       PaymentReceiptEntity,
       BusinessAreaEntity,
@@ -117,10 +112,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   providers: [
     ServicePricingService,
     HandlingCommonService,
-    BankAccountDetailService,
-    ShareholderService,
     FileService,
-    BeneficialOwnershipService,
     AreasOfBusinessInterestService,
     WorkflowInstanceService,
     ApplicationExcutionService,
@@ -130,7 +122,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     BpServiceService,
     PreferentailTreatmentService,
     BriefcasesService,
-    VendorDiscoveryService
+    VendorDiscoveryService,
+    BankAccountDetailService,
     // TusService,
   ],
   controllers: [
@@ -138,16 +131,14 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ApplicationExcutionController,
     VendorRegistrationsController,
     ServicePricingController,
-    BankAccountDetailController,
-    ShareholderController,
     UploadController,
-    BeneficialOwnershipController,
     AreasOfBusinessInterestController,
     BusinessAreaController,
     InvoicesController,
     PreferentailTreatmentsController,
     BriefcasesController,
-    VendorDiscoveryController
+    VendorDiscoveryController,
+    BankAccountDetailController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

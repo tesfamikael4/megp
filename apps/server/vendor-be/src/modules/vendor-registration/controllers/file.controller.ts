@@ -92,6 +92,7 @@ export class UploadController {
     const result = await this.fileService.uploadPaymentReceiptAttachment(
       file,
       uploadFileDto,
+      userInfo
     );
     return result;
   }

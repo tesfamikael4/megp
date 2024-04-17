@@ -12,7 +12,7 @@ export class IsrVendorsEntity extends Audit {
   tinNumber: string;
   @Column({ default: 'Draft' })
   status: string;
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: true })
   initial: any;
   @Column({ type: 'jsonb' })
   basic: any;
@@ -22,10 +22,10 @@ export class IsrVendorsEntity extends Audit {
   contactPersons: any;
   @Column({ type: 'jsonb', nullable: true })
   businessSizeAndOwnership: any;
+  // @Column({ type: 'jsonb', nullable: true })
+  // shareHolders: any;
   @Column({ type: 'jsonb', nullable: true })
-  shareHolders: any;
-  @Column({ type: 'jsonb', nullable: true })
-  beneficialOwnership: any;
+  beneficialOwnershipShareholders: any;
   @Column({ type: 'jsonb', nullable: true })
   bankAccountDetails: any;
   @Column({ type: 'jsonb', nullable: true })

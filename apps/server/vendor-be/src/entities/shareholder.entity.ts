@@ -12,16 +12,16 @@ export class ShareholdersEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ nullable: true })
-  firstName: string;
+  firstname: string;
   @Column({ nullable: true })
   lastName: string;
-  @Column({ nullable: true })
-  vendorId: string;
+
   @Column({ default: 'Malian' })
   nationality: string;
-  @Column()
+  @Column({ nullable: true })
   share: string;
-  @JoinColumn({ name: 'vendorId' })
+
   @ManyToOne(() => VendorsEntity, (v) => v.shareholders)
+  @JoinColumn({ name: 'vendorId' })
   vendor: VendorsEntity;
 }

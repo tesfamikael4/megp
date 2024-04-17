@@ -1,7 +1,7 @@
 export * from './areas-of-business-interest.entity';
 export * from './bank-account-detail.entity';
 export * from './bank.entity';
-export * from './beneficial-ownership.entity';
+export * from './beneficial-ownership-shareholers.entity';
 export * from './bp-service.entity';
 export * from './business-area.entity';
 export * from './business-category.entity';
@@ -12,7 +12,6 @@ export * from './file.entity';
 export * from './invoice.entity';
 export * from './receipt-attachment.entity';
 export * from './service-price.entity';
-export * from './shareholder.entity';
 export * from './task-assignment.entity';
 export * from './task-handler.entity';
 export * from './task-tracker.entity';

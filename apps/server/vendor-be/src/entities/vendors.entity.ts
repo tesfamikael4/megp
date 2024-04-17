@@ -6,22 +6,23 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ShareholdersEntity } from './shareholder.entity';
 import { BankAccountDetailEntity } from './bank-account-detail.entity';
-import { CustomCategoryEntity } from './custom-category.entity';
-import { BusinessCategoryEntity } from './business-category.entity';
-import { BeneficialOwnership } from './beneficial-ownership.entity';
+import { BeneficialOwnershipShares } from './beneficial-ownership-shareholers.entity';
 import { AreasOfBusinessInterestEntity } from './areas-of-business-interest.entity';
 import { Audit } from '@audit';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { IsrVendorsEntity } from './isr-vendors.entity';
 import { ProfileInfoEntity } from './profile-info.entity';
+import { BusinessCategoryEntity } from './business-category.entity';
+import { CustomCategoryEntity } from './custom-category.entity';
+import { ShareholdersEntity } from './shareholder.entity';
+
 @Entity({ name: 'vendors' })
 export class VendorsEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'tin', nullable: true })
-  tin: string;
+  @Column({ nullable: true })
+  tinNumber: string;
   @Column({ nullable: true, unique: true })
   registrationNumber: string;
   @Column()
@@ -42,30 +43,20 @@ export class VendorsEntity extends Audit {
   @Column({ nullable: true })
   level: string;
   @Column({ nullable: true })
-  origin: string;
+  countryOfRegistration: string;
   @Column({ nullable: true })
   district: string;
-
-  @OneToMany(() => CustomCategoryEntity, (cat) => cat.application)
-  customCats: CustomCategoryEntity[]; //customeCategories
-
-  @OneToMany(() => BusinessCategoryEntity, (business) => business.vendor)
-  businessCats: BusinessCategoryEntity[]; //business categories
-
+  @Column({ type: 'json', nullable: true })
+  lineOfBusiness: any;
   @OneToMany(() => BankAccountDetailEntity, (b) => b.vendor, {
     cascade: true,
   })
   vendorAccounts: BankAccountDetailEntity[];
 
-  @OneToMany(() => ShareholdersEntity, (b) => b.vendor, {
+  @OneToMany(() => BeneficialOwnershipShares, (b) => b.vendor, {
     cascade: true,
   })
-  shareholders: ShareholdersEntity[];
-
-  @OneToMany(() => BeneficialOwnership, (b) => b.vendor, {
-    cascade: true,
-  })
-  beneficialOwnership: BeneficialOwnership[];
+  beneficialOwnershipShareholders: BeneficialOwnershipShares[];
 
   @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.isrVendor, {
     cascade: true,
@@ -83,4 +74,15 @@ export class VendorsEntity extends Audit {
 
   @OneToMany(() => ProfileInfoEntity, (profile) => profile.vendor)
   ProfileInfo: ProfileInfoEntity;
+
+  //will be removed  all code below
+  @OneToMany(() => ShareholdersEntity, (b) => b.vendor, {
+    cascade: true,
+  })
+  shareholders: ShareholdersEntity[];
+
+  @OneToMany(() => BusinessCategoryEntity, (business) => business.vendor)
+  businessCats: BusinessCategoryEntity[]; //business categories
+  @OneToMany(() => CustomCategoryEntity, (cat) => cat.application)
+  customCats: CustomCategoryEntity[]; //customeCategories
 }

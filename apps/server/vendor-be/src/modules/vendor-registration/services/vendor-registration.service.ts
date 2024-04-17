@@ -18,7 +18,6 @@ import {
   BusinessAreaEntity,
   InvoiceEntity,
   IsrVendorsEntity,
-  ProfileInfoEntity,
   ServicePrice,
   VendorsEntity,
 } from '@entities';
@@ -39,8 +38,7 @@ import { IsrVendorsResponseDto } from '../dto/isrvendor.dto';
 import { BusinessAreaDetailResponseDto } from '../dto/business-area.dto';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { BusinessAreaService } from './business-area.service';
-import InitialValueSchema from '../dto/add-vendor.dto';
-
+import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
@@ -58,6 +56,7 @@ import { MRAResponseDTO } from '../dto/api-mra.dto';
 import { MBRSResponseDto, RecordDTO } from '../dto/api-mbrs.dto';
 import { StringifyOptions } from 'querystring';
 import { NCICResponseDTO } from '../dto/api-ncic.dto';
+import { Readable } from 'typeorm/platform/PlatformTools';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -119,6 +118,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       );
     return draftServices;
   }
+  //submit new registration request
   async submitVendorInformation(data: any, userInfo: any): Promise<any> {
     try {
       // const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
@@ -175,6 +175,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           wfi.serviceId = bp.serviceId;
           wfi.requestorId = data.id;
           wfi.data = await this.formatData(data);
+
           workflowInstance = await this.workflowService.intiateWorkflowInstance(
             wfi,
             userInfo,
@@ -244,6 +245,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
+
   async formatData(data: any) {
     const formattedData: any = { ...data };
     formattedData.areasOfBusinessInterest = [];
@@ -261,113 +263,151 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const formated = this.commonService.reduceAttributes(bank);
       formattedData.bankAccountDetails.push(formated);
     }
-
-    formattedData.shareHolders = [];
-    for (const share of data.shareHolders) {
+    //new model changes
+    formattedData.beneficialOwnershipAndShareholders = [];
+    for (const share of data?.beneficialOwnershipAndShareholders) {
       const formated = this.commonService.reduceAttributes(share);
-      formattedData.shareHolders.push(formated);
+      formattedData.beneficialOwnershipAndShareholders.push(formated);
     }
-    formattedData.beneficialOwnership = [];
-    for (const beneficial of data.beneficialOwnership) {
-      const formated = this.commonService.reduceAttributes(beneficial);
-      formattedData.shareHolders.push(formated);
-    }
+    //new model changes
+
+    formattedData.businessSizeAndOwnership =
+      this.commonService.reduceAttributes(data?.businessSizeAndOwnership);
+
     formattedData.preferential = [];
-    for (const pt of data.preferential) {
+    for (const pt of data?.preferential) {
       const formated = this.commonService.reduceAttributes(pt);
       formattedData.preferential.push(formated);
     }
+
     return formattedData;
   }
 
-  async addDraftVendorInformation(data: any, userInfo: any): Promise<any> {
+  async generatePDFForReview(data: any, user: any) {
     try {
-      const initiatedVendor = await this.isrVendorsRepository.findOne({
-        where: { userId: userInfo.id, status: VendorStatusEnum.DRAFT },
+      let buffer: Buffer;
+      const chunks = [];
+      let fileId = '';
+      const result = await PdfDocumentTemplate(data);
+      result.on('data', (chunk) => {
+        chunks.push(chunk);
       });
-      if (!initiatedVendor)
-        throw new HttpException('vendor is not initiated', 400);
-      if (
-        data.initial.status == VendorStatusEnum.DRAFT ||
-        data.initial.status == VendorStatusEnum.SAVE
-      ) {
-        const isrVendor = await this.fromInitialValue(data);
-        if (
-          data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
-          data.initial.status.trim() === VendorStatusEnum.SAVE
-        ) {
-          let ncicData = null;
-          let fppaData = null;
-          const length = data.areasOfBusinessInterest.length;
-          for (let index = 0; index < length; index++) {
-            if (data.basic.origin == 'MW' || data.basic.origin == 'Malawi') {
-              if (
-                data.areasOfBusinessInterest[index] === 'work' &&
-                ncicData == null
-              ) {
-                ncicData = await this.fetchFromExternalApi(
-                  `ncic-vendors/${isrVendor.tinNumber}`,
-                );
-                if (!ncicData) {
-                  isrVendor.initial.status = VendorStatusEnum.SAVE;
-                  isrVendor.initial.level = VendorStatusEnum.PPDA;
-                } else {
-                  isrVendor.basic.district = ncicData?.district;
-                  isrVendor.basic.nameOfFirm = ncicData?.nameOfFirm;
-                  isrVendor.basic.nationalOfFirm = ncicData?.nationalOfFirm;
-                  isrVendor.basic.typeOfRegistration =
-                    ncicData?.typeOfRegistration;
-                  isrVendor.basic.branch = ncicData?.branch;
-                  isrVendor.basic.category = ncicData?.category;
-                  isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
-                  isrVendor.address.postalAddress = ncicData?.postalAddress;
-                  isrVendor.address.primaryEmail = ncicData?.email;
-                  isrVendor.address.region = ncicData?.region;
-                }
-              } else if (fppaData == null) {
-                fppaData = await this.fetchFromExternalApi(
-                  `fppa-vendors/${isrVendor.tinNumber}`,
-                );
-                if (fppaData) {
-                  isrVendor.basic.businessType = fppaData.businessType;
-                  isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
-                  continue;
-                }
-              } else if (fppaData !== null) {
-                continue;
-              }
-            } else {
-              isrVendor.initial.status = VendorStatusEnum.SAVE;
-              isrVendor.initial.level = VendorStatusEnum.PPDA;
-              // await this.isrVendorsRepository.save(isrVendor);
-            }
-          }
-        }
-        let priceRangeIds = [];
-        if (data?.areasOfBusinessInterest.length > 0) {
-          priceRangeIds = data.areasOfBusinessInterest.map(
-            (item: any) => item.priceRange,
-          );
-        }
-        const vendorInfo: any = {
-          id: isrVendor?.id,
-          name: isrVendor.basic['name'],
-        };
-        await this.invoiceService.generateInvoice(
-          priceRangeIds,
-          vendorInfo,
-          userInfo,
+      result.on('end', async () => {
+        buffer = Buffer.concat(chunks);
+        const subfolder = 'application-doc';
+        fileId = await this.fileService.uploadBuffer(
+          buffer,
+          user.id,
+          subfolder,
         );
-        await this.isrVendorsRepository.save(isrVendor);
-        return { msg: 'Success' };
-      } else {
-        throw new BadRequestException('invalid status');
+      });
+      result.on('error', (error) => {
+        console.error('Error during rendering:', error);
+      });
+
+      if (!(result instanceof Readable)) {
+        throw new Error(
+          'Certificate function did not return a Readable stream',
+        );
       }
+      return fileId;
+      //  return result;
     } catch (error) {
-      console.log(error);
-      throw error;
+      console.error('Error:', error);
+      throw new Error('Internal Server Error' + error);
     }
   }
+
+  /*
+    async addDraftVendorInformation(data: any, userInfo: any): Promise<any> {
+      try {
+        const initiatedVendor = await this.isrVendorsRepository.findOne({
+          where: { userId: userInfo.id, status: VendorStatusEnum.DRAFT },
+        });
+        if (!initiatedVendor)
+          throw new HttpException('vendor is not initiated', 400);
+        if (
+          data.initial.status == VendorStatusEnum.DRAFT ||
+          data.initial.status == VendorStatusEnum.SAVE
+        ) {
+          const isrVendor = await this.fromInitialValue(data);
+          if (
+            data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
+            data.initial.status.trim() === VendorStatusEnum.SAVE
+          ) {
+            let ncicData = null;
+            let fppaData = null;
+            const length = data.areasOfBusinessInterest.length;
+            for (let index = 0; index < length; index++) {
+              if (data.basic.origin == 'MW' || data.basic.origin == 'Malawi') {
+                if (
+                  data.areasOfBusinessInterest[index] === 'work' &&
+                  ncicData == null
+                ) {
+                  ncicData = await this.fetchFromExternalApi(
+                    `ncic-vendors/${isrVendor.tinNumber}`,
+                  );
+                  if (ncicData == null) {
+                    isrVendor.initial.status = VendorStatusEnum.SAVE;
+                    isrVendor.initial.level = VendorStatusEnum.PPDA;
+                  } else {
+                    isrVendor.basic.district = ncicData?.district;
+                    isrVendor.basic.nameOfFirm = ncicData?.nameOfFirm;
+                    isrVendor.basic.nationalOfFirm = ncicData?.nationalOfFirm;
+                    isrVendor.basic.typeOfRegistration =
+                      ncicData?.typeOfRegistration;
+                    isrVendor.basic.branch = ncicData?.branch;
+                    isrVendor.basic.category = ncicData?.category;
+                    isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
+                    isrVendor.address.postalAddress = ncicData?.postalAddress;
+                    isrVendor.address.primaryEmail = ncicData?.email;
+                    isrVendor.address.region = ncicData?.region;
+                  }
+                } else if (fppaData == null) {
+                  fppaData = await this.fetchFromExternalApi(
+                    `fppa-vendors/${isrVendor.tinNumber}`,
+                  );
+                  if (fppaData !== null) {
+                    isrVendor.basic.businessType = fppaData.businessType;
+                    isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
+                    continue;
+                  }
+                } else if (fppaData !== null) {
+                  continue;
+                }
+              } else {
+                isrVendor.initial.status = VendorStatusEnum.SAVE;
+                isrVendor.initial.level = VendorStatusEnum.PPDA;
+                // await this.isrVendorsRepository.save(isrVendor);
+              }
+            }
+          }
+          let priceRangeIds = [];
+          if (data?.areasOfBusinessInterest.length > 0) {
+            priceRangeIds = data.areasOfBusinessInterest.map(
+              (item: any) => item.priceRange,
+            );
+          }
+          const vendorInfo: any = {
+            id: isrVendor?.id,
+            name: isrVendor.basic['name'],
+          };
+          await this.invoiceService.generateInvoice(
+            priceRangeIds,
+            vendorInfo,
+            userInfo,
+          );
+          await this.isrVendorsRepository.save(isrVendor);
+          return { msg: 'Success' };
+        } else {
+          throw new BadRequestException('invalid status');
+        }
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    }
+  */
   async addService(
     paymentReceiptDto: ReceiptDto,
     attachment: Express.Multer.File,
@@ -468,8 +508,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-
-  async addVendorInformations(data: any, userInfo: any): Promise<any> {
+  ///drfting vendor information
+  async draftVendorNewRegistrationRequest(
+    data: any,
+    userInfo: any,
+  ): Promise<any> {
     try {
       if (
         data.initial.status == VendorStatusEnum.DRAFT ||
@@ -494,7 +537,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           let ncicData: NCICResponseDTO | '' = null;
           let fppaData = null;
           const numberOfService = data.areasOfBusinessInterest.length;
-          //to get al/ the registration fee for each service
+          //to get all the registration fee for each service
           let priceRangeIds = [];
           if (data?.areasOfBusinessInterest.length > 0) {
             priceRangeIds = data.areasOfBusinessInterest.map(
@@ -502,7 +545,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             );
           }
           for (const row of data.areasOfBusinessInterest) {
-            if (data.basic.origin == 'MW' || data.basic.origin == 'Malawi') {
+            if (
+              data.basic.countryOfRegistration == 'MW' ||
+              data.basic.countryOfRegistration == 'Malawi'
+            ) {
               if (
                 row.category === BusinessCategories.WORKS &&
                 ncicData == null
@@ -517,7 +563,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 } else {
                   isrVendor.basic.district = ncicData?.district;
                   isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
-                  isrVendor.address.postalAddress = ncicData?.postalAddress;
+                  isrVendor.address.postalCode = ncicData?.postalAddress;
                   isrVendor.address.primaryEmail = ncicData?.email;
                   isrVendor.basic.nameOfFirm = ncicData?.nameOfFirm;
                   isrVendor.basic.nationalOfFirm = ncicData?.nationalOfFirm;
@@ -900,8 +946,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         }
       } else {
         if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
-          const isrVendorData = result;
-          const initial = isrVendorData.initial;
+          //   const isrVendorData = result;
+          const initial = result.initial;
           const appliedServices =
             await this.baService.getVendorRegisteredServices(
               vendorStatusDto.isrVendorId,
@@ -1016,19 +1062,27 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const vendorEntity = new VendorsEntity();
     vendorEntity.id = isrVendorData.id;
     vendorEntity.status = VendorStatusEnum.APPROVED;
-    vendorEntity.level = VendorStatusEnum.COMPLETED;
+    // vendorEntity.level = VendorStatusEnum.COMPLETED;
     vendorEntity.name = isrVendorData.basic.name;
     vendorEntity.formOfEntity = isrVendorData.basic.businessType;
-    vendorEntity.origin = isrVendorData.basic?.origin;
+    vendorEntity.countryOfRegistration =
+      isrVendorData.basic?.countryOfRegistration;
     vendorEntity.district = isrVendorData.basic?.district;
-    vendorEntity.tin = isrVendorData.basic?.tinNumber;
+    vendorEntity.tinNumber = isrVendorData.basic?.tinNumber;
     vendorEntity.userId = isrVendorData.userId;
     vendorEntity.isrVendorId = isrVendorData.id;
-    vendorEntity.shareholders = isrVendorData.shareHolders;
-    vendorEntity.vendorAccounts = isrVendorData.bankAccountDetails;
+    vendorEntity.lineOfBusiness = isrVendorData.lineOfBusiness;
+    const accounts = isrVendorData.bankAccountDetails.map((item) => {
+      if (item.bankId == '') {
+        item.bankId = null;
+      }
+      return item;
+    });
+    vendorEntity.vendorAccounts = [...accounts];
     vendorEntity.areasOfBusinessInterest =
       isrVendorData.areasOfBusinessInterest;
-    vendorEntity.beneficialOwnership = isrVendorData.beneficialOwnership;
+    vendorEntity.beneficialOwnershipShareholders =
+      isrVendorData.beneficialOwnershipShareholders;
     vendorEntity.registrationNumber =
       await this.commonService.generateApplicationNumber('MW', 'EGP');
     let tempMetadata = null;
@@ -1049,14 +1103,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     try {
       vendor.name = profileData.profileData?.basic?.name;
       vendor.formOfEntity = profileData.profileData?.basic?.businessType;
-      vendor.origin = profileData.profileData?.basic?.origin;
+      vendor.countryOfRegistration =
+        profileData.profileData?.basic?.countryOfRegistration;
 
       vendor.district = profileData.profileData?.basic?.district;
-      vendor.shareholders = profileData.profileData?.shareHolders;
+      //  vendor.shareholders = profileData.profileData?.shareHolders;
       vendor.vendorAccounts = profileData.profileData?.bankAccountDetails;
       // vendor.areasOfBusinessInterest =
       //   profileData.profileData?.areasOfBusinessInterest;
-      vendor.beneficialOwnership = profileData.profileData?.beneficialOwnership;
+      vendor.beneficialOwnershipShareholders =
+        profileData.profileData?.beneficialOwnershipAndShareholders;
       let tempMetadata = null;
       tempMetadata = {
         address: profileData.profileData?.address,
@@ -1206,8 +1262,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       isPPDARegistered: false,
     };
     if (
-      vendorInitiationDto.origin == 'MW' ||
-      vendorInitiationDto.origin == 'Malawi'
+      vendorInitiationDto.countryOfRegistration == 'MW' ||
+      vendorInitiationDto.countryOfRegistration == 'Malawi'
     ) {
       const mbrsDataDto = new MbrsDataDto();
       mbrsDataDto.tin = vendorInitiationDto.tinNumber;
@@ -1387,9 +1443,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendorEntity = await this.vendorRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
         relations: {
-          shareholders: true,
           vendorAccounts: { bank: true },
-          beneficialOwnership: true,
+          beneficialOwnershipShareholders: true,
           areasOfBusinessInterest: true,
           isrVendor: { businessAreas: true },
         },
@@ -1532,11 +1587,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               });
             }
           }
-          const certeficate = await this.baService.getCerteficate(
-            vendorEntity.id,
-          );
-          vendorEntity.preferential = formattedPt;
-          vendorEntity.certificate = certeficate?.certificateUrl;
+          if (vendorEntity) {
+            const certeficate = await this.baService.getCerteficate(
+              vendorEntity.id,
+            );
+            vendorEntity.certificate = certeficate?.certificateUrl;
+            vendorEntity.preferential = formattedPt;
+          }
         }
       }
       return vendorEntity;
@@ -1643,12 +1700,21 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return response;
   }
   async GetMBRSData(mbrsDataDto) {
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key':
+        process.env.ADMINISTRATION_API_KEY ??
+        '25bc1622e5fb42cca3d3e62e90a3a20f',
+    };
     try {
-      const url = `${process.env.MBRA_URL}/${mbrsDataDto.tin}/${mbrsDataDto.issuedDate}`;
+      const url = `${process.env.BASE_ADMINISTRATION_URL}tax-payers/${mbrsDataDto.tin}/${mbrsDataDto.issuedDate}`;
       console.log(url);
-      const result = await axios.get(url);
+      const result = await axios.get(url, {
+        headers: headers,
+      });
       if (!result) return null;
       return result;
+
       // commented because mbrs api is not working
       // const mbrsurl = `{process.env.MBRS_URL}/${mbrsDataDto.tinNumber}/${mbrsDataDto.licenseNumber}`;
       // const mbrsResponse = await axios.get(mbrsurl);
@@ -1675,8 +1741,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async GetNCICData(tinNumber: string) {
     try {
       const nCICDataDto: NCICDataDto = new NCICDataDto();
-      const url = `${process.env.NCIC_URL}/${tinNumber}`;
-      const response = await axios.get(url);
+      const headers = {
+        'Content-Type': 'application/json',
+        'x-api-key':
+          process.env.ADMINISTRATION_API_KEY ??
+          '25bc1622e5fb42cca3d3e62e90a3a20f',
+      };
+      const url = `${process.env.BASE_ADMINISTRATION_URL}ncic-vendors/${tinNumber}`;
+      const response = await axios.get(url, {
+        headers: headers,
+      });
       if (
         response?.data == null ||
         response?.data?.tin !== tinNumber.toString().trim()
@@ -1690,8 +1764,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async GetFPPAData(tinNumber: string) {
     try {
-      const url = `${process.env.FPPA_URL}/${tinNumber}`;
-      const response = await axios.get(url);
+      const headers = {
+        'Content-Type': 'application/json',
+        'x-api-key':
+          process.env.ADMINISTRATION_API_KEY ??
+          '25bc1622e5fb42cca3d3e62e90a3a20f',
+      };
+      const url = `${process.env.BASE_ADMINISTRATION_URL}fppa-vendors/${tinNumber}`;
+      const response = await axios.get(url, {
+        headers: headers,
+      });
       const fppaDataDto: FppaDataDto = new FppaDataDto();
       fppaDataDto.id = response?.data?.id;
       fppaDataDto.tin = response?.data?.tin;
@@ -1833,9 +1915,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       select: {
         id: true,
         name: true,
-        tin: true,
+        tinNumber: true,
         formOfEntity: true,
-        origin: true,
+        countryOfRegistration: true,
         metaData: true,
         status: true,
         userId: true,
@@ -1851,18 +1933,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           isDefualt: true,
           branchAddress: true,
         },
-        shareholders: {
-          id: true,
+
+        beneficialOwnershipShareholders: {
           firstName: true,
           lastName: true,
+          middleName: true,
           nationality: true,
+          countryOfResidence: true,
           share: true,
-        },
-        beneficialOwnership: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          nationality: true,
+          votingRights: true,
         },
         areasOfBusinessInterest: {
           id: true,
@@ -1873,8 +1952,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       },
       relations: {
         areasOfBusinessInterest: true,
-        shareholders: true,
-        beneficialOwnership: true,
+        //  shareholders: true,
+        beneficialOwnershipShareholders: true,
         vendorAccounts: true,
         isrVendor: { businessAreas: { servicePrice: true, BpService: true } },
       },
@@ -2142,53 +2221,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
-  async initiateVendorProfileUpdate(userId: string) {
-    const isrVendor = await this.isrVendorsRepository.findOne({
-      where: { userId: userId, status: VendorStatusEnum.APPROVED },
-    });
-    isrVendor.id = undefined;
-    isrVendor.status = VendorStatusEnum.UPDATE;
-    isrVendor.initial.status = VendorStatusEnum.DRAFT;
-    isrVendor.initial.level = VendorStatusEnum.BASIC;
-    isrVendor.areasOfBusinessInterest =
-      InitialValueSchema.areasOfBusinessInterest;
-    isrVendor.bankAccountDetails = InitialValueSchema.bankAccountDetails;
-    isrVendor.beneficialOwnership = InitialValueSchema.beneficialOwnership;
-    isrVendor.businessSizeAndOwnership =
-      InitialValueSchema.businessSizeAndOwnership;
-    isrVendor.contactPersons = InitialValueSchema.contactPersons;
-    isrVendor.initial = InitialValueSchema.initial;
-    isrVendor.address = InitialValueSchema.address;
-    isrVendor.basic = InitialValueSchema.basic;
-    isrVendor.shareHolders = InitialValueSchema.shareHolders;
-    const result = await this.isrVendorsRepository.save(isrVendor);
-    return result;
-  }
-  async updateVendorProfile(isrVendorId: string, data: any) {
-    const isrVendor = await this.isrVendorsRepository.findOne({
-      where: { id: isrVendorId },
-    });
-    if (
-      data?.initial?.status == VendorStatusEnum.DRAFT ||
-      data.initial.level !== VendorStatusEnum.SUBMIT
-    ) {
-      isrVendor.areasOfBusinessInterest = data?.areasOfBusinessInterest;
-      isrVendor.bankAccountDetails = data?.bankAccountDetails;
-      isrVendor.beneficialOwnership = data?.beneficialOwnership;
-      isrVendor.businessSizeAndOwnership = data?.businessSizeAndOwnership;
-      isrVendor.contactPersons = data?.contactPersons;
-      isrVendor.initial = data?.initial;
-      isrVendor.address = data?.address;
-      isrVendor.basic = data?.basic;
-      isrVendor.shareHolders = data?.shareHolders;
-      return isrVendor;
-    } else if (
-      data?.initial?.status == VendorStatusEnum.SUBMIT &&
-      data.initial.level !== VendorStatusEnum.SUBMIT
-    ) {
-    }
-  }
-
   async cancelRegistration(user: any) {
     const vendor = await this.isrVendorsRepository.findOne({
       where: { userId: user.id, status: Not(ApplicationStatus.APPROVED) },
@@ -2259,10 +2291,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendor = await this.vendorRepository.findOne({
         where: { userId: userId },
         relations: {
-          shareholders: true,
           areasOfBusinessInterest: true,
-          beneficialOwnership: true,
-          businessCats: true,
+          beneficialOwnershipShareholders: true,
           vendorAccounts: true,
         },
       });
@@ -2294,18 +2324,21 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         vendorEntity.bankAccountDetails = vendor.vendorAccounts;
         vendorEntity.basic = {
           name: vendor.name,
-          origin: vendor.origin,
+          countryOfRegistration: vendor.countryOfRegistration,
           district: vendor.district,
-          tinNumber: vendor.tin,
+          tinNumber: vendor.tinNumber,
           businessType: vendor.formOfEntity,
         };
-        vendorEntity.beneficialOwnership = vendor.beneficialOwnership;
+
+        vendorEntity.beneficialOwnershipShareholders =
+          vendor.beneficialOwnershipShareholders;
         vendorEntity.id = vendor.id;
         vendorEntity.userId = vendor.userId;
-        vendorEntity.tinNumber = vendor.tin;
+        vendorEntity.tinNumber = vendor.tinNumber;
         vendorEntity.status = vendor.status;
         vendorEntity.tenantId = vendor.tenantId;
-        vendorEntity.shareHolders = vendor.shareholders;
+        // vendorEntity.shareHolders = vendor.shareholders;
+        vendorEntity.lineOfBusiness = vendor.lineOfBusiness;
         vendorEntity.address = vendor.metaData?.address;
         vendorEntity.initial = vendor.metaData?.initial;
         vendorEntity.contactPersons = vendor.metaData?.contactPersons;
@@ -2535,12 +2568,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       await this.isrVendorsRepository.update(wfi.requestorId, tempVendor);
       return true;
     }
-  }
-  async submitRegistrationRequest(user: any) {
-    const data = this.isrVendorsRepository.find({ where: { userId: user.id } });
-    const pdf = await PdfDocumentTemplate(data);
-
-    return pdf;
   }
 
   private async verifyAndGetExternalApiData(itemData: VendorInitiationDto) {

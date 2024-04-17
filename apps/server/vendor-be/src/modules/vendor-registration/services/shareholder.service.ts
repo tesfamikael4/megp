@@ -3,20 +3,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { ShareholdersEntity } from 'src/entities';
+import { BeneficialOwnershipShares } from 'src/entities';
 
 @Injectable()
-export class ShareholderService {
+export class beneficialOwnershipAndShareholdersService {
   constructor(
-    @InjectRepository(ShareholdersEntity)
-    private readonly shareholderrepository: Repository<ShareholdersEntity>,
+    @InjectRepository(BeneficialOwnershipShares)
+    private readonly shareholderrepository: Repository<BeneficialOwnershipShares>,
   ) {}
   async fetch(query: CollectionQuery): Promise<any> {
     try {
-      const dataQuery = QueryConstructor.constructQuery<ShareholdersEntity>(
-        this.shareholderrepository,
-        query,
-      );
+      const dataQuery =
+        QueryConstructor.constructQuery<BeneficialOwnershipShares>(
+          this.shareholderrepository,
+          query,
+        );
       const response = new DataResponseFormat<any>();
       if (query.count) {
         response.total = await dataQuery.getCount();
@@ -44,10 +45,11 @@ export class ShareholderService {
     query: CollectionQuery,
   ): Promise<any> {
     try {
-      const dataQuery = QueryConstructor.constructQuery<ShareholdersEntity>(
-        this.shareholderrepository,
-        query,
-      ).andWhere('vendorId = :vendorId', { vendorId: vendorId });
+      const dataQuery =
+        QueryConstructor.constructQuery<BeneficialOwnershipShares>(
+          this.shareholderrepository,
+          query,
+        ).andWhere('vendorId = :vendorId', { vendorId: vendorId });
       dataQuery.where('');
       const response = new DataResponseFormat<any>();
       if (query.count) {

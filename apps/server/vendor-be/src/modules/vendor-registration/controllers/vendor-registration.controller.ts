@@ -8,9 +8,7 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
-  Req,
   Res,
-  StreamableFile,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -36,7 +34,7 @@ import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -111,25 +109,12 @@ export class VendorRegistrationsController {
   }
   //new registration request draft
   @Post('add-vendor-information')
-  async addVendorInformation(
+  async draftVendorNewRegistrationRequest(
     @Body() data: InsertAllDataDto,
     @CurrentUser() userInfo: any,
   ) {
     data.data.userId = userInfo.id;
-    const result = await this.regService.addVendorInformations(
-      data.data,
-      userInfo,
-    );
-    if (!result) throw new BadRequestException(`vendor registration failed`);
-    return result;
-  }
-  @Post('draft-vendor-information')
-  async addDraftVendorInformation(
-    @Body() data: InsertAllDataDto,
-    @CurrentUser() userInfo: any,
-  ) {
-    data.data.userId = userInfo.id;
-    const result = await this.regService.addDraftVendorInformation(
+    const result = await this.regService.draftVendorNewRegistrationRequest(
       data.data,
       userInfo,
     );
@@ -137,7 +122,7 @@ export class VendorRegistrationsController {
     return result;
   }
 
-  @Post('submit-vendor-information')
+  @Post('submit-vendor-registration-request')
   async submitNewRegistratinRequest(
     @Body() data: InsertAllDataDto,
     @CurrentUser() userInfo: any,
@@ -158,7 +143,6 @@ export class VendorRegistrationsController {
     @Query() quer: CollectionQuery,
   ) {
     vendorInitiationDto.status = 'Draft';
-    vendorInitiationDto.level = 'detail';
     return await this.regService.vendorInitiation(vendorInitiationDto, user);
   }
   // @UseGuards(ApiKeyGuard)
@@ -314,18 +298,173 @@ export class VendorRegistrationsController {
   async getpreferentialCertificates(@CurrentUser() userInfo: any) {
     return await this.regService.getCertificateInformations(userInfo.id);
   }
-
+  //for testing purpose # document generation
   @Post('submit-registration-request')
   async submitRegistrationRequest(
     @CurrentUser() user: string,
     @Res() res: any,
   ) {
-    const result = await this.regService.submitRegistrationRequest(user);
+    const data = {
+      "vendor": {
+        "id": "850a9f47-81a8-4eb6-9254-96bc90902caa",
+        "basic": {
+          "name": "Terrastone Construction Limited44-b",
+          "level": "detail",
+          "origin": "Malawi",
+          "status": "Draft",
+          "district": "Chiradzulu",
+          "tinNumber": "222222221",
+          "businessType": "privateLimitedCompany",
+          "tinIssuedDate": "2024-04-04"
+        },
+        "remark": null,
+        "status": "Approved",
+        "userId": "bd1a4b88-3015-4663-bbd3-bba11ccb5d98",
+        "address": {
+          "fax": "+345234",
+          "website": "https://dev.megp.peragosystems.com",
+          "telephone": "+5234523452345",
+          "mobilePhone": "0909090909",
+          "primaryEmail": "dfasdfas@asdfasdf.cc",
+          "postalAddress": "12312342",
+          "alternateEmail": "deme1@gmsil.com"
+        },
+        "initial": {
+          "level": "doc",
+          "status": "Save",
+          "userId": "bd1a4b88-3015-4663-bbd3-bba11ccb5d98",
+          "issueDate": "2024-04-04"
+        },
+        "invoice": {
+
+        },
+        "tenantId": 0,
+        "createdAt": "2024-04-04T13:07:08.844Z",
+        "deletedAt": null,
+        "tinNumber": "222222221",
+        "updatedAt": "2024-04-04T14:23:37.667Z",
+        "shareHolders": [
+          {
+            "share": 67,
+            "lastName": "Getaneh",
+            "firstName": "Demeke ",
+            "nationality": "Åland Islands"
+          }
+        ],
+        "contactPersons": [
+          {
+            "email": "demekeg@wldu.edu.et",
+            "lastName": "Mergia",
+            "firstName": "Demeke ",
+            "mobileNumber": "0941234126"
+          }
+        ],
+        "lineOfBusiness": ['Ecobank Malawi', 'Ecobank Malawi 2'],
+        "paymentReceipt": {
+          "invoiceId": "[\"f4b06506-a017-41c6-8d9c-28a647446e98\"]",
+          "attachment": "1712240617496-434064850_certeficate.png",
+          "transactionNumber": "452345325452"
+        },
+        "bankAccountDetails": [
+          {
+            "IBAN": "234523",
+            "bankId": "56e1a7b0-622d-4bf0-9a95-8ce22cfa3d2b",
+            "status": "",
+            "bankName": "Ecobank Malawi",
+            "currency": "ETB",
+            "bankSwift": "2345234",
+            "hashValue": "",
+            "isDefualt": true,
+            "branchName": "23452345",
+            "accountType": "",
+            "accountNumber": "452345234",
+            "branchAddress": "34523",
+            "accountHolderFullName": "ServiceKeyEnum.REGISTRATION_RENEWAL"
+          }
+        ],
+        "beneficialOwnershipAndShares": [
+          {
+            "lastName": "Mergia",
+            "middleName": "",
+            "firstName": "Demeke ",
+            "nationality": "Åland Islands",
+            "share": "",
+            "countryOfResidence": "",
+            "votingRights": "",
+            "authorityToAppointGov": "",
+          }
+        ],
+        "supportingDocuments": {
+          "mRA_TPINCertificate": "",
+          "mRATaxClearanceCertificate": "",
+          "generalReceipt_BankDepositSlip": "",
+          "previousPPDARegistrationCertificate": "",
+          "businessRegistration_IncorporationCertificate": ""
+        },
+        "areasOfBusinessInterest": [
+          {
+            "category": "Goods",
+            "priceRange": "uto 100MK",
+            "lineOfBusiness": [
+              {
+                "id": "641a3198-42ab-f65a-a8df-7005f7f4cb46",
+                "name": "Office equipment"
+              }
+            ]
+          }
+        ],
+        "businessSizeAndOwnership": {
+          "ownershipType": "Malawian",
+          "paidUpCapital": {
+            "amount": "456",
+            "currency": "KW"
+          },
+          "numberOfEmployees": "67",
+          "registeredCapital": {
+            "amount": "45,232,999",
+            "currency": "KW"
+          }
+        }
+      },
+      "preferential": [
+        {
+          'category': '',
+          'type': 'Micro Interprize',
+          "certiNumber": "er451425123451",
+          'certificateIssuanceDate': '',
+          'certificateValidityPeriod': '',
+          "status": "Submitted",
+          "userId": "bd1a4b88-3015-4663-bbd3-bba11ccb5d98",
+
+        },
+        {
+          'category': '',
+          'type': 'IBM',
+          "certiNumber": "er451425123451",
+          'certificateIssuanceDate': '',
+          'certificateValidityPeriod': '',
+          "status": "Submitted",
+          "userId": "bd1a4b88-3015-4663-bbd3-bba11ccb5d98",
+
+        },
+        {
+          'category': '',
+          'type': 'Marginalized',
+          "certiNumber": "er451425123451",
+          'certificateIssuanceDate': '',
+          'certificateValidityPeriod': '',
+          "status": "Submitted",
+          "userId": "bd1a4b88-3015-4663-bbd3-bba11ccb5d98",
+
+        }
+      ]
+    };
+    const result = await this.regService.generatePDFForReview(data, user);
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': 'attachment; filename="document.pdf"',
     });
-    result.pipe(res);
+    //  result.pipe(res);
   }
 
   @Post('event-test')

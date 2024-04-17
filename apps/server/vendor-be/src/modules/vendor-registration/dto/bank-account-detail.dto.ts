@@ -70,7 +70,7 @@ export class CreateBankAccountDetailDto {
     entity.branchName = dto.branchName;
     entity.branchAddress = dto.branchName;
     entity.currency = dto.currency;
-    entity.bankSwift = dto.bankSwift;
+    entity.swiftCode = dto.bankSwift;
     entity.IBAN = dto.IBAN;
     entity.status = dto.status;
     entity.hashValue = dto.hashValue;
@@ -112,7 +112,7 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
     entity.branchName = dto.branchName;
     entity.branchAddress = dto.branchAddress;
     entity.currency = dto.currency;
-    entity.bankSwift = dto.bankSwift;
+    entity.swiftCode = dto.bankSwift;
     entity.IBAN = dto.IBAN;
     entity.status = dto.status;
     entity.hashValue = dto.hashValue;
@@ -136,7 +136,7 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
     entity.branchName = dto?.branchName;
     entity.branchAddress = dto?.branchAddress;
     entity.currency = dto.currency;
-    entity.bankSwift = dto?.bankSwift;
+    entity.bankSwift = dto?.swiftCode;
     entity.IBAN = dto?.IBAN;
     entity.status = dto?.status;
     entity.hashValue = dto?.hashValue;

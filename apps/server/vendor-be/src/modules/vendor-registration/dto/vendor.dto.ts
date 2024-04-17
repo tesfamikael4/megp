@@ -1,19 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import {
-  BusinessCategoryResponseDto,
   CreateBusinessCategoryDto,
 } from './business-category.dto';
-import {
-  CreateCustomCategoryDto,
-  CustomCategoryResponseDto,
-} from './custom-category.dto';
-import {
-  CreateShareholdersDto,
-  ShareholdersResponseDto,
-} from './shareholder.dto';
-import { BankAccountDetailResponse } from './bank-account-detail.dto';
-import { BeneficialOwnershipResponse } from './beneficial-ownership.dto';
+
 import {
   AreasOfBusinessInterestResponse,
   CreateAreasOfBusinessInterest,
@@ -52,24 +42,16 @@ export class CreateVendorsDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  origin: string;
+  countryOfRegistration: string;
   @ApiProperty()
   canRequest: true;
   @ApiProperty()
   commonCategories: CreateBusinessCategoryDto[];
-  @ApiProperty()
-  customCategories: CreateCustomCategoryDto[];
+
 
   appliactions: CreateWorkflowInstanceDto[];
-  @ApiProperty()
-  shareholders: ShareholdersResponseDto[];
-  BeneficialOwnershipResponse;
 
-  @ApiProperty()
-  bankAccountDetail: BankAccountDetailResponse[];
 
-  @ApiProperty()
-  beneficialOwnership: BeneficialOwnershipResponse[];
 
   @ApiProperty()
   areasOfBusinessInterest: AreasOfBusinessInterestResponse[];
@@ -80,38 +62,28 @@ export class CreateVendorsDto {
       return;
     }
     entity.id = dto?.id;
-    entity.tin = dto.tin;
+
     entity.formOfEntity = dto.formOfEntity;
     entity.status = dto.status;
     entity.userId = dto.userId;
 
     entity.district = dto.district;
     entity.name = dto.name;
-    entity.origin = dto.origin;
+    entity.countryOfRegistration = dto.countryOfRegistration;
 
     entity.metaData = dto.metaData;
-    entity.businessCats = dto.commonCategories
-      ? dto.commonCategories.map((item) =>
-          CreateBusinessCategoryDto.fromDto(item),
-        )
-      : null;
-    entity.customCats = dto.customCategories
-      ? dto.customCategories.map((item) =>
-          CreateCustomCategoryDto.fromDto(item),
-        )
-      : null;
+
+
 
     entity.instances = dto.appliactions
       ? dto.appliactions.map((item) => CreateWorkflowInstanceDto.fromDto(item))
       : null;
 
-    entity.shareholders = dto.shareholders
-      ? dto.shareholders.map((item) => CreateShareholdersDto.fromDto(item))
-      : null;
+
     entity.areasOfBusinessInterest = dto.areasOfBusinessInterest
       ? dto.areasOfBusinessInterest.map((item) =>
-          CreateAreasOfBusinessInterest.fromDto(item),
-        )
+        CreateAreasOfBusinessInterest.fromDto(item),
+      )
       : null;
     return entity;
   }
@@ -126,13 +98,13 @@ export class UpdateVendorsDto extends CreateVendorsDto {
       return;
     }
     entity.id = dto.id;
-    entity.tin = dto.tin;
+    entity.tinNumber = dto.tin;
     entity.userId = dto.userId;
     entity.formOfEntity = dto.status;
     entity.metaData = dto.metaData;
     entity.district = dto.district;
     entity.name = dto.name;
-    entity.origin = dto.origin;
+    entity.countryOfRegistration = dto.countryOfRegistration;
     return entity;
   }
 }
@@ -141,35 +113,18 @@ export class VendorsResponseDto extends UpdateVendorsDto {
     vendor: VendorsResponseDto;
     const response = new VendorsResponseDto();
     response.id = entity.id;
-    response.tin = entity.tin;
+    response.tin = entity.tinNumber;
     response.userId = entity.userId;
     response.name = entity.name;
     response.status = entity.status;
     response.metaData = entity.metaData;
     response.district = entity.district;
     response.name = entity.name;
-    response.origin = entity.origin;
-
-    response.shareholders = entity?.shareholders?.map((element) =>
-      ShareholdersResponseDto.fromEntity(element),
-    );
-    response.bankAccountDetail = entity?.vendorAccounts?.map((element) =>
-      BankAccountDetailResponse.toResponse(element),
-    );
-    response.beneficialOwnership = entity?.beneficialOwnership?.map((element) =>
-      BeneficialOwnershipResponse.fromEntity(element),
-    );
+    response.countryOfRegistration = entity.countryOfRegistration;
     response.areasOfBusinessInterest = entity?.areasOfBusinessInterest?.map(
       (element) => AreasOfBusinessInterestResponse.fromEntity(element),
     );
-    if (entity.businessCats)
-      response.commonCategories = entity.businessCats.map((item) =>
-        BusinessCategoryResponseDto.toResponse(item),
-      );
-    if (entity.customCats)
-      response.customCategories = entity.customCats.map((item) =>
-        CustomCategoryResponseDto.toResponse(item),
-      );
+
 
     return response;
   }
