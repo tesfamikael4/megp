@@ -38,7 +38,7 @@ export class MinIOService {
       originalname: string;
       contentType?: string;
     },
-    bucketName?: string,
+    bucketName = '',
   ): Promise<{ presignedUrl: string; file: any }> {
     const filepath = randomUUID() + extname(fileInfo.originalname);
 
