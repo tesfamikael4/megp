@@ -25,13 +25,39 @@ export class SubmittedPlanController extends EntityCrudController<SubmittedPlan>
 
   @AllowAnonymous()
   @Get('prev-versions/:id')
-  async getPreviousVersion(@Param('id') id: any) {
+  async getPreviousVersion(@Param('id') id: string) {
     return await this.submittedPlanService.getPreviousVersions(id);
+  }
+
+  @AllowAnonymous()
+  @Get('compare/:toBeCompareId/:compareWithId')
+  async compare(
+    @Param('toBeCompareId') toBeCompareId: string,
+    @Param('compareWithId') compareWithId: string,
+  ) {
+    return await this.submittedPlanService.compare(
+      toBeCompareId,
+      compareWithId,
+    );
   }
 
   @AllowAnonymous()
   @Post('compare-json')
   async compareJson(@Body() data: any) {
     return await this.submittedPlanService.deepEqual(data.obj1, data.obj2);
+  }
+
+  @AllowAnonymous()
+  @Get('compare-plan/:toBeCompareId/:compareWithId/:modifiedId')
+  async comparePlan(
+    @Param('toBeCompareId') toBeCompareId: string,
+    @Param('compareWithId') compareWithId: string,
+    @Param('modifiedId') modifiedId: string,
+  ) {
+    return await this.submittedPlanService.comparePlan(
+      toBeCompareId,
+      compareWithId,
+      modifiedId,
+    );
   }
 }
