@@ -1338,6 +1338,9 @@ importers:
       jwt-decode:
         specifier: ^3.1.2
         version: 3.1.2
+      lodash.sortby:
+        specifier: ^4.7.0
+        version: 4.7.0
       mantine-datatable:
         specifier: ^7.5.0
         version: 7.5.0(@mantine/core@7.5.2)(@mantine/hooks@7.5.2)(clsx@2.1.0)(react@18.2.0)
@@ -16447,6 +16450,10 @@ packages:
   /lodash.snakecase@4.1.1:
     resolution: {integrity: sha512-QZ1d4xoBHYUeuouhEq3lk3Uq7ldgyFXGBhg04+oRLnIz8o9T65Eh+8YdroUwn846zchkA9yDsDl5CVVaV2nqYw==}
     dev: true
+
+  /lodash.sortby@4.7.0:
+    resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
+    dev: false
 
   /lodash.startcase@4.4.0:
     resolution: {integrity: sha512-+WKqsK294HMSc2jEbNgpHpd0JfIBhp7rEV4aqXWqFr6AlXov+SlcgB1Fv01y2kGe3Gc8nMW7VA0SrGuSkRfIEg==}

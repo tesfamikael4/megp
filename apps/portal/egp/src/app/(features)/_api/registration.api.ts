@@ -42,6 +42,16 @@ export const getRegistrationApi = createApi({
       },
       providesTags: ['bid-registration'],
     }),
+    getLot: builder.query<any, any>({
+      query: (id: string) => {
+        let q = '';
+        return {
+          url: `/lots/${id}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['bid-registration'],
+    }),
   }),
 });
 
@@ -49,4 +59,6 @@ export const {
   useLazyRegistrationsQuery,
   useTenderDetailQuery,
   useGetAllLotsQuery,
+  useGetLotQuery,
+  useLazyGetLotQuery,
 } = getRegistrationApi;

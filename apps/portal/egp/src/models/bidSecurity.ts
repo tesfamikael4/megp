@@ -1,25 +1,22 @@
 export interface BidSecurity {
   id: string;
-  tenantId: string;
-  vendorId: string;
-  vendorName: string;
+  lotId: string;
   guarantorId: string;
   guarantorName: string;
   guarantorBranchId: string;
   guarantorBranchName: string;
-  startDate: Date;
-  endDate: Date;
-  type: string;
-  objectId: string;
-  objectType: string;
-  minValidityDate: Date;
-  garantorValidityDate: Date;
+  revisedValidityDate: number;
+  contactPerson: {
+    email?: string;
+    fullName?: string;
+    phoneNumber?: string;
+  };
   name: string;
   title: string;
   amount: number;
-  currencyType: string;
-  remark: string;
-  attachment: {};
+  currency: string;
+  description: string;
+  document: {};
   status: string;
-  createdAt?: string;
+  createdAt: string;
 }
