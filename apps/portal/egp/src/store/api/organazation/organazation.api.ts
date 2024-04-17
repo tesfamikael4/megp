@@ -22,7 +22,7 @@ export const organazationApi = createApi({
       },
     }),
     getOrganazation: builder.query<any, string>({
-      query: (id) => `organizations/${id}`,
+      query: (mandateKey) => `organizations/list/by-mandate/${mandateKey}`,
     }),
   }),
 });

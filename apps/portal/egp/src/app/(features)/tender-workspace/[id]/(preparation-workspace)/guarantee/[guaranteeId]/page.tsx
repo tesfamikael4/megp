@@ -1,55 +1,77 @@
 'use client';
 
 import { useReadQuery } from '@/store/api/guarantee/guarantee.api';
-import { useGetOrganazationQuery } from '@/store/api/organazation/organazation.api';
 import { useGetRegisteredBidQuery } from '@/store/api/registered-bid/registered-bid.api';
-import { Accordion, Box, Divider, Flex, Table, Text } from '@mantine/core';
-import { logger } from '@megp/core-fe';
-import { IconFileInvoice } from '@tabler/icons-react';
+import { Box, Button, Divider, Flex, Modal, Table, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { TableForm } from '../_components/table';
+import { IconFileInvoice } from '@tabler/icons-react';
 export default function BidSecurityPage() {
-  const [openedTerm, setOpenedTerm] = useState(false);
-  const togglePanel = () => {
-    setOpenedTerm(!openedTerm);
-  };
+  const [opened, { open, close }] = useDisclosure(false);
   const { guaranteeId } = useParams();
   const { id } = useParams();
 
   const { data: data, isSuccess } = useReadQuery(guaranteeId?.toString());
-  const { data: guarantor } = useGetOrganazationQuery(
-    data?.guarantorId?.toString() || '',
-  );
+
   const { data: tenderData } = useGetRegisteredBidQuery(id?.toString());
 
   return (
-    <Flex w={'100%'}>
-      <Box className=" w-full p-6 bg-[#e7f4f7]">
-        <Box className=" w-full p-6 min-h-screen bg-white">
-          <Flex direction={'column'} className="w-full py-2 mb-3 ">
-            <Text fw={700} fz="xl" c={'#1D8E3F'}>
-              Guarantee Info
-            </Text>
+    <Flex w={'100%'} justify={'center'} mt={20} mb={20}>
+      <Box className=" w-full max-w-[800px] p-6 h-auto bg-white shadow-md rounded-md ">
+        <Box className=" w-full p-6 h-auto bg-white">
+          <Flex className="w-full py-2 mb-3  " justify={'space-between'}>
+            <Text fw={600}>Guarantee Information</Text>
+            <Flex gap={7}>
+              <Button w={100} variant="outline">
+                Cancel
+              </Button>
+              <Button
+                w={100}
+                className=" ml-auto "
+                // onClick={handleSubmit(onCreate, (err) => logger.log(err))}
+              >
+                Extend
+              </Button>
+            </Flex>
           </Flex>
           <Table h={100} className="mb-5 ">
             <Table.Tbody className=" border-2">
               <Table.Tr className=" border-2 ">
                 <Table.Th className="bg-[#edf3f8] font-normal  w-72  text-[14px]">
-                  Guaranter Name
+                  Guarantor Name
                 </Table.Th>
                 <Table.Td>
-                  <Text size="sm">{guarantor?.name}</Text>
+                  <Text size="sm">{data?.guarantorName}</Text>
                 </Table.Td>
               </Table.Tr>
               <Table.Tr className=" border-2 ">
-                <Table.Th className="bg-[#edf3f8] font-normal text-[14px]">
-                  Validity Date
+                <Table.Th className="bg-[#edf3f8] font-normal  w-72  text-[14px]">
+                  Guarantor Branch Name
                 </Table.Th>
                 <Table.Td>
-                  <Text size="sm">Mar 30, 2024</Text>
+                  <Text size="sm">{data?.guarantorBranchName}</Text>
                 </Table.Td>
               </Table.Tr>
-
+              <Table.Tr>
+                <Table.Th className="bg-[#edf3f8] font-normal text-[14px] ">
+                  Guarantee Type
+                </Table.Th>
+                <Table.Td className=" ">
+                  <Text size="sm">Bid Security</Text>
+                </Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Th className="bg-[#edf3f8] font-normal text-[14px] ">
+                  Guarantee Amount
+                </Table.Th>
+                <Table.Td className=" ">
+                  <Text size="sm">
+                    {parseFloat(tenderData?.budgetAmount).toLocaleString()}{' '}
+                    {tenderData?.budgetAmountCurrency}
+                  </Text>
+                </Table.Td>
+              </Table.Tr>
               <Table.Tr className=" border-2 ">
                 <Table.Th className="bg-[#edf3f8] font-normal text-[14px]">
                   Request Date
@@ -66,100 +88,102 @@ export default function BidSecurityPage() {
                   </Text>
                 </Table.Td>
               </Table.Tr>
-
-              <Table.Tr>
-                <Table.Th className="bg-[#edf3f8] font-normal text-[14px] ">
-                  Submission Deadline
+              <Table.Tr className=" border-2 ">
+                <Table.Th className="bg-[#edf3f8] font-normal text-[14px]">
+                  Guarantee Validity Date
                 </Table.Th>
-                <Table.Td className=" ">
-                  <Text size="sm">Mar 30,2024</Text>
+                <Table.Td>
+                  <Text size="sm">Mar 30, 2024</Text>
                 </Table.Td>
               </Table.Tr>
+
               <Table.Tr>
                 <Table.Th className="bg-[#edf3f8] font-normal text-[14px] ">
                   Guarantee Status
                 </Table.Th>
-                <Table.Td className=" ">
-                  <Text size="sm">{data?.status}</Text>
-                </Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Th className="bg-[#edf3f8] font-normal text-[14px]  ">
-                  Procuring Entity Name
-                </Table.Th>
-                <Table.Td className=" ">
-                  <Text size="sm">{tenderData?.organizationName} </Text>
-                </Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Th className="bg-[#edf3f8] font-normal text-[14px] ">
-                  Security Currency
-                </Table.Th>
-                <Table.Td className=" ">
-                  <Text size="sm">{tenderData?.budgetAmountCurrency}</Text>
-                </Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Th className="bg-[#edf3f8] font-normal text-[14px] ">
-                  Security Amount
-                </Table.Th>
-                <Table.Td className=" ">
-                  <Text size="sm">{tenderData?.budgetAmount}</Text>
+                <Table.Td className="capitalize ">
+                  <Text
+                    size="sm"
+                    className="capitalize text-[#49c460] bg-[#ebfbee] border rounded-xl w-24 text-center"
+                  >
+                    {data?.status}
+                  </Text>
                 </Table.Td>
               </Table.Tr>
             </Table.Tbody>
           </Table>
-          <Divider my="md" className="w-full" size={'xs'} />
 
-          <Accordion className="" defaultValue="Terms and Conditions">
-            <Accordion.Item value={'    Terms and Conditions'}>
-              <Accordion.Control
-                className="pl-0"
-                icon={<IconFileInvoice />}
-                styles={{
-                  icon: {
-                    color: '#40C057',
-                  },
-                }}
-                onClick={togglePanel}
-              >
-                Terms and Conditions
-              </Accordion.Control>
+          <Flex
+            direction={{ base: 'column', sm: 'row' }}
+            gap={{ base: 'sm', sm: 'lg' }}
+            justify={{ sm: 'end' }}
+          >
+            <Box></Box>
+            <Button w={100} onClick={open}>
+              Preview
+            </Button>
+          </Flex>
+          <Modal
+            opened={opened}
+            onClose={close}
+            title="Applicatipn Form for Bid Guarantee "
+            size="lg"
+          >
+            <Box mb={20}>
+              <Text>Name/Title:</Text>
+              <Text>Bank Name:</Text>
+              <Text>Date:</Text>
+              <Text>
+                I/We would like to Request For Guarantee For Bid Security(EMD) /
+                Performance Guarantee / Mobilization Advance / Release of
+                Retention Money/ Security Deposit as per the details given
+                below:
+              </Text>
+            </Box>
+            <TableForm />
+            <Flex>
+              <IconFileInvoice color="#40C057" />
+              <Text fw={600}> Declaration</Text>
+            </Flex>
+            <Text c="dimmed" className="pl-7 mt-2 text-justify">
+              I acknowledge that I have read, understood, and agree to the terms
+              outlined in MANEPS Privacy Policy. I hereby grant my explicit
+              consent for the collection, use, storage, and sharing of my
+              personal data as described in the Privacy Policy. The information
+              I provide may be used for contacting me for service related or
+              marketing communications, Enhancing and personalizing my customer
+              experience with MANEPS and to comply with legal and regulatory
+              obligations.
+            </Text>
+            <Divider my="md" className="w-full" size={'xs'} />
+            <Text c="dimmed" className="pl-7 mt-2 text-justify">
+              In case of claim by the beneficiary, I/WE, hereby undertake to
+              reimburse on your first demand the amount paid by MANEPS to
+              ……………………………………………………………………………………. If I/We fail to reimburse, the
+              claimed amount may be converted to short-term business loan at the
+              prevailing interest rate and the tenure approved by the Bank. In
+              the event of failure to liquidate the loan, I/We authorize MANEPS
+              to take over the properties mortgaged to the Bank in order to
+              realize the amount payable by us. Date:___________________________{' '}
+            </Text>
 
-              <Accordion.Panel c="dimmed" className="pl-5">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-                varius sollicitudin dictum. Nulla pulvinar accumsan nunc, non
-                ultrices dolor elementum ut. Maecenas accumsan, risus vitae
-                maximus facilisis, est purus mollis lacus, eu volutpat lacus
-                purus non velit. Integer malesuada ultricies ex ut pellentesque.
-                Nulla facilisi. Integer elementum porta nisi vitae vestibulum.
-                Maecenas id neque vestibulum, convallis lacus sit amet, suscipit
-                sapien. Aliquam sed neque erat. Cras ipsum magna, vehicula
-                viverra diam eu, blandit pharetra ipsum. Curabitur efficitur
-                nibh id ex varius pulvinar.
-              </Accordion.Panel>
-            </Accordion.Item>
-          </Accordion>
-          <Accordion className="" defaultValue="Terms and Conditions">
-            <Accordion.Item value={'    Terms and Conditions'}>
-              <Accordion.Control
-                className="pl-0"
-                icon={<IconFileInvoice />}
-                styles={{
-                  icon: {
-                    color: '#40C057',
-                  },
-                }}
-                onClick={togglePanel}
-              >
-                Guarantee Remarks
-              </Accordion.Control>
-
-              <Accordion.Panel c="dimmed" className="pl-5">
-                {data?.remark}
-              </Accordion.Panel>
-            </Accordion.Item>
-          </Accordion>
+            <Box mb={20}>
+              {' '}
+              <Text c="dimmed" className="pl-7 mt-10">
+                AUTHORIZED SIGNATORY & SEAL OF THE COMPANY
+              </Text>
+              <Text c="dimmed" className="pl-7 mt-2">
+                NAME________________________________
+              </Text>
+              <Text c="dimmed" className="pl-7 mt-2">
+                DESIGNATION________________________
+              </Text>
+            </Box>
+            <Text className="text-justify">
+              Please note: You are required to bring the original copy of all
+              the documents for verification by the concerned Bank Officials.
+            </Text>
+          </Modal>
         </Box>
       </Box>
     </Flex>

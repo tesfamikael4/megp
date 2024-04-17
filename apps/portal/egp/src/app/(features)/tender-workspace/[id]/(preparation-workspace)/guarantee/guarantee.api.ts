@@ -1,8 +1,7 @@
 import { BidSecurity } from '@/models/bidSecurity';
 import { baseQuery } from '@/store/base-query';
 import { createApi } from '@reduxjs/toolkit/query/react';
-const URL =
-  process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/';
+const URL = process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/';
 export const guaranteeApi = createApi({
   reducerPath: 'guaranteeApi',
   refetchOnFocus: true,
