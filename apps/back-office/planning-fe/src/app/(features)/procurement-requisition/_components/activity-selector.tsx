@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useLazyListByIdQuery as useLazyGetActivitiesQuery } from '../_api/activities.api';
 import { useCreatePrFromPlanMutation } from '@/app/(features)/procurement-requisition/_api/custom.api';
 import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
-import { ExpandableTable } from './expandable-table';
 import {
   Box,
   Button,
@@ -13,7 +12,7 @@ import {
   Select,
 } from '@mantine/core';
 import { DetailActivity } from './detail-activity';
-import { notify } from '@megp/core-fe';
+import { ExpandableTable, notify } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
 
 export const ActivitySelector = () => {

@@ -9,7 +9,7 @@ import {
   Radio,
   Text,
 } from '@mantine/core';
-import { logger, notify } from '@megp/core-fe';
+import { ExpandableTable, logger, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -23,7 +23,6 @@ import {
   useCreateMutation,
   useLazyListByIdQuery,
 } from '@/app/(features)/procurement-requisition/_api/pr-activity.api';
-import { ExpandableTable } from './expandable-table';
 
 export function Activities() {
   const [opened, { open, close }] = useDisclosure(false);

@@ -93,6 +93,7 @@ export function ExpandableTable({
         withTableBorder
         {...paginationProps}
         // classNames={{ table: classes.table, header: classes.header }}
+        fetching={config.isLoading}
         onRowClick={config.onClick ?? undefined}
         onSelectedRecordsChange={(records) => {
           if (config.disableMultiSelect) {

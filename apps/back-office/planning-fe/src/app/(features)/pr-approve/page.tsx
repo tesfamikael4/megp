@@ -1,6 +1,6 @@
 'use client';
 
-import { ExpandableTable } from '@/app/(features)/procurement-requisition/_components/expandable-table';
+import { ExpandableTable } from '@megp/core-fe';
 import { Section } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
 import { ActionIcon } from '@mantine/core';

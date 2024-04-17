@@ -30,9 +30,7 @@ const itemSchema: ZodType<Partial<any>> = z.object({
   commodityName: z.string({
     required_error: 'Classification  is required',
   }),
-  description: z.string({
-    required_error: 'Description is required',
-  }),
+  description: z.string().min(1, 'Description is required'),
   uOMId: z.string({
     required_error: 'Unit of Measurement is required',
   }),
