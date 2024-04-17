@@ -6,7 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { BpServiceEntity } from '@entities';
+import { AreasOfBusinessInterestEntity, BpServiceEntity } from '@entities';
 import { Audit } from '@audit';
 import { BusinessAreaEntity } from './business-area.entity';
 @Entity({ name: 'service_pricing' })
@@ -35,4 +35,9 @@ export class ServicePrice extends Audit {
     (businessArea) => businessArea.servicePrice,
   )
   businessAreas: BusinessAreaEntity[];
+  @OneToMany(
+    () => AreasOfBusinessInterestEntity,
+    (p) => p.price,
+  )
+  areasOfBusinessInterests: AreasOfBusinessInterestEntity[];
 }

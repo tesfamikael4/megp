@@ -1,4 +1,3 @@
-import { IsDate } from 'class-validator';
 
 const InitialValueSchema = {
   initial: {
@@ -9,19 +8,21 @@ const InitialValueSchema = {
   },
   basic: {
     name: '',
-    isrVendorId: '',
     businessType: '',
-    origin: '',
     district: '',
-    country: '',
     tinNumber: '',
+    countryOfRegistration: '',
+    isrVendorId: '',
   },
   address: {
-    postal: '',
+    physicalAddress: '',
+    region: '',
+    district: '',
     primaryEmail: '',
     alternateEmail: '',
+    postalCode: '',
     mobile: '',
-    phone: '',
+    telephone: '',
     fax: '',
     website: '',
   },
@@ -45,44 +46,49 @@ const InitialValueSchema = {
     numberOfEmployees: '',
     ownershipType: '',
   },
-  shareHolders: [
+
+  beneficialOwnershipAndShareholders: [
     {
       firstName: '',
+      middleName: '',
       lastName: '',
+      countryOfResidence: '',
       nationality: '',
       share: '',
+      votingRights: '',
+      authorityToAppointGov: ''
     },
   ],
-  beneficialOwnership: [
-    {
-      firstName: '',
-      lastName: '',
-      nationality: '',
-    },
-  ],
+
+
 
   bankAccountDetails: [
     {
       accountHolderFullName: '',
       accountNumber: 0,
-      branchAddress: '',
+      accountType: '',
       currency: '',
-      bankSwift: '',
+      swiftCode: '',
+      bankName: '',
+      branchName: '',
+      branchAddress: '',
       IBAN: '',
       status: '',
       bankId: '',
-      bankName: '',
       hashValue: '',
-      branchName: '',
-      accountType: '',
       isDefualt: true,
     },
   ],
+  //ppdA schema
   areasOfBusinessInterest: [
     {
       category: '',
       lineOfBusiness: [],
       priceId: '',
+      userType: '',//Contractor, Consultant
+      classification: '',// Classification of Contractor or consultants
+      activationDate: '',
+      expiryDate: ''
     },
     {
       category: '',
@@ -98,21 +104,21 @@ const InitialValueSchema = {
   invoice: [
     {
       id: '',
-      instanceId: '',
-      applicationNo: '',
-      taskId: '',
-      taskName: '',
       payToAccName: '',
       payToAccNo: '1',
       payToBank: '',
       payerAccountId: '',
       payerName: '',
-      createdOn: Date,
+      createdOn: '',
       serviceName: '',
       paymentStatus: '',
       remark: '',
       amount: '',
     },
+  ],
+  lineOfBusiness: [
+    { id: '', name: '' }
+
   ],
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: '',
@@ -121,6 +127,16 @@ const InitialValueSchema = {
     mRATaxClearanceCertificate: '',
     previousPPDARegistrationCertificate: '',
     mSMECertificate: '',
+    ibmCertificate: '',
   },
+  preferential: [
+    {
+      category: '',
+      serviceId: '',
+      type: '',
+      certificateValidityPeriod: '',
+      certificateIssuanceDate: '',
+    }
+  ]
 };
 export default InitialValueSchema;

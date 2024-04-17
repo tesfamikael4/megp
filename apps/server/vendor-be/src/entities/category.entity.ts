@@ -34,9 +34,5 @@ export class Category extends Audit {
   )
   businessCategories: BusinessCategoryEntity[];
 
-  @OneToMany(
-    () => CustomCategoryEntity,
-    (customCategory) => customCategory.application,
-  )
   customCategories: CustomCategoryEntity[];
 }

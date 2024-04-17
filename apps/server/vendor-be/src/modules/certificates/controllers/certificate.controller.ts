@@ -1,6 +1,5 @@
-import { Controller, Get, Param, Query, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-
 import { Readable } from 'stream';
 import { CertificateService } from '../services/certificate.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -51,4 +50,5 @@ export class CertificateController {
     console.log('fileId', userInfo);
     return await this.fileService.getCertificate(fileId, vendorId, resp);
   }
+
 }

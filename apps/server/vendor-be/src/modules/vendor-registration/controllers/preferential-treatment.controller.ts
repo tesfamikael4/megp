@@ -24,7 +24,7 @@ import {
   CreatePTDto,
   PTResponse,
   UpdatePTDto,
-} from '../../preferentials/dto/preferentail-treatment.dto';
+} from '../dto/preferentail-treatment.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 const options: EntityCrudOptions = {
   createDto: CreateBusinessAreaDto,

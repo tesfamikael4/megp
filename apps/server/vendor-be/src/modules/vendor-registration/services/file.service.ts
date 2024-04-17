@@ -200,7 +200,7 @@ export class FileService {
     paymentReceiptDto: any,
   ) {
     try {
-      if (!await this.isTransactionNumberUnique(paymentReceiptDto.transactionNumber)) {
+      if (!await this.isTransactionNumberUnique(paymentReceiptDto.transactionNumber, userId)) {
         throw new HttpException(" Transaction NUmber must be unique", 400)
       }
       const result = await this.isrVendorsRepository.findOne({
@@ -277,7 +277,7 @@ export class FileService {
   ) {
     const userId = user.id;
     try {
-      if (!await this.isTransactionNumberUnique(paymentReceiptDto.transactionNumber)) {
+      if (!await this.isTransactionNumberUnique(paymentReceiptDto.transactionNumber, user.id)) {
         throw new HttpException(" Transaction NUmber must be unique", 400)
       }
 
@@ -368,12 +368,12 @@ export class FileService {
       throw error;
     }
   }
-  async isTransactionNumberUnique(tranasctionNumber: string): Promise<boolean> {
+  async isTransactionNumberUnique(tranasctionNumber: string, userId: string): Promise<boolean> {
     //check transaction number uniqueness
     const transactionExits = await this.isrVendorsRepository.createQueryBuilder('isr')
       .where(`isr.paymentReceipt @> '{"transactionId": "${tranasctionNumber}"}'`)
       .getOne();
-    if (transactionExits) {
+    if (transactionExits && transactionExits.userId != userId) {
       return false;
     }
     return true;
@@ -381,9 +381,10 @@ export class FileService {
   async uploadPaymentReceiptAttachment(
     file: Express.Multer.File,
     uploadFileDto: UploadFileDto,
+    user: any
   ) {
     try {
-      if (!await this.isTransactionNumberUnique(uploadFileDto.transactionNumber)) {
+      if (!await this.isTransactionNumberUnique(uploadFileDto.transactionNumber, user.id)) {
         throw new HttpException(" Transaction NUmber must be unique", 400)
       }
       const userId = uploadFileDto.userInfo.id;
@@ -579,6 +580,29 @@ export class FileService {
       throw error;
     }
   }
+
+  async uploadBuffer(file: Buffer, userId: string, subDirectory: string) {
+    console.log('user-id', userId);
+    try {
+
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileId = `${uniqueSuffix}_${'file.pdf'}`;
+      const filename = `${userId}/${subDirectory}/${fileId}`;
+      const metaData = {
+        'Content-Type': 'application/octet-stream',
+      };
+      await this.minioClient.putObject(
+        this.bucketName,
+        filename,
+        file,
+        metaData,
+      );
+      return fileId;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
   /*
   upload any document in a user directory
   */
@@ -590,7 +614,7 @@ export class FileService {
     try {
       const filetype = this.getFileExtension(file.originalname);
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const fileId = `${uniqueSuffix}_${'certeficate.'}` + filetype;
+      const fileId = `${uniqueSuffix}_${'file.'}` + filetype;
       const filename = `${user.id}/${subDirectory}/${fileId}`;
       const metaData = {
         'Content-Type': 'application/octet-stream',
@@ -607,6 +631,7 @@ export class FileService {
       throw error;
     }
   }
+
   getFileExtension(fileName: string): string | null {
     const lastDotIndex = fileName.lastIndexOf('.');
     if (lastDotIndex === -1) {

@@ -42,10 +42,10 @@ export class IsrVendorsResponseDto {
   contactPersons: any;
   @ApiProperty()
   businessSizeAndOwnership: any;
+  // @ApiProperty()
+  // shareHolders: any;
   @ApiProperty()
-  shareHolders: any;
-  @ApiProperty()
-  beneficialOwnership: any;
+  beneficialOwnershipShareholders: any;
   @ApiProperty()
   bankAccountDetails: any;
   @ApiProperty()

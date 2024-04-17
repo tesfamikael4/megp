@@ -19,7 +19,7 @@ export class BankAccountDetailEntity extends Audit {
   accountNumber: string;
   @Column({ nullable: true })
   vendorId: string;
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: true })
   bankId: string;
   ///Goods , Services
   @Column({})
@@ -29,7 +29,7 @@ export class BankAccountDetailEntity extends Audit {
   @Column({ nullable: true })
   currency: string;
   @Column({ nullable: true })
-  bankSwift: string;
+  swiftCode: string;
   @Column({ nullable: true })
   IBAN: string;
   @Column({ nullable: true })
@@ -42,6 +42,8 @@ export class BankAccountDetailEntity extends Audit {
   metaData: JSON;
   @Column({ nullable: true })
   accountType: string;
+  @Column({ nullable: true })
+  bankType: string;
   @Column({ nullable: true })
   isDefualt: boolean;
 

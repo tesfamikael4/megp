@@ -19,9 +19,10 @@ const PdfDocumentTemplate = async (data) => {
           </View>
           <View style={styles.activityDetail}>
             <ReactPdfTable
-              data={Object.entries(data?.isrvendor.basic).map(
-                ([key, value]) => ({ key, value }),
-              )}
+              data={Object.entries(data?.vendor.basic).map(([key, value]) => ({
+                key,
+                value,
+              }))}
               config={{}}
             />
           </View>
@@ -29,7 +30,7 @@ const PdfDocumentTemplate = async (data) => {
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}>Address Information</Text>
             <ReactPdfTable
-              data={Object.entries(data?.isrvendor.address).map(
+              data={Object.entries(data?.vendor.address).map(
                 ([key, value]) => ({ key, value }),
               )}
               config={{}}
@@ -37,7 +38,7 @@ const PdfDocumentTemplate = async (data) => {
           </View>
           {/* Contact Persons */}
           <View style={styles.activity}>
-            <Text style={{ marginBottom: '8px' }}>Contact Persons</Text>
+            <Text style={{ marginBottom: '8px' }}> Contact Persons</Text>
             <ReactPdfTableGrid3
               config={{
                 columns: [
@@ -45,7 +46,10 @@ const PdfDocumentTemplate = async (data) => {
                     accessor: 'firstName',
                     title: 'First Name',
                   },
-                  { accessor: 'lastName', title: 'Last Name' },
+                  {
+                    accessor: 'lastName',
+                    title: 'Last Name',
+                  },
                   {
                     accessor: 'email',
                     title: 'Email',
@@ -55,7 +59,7 @@ const PdfDocumentTemplate = async (data) => {
                     title: 'Phone Number',
                   },
                 ],
-                data: data?.isrvendor.contactPersons,
+                data: data?.vendor.contactPersons,
               }}
             />
           </View>
@@ -66,28 +70,28 @@ const PdfDocumentTemplate = async (data) => {
               data={[
                 {
                   key: 'Ownership Type',
-                  value: data?.isrvendor.businessSizeAndOwnership.ownershipType,
+                  value: data?.vendor.businessSizeAndOwnership.ownershipType,
                 },
                 {
                   key: 'paidUp Capital',
-                  value: `${data?.isrvendor.businessSizeAndOwnership.paidUpCapital.amount} ${data?.isrvendor.businessSizeAndOwnership.paidUpCapital.currency}`,
+                  value: `${data?.vendor.businessSizeAndOwnership.paidUpCapital.amount} ${data?.vendor.businessSizeAndOwnership.paidUpCapital.currency}`,
                 },
                 {
                   key: 'number of Employees',
                   value:
-                    data?.isrvendor.businessSizeAndOwnership.numberOfEmployees,
+                    data?.vendor.businessSizeAndOwnership.numberOfEmployees,
                 },
                 {
                   key: 'registration Capital',
-                  value: `${data?.isrvendor.businessSizeAndOwnership.registeredCapital.amount} ${data?.isrvendor.businessSizeAndOwnership.registeredCapital.currency}`,
+                  value: `${data?.vendor.businessSizeAndOwnership.registeredCapital.amount} ${data?.vendor.businessSizeAndOwnership.registeredCapital.currency}`,
                 },
               ]}
               config={{}}
             />
           </View>
           {/* Share Holders */}
-          <View style={styles.activity}>
-            <Text style={{ marginBottom: '8px' }}>Shareholders</Text>
+          {/* <View style={styles.activity}>
+            <Text style={{ marginBottom: '8px' }}> Shareholders</Text>
             <ReactPdfTableGrid3
               config={{
                 columns: [
@@ -96,6 +100,35 @@ const PdfDocumentTemplate = async (data) => {
                     title: 'First Name',
                   },
                   { accessor: 'lastName', title: 'Last Name' },
+                ],
+                data: data?.vendor.shareHolders,
+              }}
+            />
+          </View> */}
+          {/* Beneficial Ownership */}
+          <View style={styles.activity}>
+            <Text style={{ marginBottom: '8px' }}>
+              Beneficial Ownership and Shares
+            </Text>
+            <ReactPdfTableGrid3
+              config={{
+                columns: [
+                  {
+                    accessor: 'firstName',
+                    title: 'First Name',
+                  },
+                  {
+                    accessor: 'middleName',
+                    title: 'middle Name',
+                  },
+                  {
+                    accessor: 'lastName',
+                    title: 'Last Name',
+                  },
+                  {
+                    accessor: 'nationality',
+                    title: 'Nationality',
+                  },
                   {
                     accessor: 'nationality',
                     title: 'Nationality',
@@ -104,28 +137,20 @@ const PdfDocumentTemplate = async (data) => {
                     accessor: 'share',
                     title: 'Share',
                   },
-                ],
-                data: data?.isrvendor.shareHolders,
-              }}
-            />
-          </View>
-          {/* Beneficial Ownership */}
-          <View style={styles.activity}>
-            <Text style={{ marginBottom: '8px' }}>Beneficial Ownership</Text>
-            <ReactPdfTableGrid3
-              config={{
-                columns: [
                   {
-                    accessor: 'firstName',
-                    title: 'First Name',
+                    accessor: 'countryOfResidence',
+                    title: 'country of Residence',
                   },
-                  { accessor: 'lastName', title: 'Last Name' },
                   {
-                    accessor: 'nationality',
-                    title: 'Nationality',
+                    accessor: 'votingRights',
+                    title: 'voting Rights',
+                  },
+                  {
+                    accessor: 'authorityToAppointGov',
+                    title: 'authority to Appoint Govt.',
                   },
                 ],
-                data: data?.isrvendor.shareHolders,
+                data: data?.vendor.shareHolders,
               }}
             />
           </View>
@@ -136,10 +161,30 @@ const PdfDocumentTemplate = async (data) => {
               config={{
                 columns: [
                   {
-                    accessor: 'fullName',
+                    accessor: 'accountHolderFullName',
                     title: 'Full Name',
                   },
                   { accessor: 'accountNumber', title: 'Account Number' },
+                  {
+                    accessor: 'currency',
+                    title: 'currency',
+                  },
+                  {
+                    accessor: 'swiftCode',
+                    title: 'swiftCode',
+                  },
+                  {
+                    accessor: 'IBAN',
+                    title: 'IBAN',
+                  },
+                  {
+                    accessor: 'accountType',
+                    title: 'accountType',
+                  },
+                  {
+                    accessor: 'bankType',
+                    title: 'bankType',
+                  },
                   {
                     accessor: 'bankName',
                     title: 'Bank Name',
@@ -148,8 +193,17 @@ const PdfDocumentTemplate = async (data) => {
                     accessor: 'branchName',
                     title: 'Branch Name',
                   },
+                  {
+                    accessor: 'branchAddress',
+                    title: 'Address',
+                  },
+
+                  {
+                    accessor: 'isDefualt',
+                    title: 'Defualt',
+                  },
                 ],
-                data: data?.isrvendor.bankAccountDetails,
+                data: data?.vendor.bankAccountDetails,
               }}
             />
           </View>
@@ -166,15 +220,47 @@ const PdfDocumentTemplate = async (data) => {
                     title: 'Category',
                   },
                   { accessor: 'priceRange', title: 'Price Range' },
-                  {
-                    accessor: 'lineOfBusiness',
-                    title: 'Line Of Business',
-                  },
+                  // {
+                  //   accessor: 'lineOfBusiness',
+                  //   title: 'Line Of Business',
+                  // },
                 ],
-                data: data?.isrvendor.areasOfBusinessInterest,
+                data: data?.vendor.areasOfBusinessInterest,
               }}
             />
           </View>
+          {/*Business Lines*/}
+          <View style={styles.activity}>
+            <Text style={{ marginBottom: '8px' }}>line of Business</Text>
+            <Text> {...data?.vendor.lineOfBusiness} </Text>
+          </View>
+          {/* prefertial information Documents */}
+          <View style={styles.activity}>
+            <Text style={{ marginBottom: '8px' }}>
+              Prefertial Requests information
+            </Text>
+            <ReactPdfTableGrid3
+              config={{
+                columns: [
+                  {
+                    accessor: 'type',
+                    title: 'service Name',
+                  },
+                  { accessor: 'certiNumber', title: 'certificate Number' },
+                  {
+                    accessor: 'certificateIssuanceDate',
+                    title: 'Issuance Date',
+                  },
+                  {
+                    accessor: 'certificateValidityPeriod',
+                    title: 'Validity Period',
+                  },
+                ],
+                data: data?.preferential,
+              }}
+            />
+          </View>
+
           {/* Supporting Documents */}
 
           {/* Payment Reciepts */}
