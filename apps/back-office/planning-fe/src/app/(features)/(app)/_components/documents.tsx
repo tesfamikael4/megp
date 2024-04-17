@@ -297,7 +297,11 @@ export const Documents = ({
           total={page == 'pr' ? PrDocuments?.total ?? 0 : documents?.total ?? 0}
         />
 
-        <Modal title="Upload New Document" opened={opened} onClose={close}>
+        <Modal
+          title={<Box fw={'bold'}>Upload New Document</Box>}
+          opened={opened}
+          onClose={close}
+        >
           <form onSubmit={handleSubmit(onSubmit)}>
             <TextInput
               label="Name"
