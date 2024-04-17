@@ -26,9 +26,6 @@ export default function PrDetailPage() {
   const inActiveTabStyle =
     'cursor-pointer py-2 px-10 text-gray-700 font-medium';
 
-  // const disableFields =
-  //   data?.status != 'Draft' && data?.status != 'Adjust' ? false : true;
-
   useEffect(() => {
     succeed &&
       setDisableFields(
@@ -71,7 +68,7 @@ export default function PrDetailPage() {
               }
               onClick={() => setCurrentTab('identification')}
             >
-              Procurement Requisition Identification
+              Identification
             </Box>
             <Box
               className={
@@ -119,7 +116,7 @@ export default function PrDetailPage() {
         </Container>
       </Box>
       <Container size="xl">
-        <Box className="mt-5 -mx-4">
+        <Box className="mt-5 -mx-4  ">
           <Flex>
             {currentTab === 'identification' && (
               <FormDetail mode="detail" disableFields={disableFields} />

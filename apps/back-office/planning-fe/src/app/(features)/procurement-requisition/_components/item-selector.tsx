@@ -7,9 +7,8 @@ import {
   useLazyGetItemMasterQuery,
 } from '@/store/api/administration/administration.api';
 import { NewItem } from './new-item-form';
-import { ExpandableTable } from './expandable-table';
 import { DetailItem } from './deatil-item';
-import { MantineTree, TreeConfig } from '@megp/core-fe';
+import { ExpandableTable, MantineTree, TreeConfig } from '@megp/core-fe';
 
 interface ItemSelectorProps {
   onDone: (item: any) => void;

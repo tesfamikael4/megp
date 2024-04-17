@@ -15,4 +15,5 @@ export interface ExpandableTableConfig {
   onClick?: (record: any) => void;
   minHeight?: number;
   noRecordsText?: string;
+  isLoading?: boolean;
 }

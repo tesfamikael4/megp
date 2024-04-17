@@ -1,7 +1,6 @@
 'use client';
 
-import { ExpandableTable } from '@/app/(features)/procurement-requisition/_components/expandable-table';
-import { Section } from '@megp/core-fe';
+import { ExpandableTable, Section } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
 import {
   ActionIcon,
@@ -10,6 +9,7 @@ import {
   Group,
   Modal,
   Radio,
+  Box,
 } from '@mantine/core';
 import { IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { DetailRequisition } from '@/app/(features)/procurement-requisition/_components/detail-requisition-list';
@@ -80,6 +80,7 @@ export default function ProcurementRequisition() {
     isSearchable: true,
     isLoading: isLoading,
     primaryColumn: 'title',
+
     expandedRowContent: (requisition) => {
       return <DetailRequisition requisition={requisition} />;
     },
@@ -107,6 +108,7 @@ export default function ProcurementRequisition() {
             setMode('');
             open();
           }}
+          disabled={isLoading}
         >
           <IconPlus size={14} /> Create
         </Button>
@@ -130,7 +132,7 @@ export default function ProcurementRequisition() {
       <Modal
         opened={opened}
         onClose={close}
-        title="Create Procurement Requisition"
+        title={<Box fw={'bolder'}>Create Procurement Requisition</Box>}
       >
         <Divider />
         <p className=" mb-4 mt-2">Select procurement requisition type</p>

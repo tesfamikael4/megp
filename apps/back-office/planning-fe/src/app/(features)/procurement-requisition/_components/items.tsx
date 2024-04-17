@@ -10,7 +10,7 @@ import {
   Modal,
   Text,
 } from '@mantine/core';
-import { Section, notify } from '@megp/core-fe';
+import { ExpandableTable, Section, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconDeviceFloppy,
@@ -28,7 +28,6 @@ import {
 import { modals } from '@mantine/modals';
 import ItemSelector from '@/app/(features)/procurement-requisition/_components/item-selector';
 import DataImport from './data-import';
-import { ExpandableTable } from './expandable-table';
 import { ItemDetailForm } from './item-form-detail';
 import { CollectionQuery } from '@megp/entity';
 

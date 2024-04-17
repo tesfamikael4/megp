@@ -191,7 +191,7 @@ export const FormDetail = ({
                 <Select
                   withCheckIcon={false}
                   name={name}
-                  value={value}
+                  value="MKW"
                   onChange={onChange}
                   label="Currency"
                   data={currency?.items?.map((c) => c.abbreviation) ?? []}
@@ -200,7 +200,7 @@ export const FormDetail = ({
                   searchable
                   placeholder="Select Currency"
                   error={errors?.currency?.message}
-                  disabled={disableFields}
+                  disabled
                 />
               )}
             />
