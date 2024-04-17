@@ -10,6 +10,7 @@ import {
   Modal,
   Radio,
   Box,
+  Tooltip,
 } from '@mantine/core';
 import { IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { DetailRequisition } from '@/app/(features)/procurement-requisition/_components/detail-requisition-list';
@@ -60,6 +61,21 @@ export default function ProcurementRequisition() {
         width: 150,
       },
       {
+        accessor: '',
+        title: '',
+        render: (record) =>
+          record.reasons.length == 0 ? (
+            <Tooltip label={'Aligns perfectly with the rule'}>
+              <p className="text-green-500 text-3xl">•</p>
+            </Tooltip>
+          ) : (
+            <Tooltip label={'Violated the rule'}>
+              <p className="text-red-500 text-3xl">•</p>
+            </Tooltip>
+          ),
+        width: 50,
+      },
+      {
         accessor: 'id',
         title: '',
         render: (pr) => (
@@ -95,7 +111,7 @@ export default function ProcurementRequisition() {
       },
     ]);
 
-    trigger(request);
+    trigger({ ...request, includes: ['reasons'] });
   };
 
   return (
@@ -152,6 +168,7 @@ export default function ProcurementRequisition() {
         <Button
           loading={isLoading}
           className="mt-5"
+          disabled={!type}
           onClick={
             type == 'planned'
               ? () => setMode(type)
