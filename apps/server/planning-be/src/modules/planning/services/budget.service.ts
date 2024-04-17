@@ -1,5 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { APP } from 'src/entities';
 import { Budget } from 'src/entities/budget.entity';
@@ -23,23 +28,42 @@ export class BudgetService extends ExtraCrudService<Budget> {
   async bulkCreate(data: any): Promise<Budget[]> {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     try {
-      const budget = await this.repositoryBudget.find({
+      const appBudgets = await this.repositoryBudget.find({
         where: { appId: data.appId },
       });
-      if (budget.length > 0) {
-        await entityManager.getRepository(Budget).delete(budget as any);
-      }
+
       const app = await this.repositoryApp.findOneBy({
         id: data.appId,
       });
-      const items = data.budgets.map((budget) => ({
-        ...budget,
-        appId: data.appId,
-        budgetYearId: app.budgetYearId,
-        organizationId: app.organizationId,
-      }));
+      const items = data.budgets.map((budget) => {
+        const prevBudget = appBudgets.find(
+          (bud) => bud.budgetCode == budget.budgetCode,
+        );
+
+        if (prevBudget) {
+          if (budget.revisedBudget < +prevBudget.obligatedBudget) {
+            throw new HttpException(
+              'can not update budget with revised budget less than obligated budget',
+              430,
+            );
+          }
+
+          budget.availableBudget =
+            +budget.revisedBudget - +prevBudget.obligatedBudget;
+        }
+
+        return {
+          ...budget,
+          appId: data.appId,
+          budgetYearId: app.budgetYearId,
+          organizationId: app.organizationId,
+        };
+      });
+
       const result = await this.repositoryBudget.create(items);
-      await entityManager.getRepository(Budget).insert(result);
+      await entityManager.getRepository(Budget).upsert(result, {
+        conflictPaths: ['budgetCode'],
+      });
       return result;
     } catch (err) {
       throw new Error(err);

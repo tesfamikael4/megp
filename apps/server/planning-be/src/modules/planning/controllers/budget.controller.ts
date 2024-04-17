@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { Budget } from 'src/entities/budget.entity';
@@ -20,6 +20,7 @@ export class BudgetController extends ExtraCrudController<Budget>(options) {
 
   @Post('bulk-create')
   @ApiPaginatedResponse(Budget)
+  @ApiBody({})
   async bulkCreate(@Body() budgets: any) {
     return await this.budgetService.bulkCreate(budgets);
   }
