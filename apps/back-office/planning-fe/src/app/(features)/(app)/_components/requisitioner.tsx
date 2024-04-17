@@ -215,7 +215,7 @@ export const Requisitioner = ({
         <Modal
           opened={opened}
           onClose={close}
-          title="Add Requisitioner"
+          title={<Box fw={'bold'}>Add Requisitioner</Box>}
           size="lg"
         >
           <ExpandableTable
