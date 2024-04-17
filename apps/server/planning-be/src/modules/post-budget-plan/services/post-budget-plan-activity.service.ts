@@ -1,10 +1,18 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Budget, PostBudgetPlan, PostBudgetPlanActivity } from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { BudgetService } from 'src/modules/planning/services/budget.service';
+import { PostAddBudgetDTO } from '../dtos/post-budget-add-budget.dto';
+import { REQUEST } from '@nestjs/core';
+import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 
 @Injectable()
 export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPlanActivity> {
@@ -16,6 +24,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
     // private readonly budgetService: BudgetService,
     @InjectRepository(Budget)
     private readonly repositoryBudget: Repository<Budget>,
+    @Inject(REQUEST) private request: Request,
     private eventEmitter: EventEmitter2,
 
     private dataSource: DataSource,
@@ -66,7 +75,27 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
     });
   }
 
-  async addBudget(payload): Promise<void> {
+  async getBudgets(budgetId: string): Promise<any> {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const budgetRepository: Repository<Budget> =
+      entityManager.getRepository(Budget);
+
+    const budget = await budgetRepository.findOne({
+      where: {
+        id: budgetId,
+      },
+      relations: {
+        postBudgetPlanActivities: true,
+      },
+    });
+
+    if (!budget) throw new NotFoundException('budget_not_found');
+
+    return budget;
+  }
+
+  async addBudget(payload: PostAddBudgetDTO): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
