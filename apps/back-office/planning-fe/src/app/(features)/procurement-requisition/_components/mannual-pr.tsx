@@ -13,7 +13,7 @@ import {
 } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 import {
@@ -27,6 +27,7 @@ import { useGetCurrenciesQuery } from '@/store/api/administration/administration
 import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 import { ProcurementRequisition } from '@/models/procurement-requsition';
+import { BudgetSelector } from './budget';
 
 interface FormDetailProps {
   mode: 'detail' | 'new';
@@ -36,12 +37,13 @@ interface FormDetailProps {
 const prSchema: ZodType<Partial<ProcurementRequisition>> = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
   description: z.string().min(1, { message: 'Description is required' }),
-
-  currency: z.string({
-    required_error: 'Currency is required',
-  }),
-  totalEstimatedAmount: z.coerce.number({
-    required_error: 'Estimated Amount is required',
+  currency: z
+    .string({
+      required_error: 'Currency is required',
+    })
+    .default('MKW'),
+  totalEstimatedAmount: z.coerce.number().min(1, {
+    message: 'Estimated Amount is required',
   }),
   remark: z.string().default(''),
   isMultiYear: z.boolean().default(false),
@@ -49,7 +51,6 @@ const prSchema: ZodType<Partial<ProcurementRequisition>> = z.object({
     required_error: 'This field is required',
     invalid_type_error: 'This field is required to be a string',
   }),
-  postBudgetPlanId: z.string(),
 });
 
 export const FormDetail = ({
@@ -69,12 +70,10 @@ export const FormDetail = ({
     resolver: zodResolver(prSchema),
   });
 
-  const { data: budgetYear } = useGetPostBudgetPlansQuery(undefined);
-  //
-
   const { data: currency } = useGetCurrenciesQuery({} as any);
 
   // pr rtk query
+  const [budget, setBudget] = useState<any>();
   const [create, { isLoading: isCreating }] = useCreateMutation();
   const [
     getPr,
@@ -94,6 +93,8 @@ export const FormDetail = ({
     try {
       const res = await create({
         ...data,
+        budgetYearId: budget?.budgetYearId,
+        budgetId: budget?.id,
       }).unwrap();
       notify('Success', 'Procurement Requisition created Successfully');
       router.push(`/procurement-requisition/${res.id}`);
@@ -114,7 +115,6 @@ export const FormDetail = ({
   const onUpdate = async (newData) => {
     const rawData = {
       id,
-
       ...newData,
     };
 
@@ -160,6 +160,7 @@ export const FormDetail = ({
         procurementRequisition?.procurementApplication,
       );
       setValue('postBudgetPlanId', procurementRequisition?.postBudgetPlanId);
+      setBudget(procurementRequisition?.budget);
     }
   }, [mode, isPrSuccess, setValue, procurementRequisition]);
 
@@ -177,13 +178,6 @@ export const FormDetail = ({
               {...register('requisitionReferenceNumber')}
             />
 
-            <TextInput
-              label="Name"
-              withAsterisk
-              {...register('name')}
-              error={errors.name?.message}
-              disabled={disableFields}
-            />
             <Controller
               name="currency"
               control={control}
@@ -204,6 +198,15 @@ export const FormDetail = ({
                 />
               )}
             />
+
+            <TextInput
+              label="Name"
+              withAsterisk
+              {...register('name')}
+              error={errors.name?.message}
+              disabled={disableFields}
+            />
+
             <Checkbox
               label="is Multi Year"
               className="w-full mt-4 mb-2"
@@ -220,28 +223,21 @@ export const FormDetail = ({
               disabled={disableFields}
             />
 
-            <Controller
-              name="postBudgetPlanId"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <Select
-                  name="name"
-                  value={value}
-                  onChange={onChange}
-                  data={budgetYear?.items.map((b) => {
-                    return {
-                      value: b.id,
-                      label: b.app.budgetYear,
-                    };
-                  })}
-                  label="Budget Year"
-                  placeholder="Select Budget Year"
-                  withAsterisk
-                  error={errors?.postBudgetPlanId?.message}
-                  disabled={disableFields}
-                />
-              )}
+            <BudgetSelector
+              activity={procurementRequisition}
+              disableFields={disableFields}
+              budget={budget}
+              setBudget={setBudget}
             />
+            {mode == 'detail' && (
+              <Select
+                name="name"
+                value={procurementRequisition?.budgetYear?.name}
+                label="Budget Year"
+                placeholder="Select Budget Year"
+                disabled
+              />
+            )}
           </Box>
           <Box className="w-1/2">
             <Controller

@@ -94,6 +94,19 @@ export const prApi = createApi({
         method: 'GET',
       }),
     }),
+    getBudget: builder.query<any, any>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `/procurement-requisitions/get-current-budgets${q}`,
+          method: 'GET',
+        };
+      },
+    }),
   }),
 });
 
@@ -116,4 +129,7 @@ export const {
 
   useGetAnalyticsQuery,
   useLazyGetAnalyticsQuery,
+
+  useGetBudgetQuery,
+  useLazyGetBudgetQuery,
 } = prApi;
