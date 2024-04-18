@@ -42,6 +42,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { StatisticCard } from './statistic-card';
 import { useCanSubmitQuery } from '@/store/api/workflow/workflow.api';
+import { HistoryBtn } from './history-btn';
 
 const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
   const { budgetYear, documentId } = useParams();
@@ -303,16 +304,7 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
             </Badge>
           </Group>
           <Group gap={5}>
-            {page == 'post' && (
-              <ActionIcon
-                variant="subtle"
-                onClick={() =>
-                  router.push(`/post-budget-plan/${budgetYear}/history`)
-                }
-              >
-                <IconHistory size={14} />
-              </ActionIcon>
-            )}
+            {page == 'post' && <HistoryBtn />}
 
             {(selectedYear as any)?.status == 'Draft' &&
               documents &&
