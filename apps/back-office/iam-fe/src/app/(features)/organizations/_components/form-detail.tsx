@@ -50,6 +50,9 @@ export function FormDetail({ mode }: FormDetailProps) {
     shortName: z.string().min(1, { message: 'This field is required' }),
     description: z.string().optional(),
     budgetCheckNeeded: z.boolean(),
+    voteCode: z.coerce.number().min(1, {
+      message: 'Vote code is required',
+    }),
   });
 
   const {
@@ -154,6 +157,8 @@ export function FormDetail({ mode }: FormDetailProps) {
         shortName: selected?.shortName,
         description: selected?.description,
         typeId: selected?.typeId,
+        voteCode: selected?.voteCode,
+        budgetCheckNeeded: selected?.budgetCheckNeeded,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
@@ -196,11 +201,32 @@ export function FormDetail({ mode }: FormDetailProps) {
         minRows={2}
         {...register('description')}
       />
+
       <Checkbox
         label="Is Budget Verifications Required"
         className="w-full mt-4 mb-2"
         {...register('budgetCheckNeeded')}
       />
+
+      <Controller
+        name="voteCode"
+        control={control}
+        render={({ field: { name, value, onChange } }) => (
+          <TextInput
+            label="Vote Code"
+            className="w-full"
+            name={name}
+            value={value ?? ''}
+            onChange={onChange}
+            error={
+              errors?.voteCode ? errors?.voteCode?.message?.toString() : ''
+            }
+            withAsterisk
+            type="number"
+          />
+        )}
+      />
+
       <Controller
         name="typeId"
         control={control}
