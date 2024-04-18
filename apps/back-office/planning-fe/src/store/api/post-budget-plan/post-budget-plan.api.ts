@@ -139,6 +139,33 @@ export const postBudgetPlanApi = createApi({
       },
       providesTags: ['post-budget-plan'],
     }),
+    getPreviousPlan: builder.query<any, any>({
+      query: (id) => `submitted-plan/get-by-objectId/${id}`,
+    }),
+    getPreviousVersions: builder.query<any, any>({
+      query: (id) => `submitted-plan/prev-versions/${id}`,
+    }),
+    getDif: builder.query<any, any>({
+      query: ({
+        toBeCompare,
+        comparedWith,
+      }: {
+        toBeCompare: string;
+        comparedWith: string;
+      }) => `submitted-plan/compare/${toBeCompare}/${comparedWith}`,
+    }),
+    getDifDetail: builder.query<any, any>({
+      query: ({
+        toBeCompare,
+        comparedWith,
+        activityId,
+      }: {
+        toBeCompare: string;
+        comparedWith: string;
+        activityId: string;
+      }) =>
+        `submitted-plan/compare-plan/${toBeCompare}/${comparedWith}/${activityId}`,
+    }),
   }),
 });
 
@@ -164,4 +191,8 @@ export const {
   useDeleteDocumentMutation,
   useLazyDownloadFilesQuery,
   useLazyIsValidPostPlanQuery,
+  useGetPreviousPlanQuery,
+  useLazyGetDifQuery,
+  useLazyGetPreviousVersionsQuery,
+  useLazyGetDifDetailQuery,
 } = postBudgetPlanApi;
