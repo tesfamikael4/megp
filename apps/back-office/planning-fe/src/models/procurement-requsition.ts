@@ -6,7 +6,7 @@ export interface ProcurementRequisition {
   requisitionReferenceNumber: string;
   userReferenceNumber: string;
   budgetId: string | null;
-  postBudgetPlanId: string;
+  postBudgetPlanId?: string;
   budgetCode: {
     name: string;
     endDate: Date;
