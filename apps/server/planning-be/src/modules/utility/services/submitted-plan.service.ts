@@ -118,11 +118,11 @@ export class SubmittedPlanService extends EntityCrudService<SubmittedPlan> {
     //   exclude: ['createdAt', 'updatedAt', 'deletedAt'],
     // });
     // const plan = await this.compareJson(transformedToCompare, transformedCompareWith)
-    const plan = await this.compareJson(modifiedToCompare, modifiedCompareWith);
+    const plan = await this.compareJson(modifiedCompareWith, modifiedToCompare);
     return {
       modifiedToCompare,
       modifiedCompareWith,
-      modifiedKeys: plan !== 'Not modified' && plan.modifiedKeys,
+      modifiedKeys: plan !== 'Not modified' && plan,
     };
     // return {
     //   modifiedToCompare: transformedToCompare,
@@ -238,16 +238,19 @@ export class SubmittedPlanService extends EntityCrudService<SubmittedPlan> {
       } else if (Array.isArray(obj1[key]) && Array.isArray(obj2[key])) {
         const allHaveId1 = obj1[key].every((item) => item.hasOwnProperty('id'));
         const allHaveId2 = obj2[key].every((item) => item.hasOwnProperty('id'));
+
         if (allHaveId1 && allHaveId2) {
           const sorted1 = obj1[key]
             .slice()
-            .sort((a, b) => a.id.localeCompare(b.id));
+            .sort((a, b) => a.id.localeCompare(b.id))
+            .map(({ id, ...rest }) => rest);
           const sorted2 = obj2[key]
             .slice()
-            .sort((a, b) => a.id.localeCompare(b.id));
+            .sort((a, b) => a.id.localeCompare(b.id))
+            .map(({ id, ...rest }) => rest);
 
           if (JSON.stringify(sorted1) !== JSON.stringify(sorted2)) {
-            const result = await this.compareJson(sorted1, sorted2, newPath);
+            const result = await this.compareJson(sorted2, sorted1, newPath);
             if (result !== 'Not modified') {
               addedKeys.push(...result.addedKeys);
               removedKeys.push(...result.removedKeys);
@@ -263,13 +266,16 @@ export class SubmittedPlanService extends EntityCrudService<SubmittedPlan> {
         typeof obj1[key] === 'object' &&
         typeof obj2[key] === 'object'
       ) {
-        const result = await this.compareJson(obj1[key], obj2[key], newPath);
+        const result = await this.compareJson(obj2[key], obj1[key], newPath);
         if (result !== 'Not modified') {
           addedKeys.push(...result.addedKeys);
           removedKeys.push(...result.removedKeys);
           modifiedKeys.push(...result.modifiedKeys);
         }
       } else if (obj1[key] !== obj2[key]) {
+        if (key == 'id') {
+          return 'Not modified';
+        }
         modifiedKeys.push(newPath);
       }
     }
@@ -334,8 +340,8 @@ export class SubmittedPlanService extends EntityCrudService<SubmittedPlan> {
     );
 
     return await this.deepEqual(
-      Object.values(transformedToCompare.data),
-      Object.values(transformedCompareWith.data),
+      Object.values(toBeCompare.plan.data),
+      Object.values(compareWith.plan.data),
     );
   }
   async deepEqual(list1: any[], list2: any[]): Promise<ComparisonResult> {
@@ -359,17 +365,17 @@ export class SubmittedPlanService extends EntityCrudService<SubmittedPlan> {
           estimatedAmount: added.estimatedAmount,
         });
       } else {
-        const result = await this.compareJson(item, map1.get(id));
+        const result = await this.compareJson(map1.get(id), item);
         if (result !== 'Not modified') {
-          return result;
-          // const modified = list2.find((x) => x.id == id);
-          // modifiedKeys.push({
-          //   id: modified.id,
-          //   name: modified.name,
-          //   description: modified.description,
-          //   procurementReference: modified.procurementReference,
-          //   estimatedAmount: modified.estimatedAmount,
-          // });
+          // return result;
+          const modified = list2.find((x) => x.id == id);
+          modifiedKeys.push({
+            id: modified.id,
+            name: modified.name,
+            description: modified.description,
+            procurementReference: modified.procurementReference,
+            estimatedAmount: modified.estimatedAmount,
+          });
         }
       }
     }
