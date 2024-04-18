@@ -1,14 +1,12 @@
 'use client';
 
-import {
-  useGetAllLotsQuery,
-  useLazyGetLotQuery,
-} from '@/app/(features)/_api/registration.api';
+import { useLazyGetLotQuery } from '@/app/(features)/_api/registration.api';
 import { BidSecurity } from '@/models/bidSecurity';
 import {
-  useLazyReadQuery,
+  useReadQuery,
   useSaveRequestMutation,
   useSubmitRequestMutation,
+  useUpdateRequestMutation,
 } from '@/store/api/guarantee/guarantee.api';
 import {
   useGetOrganazationQuery,
@@ -37,11 +35,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
-import { TableForm } from '../_components/table';
+import { TableForm } from '../../components/table';
 
-export default function BidSecurityPage() {
+interface Props {
+  mode: 'new' | 'detail';
+}
+export function FormDetail({ mode }: Props) {
   const bidSecuritySchema: ZodType<Partial<BidSecurity>> = z.object({
-    lotId: z.string().min(1, { message: 'This field is required' }),
     guarantorId: z.string().min(1, { message: 'This field is required' }),
     guarantorName: z.string().min(1, { message: 'This field is required' }),
     guarantorBranchId: z.string().min(1, { message: 'This field is required' }),
@@ -65,8 +65,8 @@ export default function BidSecurityPage() {
 
   const {
     handleSubmit,
-    reset,
     register,
+    reset,
     control,
     formState: { errors },
     watch,
@@ -78,6 +78,7 @@ export default function BidSecurityPage() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const router = useRouter();
   const { id } = useParams();
+  const { lotId } = useParams();
   const { guaranteeId } = useParams();
   const { data: tenderData, isSuccess: tenderSuccess } =
     useGetRegisteredBidQuery(id?.toString());
@@ -85,28 +86,20 @@ export default function BidSecurityPage() {
   const { data: guarantor } = useGetOrganazationQuery('FINANCIAL_INSTITUTION');
   const [trigger, { data }] = useLazyGetUintByIdQuery();
   const guarantorId = watch('guarantorId');
-  const lotId = watch('lotId');
 
   const [submit] = useSubmitRequestMutation();
   const [save] = useSaveRequestMutation();
-  const { data: lots, isLoading: lotLoading } = useGetAllLotsQuery(
-    id?.toString(),
-  );
+  const [update, { isLoading: isUpdating }] = useUpdateRequestMutation();
 
   const [triggerLot, { data: lot }] = useLazyGetLotQuery();
 
   const icon = <IconAt style={{ width: rem(16), height: rem(16) }} />;
 
-  const [
-    getGuarantee,
-    { data: selected, isSuccess: selectedSuccess, isLoading },
-  ] = useLazyReadQuery();
-
-  useEffect(() => {
-    if (id) {
-      getGuarantee(id.toString());
-    }
-  }, [id]);
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(guaranteeId?.toString());
 
   useEffect(() => {
     if (guarantorId) {
@@ -126,17 +119,6 @@ export default function BidSecurityPage() {
   }, [guarantorId]);
 
   useEffect(() => {
-    if (tenderSuccess) {
-      reset({
-        amount: parseInt(lot?.bdsBidSecurity.bidSecurityAmount),
-        currency: lot?.bdsBidSecurity.bidSecurityCurrency,
-        name: tenderData?.name,
-        title: tenderData?.organizationName,
-      });
-    }
-  }, [reset, tenderSuccess, tenderData]);
-
-  useEffect(() => {
     triggerLot(lotId?.toString());
   }, [lotId]);
   const onSubmit = async (data) => {
@@ -146,24 +128,37 @@ export default function BidSecurityPage() {
         id: guaranteeId?.toString(),
       }).unwrap();
 
-      router.push(`/tender-workspace/${id}/guarantee/${result.id}`);
+      router.push(
+        `/tender-workspace/${id}/my-lots/${lotId}/guarantee/${result.id}`,
+      );
 
       notifications.show({
-        message: 'Guarantee request send successfully',
+        message: 'Guarantee request submit successfully',
         title: 'Success',
         color: 'green',
       });
     } catch (err) {
       notifications.show({
         color: 'red',
-        message: 'errors in sending guarantee request.',
+        message: 'errors in submit guarantee request.',
         title: 'Error',
       });
     }
   };
   const onSave = async (data) => {
     try {
-      await save(data).unwrap();
+      const result = await save({
+        ...data,
+        lotId: lotId,
+        amount: lot?.bdsBidSecurity.bidSecurityAmount,
+        currency: lot?.bdsBidSecurity.bidSecurityCurrency,
+        name: tenderData?.name,
+        title: tenderData?.organizationName,
+        status: 'DRAFT',
+      }).unwrap();
+      router.push(
+        `/tender-workspace/${id}/my-lots/${lotId}/guarantee/${result?.id}`,
+      );
 
       notifications.show({
         message: 'Guarantee request save successfully',
@@ -178,45 +173,46 @@ export default function BidSecurityPage() {
       });
     }
   };
+  const onUpdate = async (data) => {
+    try {
+      await update({ ...data, id: guaranteeId?.toString() }).unwrap();
+      notifications.show({
+        message: 'Guarantee updated successfully',
+        title: 'Success',
+        color: 'green',
+      });
+    } catch {
+      notifications.show({
+        message: 'errors in updating guarantee.',
+        title: 'Error',
+        color: 'red',
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (mode == 'detail' && selectedSuccess && selected !== undefined) {
+      reset({
+        guarantorName: selected?.guarantorName,
+        guarantorBranchName: selected?.guarantorBranchName,
+        description: selected?.description,
+        contactPerson: selected?.contactPerson,
+        revisedValidityDate: selected?.revisedValidityDate,
+      });
+      setValue('guarantorBranchId', selected?.guarantorBranchId);
+      setValue('guarantorId', selected?.guarantorId);
+    }
+  }, [mode, reset, selected, selectedSuccess]);
 
   return (
     <>
-      <LoadingOverlay visible={isLoading || lotLoading} />
+      <LoadingOverlay visible={isLoading} />
       <Flex w={'100%'}>
         <Box className=" w-full p-6 bg-[#e7f4f7]">
           <Box className=" w-full p-6 min-h-screen bg-white">
             <Flex className="w-full py-2 mb-3  " justify={'space-between'}>
               <Text fw={600}>Tender/Lot Information</Text>
               <Flex gap={10}>
-                <Controller
-                  name="lotId"
-                  control={control}
-                  render={({ field: { onChange, value, name } }) => (
-                    <Select
-                      name={name}
-                      placeholder="Pick Lot"
-                      value={value}
-                      withAsterisk
-                      searchable
-                      error={
-                        errors?.lotId ? errors?.lotId?.message?.toString() : ''
-                      }
-                      onChange={(value, option) => {
-                        const selectedLot = lots?.items?.filter(
-                          (item) => item?.id == value,
-                        )?.[0];
-                        setValue('lotId', selectedLot?.id);
-                      }}
-                      data={
-                        lots?.items?.map((type) => ({
-                          value: type?.id,
-                          label: type?.name,
-                        })) || []
-                      }
-                    />
-                  )}
-                />
-
                 <Button
                   w={100}
                   h={35}
@@ -334,6 +330,9 @@ export default function BidSecurityPage() {
                       placeholder="Guarantee Validity Date"
                       name={name}
                       value={value}
+                      defaultValue={
+                        tenderData?.bdsPreparation.bidValidityPeriod
+                      }
                       onChange={(d) => onChange(parseInt(d as string))}
                       error={
                         errors?.revisedValidityDate
@@ -355,13 +354,22 @@ export default function BidSecurityPage() {
               />
               <Flex justify={'flex-end'} gap={30}>
                 <Box></Box>
-                <Button
-                  w={100}
-                  className=" mt-5 "
-                  onClick={handleSubmit(onSave, (err) => logger.log(err))}
-                >
-                  Save
-                </Button>
+                {mode === 'new' ? (
+                  <Button
+                    className=" mt-5 "
+                    onClick={handleSubmit(onSave, (err) => logger.log(err))}
+                  >
+                    Save as Draft
+                  </Button>
+                ) : (
+                  <Button
+                    w={100}
+                    className=" mt-5 "
+                    onClick={handleSubmit(onUpdate, (err) => logger.log(err))}
+                  >
+                    Update
+                  </Button>
+                )}
               </Flex>
             </>
           </Box>

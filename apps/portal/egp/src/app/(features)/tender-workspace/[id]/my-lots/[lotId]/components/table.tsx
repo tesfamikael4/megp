@@ -5,14 +5,13 @@ import { logger } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
 
-export const TableForm = ({ lotId }: { lotId?: string }) => {
+export const TableForm = ({ lotId }: { lotId?: any }) => {
   const { id } = useParams();
   const { data: data } = useGetRegisteredBidQuery(id?.toString());
   const [triggerLot, { data: lot }] = useLazyGetLotQuery();
   useEffect(() => {
     triggerLot(lotId?.toString());
   }, [lotId]);
-  logger.log({ lotId });
   return (
     <div>
       {' '}
@@ -67,7 +66,7 @@ export const TableForm = ({ lotId }: { lotId?: string }) => {
               Guarantee Validity Date
             </Table.Th>
             <Table.Td className=" ">
-              <Text size="sm">Feb 01, 2024</Text>
+              <Text size="sm">{data?.bdsPreparation?.bidValidityPeriod}</Text>
             </Table.Td>
           </Table.Tr>
           <Table.Tr className=" border-2 ">

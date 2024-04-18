@@ -90,6 +90,19 @@ export function ExpandableTable({
         minHeight={config.minHeight ?? 300}
         noRecordsIcon={<IconInboxOff size={40} />}
         noRecordsText={config.noRecordsText ?? 'No Data Found'}
+        rowExpansion={{
+          trigger: config.isExpandable ? 'click' : 'never',
+          content: ({ record, collapse }: any) =>
+            config.expandedRowContent
+              ? config.expandedRowContent(record, collapse)
+              : null,
+        }}
+        selectedRecords={config.selectedItems}
+        selectionCheckboxProps={{
+          radius: config.disableMultiSelect ? 'xl' : 'sm',
+        }}
+        sortStatus={sortStatus}
+        striped
         withTableBorder
         {...paginationProps}
         // classNames={{ table: classes.table, header: classes.header }}
@@ -105,19 +118,6 @@ export function ExpandableTable({
         }}
         onSortStatusChange={setSortStatus}
         records={data}
-        rowExpansion={{
-          trigger: config.isExpandable ? 'click' : 'never',
-          content: ({ record, collapse }: any) =>
-            config.expandedRowContent
-              ? config.expandedRowContent(record, collapse)
-              : null,
-        }}
-        selectedRecords={config.selectedItems}
-        selectionCheckboxProps={{
-          radius: config.disableMultiSelect ? 'xl' : 'sm',
-        }}
-        sortStatus={sortStatus}
-        striped
         styles={{
           header: {
             backgroundColor: '#D9D9D9',

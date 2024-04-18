@@ -20,7 +20,7 @@ export const infomationLinks: MenuLinks.SidebarLinks[] = [
   {
     label: 'Bid Security',
     icon: IconAdjustments,
-    link: `guarantee`,
+    link: `my-lots`,
   },
   {
     label: 'Clarification',
