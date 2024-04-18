@@ -1,11 +1,19 @@
-import { Box, Container, Flex, LoadingOverlay, Text } from '@mantine/core';
+import {
+  Box,
+  BoxProps,
+  Container,
+  ContainerProps,
+  Flex,
+  LoadingOverlay,
+  Text,
+} from '@mantine/core';
 import React, { memo, PropsWithChildren, useMemo } from 'react';
 import PageHeader from './header';
 import PageInfo from './info';
 import PageActions from './actions';
 import PageContent from './content';
 
-interface Props extends PropsWithChildren {
+interface Props extends PropsWithChildren, BoxProps {
   headerRight?: React.ReactNode;
   headerLeft?: React.ReactNode;
   headerBorder?: boolean;
@@ -31,6 +39,7 @@ const PageWrapper = memo(({ children, ...props }: Props) => {
     actions,
     info,
     className,
+    ...conProps
   } = props;
 
   return (
@@ -38,8 +47,11 @@ const PageWrapper = memo(({ children, ...props }: Props) => {
       fluid
       bg={'white'}
       className={`p-4 min-h-screen relative ${className}`}
+      {...conProps}
     >
-      <Flex className={`flex-col pb-2 ${withBorder && 'border-b'} `}>
+      <Flex
+        className={`flex-col pb-2 ${withBorder && 'border-b-2 border-gray-300'} `}
+      >
         <PageHeader title={title} left={headerLeft} right={headerRight} />
         <PageInfo text={info} />
         <PageActions actions={actions} />

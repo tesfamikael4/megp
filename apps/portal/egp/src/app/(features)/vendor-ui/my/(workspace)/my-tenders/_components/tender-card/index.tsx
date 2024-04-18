@@ -1,7 +1,11 @@
 import React from 'react';
 import { Text, Card, Flex, Button, Avatar, Box, rgba } from '@mantine/core';
 import classes from './TenderCard.module.css';
-import { IconBookmark, IconTools } from '@tabler/icons-react';
+import {
+  IconBookmark,
+  IconBookmarkFilled,
+  IconTools,
+} from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
 interface TenderCardProps {
@@ -35,10 +39,10 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
       <Box
         className=" absolute top-0 right-4 rounded-b-lg p-2 py-1 cursor-pointer"
         fz={'xs'}
-        c="gray.7"
+        c="primary.4"
         bg={rgba('var(--mantine-primary-color-5)', 0.1)}
       >
-        <IconBookmark size={28} stroke={1.6} />
+        <IconBookmarkFilled size={28} stroke={1.6} />
       </Box>
       <Box className="flex flex-col" c={'black'}>
         <Flex align={'center'} gap={'sm'}>

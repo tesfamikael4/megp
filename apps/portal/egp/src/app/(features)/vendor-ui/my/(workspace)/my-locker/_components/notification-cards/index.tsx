@@ -32,7 +32,7 @@ const NotificationCard: React.FC<Notification> = ({
       shadow={'xs'}
       className={`bg-white flex w-full p-4 gap-2 ${color}`}
     >
-      <Flex className="w-full gap-2 h-full">
+      <Flex className="w-full gap-3 h-full">
         {icon && (
           <Box
             style={{
@@ -45,23 +45,23 @@ const NotificationCard: React.FC<Notification> = ({
         )}
         <Flex className="flex-col gap-1 ">
           <Flex className="gap-3">
-            <Text fw={600} fz={12} c={'gray.6'}>
+            <Text fw={600} fz={12} c={'#424242'}>
               Organization Name
             </Text>
-            <Text fw={600} fz={12} c={'gray.6'}>
+            <Text fw={600} fz={12} c={'#424242'}>
               .
             </Text>
-            <Text fw={600} fz={12} c={'gray.6'}>
+            <Text fw={600} fz={12} c={'#424242'}>
               Now
             </Text>
           </Flex>
           <Flex>
-            <Text fw={500} fz={14}>
+            <Text fw={500} fz={14} c={'#373737'}>
               {organizationName}
             </Text>
           </Flex>
           <Flex>
-            <Text fw={500} fz={12} c={'gray.6'}>
+            <Text fw={500} fz={12} c={'#424242'}>
               {description}
             </Text>
           </Flex>

@@ -22,7 +22,7 @@ const Page = (props: Props) => {
             rightSectionWidth={30}
           />
         }
-        className=" w-full min-h-[110px]"
+        mih={200}
       ></PageWrapper>
       <Flex className="flex-col gap-2">
         <NotificationList />
