@@ -31,4 +31,10 @@ export class OfflinePaymentController {
   async paymentCompleted(@Body() payload: PaymentCompletedDto) {
     return await this.mpgsPaymentService.paymentCompleted(payload);
   }
+
+  @Post('log')
+  async log(@Body() payload: any) {
+    console.log('🚀 ~ OfflinePaymentController ~ log ~ payload:', payload);
+    return payload;
+  }
 }
