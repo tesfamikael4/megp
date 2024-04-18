@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
@@ -31,5 +31,10 @@ export class BidGuaranteeController extends ExtraCrudController<BidGuarantee>(
     @Body() status: UpdateGuaranteeStatusDto,
   ): Promise<BidGuarantee> {
     return await this.bidGuaranteeService.updateStatus(id, status);
+  }
+
+  @Get('download-document/:id')
+  async downloadDocument(@Param('id') id: string) {
+    return await this.bidGuaranteeService.downloadDocument(id);
   }
 }

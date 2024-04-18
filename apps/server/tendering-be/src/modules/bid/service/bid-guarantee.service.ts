@@ -109,4 +109,18 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
 
     return await super.update(id, updateGuaranteeStatusDto);
   }
+
+  async downloadDocument(id: string) {
+    const guarantee = await this.findOne(id);
+    if (!guarantee) {
+      throw new NotFoundException('Guarantee not found');
+    } else if (!guarantee.document) {
+      throw new NotFoundException('Document not found');
+    }
+
+    const presignedUrl = await this.minIOService.generatePresignedDownloadUrl(
+      guarantee.document,
+    );
+    return { presignedUrl };
+  }
 }
