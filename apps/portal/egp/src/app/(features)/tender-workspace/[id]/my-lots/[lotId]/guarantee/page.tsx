@@ -6,18 +6,20 @@ import {
 import { useGetRegisteredBidQuery } from '@/store/api/registered-bid/registered-bid.api';
 import { Box, Button, Divider, Flex, Text } from '@mantine/core';
 import { useParams, useRouter } from 'next/navigation';
-import Table from '../../../_components/table/table';
+import { logger } from '@megp/core-fe';
+import Table from '../components/table/table';
 
 const GuaranteePage = () => {
   const router = useRouter();
   const { id } = useParams();
-  const { data: data } = useGetGuaranteesQuery({});
-  const { data: guarantee } = useGetGuaranteeQuery(data?.lotId.toString());
+  const { lotId } = useParams();
+
+  const { data: guarantee } = useGetGuaranteeQuery(lotId.toString());
 
   const { data: tenderData } = useGetRegisteredBidQuery(id?.toString());
 
   const handleButtonClick = () => {
-    router.push(`/tender-workspace/${id}/guarantee/new`);
+    router.push(`/tender-workspace/${id}/my-lots/${lotId}/guarantee/new`);
   };
 
   return (

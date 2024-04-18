@@ -17,6 +17,7 @@ interface Props {
 export default function Table({ data, tenderData }: Props) {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
+  const { lotId } = useParams();
   const [search, setSearch] = useState('');
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [page, setPage] = useState(1);
@@ -88,7 +89,9 @@ export default function Table({ data, tenderData }: Props) {
   }, [filteredRecords, sortStatus, page, pageSize]);
 
   const handleRowClick = (record: BidSecurity) => {
-    router.push(`/tender-workspace/${id}/guarantee/${record?.id}`);
+    router.push(
+      `/tender-workspace/${id}/my-lots/${lotId}/guarantee/${record?.id}`,
+    );
   };
 
   return (
@@ -107,7 +110,6 @@ export default function Table({ data, tenderData }: Props) {
       </Flex>
 
       <DataTable
-        height="665px"
         striped
         verticalSpacing="sm"
         highlightOnHover
@@ -146,7 +148,7 @@ export default function Table({ data, tenderData }: Props) {
                 color={
                   status === 'APPROVED'
                     ? 'green'
-                    : status === 'REQUESTED'
+                    : status === 'REQUESTED ' || status === 'DRAFT'
                       ? 'yellow'
                       : 'red'
                 }
