@@ -41,15 +41,10 @@ export class BudgetService extends ExtraCrudService<Budget> {
         );
 
         if (prevBudget) {
-          if (budget.revisedBudget < +prevBudget.obligatedBudget) {
-            throw new HttpException(
-              'can not update budget with revised budget less than obligated budget',
-              430,
-            );
-          }
-
           budget.availableBudget =
             +budget.revisedBudget - +prevBudget.obligatedBudget;
+
+          this.checkBudgetValidity(budget, prevBudget);
         }
 
         return {
@@ -85,5 +80,40 @@ export class BudgetService extends ExtraCrudService<Budget> {
         : (resp[budget.currency] = +amount);
     });
     return resp;
+  }
+
+  private checkBudgetValidity(budget: any, prevBudget: any) {
+    if (budget.revisedBudget < +prevBudget.obligatedBudget) {
+      throw new HttpException(
+        'can not update budget with revised budget less than obligated budget',
+        430,
+      );
+    }
+
+    if (budget.availableBudget > budget.revisedBudget)
+      throw new HttpException(
+        `available budget of budget ${budget.budgetCode} is less than the revised budget`,
+        430,
+      );
+
+    if (budget.availableBudget < 0)
+      throw new HttpException(
+        `available budget of budget ${budget.budgetCode} is less than zero`,
+        430,
+      );
+
+    if (budget.revisedBudget < 0)
+      throw new HttpException(
+        `revised budget of budget ${budget.budgetCode} is less than zero`,
+        430,
+      );
+
+    if (budget.allocatedBudget < 0)
+      throw new HttpException(
+        `allocated budget of budget ${budget.budgetCode} is less than zero`,
+        430,
+      );
+
+    return budget;
   }
 }
