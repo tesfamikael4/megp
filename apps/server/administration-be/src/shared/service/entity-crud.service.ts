@@ -39,11 +39,8 @@ export class EntityCrudService<T extends ObjectLiteral> {
 
   async update(id: string, itemData: any): Promise<T | undefined> {
     const item = await this.findOneOrFail(id);
-    await this.repository.update(item.id, itemData);
-    return {
-      ...item,
-      ...itemData,
-    };
+    await this.repository.update(id, itemData);
+    return { ...item, ...itemData };
   }
 
   async delete(id: string, req?: any): Promise<void> {
@@ -52,7 +49,7 @@ export class EntityCrudService<T extends ObjectLiteral> {
   }
 
   private async findOneOrFail(id: any): Promise<T> {
-    const item = await this.repository.findOne(id);
+    const item = await this.findOne(id);
     if (!item) {
       throw new NotFoundException(`not_found`);
     }
