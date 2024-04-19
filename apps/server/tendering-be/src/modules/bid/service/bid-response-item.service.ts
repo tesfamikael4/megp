@@ -448,7 +448,7 @@ export class BidResponseItemService {
     return children.map((child) => {
       const childWithChildren = {
         ...child,
-        children: this.buildBoQHierarchy(items, child.code, responses),
+        children: this.buildBoQHierarchy(items, child.code, responses) ?? [],
       };
 
       childWithChildren.rate = this.findItemRateById(
@@ -460,7 +460,7 @@ export class BidResponseItemService {
   }
 
   private buildBoQHierarchyWithRate(items: any[]) {
-    const calculateItem = (items: any[], current) => {
+    const calculateItem = (items: any[], current: any) => {
       let val = 0;
       for (const item of items) {
         if (item.children) {
