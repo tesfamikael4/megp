@@ -149,6 +149,10 @@ export const BudgetSelector = ({
     getBudget(undefined);
   }, [getBudget]);
 
+  useEffect(() => {
+    setSelectedBudget([budget]);
+  }, [budget]);
+
   return (
     <Box>
       <TextInput
@@ -159,6 +163,7 @@ export const BudgetSelector = ({
         onClick={open}
         disabled={disableFields}
         error={error}
+        withAsterisk
       />
 
       <Modal
