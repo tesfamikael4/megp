@@ -19,7 +19,7 @@ const PdfDocumentTemplate = async (data) => {
           </View>
           <View style={styles.activityDetail}>
             <ReactPdfTable
-              data={Object.entries(data?.vendor.basic).map(([key, value]) => ({
+              data={Object.entries(data?.basic).map(([key, value]) => ({
                 key,
                 value,
               }))}
@@ -30,9 +30,10 @@ const PdfDocumentTemplate = async (data) => {
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}>Address Information</Text>
             <ReactPdfTable
-              data={Object.entries(data?.vendor.address).map(
-                ([key, value]) => ({ key, value }),
-              )}
+              data={Object.entries(data?.address).map(([key, value]) => ({
+                key,
+                value,
+              }))}
               config={{}}
             />
           </View>
@@ -59,7 +60,7 @@ const PdfDocumentTemplate = async (data) => {
                     title: 'Phone Number',
                   },
                 ],
-                data: data?.vendor.contactPersons,
+                data: data?.contactPersons,
               }}
             />
           </View>
@@ -70,41 +71,25 @@ const PdfDocumentTemplate = async (data) => {
               data={[
                 {
                   key: 'Ownership Type',
-                  value: data?.vendor.businessSizeAndOwnership.ownershipType,
+                  value: data?.businessSizeAndOwnership.ownershipType,
                 },
                 {
                   key: 'paidUp Capital',
-                  value: `${data?.vendor.businessSizeAndOwnership.paidUpCapital.amount} ${data?.vendor.businessSizeAndOwnership.paidUpCapital.currency}`,
+                  value: `${data?.businessSizeAndOwnership.paidUpCapital.amount} ${data?.businessSizeAndOwnership.paidUpCapital.currency}`,
                 },
                 {
                   key: 'number of Employees',
-                  value:
-                    data?.vendor.businessSizeAndOwnership.numberOfEmployees,
+                  value: data?.businessSizeAndOwnership.numberOfEmployees,
                 },
                 {
                   key: 'registration Capital',
-                  value: `${data?.vendor.businessSizeAndOwnership.registeredCapital.amount} ${data?.vendor.businessSizeAndOwnership.registeredCapital.currency}`,
+                  value: `${data?.businessSizeAndOwnership.registeredCapital.amount} ${data?.businessSizeAndOwnership.registeredCapital.currency}`,
                 },
               ]}
               config={{}}
             />
           </View>
-          {/* Share Holders */}
-          {/* <View style={styles.activity}>
-            <Text style={{ marginBottom: '8px' }}> Shareholders</Text>
-            <ReactPdfTableGrid3
-              config={{
-                columns: [
-                  {
-                    accessor: 'firstName',
-                    title: 'First Name',
-                  },
-                  { accessor: 'lastName', title: 'Last Name' },
-                ],
-                data: data?.vendor.shareHolders,
-              }}
-            />
-          </View> */}
+
           {/* Beneficial Ownership */}
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}>
@@ -150,7 +135,7 @@ const PdfDocumentTemplate = async (data) => {
                     title: 'authority to Appoint Govt.',
                   },
                 ],
-                data: data?.vendor.shareHolders,
+                data: data?.beneficialOwnershipShareholders,
               }}
             />
           </View>
@@ -203,7 +188,7 @@ const PdfDocumentTemplate = async (data) => {
                     title: 'Defualt',
                   },
                 ],
-                data: data?.vendor.bankAccountDetails,
+                data: data?.bankAccountDetails,
               }}
             />
           </View>
@@ -220,19 +205,23 @@ const PdfDocumentTemplate = async (data) => {
                     title: 'Category',
                   },
                   { accessor: 'priceRange', title: 'Price Range' },
-                  // {
-                  //   accessor: 'lineOfBusiness',
-                  //   title: 'Line Of Business',
-                  // },
+
+                  {
+                    accessor: 'lineOfBusiness',
+                    title: 'Line Of Business',
+                  },
                 ],
-                data: data?.vendor.areasOfBusinessInterest,
+                data: data?.areasOfBusinessInterest,
               }}
             />
           </View>
           {/*Business Lines*/}
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}>line of Business</Text>
-            <Text> {...data?.vendor.lineOfBusiness} </Text>
+
+            <Text>
+              {data?.lineOfBusiness.map((item) => item.name).join(', ')}{' '}
+            </Text>
           </View>
           {/* prefertial information Documents */}
           <View style={styles.activity}>
