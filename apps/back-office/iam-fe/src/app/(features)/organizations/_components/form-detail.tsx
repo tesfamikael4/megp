@@ -50,7 +50,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     shortName: z.string().min(1, { message: 'This field is required' }),
     description: z.string().optional(),
     budgetCheckNeeded: z.boolean(),
-    voteCode: z.coerce.number().min(1, {
+    voteCode: z.coerce.string().min(1, {
       message: 'Vote code is required',
     }),
   });
@@ -90,7 +90,6 @@ export function FormDetail({ mode }: FormDetailProps) {
   const onCreate = async (data) => {
     try {
       const result = await create(data).unwrap();
-      logger.log(result);
 
       router.push(`/organizations/${result.id}`);
 
@@ -98,7 +97,13 @@ export function FormDetail({ mode }: FormDetailProps) {
     } catch (err) {
       notify(
         'Error',
-        `${err.data.message === 'organization already exists' ? 'organization already exists' : 'Error in creating organization'}`,
+        `${
+          err.data.message === 'organization already exists'
+            ? 'organization already exists'
+            : err?.data?.message?.[0].startsWith('Vote')
+              ? 'Vote code must at least have three digits'
+              : 'Error in creating organization'
+        }`,
       );
     }
   };
