@@ -54,7 +54,7 @@ export class ExtraCrudService<T extends ObjectLiteral> {
   }
 
   async findOne(id: any, req?: any): Promise<T | undefined> {
-    return await this.repository.findOne({ where: { id } });
+    return await this.repository.findOneBy({ id });
   }
 
   async update(id: string, itemData: any): Promise<T | undefined> {
@@ -115,7 +115,7 @@ export class ExtraCrudService<T extends ObjectLiteral> {
   }
 
   private async findOneOrFail(id: any): Promise<T> {
-    const item = await this.repository.findOne(id);
+    const item = await this.repository.findOneBy({ id });
     if (!item) {
       throw new NotFoundException(`not_found`);
     }
