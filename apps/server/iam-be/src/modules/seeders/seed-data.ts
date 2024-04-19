@@ -671,7 +671,7 @@ export const user = {
   status: 'ACTIVE',
   accountId: '97766b0e-9d8d-46fc-a3de-65c394e73d86',
   organizationId: 'c7865a67-d289-4671-b264-bc899ef870cb',
-  // userRoleSystems: [{ roleSystemId: 1 }],
+  userRoleSystems: [{ roleSystemId: 1 }],
   userUnits: [{ unitId: 'bcf2e233-3572-45b3-b104-14023c76173a' }],
 };
 export const mandates = [
