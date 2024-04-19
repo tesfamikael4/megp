@@ -305,6 +305,156 @@ export class VendorRegistrationsController {
     @Res() res: any,
   ) {
     const data = {
+      "id": "776e178a-78ef-4c41-afaf-83dd60fc2496",
+      "basic": {
+        "name": "Submit Test",
+        "status": "Draft",
+        "tinNumber": "12345665",
+        "businessType": "partnership",
+        "tinIssuedDate": "2024-04-18",
+        "registrationNumber": "",
+        "countryOfRegistration": "Lithuania",
+        "registrationIssuedDate": ""
+      },
+      "remark": null,
+      "status": "Submit",
+      "userId": "f17599e1-41aa-4213-bfd5-bf29b3944681",
+      "address": {
+        "fax": "",
+        "website": "",
+        "telephone": "0987652321",
+        "mobilePhone": "",
+        "primaryEmail": "asdf@gmail.com",
+        "postalAddress": "asdf",
+        "alternateEmail": "asdfa@gmail.com",
+        "physicalAddress": "asdfa"
+      },
+      "initial": {
+        "level": "Submit",
+        "status": "Submit",
+        "userId": "f17599e1-41aa-4213-bfd5-bf29b3944681",
+        "issueDate": "2024-04-18",
+        "isPPDARegistered": false
+      },
+      "invoice": {
+
+      },
+      "tenantId": 0,
+      "createdAt": "2024-04-18T11:34:47.020Z",
+      "deletedAt": null,
+      "tinNumber": "12345665",
+      "updatedAt": "2024-04-18T11:37:54.945Z",
+      "documentId": "",
+      "preferential": [
+        {
+          "type": "ibm",
+          "category": "ibm",
+          "serviceId": "26ff8e51-0f68-9c28-2ea4-a32a5e1f184f",
+          "certiNumber": "asdfa",
+          "certificateUrl": null
+        }
+      ],
+      "businessAreas": [
+
+      ],
+      "contactPersons": [
+        {
+          "email": "wteffera11@gmail.com",
+          "lastName": "test",
+          "firstName": "asdf",
+          "mobileNumber": "0987654321"
+        }
+      ],
+      "lineOfBusiness": [
+        {
+          "id": "ef5009b0-329f-40d7-baa9-37de96a2f5d0",
+          "name": "Live Plant and Animal Material and Accessories and Supplies"
+        },
+        {
+          "id": "4b01d8f7-db5b-4784-86ba-94b5c243441d",
+          "name": "Mineral and Textile and Inedible Plant and Animal Materials"
+        }
+      ],
+      "paymentReceipt": {
+        "attachment": "1713440231232-146971234_14535c4c-c9cf-4411-acf9-bab43ddca8ec.pdf",
+        "invoiceIds": [
+          "884a557e-a33b-4f01-b53f-98c63c5e1cbe"
+        ],
+        "transactionId": "asdfasdfassad233"
+      },
+      "bankAccountDetails": [
+        {
+          "IBAN": "asdfa",
+          "bankId": "",
+          "status": "",
+          "bankName": "asdfa",
+          "bankType": "International",
+          "currency": "USD",
+          "hashValue": "",
+          "isDefualt": true,
+          "swiftCode": "asdfas",
+          "branchName": "ASDFA",
+          "accountType": "Saving",
+          "accountNumber": "23423",
+          "branchAddress": "asdfasdf",
+          "accountHolderFullName": "ASDFA"
+        }
+      ],
+      "registrationNumber": null,
+      "supportingDocuments": {
+        "mRA_TPINCertificate": "",
+        "mRATaxClearanceCertificate": "",
+        "generalReceipt_BankDepositSlip": "",
+        "previousPPDARegistrationCertificate": "",
+        "businessRegistration_IncorporationCertificate": "1713440272983-917932994_14535c4c-c9cf-4411-acf9-bab43ddca8ec.pdf"
+      },
+      "areasOfBusinessInterest": [
+        {
+          "category": "Goods",
+          "priceRange": "Up to MK10 million",
+          "lineOfBusiness": [
+
+          ]
+        }
+      ],
+      "businessSizeAndOwnership": {
+        "ownershipType": "",
+        "paidUpCapital": {
+          "amount": "98,765",
+          "currency": "USD"
+        },
+        "numberOfEmployees": "23423",
+        "registeredCapital": {
+          "amount": "123,456,789",
+          "currency": "USD"
+        }
+      },
+      "areasOfBusinessInterestView": [
+        {
+          "category": "Goods",
+          "priceRange": "Up to MK10 million",
+          "lineOfBusiness": [
+
+          ]
+        }
+      ],
+      "beneficialOwnershipShareholders": [
+        {
+          "share": 70,
+          "lastName": "test",
+          "firstName": "asdf",
+          "middleName": "Teferaasdf",
+          "nationality": "Algeria",
+          "votingRights": 100,
+          "countryOfResidence": "Åland Islands",
+          "authorityToAppointGov": ""
+
+        }
+      ]
+    }
+
+
+    const data2 = {
       "vendor": {
         "id": "850a9f47-81a8-4eb6-9254-96bc90902caa",
         "basic": {
@@ -464,7 +614,7 @@ export class VendorRegistrationsController {
       'Content-Type': 'application/pdf',
       'Content-Disposition': 'attachment; filename="document.pdf"',
     });
-    //  result.pipe(res);
+    // result.pipe(res);
   }
 
   @Post('event-test')

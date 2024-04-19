@@ -337,12 +337,12 @@ export const bpsToSeed = [
                     on: {},
                     meta: {
                         type: 'end',
+                        apiUrl: '',
                     },
                 },
-                'Submission of indigenous black Malawian(IBM) Registration Request':
-                {
+                'Submission of indigenous black Malawian(IBM) Registration Request': {
                     on: {
-                        ISR: 'Approval of indigenous black Malawian(IBM) Registration Request',
+                        ISR: 'Review indigenous black Malawian(IBM) Registration Request by Registration Officer',
                     },
                     meta: {
                         type: {
@@ -350,31 +350,50 @@ export const bpsToSeed = [
                         },
                     },
                 },
-                'Approval of indigenous black Malawian(IBM) Registration Request':
-                {
+
+                'Review indigenous black Malawian(IBM) Registration Request by Registration Officer': {
                     on: {
-                        ADJUST:
-                            'Submission of indigenous black Malawian(IBM) Registration Request',
-                        REJECT: 'End',
-                        APPROVE: 'Generate Vendor Registration Certificate',
+                        ADJUST: 'Submission of indigenous black Malawian(IBM) Registration Request',
+                        CANCEL: 'End',
+                        APPROVE:
+                            'Approval of indigenous black Malawian(IBM) Registration Request by Senior or chief registration officer or RRM/DRRM',
                     },
                     meta: {
-                        type: 'Approval',
-                    }
-                }
-
-            },
-            'Generate Vendor Registration Certificate': {
-                on: {
-                    FAIL: 'Generate Vendor Registration Certificate',
-                    SUCCESS: 'End',
+                        type: 'InitialReview',
+                    },
                 },
-                meta: {
-                    type: 'Certificate',
+                'Approval of indigenous black Malawian(IBM) Registration Request by Senior or chief registration officer or RRM/DRRM':
+                {
+                    on: {
+                        NO: 'Submission of indigenous black Malawian(IBM) Registration Request',
+                        YES: 'Approval of indigenous black Malawian(IBM) Registration Request by Director General (DG)',
+                    },
+                    meta: {
+                        type: 'Confirmation',
+                    },
+                },
+                'Approval of indigenous black Malawian(IBM) Registration Request by Director General (DG)':
+                {
+                    on: {
+                        ADJUST: 'Submission of indigenous black Malawian(IBM) Registration Request',
+                        APPROVE: 'Generate Vendor Registration Certificate',
+                        REJECT: 'End',
+                    },
+                    meta: {
+                        type: 'Confirmation',
+                    },
+                },
+                'Generate Vendor Registration Certificate': {
+                    on: {
+                        FAIL: 'Generate Vendor Registration Certificate',
+                        SUCCESS: 'End',
+                    },
+                    meta: {
+                        type: 'Certificate',
+                    },
                 },
             },
-            initial:
-                'Submission of indigenous black Malawian(IBM) Registration Request',
+            initial: 'Submission of indigenous black Malawian(IBM) Registration Request',
         },
         version: 0,
         isActive: true,
@@ -533,17 +552,18 @@ export const bpsToSeed = [
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
         serviceId: 'a16fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
         workflow: {
-            id: 'marginalized Group WF',
+            id: 'Marginalized Group Registration',
             states: {
                 End: {
                     on: {},
                     meta: {
                         type: 'end',
+                        apiUrl: '',
                     },
                 },
                 'Submission of Marginalized Group Registration Request': {
                     on: {
-                        ISR: 'Approval of Marginalized Group Registration Request',
+                        ISR: 'Review Marginalized Group Registration Request by Registration Officer',
                     },
                     meta: {
                         type: {
@@ -551,14 +571,37 @@ export const bpsToSeed = [
                         },
                     },
                 },
-                'Approval of Marginalized Group Registration Request': {
+
+                'Review Marginalized Group Registration Request by Registration Officer': {
                     on: {
                         ADJUST: 'Submission of Marginalized Group Registration Request',
-                        REJECT: 'End',
-                        APPROVE: 'Generate Vendor Registration Certificate',
+                        CANCEL: 'End',
+                        APPROVE:
+                            'Approval of Marginalized Group Registration Request by Senior or chief registration officer or RRM/DRRM',
                     },
                     meta: {
-                        type: 'Approval',
+                        type: 'InitialReview',
+                    },
+                },
+                'Approval of Marginalized Group Registration Request by Senior or chief registration officer or RRM/DRRM':
+                {
+                    on: {
+                        NO: 'Submission of Marginalized Group Registration Request',
+                        YES: 'Approval of Marginalized Group Registration Request by Director General (DG)',
+                    },
+                    meta: {
+                        type: 'Confirmation',
+                    },
+                },
+                'Approval of Marginalized Group Registration Request by Director General (DG)':
+                {
+                    on: {
+                        ADJUST: 'Submission of Marginalized Group Registration Request',
+                        APPROVE: 'Generate Vendor Registration Certificate',
+                        REJECT: 'End',
+                    },
+                    meta: {
+                        type: 'Confirmation',
                     },
                 },
                 'Generate Vendor Registration Certificate': {
@@ -578,7 +621,7 @@ export const bpsToSeed = [
         organizationId: null,
         organizationName: null,
     },
-    //profile update
+    //profile update updated workflow
     {
         tenantId: 0,
 
@@ -591,11 +634,12 @@ export const bpsToSeed = [
                     on: {},
                     meta: {
                         type: 'end',
+                        apiUrl: '',
                     },
                 },
                 'Submission of Vendor Profile Update Request': {
                     on: {
-                        ISR: 'Approval of Vendor Profile Update Request',
+                        ISR: 'Review Vendor Profile Update Request by Registration Officer',
                     },
                     meta: {
                         type: {
@@ -603,25 +647,40 @@ export const bpsToSeed = [
                         },
                     },
                 },
-                'Approval of Vendor Profile Update Request': {
+
+                'Review Vendor Profile Update Request by Registration Officer': {
                     on: {
                         ADJUST: 'Submission of Vendor Profile Update Request',
                         CANCEL: 'End',
                         APPROVE:
-                            'Approval of Vendor Profile Update Request By Director General (Head of PDE)',
+                            'Approval of Vendor Profile Update Request by Senior or chief registration officer or RRM/DRRM',
                     },
                     meta: {
-                        type: 'Approval',
+                        type: 'InitialReview',
                     },
                 },
-                'Approval of Vendor Profile Update Request By Director General (Head of PDE)':
+                'Approval of Vendor Profile Update Request by Senior or chief registration officer or RRM/DRRM':
+                {
+                    on: {
+                        NO: 'Submission of Vendor Profile Update Request',
+                        YES: 'Approval of Vendor Profile update Request by Director General (DG)',
+                    },
+                    meta: {
+                        type: 'Confirmation',
+                    },
+                },
+                'Approval of Vendor Profile update Request by Director General (DG)':
                 {
                     on: {
                         ADJUST: 'Submission of Vendor Profile Update Request',
                         APPROVE: 'End',
                         REJECT: 'End',
                     },
-                },
+                    meta: {
+                        type: 'Confirmation',
+                    },
+                }
+
             },
             initial: 'Submission of Vendor Profile Update Request',
         },
@@ -897,6 +956,10 @@ export const tasksToSeed = [
 
 
     //marginalized
+
+
+
+    // new Marginalized group tasks
     {
         id: '85752a13-201f-45eb-8b6f-118ebf0c89c7',
         name: 'Submission of Marginalized Group Registration Request',
@@ -910,22 +973,61 @@ export const tasksToSeed = [
     },
     {
         id: '71752a13-201f-45eb-8b6f-118ebf0c89c4',
-        name: 'Approval of Marginalized Group Registration Request',
-        label: 'Submitted Marginalized Group Request',
-        description: 'Approval of Marginalized Group Registration Request',
+        name: 'Review Marginalized Group Registration Request by Registration Officer',
+        label: 'Reviewed Marginalized Group Request',
+        description: 'Reviewing Marginalized Group Applications',
         bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
         handlerType: 'Assignee',
-        taskType: 'Approval',
+        taskType: 'InitialReview',
         checkList: [
             {
-                id: '96d95fdb-7852-4ddc-912f-0e94d23d15d3',
+                id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
                 description:
-                    'The Attached MSME certeficate and other documents are valid.',
+                    'All the required information and related documents fullfilled',
                 isMandatory: 'true',
             },
         ],
         orderBy: 2,
     },
+    {
+        id: '96752a13-205f-15eb-8b5f-118ebf0c29c4',
+        name: 'Approval of Marginalized Group Registration Request by Senior or chief registration officer or RRM/DRRM',
+        label: 'Reviewed by RO',
+        description:
+            'aprove Marginalized Group registration request by senior or chief registration officer',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
+        handlerType: 'Assignee',
+        taskType: 'Confirmation',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 3,
+    },
+    {
+        id: '16752a13-205f-15eb-8b5f-118ebf0c29c2',
+        name: 'Approval of Marginalized Group Registration Request by Director General (DG)',
+        label: 'Approved by DG',
+        description:
+            'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 4,
+    },
+
     {
         id: '12752a13-205f-11eb-8b5f-118ebf0c21c2',
         name: 'Generate Vendor Registration Certificate',
@@ -936,8 +1038,11 @@ export const tasksToSeed = [
         taskType: 'Certificate',
         checkList: [
         ],
-        orderBy: 3,
+        orderBy: 5,
     },
+
+
+
     //meduim
     {
         id: '16752a13-201f-45eb-8b6f-118ebf0c89c4',
@@ -981,7 +1086,8 @@ export const tasksToSeed = [
         orderBy: 3,
     },
 
-    ///IBM
+
+    //new BP task of IBM
     {
         id: '96752a13-205f-45eb-8b5f-118ebf0c89c7',
         name: 'Submission of indigenous black Malawian(IBM) Registration Request',
@@ -1001,25 +1107,61 @@ export const tasksToSeed = [
         ],
         orderBy: 1,
     },
-    //
     {
         id: '96752a13-205f-45eb-8b5f-118ebf0c29c7',
-        name: 'Approval of indigenous black Malawian(IBM) Registration Request',
-        label: 'Approved IBM request',
+        name: 'Review indigenous black Malawian(IBM) Registration Request by Registration Officer',
+        label: 'Reviewed IBM Registration Request',
+        description: 'Reviewing Vendor IBM Applications',
+        bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
+        handlerType: 'Assignee',
+        taskType: 'InitialReview',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 2,
+    },
+    {
+        id: '96752a13-205f-15eb-8b5f-118ebf0c29c7',
+        name: 'Approval of indigenous black Malawian(IBM) Registration Request by Senior or chief registration officer or RRM/DRRM',
+        label: 'Reviewed by RO',
         description:
-            'Approval of indigenous black Malawian(IBM) Registration Request',
+            'aprove indigenous black Malawian(IBM)  registration request for Goods by senior or chief registration officer',
+        bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
+        handlerType: 'Assignee',
+        taskType: 'Confirmation',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 3,
+    },
+    {
+        id: '16752a13-205f-15eb-8b5f-118ebf0c29c8',
+        name: 'Approval of indigenous black Malawian(IBM) Registration Request by Director General (DG)',
+        label: 'Approved by DG',
+        description:
+            'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
         bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
         handlerType: 'Assignee',
         taskType: 'Approval',
         checkList: [
             {
-                id: '96d95fdb-7852-4ddc-912f-0e94d23d15d3',
+                id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
                 description:
-                    'The Attached IBM certeficate and  other documents are valid.',
+                    'All the required information and related documents fullfilled',
                 isMandatory: 'true',
             },
         ],
-        orderBy: 2,
+        orderBy: 4,
     },
 
     {
@@ -1034,6 +1176,9 @@ export const tasksToSeed = [
         ],
         orderBy: 3,
     },
+
+
+
     //Upgrade Registration Request for Goods, services and Works
     {
         id: '31fac537-e71b-479c-9c4a-7b344724518f',
@@ -1046,8 +1191,7 @@ export const tasksToSeed = [
         checkList: [
             {
                 id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-                description:
-                    'All the required information and related documents fullfilled',
+                description: 'All the required information and related documents fullfilled',
                 isMandatory: 'true',
             },
         ],
@@ -1130,6 +1274,43 @@ export const tasksToSeed = [
     //--------------------------------end of goods, works and Services
 
     ////Profile update Workflow tasks
+
+    // {
+    //     id: '',
+    //     name: 'Approval of Vendor Profile Update Request',
+    //     label: 'Approved by RO',
+    //     description: 'Approval of Vendor Profile Update Request',
+    //     bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
+    //     handlerType: 'Assignee',
+    //     taskType: 'InitialReview',
+    //     checkList: [
+    //         {
+    //             id: '96d95fdb-7852-4ddc-982f-0e94d23d21d3',
+    //             description:
+    //                 'All the required information and related documents fullfilled',
+    //             isMandatory: 'true',
+    //         },
+    //     ],
+    //     orderBy: 2,
+    // },
+    // {
+    //     id: '277e4d2f-f996-4546-9320-3d5103e22c63',
+    //     name: 'Approval of Vendor Profile Update Request By Director General (Head of PDE)',
+    //     label: 'Vendor Profile Update Request Reviewed by Director General',
+    //     description: 'Vendor Profile Update Request Review by Director General',
+    //     bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
+    //     handlerType: 'Assignee',
+    //     taskType: 'Approval',
+    //     checkList: [
+    //         {
+    //             id: '93d95fdb-7852-4ddc-982f-0e94d23d15d3',
+    //             description: 'The bank Information is valid',
+    //             isMandatory: 'true',
+    //         },
+    //     ],
+    //     orderBy: 1,
+    // },
+    ///profile update new workflow
     {
         id: '35967d94-dcaa-4449-8b55-a70350f5e698',
         name: 'Submission of Vendor Profile Update Request',
@@ -1138,28 +1319,25 @@ export const tasksToSeed = [
         bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
         handlerType: 'Requestor',
         taskType: 'ISR',
-        checkList: [
-            {
-                id: '96d95fdb-7852-4ddc-982f-0e14d23d15d3',
-                description: 'The bank account information is valid',
-                isMandatory: 'true',
-            },
+        checkList: [{
+            id: '96d95fdb-7852-4ddc-982f-0e14d23d15d3',
+            description: 'The bank account information is valid',
+            isMandatory: 'true',
+        },
         ],
         orderBy: 1,
     },
-    //Approval of Vendor Profile Update Request
-
     {
-        id: '41fbc737-e71a-471c-9c4a-7f345820598f',
-        name: 'Approval of Vendor Profile Update Request',
-        label: 'Approved by RO',
-        description: 'Approval of Vendor Profile Update Request',
+        id: '277e4d2f-f996-4546-9320-3d5103e22c63',
+        name: 'Review Vendor Profile Update Request by Registration Officer',
+        label: 'Reviewed Vendor Registration Request',
+        description: 'Reviewing VendorProfile update',
         bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
         handlerType: 'Assignee',
         taskType: 'InitialReview',
         checkList: [
             {
-                id: '96d95fdb-7852-4ddc-982f-0e94d23d21d3',
+                id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
                 description:
                     'All the required information and related documents fullfilled',
                 isMandatory: 'true',
@@ -1168,22 +1346,46 @@ export const tasksToSeed = [
         orderBy: 2,
     },
     {
-        id: '277e4d2f-f996-4546-9320-3d5103e22c63',
-        name: 'Approval of Vendor Profile Update Request By Director General (Head of PDE)',
-        label: 'Vendor Profile Update Request Reviewed by Director General',
-        description: 'Vendor Profile Update Request Review by Director General',
+        id: '81fac537-e71b-479b-9c4a-7f344720598f',
+        name: 'Approval of Vendor Profile Update Request by Senior or chief registration officer or RRM/DRRM',
+        label: 'Reviewed by RO',
+        description:
+            'aprove Vendor Profile Update Request by senior or chief registration officer',
+        bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
+        handlerType: 'Assignee',
+        taskType: 'Confirmation',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 3,
+    },
+    {
+        id: 'd9f268ac-f85f-4973-94c3-134f753cd24e',
+        name: 'Approval of Vendor Profile update Request by Director General (DG)',
+        label: 'Approved by DG',
+        description:
+            'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
         bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
         handlerType: 'Assignee',
         taskType: 'Approval',
         checkList: [
             {
-                id: '93d95fdb-7852-4ddc-982f-0e94d23d15d3',
-                description: 'The bank Information is valid',
+                id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
                 isMandatory: 'true',
             },
         ],
-        orderBy: 1,
+        orderBy: 4,
     },
+
+
+
 ];
 export const pricesToSeed = [
     //cc6934e1-9706-1e1b-c03f-b35c3e6153a1

@@ -156,11 +156,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const instanceId = bas[0].instanceId;
           const dto = new GotoNextStateDto();
           dto.action = 'ISR';
-          dto.data = await this.formatData(data);
+          const formattedData = await this.formatData(data);
+          const documentId = await this.generatePDFForReview(formattedData, userInfo);
+          dto.data = { documentId: documentId, ...formattedData };
           dto.instanceId = instanceId;
           workflowInstance = await this.workflowService.gotoNextStep(
             dto,
-            userInfo,
+            userInfo
           );
           response = {
             applicationNumber: workflowInstance.applicationNumber,
@@ -174,11 +176,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           wfi.bpId = bp.id;
           wfi.serviceId = bp.serviceId;
           wfi.requestorId = data.id;
-          wfi.data = await this.formatData(data);
-
+          const formattedData = await this.formatData(data);
+          const documentId = await this.generatePDFForReview(formattedData, userInfo);
+          wfi.data = { documentId: documentId, ...formattedData };
           workflowInstance = await this.workflowService.intiateWorkflowInstance(
             wfi,
-            userInfo,
+            userInfo
           );
           workflowInstance = workflowInstance.application;
           if (!workflowInstance)
@@ -264,10 +267,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       formattedData.bankAccountDetails.push(formated);
     }
     //new model changes
-    formattedData.beneficialOwnershipAndShareholders = [];
-    for (const share of data?.beneficialOwnershipAndShareholders) {
+    formattedData.beneficialOwnershipShareholders = [];
+    for (const share of data?.beneficialOwnershipShareholders) {
       const formated = this.commonService.reduceAttributes(share);
-      formattedData.beneficialOwnershipAndShareholders.push(formated);
+      formattedData.beneficialOwnershipShareholders.push(formated);
     }
     //new model changes
 
@@ -298,7 +301,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         fileId = await this.fileService.uploadBuffer(
           buffer,
           user.id,
-          subfolder,
+          subfolder
         );
       });
       result.on('error', (error) => {
