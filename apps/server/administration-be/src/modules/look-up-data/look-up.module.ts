@@ -24,6 +24,9 @@ import { DistrictService } from './service/district.service';
 import { DistrictController } from './controller/district.controller';
 import { TargetGroupController } from './controller/target-group.controller';
 import { RegionController } from './controller/region.controller';
+import { ItemSubCategoryService } from './service/item-sub-category.service';
+import { ItemSubCategoryController } from './controller/item-sub-category.controller';
+import { ItemSubCategory } from 'src/entities/item-sub-category.entity';
 
 @Module({
   imports: [
@@ -36,6 +39,7 @@ import { RegionController } from './controller/region.controller';
       Measurement,
       UnitOfMeasurement,
       Tag,
+      ItemSubCategory,
     ]),
   ],
   providers: [
@@ -47,6 +51,7 @@ import { RegionController } from './controller/region.controller';
     MeasurementService,
     UnitOfMeasurementService,
     TagService,
+    ItemSubCategoryService,
   ],
   controllers: [
     ItemCategoriesController,
@@ -57,6 +62,7 @@ import { RegionController } from './controller/region.controller';
     MeasurementController,
     UnitOfMeasurementController,
     TagController,
+    ItemSubCategoryController,
   ],
 })
 export class lookUpDataModule {}
