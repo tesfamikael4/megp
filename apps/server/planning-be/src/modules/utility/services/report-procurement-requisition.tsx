@@ -12,12 +12,13 @@ export const procurementRequisitionPdf = async (
   procurementRequisition: any,
 ) => {
   procurementRequisition = { ...procurementRequisition.activities };
+  const title = procurementRequisition.postBudgetPlan
+    ? procurementRequisition.postBudgetPlan.planName
+    : procurementRequisition.budgetYear.name;
   const buffer = await renderToBuffer(
-    <Document title={procurementRequisition.postBudgetPlan.app.planName}>
+    <Document title={title}>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.title}>
-          {procurementRequisition.postBudgetPlan.app.planName}
-        </Text>
+        <Text style={styles.title}>{title}</Text>
         <View
           style={styles.procurementRequisition}
           key={procurementRequisition}
