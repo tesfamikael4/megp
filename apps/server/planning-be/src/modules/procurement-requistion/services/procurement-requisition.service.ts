@@ -5,8 +5,18 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
-import { PostBudgetPlanActivity, ProcurementRequisition } from 'src/entities';
+import {
+  EntityManager,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
+import {
+  Budget,
+  BudgetYear,
+  PostBudgetPlanActivity,
+  ProcurementRequisition,
+} from 'src/entities';
 import { EntityCrudService } from 'src/shared/service';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { REQUEST } from '@nestjs/core';
@@ -15,6 +25,8 @@ import { ProcurementRequisitionStatusEnum } from 'src/shared/enums';
 import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
 import { DocumentService } from 'src/modules/utility/services/document.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
+import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
 export class ProcurementRequisitionService extends EntityCrudService<ProcurementRequisition> {
@@ -23,6 +35,8 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     private readonly repositoryProcurementRequisition: Repository<ProcurementRequisition>,
     @InjectRepository(PostBudgetPlanActivity)
     private readonly repositoryPostBudgetPlanActivity: Repository<PostBudgetPlanActivity>,
+    @InjectRepository(Budget)
+    private readonly repositoryBudget: Repository<Budget>,
     @Inject('PR_RMQ_SERVICE')
     private readonly prRMQClient: ClientProxy,
     private readonly minIoService: MinIOService,
@@ -35,7 +49,43 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
   ) {
     super(repositoryProcurementRequisition);
   }
-
+  async getCurrentBudget(query?: CollectionQuery) {
+    const date = new Date();
+    const year = date.getFullYear().toString();
+    query.where.push([
+      {
+        column: 'budgetYears.name',
+        operator: '=',
+        value: year,
+      },
+    ]);
+    query.includes.push('budgetYears');
+    const dataQuery = QueryConstructor.constructQuery<Budget>(
+      this.repositoryBudget,
+      query,
+    );
+    const response = new DataResponseFormat<Budget>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+  async findOne(id: string): Promise<ProcurementRequisition> {
+    const result = await this.repositoryProcurementRequisition.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        budgetYear: true,
+        budget: true,
+      },
+    });
+    return result;
+  }
   async selectFromAPP(
     itemData: any,
     user: any,
@@ -364,6 +414,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         postBudgetPlan: {
           app: true,
         },
+        budgetYear: true,
       },
     });
     const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'pr');

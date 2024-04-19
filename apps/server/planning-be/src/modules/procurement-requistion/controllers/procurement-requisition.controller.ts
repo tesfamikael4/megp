@@ -8,7 +8,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ProcurementRequisitionService } from '../services/procurement-requisition.service';
 import {
   CreateProcurementRequisitionDto,
@@ -25,6 +25,7 @@ import {
 import { TransactionInterceptor } from 'src/shared/interceptors';
 import { EventPattern } from '@nestjs/microservices';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: EntityCrudOptions = {
   createDto: CreateProcurementRequisitionDto,
@@ -73,6 +74,19 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
     return await this.procurementRequisitionService.calculateTargetGroupPercentage(
       preBudgetPlanId,
     );
+  }
+
+  @Get('get-current-budgets')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  @ApiPaginatedResponse(ProcurementRequisition)
+  async getCurrentBudgetYear(@Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.procurementRequisitionService.getCurrentBudget(query);
   }
   //for tendering
   @AllowAnonymous()

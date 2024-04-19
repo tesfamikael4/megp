@@ -10,6 +10,7 @@ import { ProcurementRequisitionDocumentService } from './services/procurement-re
 import { ProcurementMechanismService } from './services/procurement-mechanism.service';
 import { ProcurementRequisitionTimelineService } from './services/procurement-requisition-timeline.service';
 import {
+  Budget,
   PostBudgetPlanActivity,
   ProcurementMechanism,
   ProcurementRequisition,
@@ -24,7 +25,6 @@ import { ProcurementRequisitionController } from './controllers/procurement-requ
 import { ProcurementRequisitionService } from './services/procurement-requisition.service';
 import { UtilityModule } from '../utility/utility.module';
 import { MinIOModule } from 'src/shared/min-io';
-import { ReasonService } from '../utility/services/reason.service';
 
 @Module({
   imports: [
@@ -38,6 +38,7 @@ import { ReasonService } from '../utility/services/reason.service';
       ProcurementRequisitionTechnicalTeam,
       ProcurementMechanism,
       PostBudgetPlanActivity,
+      Budget,
     ]),
     ClientsModule.register([
       {

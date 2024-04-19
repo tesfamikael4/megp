@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
 import { ProcurementRequisitionDocument } from 'src/entities';
-import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
+import { MinIOService } from 'src/shared/min-io';
 
 @Injectable()
 export class ProcurementRequisitionDocumentService extends ExtraCrudService<ProcurementRequisitionDocument> {
@@ -36,7 +36,7 @@ export class ProcurementRequisitionDocumentService extends ExtraCrudService<Proc
   }
 
   async upload(user: any, file: any): Promise<any> {
-    file.fileInfo.bucketName = BucketNameEnum.PROCUREMENT_REQUISITION_DOCUMENT;
+    file.fileInfo.bucketName = '';
     const preSignedUrl = await this.minIOService.generatePresignedUploadUrl(
       file.fileInfo,
     );
