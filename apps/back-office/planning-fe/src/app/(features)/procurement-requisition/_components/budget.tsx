@@ -2,16 +2,28 @@
 
 import { DetailTable } from '@/app/(features)/_components/detail-table';
 import { useLazyGetBudgetQuery } from '@/store/api/pr/pr.api';
-import { Button, Group, Modal, TextInput, Box } from '@mantine/core';
+import {
+  Button,
+  Group,
+  Modal,
+  TextInput,
+  Box,
+  LoadingOverlay,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { ExpandableTable, ExpandableTableConfig, logger } from '@megp/core-fe';
+import { ExpandableTable, ExpandableTableConfig } from '@megp/core-fe';
 import { useEffect, useState } from 'react';
 
-export const BudgetSelector = ({ disableFields, budget, setBudget }: any) => {
+export const BudgetSelector = ({
+  disableFields,
+  budget,
+  setBudget,
+  error,
+}: any) => {
   const [opened, { close, open }] = useDisclosure(false);
   const [selectedBudget, setSelectedBudget] = useState<any[]>([]);
 
-  const [getBudget, { data }] = useLazyGetBudgetQuery();
+  const [getBudget, { data, isLoading }] = useLazyGetBudgetQuery();
 
   const config: ExpandableTableConfig = {
     disableMultiSelect: true,
@@ -146,9 +158,18 @@ export const BudgetSelector = ({ disableFields, budget, setBudget }: any) => {
         value={budget?.budgetCode}
         onClick={open}
         disabled={disableFields}
+        error={error}
       />
 
-      <Modal opened={opened} onClose={close} title="Budget Line" size="70%">
+      <Modal
+        opened={opened}
+        onClose={close}
+        title={<Box fw={'bold'}>Budget Line</Box>}
+        size="70%"
+        pos={'relative'}
+      >
+        <LoadingOverlay visible={isLoading} />
+
         <>
           <ExpandableTable
             data={data?.items ?? []}

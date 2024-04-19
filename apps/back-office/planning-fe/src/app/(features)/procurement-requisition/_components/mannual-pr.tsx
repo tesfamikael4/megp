@@ -24,7 +24,6 @@ import {
 } from '../_api/procurement-requisition.api';
 import { useParams, useRouter } from 'next/navigation';
 import { useGetCurrenciesQuery } from '@/store/api/administration/administration.api';
-import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 import { ProcurementRequisition } from '@/models/procurement-requsition';
 import { BudgetSelector } from './budget';
@@ -83,23 +82,27 @@ export const FormDetail = ({
       isLoading: isPrLoading,
     },
   ] = useLazyReadQuery();
+  const [err, setErr] = useState<string>('');
   const [updatePr, { isLoading: isPrUpdating }] = useUpdateMutation();
   const [removePr, { isLoading: isPrDeleting }] = useDeleteMutation();
 
-  // configs;
-
   //event handler
   const onCreate = async (data) => {
-    try {
-      const res = await create({
-        ...data,
-        budgetYearId: budget?.budgetYearId,
-        budgetId: budget?.id,
-      }).unwrap();
-      notify('Success', 'Procurement Requisition created Successfully');
-      router.push(`/procurement-requisition/${res.id}`);
-    } catch (err) {
-      notify('Error', 'Something went wrong');
+    if (budget === undefined) {
+      setErr('Budget Line is required');
+    } else {
+      try {
+        setErr('');
+        const res = await create({
+          ...data,
+          budgetYearId: budget?.budgetYearId,
+          budgetId: budget?.id,
+        }).unwrap();
+        notify('Success', 'Procurement Requisition created Successfully');
+        router.push(`/procurement-requisition/${res.id}`);
+      } catch (err) {
+        notify('Error', 'Something went wrong');
+      }
     }
   };
   const onDelete = async () => {
@@ -192,7 +195,6 @@ export const FormDetail = ({
                   className="w-full"
                   withAsterisk
                   searchable
-                  placeholder="Select Currency"
                   error={errors?.currency?.message}
                   disabled
                 />
@@ -228,13 +230,13 @@ export const FormDetail = ({
               disableFields={disableFields}
               budget={budget}
               setBudget={setBudget}
+              error={err}
             />
             {mode == 'detail' && (
               <Select
                 name="name"
                 value={procurementRequisition?.budgetYear?.name}
                 label="Budget Year"
-                placeholder="Select Budget Year"
                 disabled
               />
             )}
