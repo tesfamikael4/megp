@@ -5,6 +5,7 @@ import {
   IsObject,
   IsOptional,
   IsUUID,
+  Matches,
 } from 'class-validator';
 import { Organization } from '@entities';
 import {
@@ -54,6 +55,20 @@ export class CreateOrganizationDto {
   @IsString()
   code: string;
 
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  budgetCheckNeeded: boolean;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  @Matches(/^\d{3}.+$/, {
+    message:
+      'Vote code must start with exactly three digits followed by any string.',
+  })
+  voteCode: string;
+
   static fromDto(organizationDto: CreateOrganizationDto): Organization {
     const organization: Organization = new Organization();
     organization.name = organizationDto.name;
@@ -67,6 +82,10 @@ export class CreateOrganizationDto {
     organization.description = organizationDto.description;
 
     organization.type = organizationDto.type;
+
+    organization.budgetCheckNeeded = organizationDto.budgetCheckNeeded;
+
+    organization.voteCode = organizationDto.voteCode;
 
     return organization;
   }
@@ -102,6 +121,10 @@ export class UpdateOrganizationDto extends CreateOrganizationDto {
     organization.description = organizationDto.description;
 
     organization.type = organizationDto.type;
+
+    organization.budgetCheckNeeded = organizationDto.budgetCheckNeeded;
+
+    organization.voteCode = organizationDto.voteCode;
 
     if (organizationDto.logo) {
       organization.logo = organizationDto.logo;
