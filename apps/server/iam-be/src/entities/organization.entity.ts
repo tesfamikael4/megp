@@ -56,6 +56,12 @@ export class Organization extends Audit {
   @Column({ nullable: true })
   typeId: string;
 
+  @Column({ default: true, nullable: true })
+  budgetCheckNeeded: boolean;
+
+  @Column({ nullable: true })
+  voteCode: string;
+
   @OneToMany(() => Unit, (unit) => unit.organization, {
     cascade: true,
     onDelete: 'CASCADE',

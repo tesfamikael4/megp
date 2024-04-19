@@ -41,6 +41,11 @@ export class OrganizationController extends EntityCrudController<Organization>(
   constructor(private readonly organizationService: OrganizationService) {
     super(organizationService);
   }
+  @Post()
+  @ApiBody({ type: CreateOrganizationDto })
+  async create(@Body() createDto: CreateOrganizationDto): Promise<any> {
+    return await this.organizationService.create(createDto);
+  }
 
   @EventPattern('vendor-registration-completed')
   async vendorRegistrationCompleted(
