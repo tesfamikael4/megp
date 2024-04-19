@@ -119,6 +119,8 @@ export const FormDetail = ({
     const rawData = {
       id,
       ...newData,
+      budgetYearId: budget?.budgetYearId,
+      budgetId: budget?.id,
     };
 
     try {
@@ -233,9 +235,8 @@ export const FormDetail = ({
               error={err}
             />
             {mode == 'detail' && (
-              <Select
-                name="name"
-                value={procurementRequisition?.budgetYear?.name}
+              <TextInput
+                value={isPrSuccess && procurementRequisition?.budgetYear?.name}
                 label="Budget Year"
                 disabled
               />
