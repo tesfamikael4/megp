@@ -62,20 +62,20 @@ export class DataSeeder implements Seeder {
       conflictPaths: ['key'],
     });
 
-    await permissionRepository.upsert(permissions, {
-      skipUpdateIfNoValuesChanged: true,
-      conflictPaths: ['key'],
-    });
+    // await permissionRepository.upsert(permissions, {
+    //   skipUpdateIfNoValuesChanged: true,
+    //   conflictPaths: ['key'],
+    // });
 
-    await roleSystemRepository.upsert(roleSystems, {
-      skipUpdateIfNoValuesChanged: true,
-      conflictPaths: ['key'],
-    });
+    // await roleSystemRepository.upsert(roleSystems, {
+    //   skipUpdateIfNoValuesChanged: true,
+    //   conflictPaths: ['key'],
+    // });
 
-    await roleSystemPermissionRepository.upsert(roleSystemPermissions, {
-      skipUpdateIfNoValuesChanged: true,
-      conflictPaths: ['roleSystemId', 'permissionId'],
-    });
+    // await roleSystemPermissionRepository.upsert(roleSystemPermissions, {
+    //   skipUpdateIfNoValuesChanged: true,
+    //   conflictPaths: ['roleSystemId', 'permissionId'],
+    // });
 
     const accountExists = await accountRepository.findOne({
       where: {
