@@ -278,7 +278,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       this.commonService.reduceAttributes(data?.businessSizeAndOwnership);
 
     formattedData.preferential = [];
-    for (const pt of data?.preferential) {
+    for (const pt of (data?.preferential ?? [])) {
       const formated = this.commonService.reduceAttributes(pt);
       formattedData.preferential.push(formated);
     }
@@ -321,96 +321,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
-  /*
-    async addDraftVendorInformation(data: any, userInfo: any): Promise<any> {
-      try {
-        const initiatedVendor = await this.isrVendorsRepository.findOne({
-          where: { userId: userInfo.id, status: VendorStatusEnum.DRAFT },
-        });
-        if (!initiatedVendor)
-          throw new HttpException('vendor is not initiated', 400);
-        if (
-          data.initial.status == VendorStatusEnum.DRAFT ||
-          data.initial.status == VendorStatusEnum.SAVE
-        ) {
-          const isrVendor = await this.fromInitialValue(data);
-          if (
-            data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
-            data.initial.status.trim() === VendorStatusEnum.SAVE
-          ) {
-            let ncicData = null;
-            let fppaData = null;
-            const length = data.areasOfBusinessInterest.length;
-            for (let index = 0; index < length; index++) {
-              if (data.basic.origin == 'MW' || data.basic.origin == 'Malawi') {
-                if (
-                  data.areasOfBusinessInterest[index] === 'work' &&
-                  ncicData == null
-                ) {
-                  ncicData = await this.fetchFromExternalApi(
-                    `ncic-vendors/${isrVendor.tinNumber}`,
-                  );
-                  if (ncicData == null) {
-                    isrVendor.initial.status = VendorStatusEnum.SAVE;
-                    isrVendor.initial.level = VendorStatusEnum.PPDA;
-                  } else {
-                    isrVendor.basic.district = ncicData?.district;
-                    isrVendor.basic.nameOfFirm = ncicData?.nameOfFirm;
-                    isrVendor.basic.nationalOfFirm = ncicData?.nationalOfFirm;
-                    isrVendor.basic.typeOfRegistration =
-                      ncicData?.typeOfRegistration;
-                    isrVendor.basic.branch = ncicData?.branch;
-                    isrVendor.basic.category = ncicData?.category;
-                    isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
-                    isrVendor.address.postalAddress = ncicData?.postalAddress;
-                    isrVendor.address.primaryEmail = ncicData?.email;
-                    isrVendor.address.region = ncicData?.region;
-                  }
-                } else if (fppaData == null) {
-                  fppaData = await this.fetchFromExternalApi(
-                    `fppa-vendors/${isrVendor.tinNumber}`,
-                  );
-                  if (fppaData !== null) {
-                    isrVendor.basic.businessType = fppaData.businessType;
-                    isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
-                    continue;
-                  }
-                } else if (fppaData !== null) {
-                  continue;
-                }
-              } else {
-                isrVendor.initial.status = VendorStatusEnum.SAVE;
-                isrVendor.initial.level = VendorStatusEnum.PPDA;
-                // await this.isrVendorsRepository.save(isrVendor);
-              }
-            }
-          }
-          let priceRangeIds = [];
-          if (data?.areasOfBusinessInterest.length > 0) {
-            priceRangeIds = data.areasOfBusinessInterest.map(
-              (item: any) => item.priceRange,
-            );
-          }
-          const vendorInfo: any = {
-            id: isrVendor?.id,
-            name: isrVendor.basic['name'],
-          };
-          await this.invoiceService.generateInvoice(
-            priceRangeIds,
-            vendorInfo,
-            userInfo,
-          );
-          await this.isrVendorsRepository.save(isrVendor);
-          return { msg: 'Success' };
-        } else {
-          throw new BadRequestException('invalid status');
-        }
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
-    }
-  */
   async addService(
     paymentReceiptDto: ReceiptDto,
     attachment: Express.Multer.File,
@@ -472,7 +382,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         if (status == ApplicationStatus.ADJUSTMENT) {
           const dto = new GotoNextStateDto();
           dto.action = 'ISR';
-          dto.data = srvendor;
+          const formattedData = await this.formatData(srvendor);
+          const documentId = await this.generatePDFForReview(formattedData, user);
+          wfi.data = { documentId: documentId, ...formattedData };
+
           dto.instanceId = instanceId;
           const workflowInstance = await this.workflowService.gotoNextStep(
             dto,
@@ -490,7 +403,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           ).id;
           wfi.serviceId = invoice.serviceId;
           wfi.requestorId = vendorData.id;
-          wfi.data = srvendor;
+          const formattedData = await this.formatData(srvendor);
+          const documentId = await this.generatePDFForReview(formattedData, user);
+          wfi.data = { documentId: documentId, ...formattedData };
           const resonse = await this.workflowService.intiateWorkflowInstance(
             wfi,
             user,
@@ -1532,7 +1447,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           for (const bi of vendorEntity?.areasOfBusinessInterest) {
             if (bi.priceRange == price.id) {
               const priceRange = this.commonService.formatPriceRange(price);
-              const lob = bi.lineOfBusiness.map((item: any) => item.name);
+              const lob = bi?.lineOfBusiness?.map((item: any) => item.name);
               formattedAreaOfBi.push({
                 category: bi.category,
                 priceRange: priceRange,
@@ -1971,7 +1886,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const priceRange = this.commonService.formatPriceRange(ba.servicePrice);
       for (const lob of vendorData.areasOfBusinessInterest) {
         if (lob.category == ba.category) {
-          bl = lob.lineOfBusiness.map((item: any) => item.name);
+          bl = lob?.lineOfBusiness?.map((item: any) => item.name);
           businessarea = {
             category: ba.category,
             ValueRange: priceRange,
@@ -2063,7 +1978,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       }),
       areasOfBusinessInterest: result.areasOfBusinessInterest.map((entity) => {
         return {
-          name: entity.lineOfBusiness[0].name,
+          name: entity?.lineOfBusiness?.[0]?.name,
           category: entity.category,
         };
       }),
@@ -2277,7 +2192,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       for (const bi of abis) {
         if (bi.priceRange == price.id) {
           const priceRange = this.commonService.formatPriceRange(price);
-          const lob = bi.lineOfBusiness.map((item: any) => item.name);
+          const lob = bi?.lineOfBusiness?.map((item: any) => item.name);
           formattedAreaOfBi.push({
             category: bi.category,
             priceRange: priceRange,
@@ -2341,7 +2256,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         vendorEntity.status = vendor.status;
         vendorEntity.tenantId = vendor.tenantId;
         // vendorEntity.shareHolders = vendor.shareholders;
-        vendorEntity.lineOfBusiness = vendor.lineOfBusiness;
+        vendorEntity.lineOfBusiness = vendor?.lineOfBusiness;
         vendorEntity.address = vendor.metaData?.address;
         vendorEntity.initial = vendor.metaData?.initial;
         vendorEntity.contactPersons = vendor.metaData?.contactPersons;

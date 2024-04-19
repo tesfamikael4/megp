@@ -401,23 +401,24 @@ export const bpsToSeed = [
         organizationName: null,
     },
 
-    //MSME
+    //medium Enterprise new WF tasks completed
     {
         tenantId: 0,
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
         serviceId: 'a63fb5b1-9896-8c73-4fd0-882d4e9a6e9a',
         workflow: {
-            id: 'medium Enterprise WF',
+            id: 'Medium Enterprise WF',
             states: {
                 End: {
                     on: {},
                     meta: {
                         type: 'end',
+                        apiUrl: '',
                     },
                 },
                 'Submission of Medium Enterprise Registration Request': {
                     on: {
-                        ISR: 'Approval of Medium Enterprises Registration Request',
+                        ISR: 'Review Medium Enterprise Registration Request by Registration Officer',
                     },
                     meta: {
                         type: {
@@ -425,24 +426,61 @@ export const bpsToSeed = [
                         },
                     },
                 },
-                'Approval of Medium Enterprises Registration Request': {
+
+                'Review Medium Enterprise Registration Request by Registration Officer': {
                     on: {
                         ADJUST: 'Submission of Medium Enterprise Registration Request',
-                        REJECT: 'End',
-                        APPROVE: 'End',
+                        CANCEL: 'End',
+                        APPROVE:
+                            'Approval of Medium Enterprise Registration Request by Senior or chief registration officer or RRM/DRRM',
                     },
                     meta: {
-                        type: 'Approval',
+                        type: 'InitialReview',
+                    },
+                },
+                'Approval of Medium Enterprise Registration Request by Senior or chief registration officer or RRM/DRRM':
+                {
+                    on: {
+                        NO: 'Submission of Medium Enterprise Registration Request',
+                        YES: 'Approval of Medium Enterprise Registration Request by Director General (DG)',
+                    },
+                    meta: {
+                        type: 'Confirmation',
+                    },
+                },
+                'Approval of Medium Enterprise Registration Request by Director General (DG)':
+                {
+                    on: {
+                        ADJUST: 'Submission of Medium Enterprise Registration Request',
+                        APPROVE: 'Generate Vendor Registration Certificate',
+                        REJECT: 'End',
+                    },
+                    meta: {
+                        type: 'Confirmation',
+                    },
+                },
+                'Generate Vendor Registration Certificate': {
+                    on: {
+                        FAIL: 'Generate Vendor Registration Certificate',
+                        SUCCESS: 'End',
+                    },
+                    meta: {
+                        type: 'Certificate',
                     },
                 },
             },
             initial: 'Submission of Medium Enterprise Registration Request',
-        },
+        }
+        ,
         version: 0,
         isActive: true,
         organizationId: null,
         organizationName: null,
     },
+
+    //small Enterprise new WF tasks
+    //will be updated
+
     {
         tenantId: 0,
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
@@ -1044,11 +1082,12 @@ export const tasksToSeed = [
 
 
     //meduim
+    //new meduim  Enterpize tasks
     {
         id: '16752a13-201f-45eb-8b6f-118ebf0c89c4',
         name: 'Submission of Medium Enterprise Registration Request',
         label: 'Submitted Medium Enterprise Request',
-        description: 'Submission of  Medium Enterprises Registration Request',
+        description: 'Submission of Medium Enterprises Registration Request',
         bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
         handlerType: 'Requestor',
         taskType: 'ISR',
@@ -1057,21 +1096,58 @@ export const tasksToSeed = [
     },
     {
         id: '96752a13-201f-45eb-8b6f-118ebf0c89c9',
-        name: 'Approval of Medium Enterprises Registration Request',
-        label: 'Submitted Medium Enterprise Request',
-        description: 'Approval of Medium Enterprises Registration Request',
+        name: 'Review Medium Enterprise Registration Request by Registration Officer',
+        label: 'Reviewed ME Registration Request',
+        description: 'Reviewing Vendor ME Applications',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
+        handlerType: 'Assignee',
+        taskType: 'InitialReview',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 2,
+    },
+    {
+        id: '96752a13-205f-15eb-8b5f-118ebf0c29c1',
+        name: 'Approval of Medium Enterprise Registration Request by Senior or chief registration officer or RRM/DRRM',
+        label: 'Reviewed by RO',
+        description: 'aprove  Medium Enterprise registration request for Goods by senior or chief registration officer',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
+        handlerType: 'Assignee',
+        taskType: 'Confirmation',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 3,
+    },
+    {
+        id: '16752a13-205f-15eb-8b5f-118ebf0c29c1',
+        name: 'Approval of Medium Enterprise Registration Request by Director General (DG)',
+        label: 'Approved by DG',
+        description:
+            'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
         bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
         handlerType: 'Assignee',
         taskType: 'Approval',
         checkList: [
             {
-                id: '96d95fdb-7852-4ddc-912f-0e94d23d15d3',
+                id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
                 description:
-                    'The Attached MSME certeficate and other documents are valid.',
+                    'All the required information and related documents fullfilled',
                 isMandatory: 'true',
             },
         ],
-        orderBy: 1,
+        orderBy: 4,
     },
     {
         id: '16752a13-205f-11eb-8b5f-118ebf0c29c2',
@@ -1081,12 +1157,9 @@ export const tasksToSeed = [
         bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
         handlerType: 'Assignee',
         taskType: 'Certificate',
-        checkList: [
-        ],
+        checkList: [],
         orderBy: 3,
     },
-
-
     //new BP task of IBM
     {
         id: '96752a13-205f-45eb-8b5f-118ebf0c89c7',

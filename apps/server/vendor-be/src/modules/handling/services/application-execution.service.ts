@@ -117,7 +117,7 @@ export class ApplicationExcutionService {
           const bia = instance.isrVendor?.areasOfBusinessInterest.find(
             (item: any) => item.category == range.category,
           );
-          const lobs = bia?.lineOfBusiness.map((item: any) => {
+          const lobs = bia?.lineOfBusiness?.map((item: any) => {
             return item.name;
           });
 
@@ -126,7 +126,6 @@ export class ApplicationExcutionService {
             priceRange: formattedBC,
             lineOfBusiness: lobs,
           });
-
           response.isrvendor.basic.status =
             range.status == ApplicationStatus.PENDING
               ? ApplicationStatus.INPROGRESS
@@ -297,7 +296,7 @@ export class ApplicationExcutionService {
           valueTo: price.priceTo,
         };
         const formattedBC = this.commonService.formatPriceRange(tempvalue);
-        const bls = price.lineOfBusiness; //.map((item) => item.name);
+        const bls = price?.lineOfBusiness; //.map((item) => item.name);
         businessInterest.push({
           category: this.commonService.capitalizeFirstLetter(price.category),
           priceRange: formattedBC,
