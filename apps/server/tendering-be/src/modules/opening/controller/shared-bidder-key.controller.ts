@@ -9,7 +9,7 @@ const options: ExtraCrudOptions = {
   entityIdName: 'tenderId',
 };
 
-@Controller('shared bidder key')
+@Controller('shared-bidder-key')
 @ApiTags('Shared Bidder Key Controller')
 export class SharedBidderKeyController extends ExtraCrudController<SharedBidderKey>(
   options,
