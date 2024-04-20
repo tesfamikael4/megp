@@ -18,7 +18,7 @@ export class MinIOService {
       const filepath = randomUUID() + extname(file.originalname);
       await this.minioService.client.putObject(
         BucketNameEnum.MEGP,
-        bucketName + filepath,
+        bucketName ? bucketName + filepath : filepath,
         file.buffer,
         { ...metaData, 'Content-Type': file.mimetype },
       );
@@ -45,7 +45,7 @@ export class MinIOService {
     const duration = Number(process.env.DURATION_OF_PRE_SIGNED_DOCUMENT ?? 120);
     const presignedUrl = await this.minioService.client.presignedPutObject(
       BucketNameEnum.MEGP,
-      bucketName ? bucketName : '' + filepath,
+      bucketName ? bucketName + filepath : filepath,
       duration,
     );
 
@@ -75,7 +75,7 @@ export class MinIOService {
       const filepath = randomUUID() + extname(originalname);
       await this.minioService.client.putObject(
         BucketNameEnum.MEGP,
-        bucketName + filepath,
+        bucketName ? bucketName + filepath : filepath,
         buffer,
         { ...metaData, 'Content-Type': mimetype },
       );
@@ -96,7 +96,9 @@ export class MinIOService {
   ) {
     const result = await this.minioService.client.getObject(
       BucketNameEnum.MEGP,
-      fileInfo.bucketName + fileInfo.filepath,
+      fileInfo.bucketName
+        ? fileInfo.bucketName + fileInfo.filepath
+        : fileInfo.filepath,
     );
 
     response.setHeader('Content-Type', fileInfo.contentType);
@@ -118,7 +120,9 @@ export class MinIOService {
 
     const presignedUrl = await this.minioService.client.presignedGetObject(
       BucketNameEnum.MEGP,
-      fileInfo.bucketName + fileInfo.filepath,
+      fileInfo.bucketName
+        ? fileInfo.bucketName + fileInfo.filepath
+        : fileInfo.filepath,
       duration,
     );
     return presignedUrl;
@@ -131,7 +135,9 @@ export class MinIOService {
   }) {
     const result = await this.minioService.client.getObject(
       BucketNameEnum.MEGP,
-      fileInfo.bucketName + fileInfo.filepath,
+      fileInfo.bucketName
+        ? fileInfo.bucketName + fileInfo.filepath
+        : fileInfo.filepath,
     );
 
     return result;
