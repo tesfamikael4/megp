@@ -131,7 +131,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         />
       )}
       <Flex className={styles.root}>
-        <Text fw={600} size="sm">
+        <Text fw={600} size="sm" className="line-clamp-1" title={label}>
           {label}
         </Text>
 

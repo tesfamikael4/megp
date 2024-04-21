@@ -1,7 +1,13 @@
 import React, { Suspense } from 'react';
-import { useFieldArray } from 'react-hook-form';
-import { Fieldset, Flex, Group, LoadingOverlay, Select } from '@mantine/core';
-import { MultiSelect } from '@mantine/core';
+import { Controller, useFieldArray } from 'react-hook-form';
+import {
+  Fieldset,
+  Flex,
+  Grid,
+  LoadingOverlay,
+  Select,
+  TextInput,
+} from '@mantine/core';
 import { PassFormDataProps } from './formShell';
 import {
   useGetLineOfBusinessQuery,
@@ -12,8 +18,10 @@ import { servicesList } from '../../../_constants';
 import {
   getCategoryProps,
   getFormattedPriceRangeValues,
-  getLineOfBusinessMultiSelectData,
 } from '../../../_utils';
+import { DatePickerInput } from '@mantine/dates';
+import { IconCalendar } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import MultiCheckBox from '@/app/(features)/my-workspace/_components/multiCheckBox';
 interface Props extends PassFormDataProps {
   name: any;
@@ -67,55 +75,156 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
               legend={`${field.category}`}
               key={field.id}
             >
-              <Group grow>
-                <MultiSelect
-                  label="Line Of Business"
-                  data={getLineOfBusinessMultiSelectData(
-                    field.category,
-                    getLineOfBusinessValues.data?.items ?? [],
-                  )}
-                  placeholder="Select"
-                  {...register(`${name}.${index}.lineOfBusiness`, 'select')}
-                  value={
-                    register(`${name}.${index}.lineOfBusiness`, 'select').value
-                      ?.id
-                  }
-                  defaultValue={register(
-                    `${name}.${index}.lineOfBusiness`,
-                    'select',
-                  ).value?.map((v: any) => v.id)}
-                  onChange={(value) => {
-                    register(
-                      `${name}.${index}.lineOfBusiness`,
-                      'select',
-                    ).onChange(
-                      value.map((v) => ({
-                        id: v,
-                        name: (
-                          getLineOfBusinessMultiSelectData(
-                            field.category,
-                            getLineOfBusinessValues.data?.items ?? [],
-                          )?.find((item: any) => item.value == v) as {
-                            value: string;
-                            label: string;
-                          }
-                        )?.label,
-                      })),
-                    );
-                  }}
-                  withAsterisk
-                  required
-                />
-                <Select
-                  label="Price Range"
-                  placeholder="Select"
-                  data={getFormattedPriceRangeValues(
-                    field.category,
-                    priceRange ?? [],
-                  )}
-                  {...register(`${name}.${index}.priceRange`, 'select')}
-                />
-              </Group>
+              <Grid grow gutter={{ base: 'md' }}>
+                <Grid.Col span={6}>
+                  <Select
+                    label="Price Range"
+                    placeholder="Select"
+                    data={getFormattedPriceRangeValues(
+                      field.category,
+                      priceRange ?? [],
+                    )}
+                    {...register(`${name}.${index}.priceRange`, 'select')}
+                  />
+                </Grid.Col>
+                {field.category === 'Works' && (
+                  <>
+                    <Grid.Col span={6}>
+                      <Select
+                        label="User Type"
+                        placeholder="Select User Type"
+                        data={['Contractor', 'Consultants']}
+                        {...register(`${name}.${index}.userType`, 'select')}
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                      <Select
+                        label="Classification"
+                        placeholder="Select"
+                        data={['Contractor', 'Consultants']}
+                        {...register(
+                          `${name}.${index}.classification`,
+                          'select',
+                        )}
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                      <Controller
+                        name={`areasOfBusinessInterest.${index}.activationDate`}
+                        control={control}
+                        render={({ field }) => (
+                          <DatePickerInput
+                            // name={`areasOfBusinessInterest.${index}.activationDate`}
+                            valueFormat="YYYY/MM/DD"
+                            required
+                            label="Activation Date"
+                            placeholder="Activation Date"
+                            leftSection={
+                              <IconCalendar size={'1.2rem'} stroke={1.5} />
+                            }
+                            maxDate={dayjs(new Date()).toDate()}
+                            // {...register(`areasOfBusinessInterest.${index}.activationDate`)}
+                            onChange={async (value: any) =>
+                              value &&
+                              field.onChange(
+                                dayjs(value)
+                                  .format('YYYY/MM/DD')
+                                  .toString()
+                                  .replace(/\//g, '-'),
+                              )
+                            }
+                            error={
+                              register(
+                                `areasOfBusinessInterest.${index}.activationDate`,
+                              ).error
+                            }
+                          />
+                        )}
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                      <Controller
+                        name={`areasOfBusinessInterest.${index}.expiryDate`}
+                        control={control}
+                        render={({ field }) => (
+                          <DatePickerInput
+                            // name={`areasOfBusinessInterest.${index}.expiryDate`}}`}
+                            valueFormat="YYYY/MM/DD"
+                            required
+                            label="Expiry Date"
+                            placeholder="Expiry Date"
+                            leftSection={
+                              <IconCalendar size={'1.2rem'} stroke={1.5} />
+                            }
+                            maxDate={dayjs(new Date()).toDate()}
+                            // {...register(`areasOfBusinessInterest.${index}.expiryDate`)}
+                            onChange={async (value: any) =>
+                              value &&
+                              field.onChange(
+                                dayjs(value)
+                                  .format('YYYY/MM/DD')
+                                  .toString()
+                                  .replace(/\//g, '-'),
+                              )
+                            }
+                            error={
+                              register(
+                                `areasOfBusinessInterest.${index}.expiryDate}`,
+                              ).error
+                            }
+                          />
+                        )}
+                      />
+                    </Grid.Col>
+                    {register('basic.countryOfRegistration').value ===
+                      'Malawi' &&
+                      field.category === 'Works' && (
+                        <>
+                          <Grid.Col span={6}>
+                            <TextInput
+                              label="NCIC Registration Number"
+                              placeholder="Enter NCIC Registration Number"
+                              {...register(
+                                `${name}.${index}.ncicRegistrationNumber`,
+                              )}
+                            />
+                          </Grid.Col>
+                          <Grid.Col span={6}>
+                            <Controller
+                              name={`areasOfBusinessInterest.${index}.ncicRegistrationDate`}
+                              control={control}
+                              render={({ field }) => (
+                                <DatePickerInput
+                                  // name={`areasOfBusinessInterest.${index}.expiryDate`}}`}
+                                  valueFormat="YYYY/MM/DD"
+                                  required
+                                  label="Expiry Date"
+                                  placeholder="Expiry Date"
+                                  leftSection={
+                                    <IconCalendar
+                                      size={'1.2rem'}
+                                      stroke={1.5}
+                                    />
+                                  }
+                                  maxDate={dayjs(new Date()).toDate()}
+                                  onChange={async (value: any) =>
+                                    value &&
+                                    field.onChange(
+                                      dayjs(value)
+                                        .format('YYYY/MM/DD')
+                                        .toString()
+                                        .replace(/\//g, '-'),
+                                    )
+                                  }
+                                />
+                              )}
+                            />
+                          </Grid.Col>
+                        </>
+                      )}
+                  </>
+                )}
+              </Grid>
             </Fieldset>
           );
         })}

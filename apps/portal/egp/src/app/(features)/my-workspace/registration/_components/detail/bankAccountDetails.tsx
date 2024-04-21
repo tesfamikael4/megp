@@ -16,12 +16,11 @@ import {
   IconMapPin,
   IconUser,
 } from '@tabler/icons-react';
-import { usePrivilege } from '../../new/_context/privilege-context';
 import { useGetBankListQuery } from '../../_api/query';
 import {
   CardListShell,
   SingleCardWrapper,
-} from '@/app/(features)/vendor/_components/cardList/cardListShell';
+} from '@/app/(features)/my-workspace/_components/cardList/cardListShell';
 
 interface Props extends PassFormDataProps {
   itemSchema: any;
@@ -37,7 +36,6 @@ export const BankAccountDetails: React.FC<Props> = ({
   disabled,
 }) => {
   const { data, isLoading, isSuccess, status } = useGetBankListQuery({});
-  console.log('data', control?._formValues?.bankAccountDetails);
 
   const bankList =
     status === 'fulfilled' && data && data.length
@@ -60,6 +58,7 @@ export const BankAccountDetails: React.FC<Props> = ({
     }
     return null;
   };
+
   return (
     <>
       <CardListShell
@@ -67,18 +66,20 @@ export const BankAccountDetails: React.FC<Props> = ({
         control={control}
         title="Bank Account Information"
         initialValues={{
-          accountHolderFullName: '',
+          bankId: '',
+          bankType: 'International', // Assuming default to "International"
+          bankName: '',
+          branchName: '',
+          accountType: 'Saving', // Assuming default to "Saving"
           accountNumber: '',
-          branchAddress: '',
+          branchAddress: undefined,
+          accountHolderFullName: '',
           currency: '',
-          bankSwift: '',
           IBAN: '',
           status: '',
-          bankId: '',
-          bankName: '',
           hashValue: '',
-          accountType: '',
           isDefualt: false,
+          swiftCode: '',
         }}
         itemSchema={itemSchema}
         disabled={disabled}
@@ -90,14 +91,37 @@ export const BankAccountDetails: React.FC<Props> = ({
             />
             <Stack>
               <Group grow>
+                <Select
+                  label="Bank Type"
+                  withAsterisk
+                  data={['International', 'Local']}
+                  placeholder="select"
+                  searchable
+                  {...getInputProps('bankType', 'select')}
+                />
+                <Select
+                  label="Account Type"
+                  withAsterisk
+                  data={['Saving', 'Current']}
+                  placeholder="Select Account Type"
+                  searchable
+                  {...getInputProps('accountType', 'select')}
+                  onChange={(value) => {
+                    getInputProps('accountType', 'select').onChange(value);
+                  }}
+                />
+              </Group>
+              <Group grow>
                 <TextInput
                   withAsterisk
                   label="Account Holder Full Name"
+                  placeholder="Enter account holder full name"
                   {...getInputProps('accountHolderFullName')}
                 />
 
                 <TextInput
                   label="Account Number"
+                  placeholder="Enter Account Number"
                   withAsterisk
                   type="number"
                   {...getInputProps('accountNumber')}
@@ -105,14 +129,14 @@ export const BankAccountDetails: React.FC<Props> = ({
               </Group>
 
               <Group grow>
-                {register('basic.origin', 'select').value === 'Malawi' ? (
+                {register('basic.countryOfRegistration', 'select').value ===
+                'Malawi' ? (
                   <>
-                    {' '}
                     <Select
                       label="Bank Name"
                       withAsterisk
                       data={bankList}
-                      placeholder="select"
+                      placeholder="Select Bank Name"
                       searchable
                       {...getInputProps('bankId', 'select')}
                       onChange={(value) => {
@@ -124,6 +148,7 @@ export const BankAccountDetails: React.FC<Props> = ({
                     />
                     <TextInput
                       label="Branch Name"
+                      placeholder="Enter Branch name"
                       withAsterisk
                       required
                       {...getInputProps('branchName')}
@@ -134,10 +159,12 @@ export const BankAccountDetails: React.FC<Props> = ({
                     {' '}
                     <TextInput
                       label="Bank Name"
+                      placeholder="Enter Bank name"
                       {...getInputProps('bankName')}
                     />
                     <TextInput
                       label="Branch Name"
+                      placeholder="Enter Branch name"
                       {...getInputProps('branchName')}
                     />
                   </>
@@ -146,37 +173,48 @@ export const BankAccountDetails: React.FC<Props> = ({
               <Group grow>
                 <Textarea
                   label="Bank Branch Address"
+                  placeholder="Enter branch address"
                   {...getInputProps('branchAddress')}
                 />
                 <Select
                   label="Currency"
                   data={['USD', 'ETB', 'EUR', 'GBP', 'MKW']}
                   withAsterisk
-                  placeholder="select"
+                  placeholder="Select Currency"
                   searchable
                   {...getInputProps('currency', 'select')}
                 />
               </Group>
-              <Group grow>
-                <TextInput
-                  label="Bank SWIFT/BIC code"
-                  withAsterisk
-                  {...getInputProps('bankSwift')}
-                />
+              {getInputProps('bankType', 'select').value ===
+                'International' && (
+                <Group grow>
+                  <TextInput
+                    label="Bank SWIFT/BIC code"
+                    placeholder="Enter SWIFT/BIC code"
+                    withAsterisk
+                    {...getInputProps('swiftCode')}
+                  />
 
-                <TextInput
-                  withAsterisk
-                  label="IBAN"
-                  {...getInputProps('IBAN')}
-                />
-              </Group>
+                  <TextInput
+                    withAsterisk
+                    label="International Bank Account Number (IBAN)"
+                    placeholder="Enter International Bank Account Number (IBAN)"
+                    {...getInputProps('IBAN')}
+                  />
+                </Group>
+              )}
               <Group grow>
                 {control?._formValues?.bankAccountDetails.every(
                   (val: any) => !val.isDefualt,
                 ) && (
                   <Checkbox
                     label="Is Default"
-                    {...getInputProps('isDefualt')}
+                    {...getInputProps('isDefualt', 'checkbox')}
+                    onChange={(event) => {
+                      getInputProps('isDefualt', 'checkbox').onChange(
+                        event.currentTarget.checked,
+                      );
+                    }}
                   />
                 )}
               </Group>

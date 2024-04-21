@@ -23,6 +23,7 @@ import { getBidFormApi } from '@/app/(features)/vendor/_api/bid-form';
 import { publicVendorsApi } from '@/app/(features)/_api/vendors.api';
 import { getRegistrationApi } from '@/app/(features)/_api/registration.api';
 import { ItemBidResponseApi } from '@/app/(features)/tender-workspace/_api/item-bid-response.api';
+import { administrationApi } from './api/administrationApi';
 
 export const store = configureStore({
   reducer: {
@@ -47,6 +48,7 @@ export const store = configureStore({
     [getTenderSpdApi.reducerPath]: getTenderSpdApi.reducer,
     [publicVendorsApi.reducerPath]: publicVendorsApi.reducer,
     [ItemBidResponseApi.reducerPath]: ItemBidResponseApi.reducer,
+    [administrationApi.reducerPath]: administrationApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) => {

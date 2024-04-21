@@ -1,16 +1,41 @@
 'use client';
 import { useEffect } from 'react';
-import { Flex, Box, Button, LoadingOverlay } from '@mantine/core';
+import {
+  Flex,
+  Box,
+  Button,
+  LoadingOverlay,
+  MultiSelect,
+  TextInput,
+  Group,
+} from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { Control, RegisterOptions, useForm } from 'react-hook-form';
+import {
+  Control,
+  Controller,
+  RegisterOptions,
+  UseFormSetValue,
+  useForm,
+} from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAddFormMutation } from '../../../_api/query';
+import {
+  useAddFormMutation,
+  useGetLineOfBusinessQuery,
+} from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { FormData } from '@/models/vendorRegistration';
 import AreasOfBusinessInterest from './areasOfBusinessInterest';
 import { usePrivilege } from '../../_context/privilege-context';
 import { ExtendedRegistrationReturnType } from '../../../_components/detail/formShell';
+import {
+  getLineOfBusinessMultiSelectData,
+  getLineOfBusinesseSelectOptions,
+} from '../../../_utils';
+import { useGetLineOfBusinessesQuery } from '@/store/api/administrationApi';
+import { DatePickerInput } from '@mantine/dates';
+import { IconCalendar } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 
 export interface PassFormDataProps {
   register: (
@@ -19,28 +44,66 @@ export interface PassFormDataProps {
     options?: RegisterOptions<FormData, any> | undefined,
   ) => ExtendedRegistrationReturnType;
   control: Control<FormData, any>;
+  setValue?: UseFormSetValue<FormData>;
 }
 export const lineOfBusinessSchema = z.object({
   id: z
     .string()
     .min(2, { message: 'At least one Line Of Business Interest is required' }),
+  name: z.string().min(2, { message: 'Line Of Business Interest is required' }),
 });
 
-export const areasOfBusinessInterestSchema = z.object({
+const activationExpiryValidator = (data) => {
+  if (!data.activationDate || !data.expiryDate) {
+    return true;
+  }
+  const { activationDate, expiryDate } = data;
+  const activation = new Date(activationDate);
+  const expiry = new Date(expiryDate);
+
+  if (isNaN(activation.getTime()) || isNaN(expiry.getTime())) {
+    // If either date is invalid, return false
+    return false;
+  }
+
+  // Ensure activation date is before or equal to expiry date
+  return activation <= expiry;
+};
+
+export const areasOfBusinessInterestSchema = z
+  .discriminatedUnion('category', [
+    z.object({
+      category: z.enum(['Goods', 'Services']),
+      priceRange: z.string().min(1, 'Price range must be selected'),
+    }),
+    z.object({
+      category: z.literal('Works'),
+      priceRange: z.string().min(1, 'Price range must be selected'),
+      userType: z.union([z.literal('Contractor'), z.literal('Consultant')]),
+      classification: z.string(),
+      activationDate: z.string(),
+      expiryDate: z.string(),
+      ncicRegistrationNumber: z.string().optional(),
+      ncicRegistrationDate: z.string().optional(),
+    }),
+  ])
+  .refine((data) => activationExpiryValidator(data), {
+    message: 'Activation date must be before or equal to expiry date',
+  });
+
+export const formDataSchema = z.object({
   lineOfBusiness: z
     .array(lineOfBusinessSchema)
     .refine((arr) => arr.length > 0, {
       message: 'At least one Line Of Business Interest is required',
     }),
-  priceRange: z.string().min(2, { message: 'Price Range is required' }),
-});
-
-export const formDataSchema = z.object({
   areasOfBusinessInterest: z
     .array(areasOfBusinessInterestSchema)
     .refine((arr) => arr.length > 0, {
       message: 'At least one Areas Of Business Interest is required',
     }),
+  ppdaRegistrationNumber: z.string().optional(),
+  ppdaRegistrationDate: z.string().optional(),
 });
 
 export const AreasOfBusinessInterestForm = ({
@@ -72,6 +135,7 @@ export const AreasOfBusinessInterestForm = ({
 
   const router = useRouter();
   const [save, saveValues] = useAddFormMutation();
+  const getLineOfBusinessValues = useGetLineOfBusinessesQuery({});
   const { checkAccess, lockElements, updateAccess } = usePrivilege();
 
   useEffect(() => {
@@ -127,6 +191,7 @@ export const AreasOfBusinessInterestForm = ({
       data: {
         ...initialValues,
         areasOfBusinessInterest: getValues().areasOfBusinessInterest,
+        lineOfBusiness: getValues().lineOfBusiness,
         initial: {
           ...vendorInfo,
           level: 'payment',
@@ -137,7 +202,7 @@ export const AreasOfBusinessInterestForm = ({
   return (
     <Box className="p-2 w-full relative">
       <LoadingOverlay
-        visible={saveValues.isLoading}
+        visible={getLineOfBusinessValues.isLoading || saveValues.isLoading}
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -146,8 +211,89 @@ export const AreasOfBusinessInterestForm = ({
             name="areasOfBusinessInterest"
             control={control}
             register={extendedRegister}
+            setValue={setValue}
             adjustment={checkAccess('ppda')}
           />
+          {watch('areasOfBusinessInterest') &&
+            watch('areasOfBusinessInterest').length > 0 && (
+              <>
+                <Group grow>
+                  <MultiSelect
+                    label="Line Of Business"
+                    data={getLineOfBusinesseSelectOptions(
+                      getLineOfBusinessValues.data?.items ?? [],
+                    )}
+                    placeholder="Select"
+                    {...extendedRegister(`lineOfBusiness`, 'select')}
+                    value={
+                      extendedRegister(`lineOfBusiness`, 'select').value?.id
+                    }
+                    defaultValue={extendedRegister(
+                      `lineOfBusiness`,
+                      'select',
+                    ).value?.map((v: any) => v.id)}
+                    onChange={(value) => {
+                      extendedRegister(`lineOfBusiness`, 'select').onChange(
+                        value.map((v) => ({
+                          id: v,
+                          name: (
+                            getLineOfBusinesseSelectOptions(
+                              getLineOfBusinessValues.data?.items ?? [],
+                            )?.find((item: any) => item.value == v) as {
+                              value: string;
+                              label: string;
+                            }
+                          )?.label,
+                        })),
+                      );
+                    }}
+                    withAsterisk
+                    required
+                  />
+                  {getValues('areasOfBusinessInterest').some(
+                    (value: z.infer<typeof areasOfBusinessInterestSchema>) =>
+                      value.category === 'Goods' ||
+                      value.category === 'Services',
+                  ) &&
+                    watch('basic.countryOfRegistration') === 'Malawi' && (
+                      <TextInput
+                        label="PPDA Registration Number"
+                        placeholder="Enter PPDA Registration Number"
+                        {...extendedRegister(`ppdaRegistrationNumber`)}
+                      />
+                    )}
+                </Group>
+                {getValues('areasOfBusinessInterest').some(
+                  (value: z.infer<typeof areasOfBusinessInterestSchema>) =>
+                    value.category === 'Goods' || value.category === 'Services',
+                ) &&
+                  watch('basic.countryOfRegistration') === 'Malawi' && (
+                    <Group grow>
+                      <DatePickerInput
+                        valueFormat="YYYY/MM/DD"
+                        required
+                        label="Activation Date"
+                        placeholder="Activation Date"
+                        leftSection={
+                          <IconCalendar size={'1.2rem'} stroke={1.5} />
+                        }
+                        maxDate={dayjs(new Date()).toDate()}
+                        onChange={async (value: any) =>
+                          value &&
+                          (await extendedRegister(
+                            `ppdaRegistrationDate`,
+                          ).onChange(
+                            dayjs(value)
+                              .format('YYYY/MM/DD')
+                              .toString()
+                              .replace(/\//g, '-'),
+                          ))
+                        }
+                      />
+                    </Group>
+                  )}
+              </>
+            )}
         </Flex>
         {watch('areasOfBusinessInterest') &&
           watch('areasOfBusinessInterest').length > 0 && (

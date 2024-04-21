@@ -14,12 +14,28 @@ const getDataByBusinessArea = (
       })) || []
   );
 };
+const getSegmentsFromAdministration = (
+  data: any[],
+  field: string,
+): { value: string; label: string }[] => {
+  return (
+    (data || []).map((item) => ({
+      value: item.id,
+      label: item[field],
+    })) || []
+  );
+};
 
 export const getLineOfBusinessMultiSelectData = (
   businessArea: string,
   data: any[],
+  field: string = 'description',
 ): { value: string; label: string }[] => {
-  return getDataByBusinessArea(businessArea, data, 'description');
+  return getDataByBusinessArea(businessArea, data, field);
+};
+
+export const getLineOfBusinesseSelectOptions = (data: any[]) => {
+  return getSegmentsFromAdministration(data, 'title');
 };
 
 export const getFormattedPriceRangeValues = (

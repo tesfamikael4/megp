@@ -203,27 +203,31 @@ export const ShowFile = ({
           <p>No content available </p>
         )}
 
-        {zoom && (pdfData || fileContent) && (
+        {(pdfData || fileContent) && (
           <>
             <Flex className="w-full" justify={'flex-end'}>
-              <Button
-                variant="subtle"
-                onClick={() => {
-                  console.log('Subtle', pdfData);
-                  return open();
-                }}
-              >
-                view full size
-              </Button>
-              <Button
-                color="blue"
-                variant="subtle"
-                onClick={() => {
-                  return downloadFile();
-                }}
-              >
-                Download
-              </Button>
+              {zoom && (
+                <Button
+                  variant="subtle"
+                  onClick={() => {
+                    console.log('Subtle', pdfData);
+                    return open();
+                  }}
+                >
+                  view full size
+                </Button>
+              )}
+              {download && (
+                <Button
+                  color="blue"
+                  variant="subtle"
+                  onClick={() => {
+                    return downloadFile();
+                  }}
+                >
+                  Download
+                </Button>
+              )}
             </Flex>
           </>
         )}

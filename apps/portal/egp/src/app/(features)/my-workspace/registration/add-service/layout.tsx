@@ -11,12 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     {},
     { refetchOnMountOrArgChange: true },
   );
-  const {
-    data: vendor,
-    isLoading: vendorLoading,
-    isError: isVendorError,
-    error: vendorError,
-  } = useGetVendorQuery({});
+  const { data: vendor, isLoading: vendorLoading } = useGetVendorQuery({});
   const router = useRouter();
 
   if (vendorLoading)

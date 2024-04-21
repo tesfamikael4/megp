@@ -1,8 +1,22 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, Button, Checkbox, LoadingOverlay } from '@mantine/core';
+import {
+  Flex,
+  Box,
+  Button,
+  Checkbox,
+  LoadingOverlay,
+  TextInput,
+  Group,
+} from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { Control, RegisterOptions, useForm } from 'react-hook-form';
+import {
+  Control,
+  Controller,
+  RegisterOptions,
+  UseFormSetValue,
+  useForm,
+} from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
@@ -14,6 +28,9 @@ import {
   useUploadPreferentialAttachmentsMutation,
 } from '@/store/api/preferential-treatment/preferential-treatment.api';
 import { ExtendedRegistrationReturnType } from '../../../_components/detail/formShell';
+import { DatePickerInput } from '@mantine/dates';
+import { IconCalendar } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 
 export interface PassFormDataProps {
   register: (
@@ -22,22 +39,27 @@ export interface PassFormDataProps {
     options?: RegisterOptions<FormData, any> | undefined,
   ) => ExtendedRegistrationReturnType;
   control: Control<FormData, any>;
+  setValue?: UseFormSetValue<FormData>;
 }
-export const preferentialSchema = z.object({
-  category: z.string(),
-  type: z.string().min(2, { message: 'MSME is required' }),
-  certificateUrl: z
-    .instanceof(File, { message: 'Attachment is required', fatal: true })
-    .refine((data) => data instanceof File, {
-      message: 'Attachment is required',
-    }),
-  certiNumber: z.string().min(2, {
-    message: 'Certificate Number must be at least 2 characters long ',
+export const preferentialSchema = z.discriminatedUnion('category', [
+  z.object({
+    category: z.enum(['ibm', 'marginalized']),
+    serviceId: z.string(),
+    certificateValidityPeriod: z.string(), // Certificate validity period
+    certificateIssuedDate: z.string(), // Certificate issuance date
   }),
-  serviceId: z.string().min(2, {
-    message: 'Service ID must be at least 2 characters long ',
+  z.object({
+    category: z.literal('msme'),
+    serviceId: z.string(),
+    type: z.union([
+      z.literal('Small'),
+      z.literal('Micro'),
+      z.literal('Medium'),
+    ]), // Type of MSME
+    certificateValidityPeriod: z.string(), // Certificate validity period
+    certificateIssuedDate: z.string(), // Certificate issuance date
   }),
-});
+]);
 
 export const formDataSchema = z.object({
   preferential: z.array(preferentialSchema).optional(),
@@ -126,9 +148,20 @@ export const PreferentialTreatmentForm = ({
 
   const onSubmit = async (data: typeof formState.defaultValues) => {
     const preferential = getValues().preferential.map(
-      ({ certiNumber, serviceId }) => {
+      ({
+        certiNumber,
+        serviceId,
+        certificateIssuedDate,
+        certificateValidityPeriod,
+        category,
+        type,
+      }) => {
         return {
+          category,
+          type,
           certiNumber,
+          certificateIssuedDate,
+          certificateValidityPeriod,
           serviceId,
           status: 'Draft',
         };
@@ -158,6 +191,39 @@ export const PreferentialTreatmentForm = ({
             register={extendedRegister}
             adjustment={vendorInfo.status === 'Adjustment' ? false : true}
           />
+          {watch('preferential') &&
+            watch('preferential').length > 0 &&
+            watch('basic.countryOfRegistration') === 'Malawi' && (
+              <Group grow>
+                <TextInput
+                  label="Preferential Registration Number"
+                  placeholder="Enter Preferential Registration Number"
+                />
+                {/* <Controller
+                  name={`preferentialRegistrationDate`}
+                  control={control}
+                  render={({ field }) => ( */}
+                <DatePickerInput
+                  // name={`areasOfBusinessInterest.${index}.activationDate`}
+                  valueFormat="YYYY/MM/DD"
+                  required
+                  label="Activation Date"
+                  placeholder="Activation Date"
+                  leftSection={<IconCalendar size={'1.2rem'} stroke={1.5} />}
+                  maxDate={dayjs(new Date()).toDate()}
+                  // {...register(`areasOfBusinessInterest.${index}.activationDate`)}
+                  // onChange={async (value: any) =>
+                  //   value &&
+                  //   field.onChange(
+                  //     dayjs(value)
+                  //       .format('YYYY/MM/DD')
+                  //       .toString()
+                  //       .replace(/\//g, '-'),
+                  //   )
+                  // }
+                />
+              </Group>
+            )}
         </Flex>
 
         <Flex className="mt-10 justify-end gap-2">

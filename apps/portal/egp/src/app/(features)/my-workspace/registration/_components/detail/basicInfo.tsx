@@ -9,48 +9,41 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
     <Stack>
       <Group grow>
         <TextInput
-          label="Name of Business/Company"
-          withAsterisk
-          id="name"
-          {...register(`basic.name`)}
-          disabled={true}
-        />
-        <TextInput
-          label="Tax Identification Number (TIN)"
+          label="Taxpayer Identification Number (TIN)"
           {...register(`basic.tinNumber`)}
+          disabled
+        />
+        <Select
+          label="Country of Registration"
+          data={getNationalityValues()}
+          {...register(`basic.countryOfRegistration`, 'select')}
           disabled
         />
       </Group>
       <Group grow>
+        <TextInput
+          label="Name of Business/Company"
+          withAsterisk
+          id="name"
+          {...register(`basic.name`)}
+          disabled
+        />
         <Select
           label="Form of Business"
           withAsterisk
           data={formOfBusiness}
           {...register('basic.businessType', 'select')}
         />
-        <Select
-          label="Country of Registration"
-          data={getNationalityValues()}
-          {...register(`basic.origin`, 'select')}
-          disabled
-        />
       </Group>
-      <Group grow>
-        {register('basic.origin', 'select').value === 'Malawi' ? (
-          <Select
-            label="District"
-            withAsterisk
-            data={malawianDistricts}
-            {...register(`basic.district`, 'select')}
-            className="w-1/2"
-          />
-        ) : (
+      {register(`basic.countryOfRegistration`).value === 'Malawi' && (
+        <Group grow>
           <TextInput
-            label="District/State/Region"
-            {...register(`basic.district`)}
+            label="Registration Number"
+            {...register(`basic.registrationNumber`)}
+            disabled
           />
-        )}
-      </Group>
+        </Group>
+      )}
     </Stack>
   );
 };

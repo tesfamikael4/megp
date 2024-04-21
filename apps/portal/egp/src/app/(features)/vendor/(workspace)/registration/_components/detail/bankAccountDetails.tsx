@@ -105,7 +105,8 @@ export const BankAccountDetails: React.FC<Props> = ({
               </Group>
 
               <Group grow>
-                {register('basic.origin', 'select').value === 'Malawi' ? (
+                {register('basic.countryOfRegistration', 'select').value ===
+                'Malawi' ? (
                   <>
                     {' '}
                     <Select

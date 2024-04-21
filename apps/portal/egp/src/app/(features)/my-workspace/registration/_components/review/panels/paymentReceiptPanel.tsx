@@ -15,11 +15,12 @@ export const PaymentReceiptPanel = ({
       <Flex direction={'column'}>
         <ShowFile
           url={`${
-            process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'
-          }upload/get-file-bo/${'paymentReceipt'}/${
+            process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
+          }/upload/get-file-bo/${'paymentReceipt'}/${
             data[tabValue]?.[fieldKey]
           }/${data?.userId}`}
           filename={data[tabValue]?.[fieldKey]}
+          zoom
         />
       </Flex>
     </Accordion.Panel>

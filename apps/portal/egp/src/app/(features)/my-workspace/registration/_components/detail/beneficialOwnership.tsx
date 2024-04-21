@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, Group, Stack } from '@mantine/core';
+import { TextInput, Group, Stack, Checkbox, NumberInput } from '@mantine/core';
 import { Select } from '@mantine/core';
 import { PassFormDataProps } from './formShell';
 import { CardItem } from './contactPersons';
@@ -7,7 +7,7 @@ import { IconFlag, IconUser } from '@tabler/icons-react';
 import {
   CardListShell,
   SingleCardWrapper,
-} from '@/app/(features)/vendor/_components/cardList/cardListShell';
+} from '@/app/(features)/my-workspace/_components/cardList/cardListShell';
 import { getNationalityValues } from '../../new/_components/mockup/nationality';
 import { usePrivilege } from '../../new/_context/privilege-context';
 
@@ -29,8 +29,13 @@ export const BeneficialOwnership: React.FC<Props> = ({
         control={control}
         initialValues={{
           firstName: '',
+          middleName: '',
           lastName: '',
           nationality: '',
+          countryOfResidence: '',
+          share: 0,
+          votingRights: 0,
+          authorityToAppointGov: false,
         }}
         title="Beneficial Ownership"
         itemSchema={itemSchema}
@@ -46,26 +51,99 @@ export const BeneficialOwnership: React.FC<Props> = ({
               />
 
               <TextInput
+                label="Middle Name"
+                placeholder="Enter Middle name"
+                withAsterisk
+                {...getInputProps('middleName')}
+              />
+            </Group>
+            <Group grow>
+              <TextInput
                 label="Last Name"
                 placeholder="Enter last name"
                 withAsterisk
                 {...getInputProps('lastName')}
               />
-            </Group>
-            <Group grow>
               <Select
                 label="Nationality"
+                placeholder="Enter Nationality"
                 withAsterisk
                 searchable
                 data={getNationalityValues()}
                 {...getInputProps('nationality', 'select')}
               />
             </Group>
+            <Group grow>
+              <Select
+                label="Country of Residence"
+                placeholder="Enter Country of Residence"
+                data={getNationalityValues()}
+                withAsterisk
+                {...getInputProps('countryOfResidence', 'select')}
+              />
+              <NumberInput
+                label="Share"
+                withAsterisk
+                hideControls
+                placeholder="Enter Share"
+                {...getInputProps('share', 'number')}
+                onChange={(value) => {
+                  getInputProps('share', 'number').onChange(Number(value));
+                  const previousShareholderShare =
+                    control?._formValues?.shareHolders.reduce(
+                      (acc, shareholder) => (acc += shareholder.share),
+                      0,
+                    );
+                  // if (previousShareholderShare > 100) {
+
+                  // }
+                }}
+                min={1}
+                max={100}
+                suffix="%"
+              />
+            </Group>
+            <Group grow>
+              <NumberInput
+                label="Voting Rights"
+                withAsterisk
+                hideControls
+                placeholder="Enter Voting Rights"
+                {...getInputProps('votingRights', 'number')}
+                onChange={(value) => {
+                  getInputProps('votingRights', 'number').onChange(
+                    Number(value),
+                  );
+                  const previousShareholderShare =
+                    control?._formValues?.shareHolders.reduce(
+                      (acc, shareholder) => (acc += shareholder.share),
+                      0,
+                    );
+                  // if (previousShareholderShare > 100) {
+
+                  // }
+                }}
+                min={1}
+                max={100}
+                suffix="%"
+              />
+              <Checkbox
+                label="Authority to Appoint Government Body"
+                placeholder="Enter Authority to Appoint Government Body"
+                // withAsterisk
+                {...getInputProps('authorityToAppointGov', 'checkbox')}
+                onChange={(value) => {
+                  getInputProps('authorityToAppointGov', 'checkbox').onChange(
+                    value.target.checked,
+                  );
+                }}
+              />
+            </Group>
           </Stack>
         )}
         card={(edit, remove) => (
           <>
-            {control?._formValues?.beneficialOwnership.map(
+            {control?._formValues?.beneficialOwnershipShareholders.map(
               (value: any, index: number) => (
                 <SingleCardWrapper
                   key={index}

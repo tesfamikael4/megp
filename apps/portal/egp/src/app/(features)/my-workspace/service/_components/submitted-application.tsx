@@ -19,7 +19,7 @@ export const SubmittedApplication = () => {
               <Text className="text-primary-800 font-bold" size="xl">
                 {data.basic.name}
               </Text>
-              ({data.basic.origin})
+              ({data.basic.countryOfRegistration})
             </Flex>
             <Text size="md">
               {addSpacesToCamelCase(data.basic?.businessType)}

@@ -1,17 +1,31 @@
 'use client';
-import React, { useEffect } from 'react';
-import { Flex, Box, Button, LoadingOverlay } from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import {
+  Flex,
+  Box,
+  Button,
+  Checkbox,
+  LoadingOverlay,
+  TextInput,
+  Group,
+} from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { Control, RegisterOptions, useForm } from 'react-hook-form';
+import {
+  Control,
+  RegisterOptions,
+  UseFormSetValue,
+  useForm,
+} from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { NotificationService } from '@/app/(features)/vendor/_components/notification';
+import { FormData } from '@/models/vendorRegistration';
 import PreferentialTreatment from './preferentialTreatment';
 import {
   useSubmitRequestMutation,
   useUploadPreferentialAttachmentsMutation,
 } from '@/store/api/preferential-treatment/preferential-treatment.api';
 import { ExtendedRegistrationReturnType } from '../../_components/detail/formShell';
-import { NotificationService } from '../../../_components/notification';
 
 export interface PassFormDataProps {
   register: (
@@ -20,31 +34,40 @@ export interface PassFormDataProps {
     options?: RegisterOptions<z.infer<typeof formDataSchema>, any> | undefined,
   ) => ExtendedRegistrationReturnType;
   control: Control<z.infer<typeof formDataSchema>, any>;
+  setValue?: UseFormSetValue<z.infer<typeof formDataSchema>>;
 }
-export const preferentialSchema = z.object({
-  category: z.string(),
-  type: z.string().min(2, { message: 'MSME is required' }),
-  certificateUrl: z
-    .instanceof(File, { message: 'Attachment is required', fatal: true })
-    .refine((data) => data instanceof File, {
-      message: 'Attachment is required',
-    }),
-  certiNumber: z.string().min(2, {
-    message: 'Certificate Number must be at least 2 characters long ',
+export const preferentialSchema = z.discriminatedUnion('category', [
+  z.object({
+    category: z.enum(['ibm', 'marginalized']),
+    serviceId: z.string(),
+    certiNumber: z.string(),
+    certificateValidityPeriod: z.string(), // Certificate validity period
+    certificateIssuedDate: z.string(), // Certificate issuance date
   }),
-  serviceId: z.string().min(2, {
-    message: 'Service ID must be at least 2 characters long ',
+  z.object({
+    category: z.literal('msme'),
+    serviceId: z.string(),
+    type: z.union([
+      z.literal('Small'),
+      z.literal('Micro'),
+      z.literal('Medium'),
+    ]), // Type of MSME
+    certiNumber: z.string(),
+    certificateValidityPeriod: z.string(), // Certificate validity period
+    certificateIssuedDate: z.string(), // Certificate issuance date
   }),
-});
+]);
 
 export const formDataSchema = z.object({
-  preferential: z.array(preferentialSchema),
+  preferential: z.array(preferentialSchema).optional(),
 });
 
 export const PreferentialTreatmentForm = ({
   initialValues,
+  countryOfRegistration,
 }: {
   initialValues: z.infer<typeof formDataSchema>;
+  countryOfRegistration: string;
 }) => {
   const {
     handleSubmit,
@@ -59,7 +82,7 @@ export const PreferentialTreatmentForm = ({
     clearErrors,
   } = useForm<z.infer<typeof formDataSchema>>({
     resolver: zodResolver(formDataSchema),
-    defaultValues: initialValues,
+    defaultValues: initialValues as z.infer<typeof formDataSchema>,
   });
 
   const router = useRouter();
@@ -110,17 +133,26 @@ export const PreferentialTreatmentForm = ({
   };
 
   const onSubmit = async (data: typeof formState.defaultValues) => {
-    const preferential = getValues().preferential.map(
-      ({ certiNumber, serviceId }) => {
-        return {
+    const preferential =
+      getValues().preferential &&
+      (getValues().preferential as any).map(
+        ({
           certiNumber,
           serviceId,
-          status: 'Submit',
-        };
-      },
-    );
+          certificateIssuedDate,
+          certificateValidityPeriod,
+        }) => {
+          return {
+            certiNumber,
+            certificateIssuedDate,
+            certificateValidityPeriod,
+            serviceId,
+            status: 'Submit',
+          };
+        },
+      );
     try {
-      await save(preferential)
+      await save(preferential as any)
         .unwrap()
         .then(() => {
           saveAttachment(getValues().preferential);
@@ -132,7 +164,7 @@ export const PreferentialTreatmentForm = ({
   return (
     <Box className="p-2 w-full relative">
       <LoadingOverlay
-        visible={saveAttachmentValues.isLoading}
+        visible={saveValues.isLoading}
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -143,17 +175,33 @@ export const PreferentialTreatmentForm = ({
             register={extendedRegister}
             // adjustment={vendorInfo.status === 'Adjustment' ? false : true}
           />
+          {watch('preferential') &&
+            (watch('preferential') as any).length > 0 &&
+            countryOfRegistration === 'Malawi' && (
+              <Group grow>
+                <TextInput
+                  label="Preferential Registration Number"
+                  placeholder="Enter Preferential Registration Number"
+                />
+                <TextInput
+                  label="Preferential Registration Issued Date"
+                  placeholder="Enter Preferential Registration Number"
+                />
+              </Group>
+            )}
         </Flex>
 
         <Flex className="mt-10 justify-end gap-2">
-          {watch('preferential') && watch('preferential').length > 0 && (
+          <Button onClick={() => router.push('payment')} variant="outline">
+            Back
+          </Button>
+          {watch('preferential') &&
+          (watch('preferential') as any).length > 0 ? (
             <>
-              <Button onClick={() => router.push('payment')} variant="outline">
-                Back
-              </Button>
-
               <Button type="submit">Save & Continue</Button>
             </>
+          ) : (
+            <Button onClick={() => router.push('doc')}>Skip</Button>
           )}
         </Flex>
       </form>
