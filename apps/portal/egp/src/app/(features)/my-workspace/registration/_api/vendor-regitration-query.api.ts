@@ -29,9 +29,12 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
     getVendorInfo: builder.query<GetVendorInfoResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-info-by-userId`,
     }),
-    getApprovedVendorInfo: builder.query<GetVendorInfoResponse, any>({
-      query: () =>
-        `/vendor-registrations/get-approved-isr-vendor-info-by-userId`,
+    getApprovedVendorInfo: builder.query<
+      GetVendorInfoResponse,
+      { status?: string }
+    >({
+      query: ({ status = 'Approved' }) =>
+        `/vendor-registrations/get-approved-isr-vendor-info-by-userId/${status}`,
     }),
     getApproveVendorInfo: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-vendor-information`,

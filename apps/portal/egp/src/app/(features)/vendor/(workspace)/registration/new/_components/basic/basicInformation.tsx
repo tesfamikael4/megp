@@ -27,14 +27,14 @@ import style from './basic.module.scss';
 
 type FormData = {
   name: string;
-  origin: string;
+  countryOfRegistration: string;
   tinNumber: string;
   tinIssuedDate: string;
 };
 
-const formDataSchema = z.discriminatedUnion('origin', [
+const formDataSchema = z.discriminatedUnion('countryOfRegistration', [
   z.object({
-    origin: z.literal('Malawi'),
+    countryOfRegistration: z.literal('Malawi'),
     tinNumber: z
       .string()
       .min(6, { message: 'TIN must have at least 10 characters' })
@@ -44,7 +44,7 @@ const formDataSchema = z.discriminatedUnion('origin', [
       .min(1, { message: 'TIN Issued Date is required' }),
   }),
   z.object({
-    origin: z.enum(getNationalityValues('Malawi')),
+    countryOfRegistration: z.enum(getNationalityValues('Malawi')),
     name: z
       .string()
       .min(2, { message: 'Name must be at least 2 characters long' })
@@ -94,7 +94,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
   const onSubmit = (data: typeof formState.defaultValues) => {
     create({
       name: data?.name ?? '_',
-      origin: data?.origin ?? '',
+      countryOfRegistration: data?.countryOfRegistration ?? '',
       tinNumber: data?.tinNumber ?? '',
       tinIssuedDate: data?.tinIssuedDate ?? '',
       registrationNumber: '',
@@ -133,17 +133,20 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
             className="w-full"
             label="Country of Registration"
             searchable
-            value={getValues('origin')}
+            value={getValues('countryOfRegistration')}
             data={getNationalityValues()}
-            {...register('origin')}
+            {...register('countryOfRegistration')}
             onChange={async (value) =>
-              value && (await setValue('origin', value))
+              value && (await setValue('countryOfRegistration', value))
             }
-            error={formState.errors.origin && formState.errors.origin.message}
+            error={
+              formState.errors.countryOfRegistration &&
+              formState.errors.countryOfRegistration.message
+            }
             {...lockElements('basic')}
             required
           />
-          {watch().origin !== 'Malawi' && (
+          {watch().countryOfRegistration !== 'Malawi' && (
             <>
               <TextInput
                 className="w-full"
@@ -168,7 +171,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
             </>
           )}
 
-          {watch().origin === 'Malawi' ? (
+          {watch().countryOfRegistration === 'Malawi' ? (
             <>
               <TextInput
                 className="w-full"

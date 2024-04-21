@@ -1,4 +1,4 @@
-import { Box, Button, Table } from '@mantine/core';
+import { Box, Button, Table, Text } from '@mantine/core';
 import tableClasses from './table.module.scss';
 import {
   addSpacesToCamelCase,
@@ -77,9 +77,10 @@ const renderCell = (header, item, open, setUrl, userId) => {
     );
   }
 
+  console.log(cellValue, isDate(cellValue));
   return (
     <Table.Td>
-      {isDate(cellValue)
+      {typeof cellValue === 'string' && isDate(cellValue)
         ? formatDateTimeFromString(cellValue, true) || 'N/A'
         : typeof cellValue === 'boolean'
           ? JSON.stringify(cellValue)

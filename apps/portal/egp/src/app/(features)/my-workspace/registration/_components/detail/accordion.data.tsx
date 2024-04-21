@@ -7,7 +7,7 @@ import { BasicInfo } from './basicInfo';
 import { ContactPersons } from './contactPersons';
 import {
   bankAccountSchema,
-  beneficialOwnershipSchema,
+  beneficialOwnershipShareholderSchema,
   contactPersonSchema,
   shareHoldersSchema,
 } from './schema';
@@ -56,28 +56,28 @@ export const useTabs = (extendedRegister, control, disabled): Tabs[] => [
       <BusinessSizeAndOwnership register={extendedRegister} control={control} />
     ),
   },
+  // {
+  //   tabValue: 'shareHolders',
+  //   tabName: 'Shareholders',
+  //   tabDescription: 'Shareholders List',
+  //   tabPanelComponent: (
+  //     <ShareHolders
+  //       name="shareHolders"
+  //       control={control}
+  //       itemSchema={shareHoldersSchema}
+  //       disabled={disabled}
+  //     />
+  //   ),
+  // },
   {
-    tabValue: 'shareHolders',
-    tabName: 'Shareholders',
-    tabDescription: 'Shareholders List',
-    tabPanelComponent: (
-      <ShareHolders
-        name="shareHolders"
-        control={control}
-        itemSchema={shareHoldersSchema}
-        disabled={disabled}
-      />
-    ),
-  },
-  {
-    tabValue: 'beneficialOwnership',
-    tabName: 'Beneficial Ownership',
-    tabDescription: 'Beneficial Ownership List',
+    tabValue: 'beneficialOwnershipShareholders',
+    tabName: 'Beneficial Ownership/Shareholders',
+    tabDescription: 'Beneficial Ownership.Shareholders List',
     tabPanelComponent: (
       <BeneficialOwnership
-        name="beneficialOwnership"
+        name="beneficialOwnershipShareholders"
         control={control}
-        itemSchema={beneficialOwnershipSchema}
+        itemSchema={beneficialOwnershipShareholderSchema}
         disabled={disabled}
       />
     ),

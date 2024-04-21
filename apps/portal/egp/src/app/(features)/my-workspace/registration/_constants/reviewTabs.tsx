@@ -16,12 +16,8 @@ export const tab = [
     tabName: 'Business Size and Ownership',
   },
   {
-    tabValue: 'shareHolders',
-    tabName: 'Shareholders',
-  },
-  {
-    tabValue: 'beneficialOwnership',
-    tabName: 'Beneficial Ownership',
+    tabValue: 'beneficialOwnershipShareholders',
+    tabName: 'Beneficial Ownership/Shareholders',
   },
   {
     tabValue: 'bankAccountDetails',
@@ -36,12 +32,8 @@ export const tab = [
     tabName: 'Areas of Business Interest',
   },
   {
-    tabValue: 'customCats',
-    tabName: 'Custom Categories',
-  },
-  {
-    tabValue: 'businessCats',
-    tabName: 'Business Categories',
+    tabValue: 'lineOfBusiness',
+    tabName: 'Line Of Business',
   },
   {
     tabValue: 'supportingDocuments',
@@ -57,20 +49,38 @@ export const tab = [
   },
 ];
 
-export const formatColumns = {
+export const formatColumns = (countryOfRegistration) => ({
   basic: [
     { name: 'name', displayName: 'Name of Business Company' },
-    { name: 'origin', displayName: 'Country of Registration' },
+    { name: 'countryOfRegistration', displayName: 'Country of Registration' },
     { name: 'businessType', displayName: 'Form of Business' },
     { name: 'tinNumber', displayName: 'Taxpayer Identification Number' },
-    { name: 'district', displayName: 'District' },
     { name: 'tinIssuedDate' },
+    ...(countryOfRegistration === 'Malawi'
+      ? [{ name: 'registrationNumber' }, { name: 'registrationIssuedDate' }]
+      : []),
   ],
+  address: [
+    { name: 'physicalAddress', displayName: 'Physical Address' },
+    { name: 'postalAddress', displayName: 'Postal Address' },
+    { name: 'primaryEmail', displayName: 'Primary Email' },
+    ...(countryOfRegistration === 'Malawi'
+      ? [
+          { name: 'region', displayName: 'Region' },
+          { name: 'district', displayName: 'District' },
+        ]
+      : []),
+    { name: 'alternateEmail', displayName: 'Alternate Email' },
+    { name: 'telephone', displayName: 'Telephone' },
+    { name: 'fax', displayName: 'Fax' },
+    { name: 'website', displayName: 'Website' },
+  ],
+  areasOfBusinessInterestView: [{ name: 'category' }, { name: 'priceRange' }],
+
   businessSizeAndOwnership: [
     { name: 'registeredCapital' },
     { name: 'paidUpCapital' },
     { name: 'numberOfEmployees' },
-    { name: 'ownershipType' },
   ],
   contactPersons: [
     { name: 'firstName' },
@@ -78,22 +88,19 @@ export const formatColumns = {
     { name: 'email' },
     { name: 'mobileNumber' },
   ],
-  beneficialOwnership: [
+  beneficialOwnershipShareholders: [
     { name: 'firstName' },
+    { name: 'middleName' },
     { name: 'lastName' },
     { name: 'nationality' },
+    { name: 'countryOfResidence' },
+    { name: 'share' },
+    { name: 'votingRights' },
   ],
 
-  businessAreas: [
-    { name: 'category' },
-    { name: 'priceFrom' },
-    { name: 'priceTo' },
-    { name: 'currency' },
-    { name: 'approvedAt', displayName: 'Approved On' },
-    { name: 'expireDate', displayName: 'Expiry Date' },
-    { name: 'certificateUrl', displayName: 'Certificate URL' },
-  ],
   bankAccountDetails: [
+    { name: 'bankType' },
+    { name: 'accountType', displayName: 'Account Type' },
     { name: 'accountHolderFullName', displayName: 'fullName' },
     { name: 'accountNumber' },
     { name: 'bankName' },
@@ -102,17 +109,12 @@ export const formatColumns = {
     { name: 'IBAN' },
     { name: 'isDefualt' },
   ],
-  shareHolders: [
-    { name: 'firstName' },
-    { name: 'lastName' },
-    { name: 'nationality' },
-    { name: 'share' },
-  ],
 
   service: [{ name: 'name', displayName: 'Service Type' }],
   preferential: [
     { name: 'type', displayName: 'Preferential Service' },
     { name: 'certiNumber', displayName: 'Certificate Number' },
-    { name: 'certificateUrl', displayName: 'Certificate' },
+    { name: 'certificateValidityPeriod', displayName: 'Validity Period' },
+    { name: 'certificateIssuedDate', displayName: 'Issued Date' },
   ],
-};
+});

@@ -15,7 +15,7 @@ function Page() {
   useEffect(() => {
     if (requestInfo.isError) {
       NotificationService.requestErrorNotification('Error on fetching data');
-      router.push(`basic`);
+      router.push(`/my-workspace/service`);
     }
     return () => {};
   }, [requestInfo, router]);
@@ -44,6 +44,9 @@ function Page() {
               initialValues={{
                 preferential: [],
               }}
+              countryOfRegistration={
+                requestInfo.data?.basic?.countryOfRegistration as string
+              }
             />
           </section>
         </Box>

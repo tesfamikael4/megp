@@ -30,8 +30,10 @@ export const getInitialValues = (data) => {
           }
         : data.businessSizeAndOwnership,
     shareHolders: data.shareHolders == null ? [] : data.shareHolders,
-    beneficialOwnership:
-      data.beneficialOwnership == null ? [] : data.beneficialOwnership,
+    beneficialOwnershipShareholders:
+      data.beneficialOwnershipShareholders == null
+        ? []
+        : data.beneficialOwnershipShareholders,
     bankAccountDetails:
       data.bankAccountDetails == null ? [] : data.bankAccountDetails,
     areasOfBusinessInterest:

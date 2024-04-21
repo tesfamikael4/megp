@@ -1,13 +1,26 @@
 'use client';
-import { Flex, Box, Button, LoadingOverlay } from '@mantine/core';
+import {
+  Flex,
+  Box,
+  Button,
+  LoadingOverlay,
+  TextInput,
+  Group,
+  MultiSelect,
+} from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { Control, RegisterOptions, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useGenerateInvoiceForAdditionalServiceMutation } from '../../../_api/query';
+import {
+  useGenerateInvoiceForAdditionalServiceMutation,
+  useGetApproveVendorInfoQuery,
+} from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { AreasOfBusinessInterest } from './areasOfBusinessInterest';
 import { ExtendedRegistrationReturnType } from '../../../_components/detail/formShell';
+import { useGetLineOfBusinessesQuery } from '@/store/api/administrationApi';
+import { getLineOfBusinesseSelectOptions } from '../../../_utils';
 
 export const lineOfBusinessSchema = z.object({
   id: z
@@ -16,17 +29,48 @@ export const lineOfBusinessSchema = z.object({
   name: z.string().min(2, { message: 'Line Of Business Interest is required' }),
 });
 
-export const areasOfBusinessInterestSchema = z.object({
-  category: z.string().min(2, { message: 'Category is required' }),
+const activationExpiryValidator = (data) => {
+  if (!data.activationDate || !data.expiryDate) {
+    return true;
+  }
+  const { activationDate, expiryDate } = data;
+  const activation = new Date(activationDate);
+  const expiry = new Date(expiryDate);
+
+  if (isNaN(activation.getTime()) || isNaN(expiry.getTime())) {
+    // If either date is invalid, return false
+    return false;
+  }
+
+  // Ensure activation date is before or equal to expiry date
+  return activation <= expiry;
+};
+
+export const areasOfBusinessInterestSchema = z
+  .discriminatedUnion('category', [
+    z.object({
+      category: z.enum(['Goods', 'Services']),
+      priceRange: z.string().min(1, 'Price range must be selected'),
+    }),
+    z.object({
+      category: z.literal('Works'),
+      priceRange: z.string().min(1, 'Price range must be selected'),
+      userType: z.union([z.literal('Contractor'), z.literal('Consultant')]),
+      classification: z.string(),
+      activationDate: z.string(),
+      expiryDate: z.string(),
+    }),
+  ])
+  .refine((data) => activationExpiryValidator(data), {
+    message: 'Activation date must be before or equal to expiry date',
+  });
+
+export const formDataSchema = z.object({
   lineOfBusiness: z
     .array(lineOfBusinessSchema)
     .refine((arr) => arr.length > 0, {
       message: 'At least one Line Of Business Interest is required',
     }),
-  priceRange: z.string().min(2, { message: 'Price Range is required' }),
-});
-
-export const formDataSchema = z.object({
   areasOfBusinessInterest: z
     .array(areasOfBusinessInterestSchema)
     .refine((arr) => arr.length > 0, {
@@ -71,6 +115,9 @@ export const AreasOfBusinessInterestForm = ({
   });
 
   const router = useRouter();
+  const getLineOfBusinessValues = useGetLineOfBusinessesQuery({});
+  const { data, isLoading } = useGetApproveVendorInfoQuery({});
+
   const [generatePayment, { isLoading: isSaving }] =
     useGenerateInvoiceForAdditionalServiceMutation({});
 
@@ -123,29 +170,102 @@ export const AreasOfBusinessInterestForm = ({
     }
   };
 
-  return (
-    <Box className="p-2 w-full relative">
-      <LoadingOverlay
-        visible={isSaving}
-        overlayProps={{ radius: 'sm', blur: 2 }}
-      />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Flex className="flex-col gap-2 w-full">
-          <AreasOfBusinessInterest
-            name="areasOfBusinessInterest"
-            control={control}
-            register={extendedRegister}
-            adjustment={vendorInfo?.status === 'Adjustment' ? false : true}
-          />
-        </Flex>
-        <Flex justify={'flex-end'} mt={'md'}>
-          {watch('areasOfBusinessInterest')?.length > 0 && (
-            <Button type="submit" size="sm" disabled={isSaving}>
-              Add Service
-            </Button>
-          )}
-        </Flex>
-      </form>
-    </Box>
-  );
+  console.log({ data });
+  if (data)
+    return (
+      <Box className="p-2 w-full relative">
+        <LoadingOverlay
+          visible={getLineOfBusinessValues.isLoading || isSaving || isLoading}
+          overlayProps={{ radius: 'sm', blur: 2 }}
+        />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Flex className="flex-col gap-2 w-full">
+            <AreasOfBusinessInterest
+              name="areasOfBusinessInterest"
+              control={control}
+              register={extendedRegister}
+              // setValue={setValue}
+              adjustment={false}
+            />
+            {watch('areasOfBusinessInterest') &&
+              watch('areasOfBusinessInterest').length > 0 && (
+                <>
+                  <Group grow>
+                    <MultiSelect
+                      label="Line Of Business"
+                      data={getLineOfBusinesseSelectOptions(
+                        getLineOfBusinessValues.data?.items ?? [],
+                      )}
+                      placeholder="Select"
+                      {...extendedRegister(`lineOfBusiness`, 'select')}
+                      value={
+                        extendedRegister(`lineOfBusiness`, 'select').value?.id
+                      }
+                      defaultValue={extendedRegister(
+                        `lineOfBusiness`,
+                        'select',
+                      ).value?.map((v: any) => v.id)}
+                      onChange={(value) => {
+                        extendedRegister(`lineOfBusiness`, 'select').onChange(
+                          value.map((v) => ({
+                            id: v,
+                            name: (
+                              getLineOfBusinesseSelectOptions(
+                                getLineOfBusinessValues.data?.items ?? [],
+                              )?.find((item: any) => item.value == v) as {
+                                value: string;
+                                label: string;
+                              }
+                            )?.label,
+                          })),
+                        );
+                      }}
+                      withAsterisk
+                      required
+                    />
+                    {getValues('areasOfBusinessInterest').some(
+                      (value: z.infer<typeof areasOfBusinessInterestSchema>) =>
+                        value.category === 'Goods' ||
+                        value.category === 'Services',
+                    ) &&
+                      data.basic.countryOfRegistration === 'Malawi' && (
+                        <TextInput
+                          label="PPDA Registration Number"
+                          placeholder="Enter PPDA Registration Number"
+                        />
+                      )}
+                  </Group>
+                  {getValues('areasOfBusinessInterest').some(
+                    (value: z.infer<typeof areasOfBusinessInterestSchema>) =>
+                      value.category === 'Goods' ||
+                      value.category === 'Services',
+                  ) &&
+                    data.basic.countryOfRegistration === 'Malawi' && (
+                      <Group grow>
+                        <TextInput
+                          label="PPDA Registration Issued Date"
+                          placeholder="Enter PPDA Registration Number"
+                        />
+                      </Group>
+                    )}
+                </>
+              )}
+          </Flex>
+          {watch('areasOfBusinessInterest') &&
+            watch('areasOfBusinessInterest').length > 0 && (
+              <Flex className="mt-10 justify-end gap-2">
+                {
+                  <Button
+                    onClick={() => router.push('detail')}
+                    variant="outline"
+                  >
+                    Back
+                  </Button>
+                }
+                {<Button type="submit">Save & Continue</Button>}
+              </Flex>
+            )}
+        </form>
+      </Box>
+    );
 };

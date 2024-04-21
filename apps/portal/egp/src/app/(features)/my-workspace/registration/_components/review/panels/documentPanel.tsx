@@ -26,7 +26,7 @@ export const DocumentPanel = ({
           key={fieldKey ?? addSpacesToCamelCase(tabValue)}
           styles={{
             item: {
-              borderBottom: '1px solid #E5E7EB',
+              // borderBottom: '1px solid #E5E7EB',
               gap: '0rem',
             },
           }}
@@ -38,13 +38,13 @@ export const DocumentPanel = ({
             styles={{
               control: {
                 border: 'none',
-                borderBottom: '1px solid #E5E7EB',
+                // borderBottom: '1px solid #E5E7EB',
               },
             }}
           >
             {addSpacesToCamelCase(fieldKey) ?? addSpacesToCamelCase(tabValue)}
           </Accordion.Control>
-          <Accordion.Panel>
+          <Accordion.Panel className="pb-5">
             {data[tabValue]?.[fieldKey] ? (
               <ShowFile
                 url={`${
@@ -57,6 +57,7 @@ export const DocumentPanel = ({
                       : 'paymentReceipt'
                 }/${data[tabValue]?.[fieldKey]}/${data?.userId}`}
                 filename={data[tabValue][fieldKey]}
+                zoom
               />
             ) : (
               <Box className="flex items-center h-20 w-full justify-center">

@@ -22,6 +22,7 @@ import { getTenderSpdApi } from '@/app/(features)/vendor/_api/tender-spd';
 import { publicVendorsApi } from '@/app/(features)/_api/vendors.api';
 import { getRegistrationApi } from '@/app/(features)/_api/registration.api';
 import { ItemBidResponseApi } from '@/app/(features)/tender-workspace/_api/item-bid-response.api';
+import { administrationApi } from './api/administrationApi';
 
 const middleware = [
   vendorRegistrationApi.middleware,
@@ -45,6 +46,7 @@ const middleware = [
   getTenderSpdApi.middleware,
   publicVendorsApi.middleware,
   ItemBidResponseApi.middleware,
+  administrationApi.middleware,
 ];
 
 export { middleware };

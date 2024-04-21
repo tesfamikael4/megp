@@ -22,7 +22,7 @@ export default function BasicInformationPage() {
         <BasicInformation
           defaultValues={{
             name: data.basic.name ?? '',
-            origin: data.basic.origin ?? '',
+            countryOfRegistration: data.basic.countryOfRegistration ?? '',
             tinNumber: data.basic.tinNumber ?? '',
             tinIssuedDate: data.basic.tinIssuedDate ?? '',
             registrationNumber: data.basic.registrationNumber ?? '',
@@ -33,7 +33,7 @@ export default function BasicInformationPage() {
         <BasicInformation
           defaultValues={{
             name: '',
-            origin: '',
+            countryOfRegistration: '',
             tinNumber: '',
             tinIssuedDate: '',
             registrationNumber: '',

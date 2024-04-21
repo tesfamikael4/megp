@@ -126,10 +126,12 @@ export const PreferentialTreatmentForm = ({
 
   const onSubmit = async (data: typeof formState.defaultValues) => {
     const preferential = getValues().preferential.map(
-      ({ certiNumber, serviceId }) => {
+      ({ certiNumber, serviceId, category, type }) => {
         return {
           certiNumber,
           serviceId,
+          category,
+          type,
           status: 'Draft',
         };
       },

@@ -25,7 +25,7 @@ function Page() {
     }
 
     if (!requestInfo.data) {
-      router.push(`/my-workspace/services`);
+      router.push(`/my-workspace/service`);
     }
 
     return () => {};

@@ -12,22 +12,12 @@ import NewRegistrationLanding from './_components/new-registration-landing';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 const ServiceLayout = () => {
-  // const { data, isLoading, isError, error } = useGetVendorInfoQuery(
-  //   {},
-  //   { refetchOnMountOrArgChange: true },
-  // );
-  const {
-    data: vendor,
-    isLoading: vendorLoading,
-    isError: isVendorError,
-    error: vendorError,
-  } = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
   const { data, isLoading, isError, error } = useGetVendorStatusQuery({
     refetchOnMountOrArgChange: true,
   });
   const router = useRouter();
 
-  if (isLoading || vendorLoading) return <LoadingOverlay visible={isLoading} />;
+  if (isLoading) return <LoadingOverlay visible={isLoading} />;
   if (error) return router.push('/my-workspace/dashboard');
   if (!data) return router.push('/my-workspace/dashboard');
   if (data?.status === 'Initial') return <NewRegistrationLanding />;

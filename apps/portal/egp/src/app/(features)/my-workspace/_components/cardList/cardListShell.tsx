@@ -111,6 +111,31 @@ export const CardListShell: React.FC<CardListProps> = ({
     return true;
   };
 
+  const validateItem = (item: any, fieldName?: string) => {
+    const result = itemSchema.safeParse(item);
+    console.log(result, item);
+    if (!result.success) {
+      if (!fieldName)
+        result.error.issues.map((issue) => {
+          setValidationErrors((prevErrors) => ({
+            ...prevErrors,
+            [issue.path[0]]: issue.message,
+          }));
+        });
+      result.error.issues.map((issue) => {
+        const _fieldName = issue.path[0];
+        if (_fieldName === fieldName)
+          setValidationErrors((prevErrors) => ({
+            ...prevErrors,
+            [_fieldName]: issue.message,
+          }));
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const clearValidationError = (fieldName: string) => {
     setValidationErrors((prevErrors) => ({
       ...prevErrors,
@@ -131,11 +156,14 @@ export const CardListShell: React.FC<CardListProps> = ({
               ...prevItem,
               [fieldName]: e,
             }))
-        : (e: React.ChangeEvent<HTMLInputElement>) =>
-            setItem((prevItem) => ({
-              ...prevItem,
-              [e.target.name]: e.target.value,
-            })),
+        : type === 'checkbox'
+          ? (value) =>
+              setItem((prevItem) => ({ ...prevItem, [fieldName]: value }))
+          : (e: React.ChangeEvent<HTMLInputElement>) =>
+              setItem((prevItem) => ({
+                ...prevItem,
+                [e.target.name]: e.target.value,
+              })),
     // onChange:
     // type == "select"
     //   ? async (e) => await setValue(name, e)
@@ -145,12 +173,13 @@ export const CardListShell: React.FC<CardListProps> = ({
         ? validationErrors[fieldName]
         : null,
     onFocus: () => clearValidationError(fieldName),
-    onBlur: () => validateField(fieldName),
+    onBlur: () => validateItem(item, fieldName),
     disabled,
   });
 
   const handleAddItem = () => {
-    if (validateField(item)) {
+    console.log(validationErrors, Object.values(item));
+    if (validateItem(item)) {
       modalType.type == 'ADD' && append(item);
       if ((modalType.type === 'EDIT' && modalType.id) || modalType.id == 0) {
         update(modalType.id, item);

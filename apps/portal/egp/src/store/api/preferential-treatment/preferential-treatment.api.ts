@@ -10,7 +10,13 @@ export const preferentialTreatmentApi = createApi({
   endpoints: (builder) => ({
     submitRequest: builder.mutation<
       any,
-      { certiNumber: string; serviceId: string; status: string }[]
+      {
+        certiNumber: string;
+        serviceId: string;
+        status: string;
+        category: string;
+        type: string;
+      }[]
     >({
       query: (body) => {
         return {

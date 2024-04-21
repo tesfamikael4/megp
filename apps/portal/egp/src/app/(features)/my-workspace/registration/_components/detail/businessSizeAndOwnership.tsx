@@ -104,13 +104,14 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
       </Group>
       <Group grow>
         <TextInput
+          className="w-1/2"
           label="Number of Employees"
           id="numberOfEmployees"
           withAsterisk
           type="number"
           {...register(`businessSizeAndOwnership.numberOfEmployees`)}
         />
-        <Select
+        {/* <Select
           label="Ownership Type"
           withAsterisk
           id="ownershipType"
@@ -118,7 +119,7 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
           placeholder="select"
           searchable
           {...register('businessSizeAndOwnership.ownershipType', 'select')}
-        />
+        /> */}
       </Group>
     </Stack>
   );
