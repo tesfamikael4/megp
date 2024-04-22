@@ -219,9 +219,16 @@ const PdfDocumentTemplate = async (data) => {
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}>line of Business</Text>
 
-            <Text>
-              {data?.lineOfBusiness.map((item) => item.name).join(', ')}{' '}
-            </Text>
+            <View style={styles.activity}>
+              {data?.lineOfBusiness.map((item, index) => {
+                return (
+                  <View key={index} style={styles.listItem}>
+                    <Text style={styles.bulletPoint}>•</Text>
+                    <Text style={styles.listItemText}>{item.name}</Text>
+                  </View>
+                );
+              })}
+            </View>
           </View>
           {/* prefertial information Documents */}
           <View style={styles.activity}>
@@ -237,8 +244,8 @@ const PdfDocumentTemplate = async (data) => {
                   },
                   { accessor: 'certiNumber', title: 'certificate Number' },
                   {
-                    accessor: 'certificateIssuanceDate',
-                    title: 'Issuance Date',
+                    accessor: 'certificateIssuedDate',
+                    title: 'Issued Date',
                   },
                   {
                     accessor: 'certificateValidityPeriod',
@@ -392,5 +399,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     width: '70%',
     fontSize: '7px',
+  },
+  listItem: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  bulletPoint: {
+    width: 10,
+    fontSize: 10,
+    marginRight: 5,
+  },
+  listItemText: {
+    fontSize: 12,
   },
 });

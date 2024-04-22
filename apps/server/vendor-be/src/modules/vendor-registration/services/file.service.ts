@@ -20,6 +20,7 @@ import {
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
+import { ReadStream, Readable } from 'typeorm/platform/PlatformTools';
 
 @Injectable()
 export class FileService {
@@ -581,7 +582,7 @@ export class FileService {
     }
   }
 
-  async uploadBuffer(file: Buffer, userId: string, subDirectory: string) {
+  async uploadReadable(readstream: Readable, userId: string, subDirectory: string) {
     console.log('user-id', userId);
     try {
 
@@ -594,7 +595,7 @@ export class FileService {
       await this.minioClient.putObject(
         this.bucketName,
         filename,
-        file,
+        readstream,
         metaData,
       );
       return fileId;
