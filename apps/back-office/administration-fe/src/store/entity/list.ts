@@ -34,6 +34,11 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
       process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
+    entity: 'item-sub-category',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
+  },
+  {
     entity: 'item-Categories/get-trees',
     baseUrl:
       process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',

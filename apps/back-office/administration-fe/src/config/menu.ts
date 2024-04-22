@@ -17,7 +17,14 @@ export const Menu: MenuItem[] = [
   { label: 'Organizations', icon: IconBuildingBank, link: '/organizations' },
   { label: 'Taxonomy', icon: IconFileDollar, link: '/taxonomy' },
   { label: 'Item Master', icon: IconTable, link: '/item-master' },
-  { label: 'Item Category', icon: IconTableShortcut, link: '/item-category' },
+  {
+    label: 'Category',
+    icon: IconTableShortcut,
+    links: [
+      { label: 'Item Category', link: '/item-category' },
+      { label: 'Item Sub Category', link: '/item-sub-category' },
+    ],
+  },
   { label: 'Measurements', icon: IconTools, link: '/measurement' },
   { label: 'Item Tags', icon: IconBookmark, link: '/tag' },
   { label: 'Rules', icon: IconFileCheck, link: '/rule-designer' },

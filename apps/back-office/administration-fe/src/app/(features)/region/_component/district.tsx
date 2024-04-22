@@ -50,26 +50,32 @@ export function DistrictForm({
 
   const onCreate = async (data) => {
     try {
-      const result = await create({
+      await create({
         ...data,
         regionId: id?.toString(),
       }).unwrap();
-      if ('data' in result) {
-        handleCloseModal();
-      }
       notifications.show({
         message: 'District created successfully',
         title: 'Success',
         color: 'green',
       });
+      handleCloseModal();
     } catch (err) {
+      let errorMessage = 'Error occurred while creating District';
+
+      // Handle other specific error messages
+      if (err?.data?.message) {
+        errorMessage = err.data.message;
+      }
+
       notifications.show({
-        color: 'red',
-        message: 'errors in creating district.',
+        message: errorMessage,
         title: 'Error',
+        color: 'red',
       });
     }
   };
+
   const onUpdate = async (data) => {
     try {
       await update({ ...distric, ...data }).unwrap();
@@ -81,7 +87,7 @@ export function DistrictForm({
       });
     } catch {
       notifications.show({
-        message: 'errors in updating district.',
+        message: 'Errors in updating district.',
         title: 'Error',
         color: 'red',
       });
