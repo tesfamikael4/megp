@@ -288,25 +288,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
   async generatePDFForReview(data: any, user: any) {
     try {
-      let buffer: Buffer;
-      const chunks = [];
-      let fileId = '';
+      const subfolder = 'application-doc';
       const result = await PdfDocumentTemplate(data);
-      result.on('data', (chunk) => {
-        chunks.push(chunk);
-      });
-      result.on('end', async () => {
-        buffer = Buffer.concat(chunks);
-        const subfolder = 'application-doc';
-        fileId = await this.fileService.uploadBuffer(
-          buffer,
-          user.id,
-          subfolder
-        );
-      });
-      result.on('error', (error) => {
-        console.error('Error during rendering:', error);
-      });
+      const readStream = new Readable().wrap(result);
+      const fileId = await this.fileService.uploadReadable(
+        readStream,
+        user.id,
+        subfolder
+      );
+
 
       if (!(result instanceof Readable)) {
         throw new Error(
@@ -314,7 +304,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         );
       }
       return fileId;
-      //  return result;
     } catch (error) {
       console.error('Error:', error);
       throw new Error('Internal Server Error' + error);
@@ -1469,51 +1458,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         keys,
         userId,
       );
-      const formattedPt = [];
-      const keys_ = this.commonService.getServiceCatagoryKeys(
-        ServiceKeyEnum.MSME,
-      );
-      if (ptResult.length) {
-        for (const pt of ptResult) {
-          if (keys_.filter((item) => item == pt.service.key).length) {
-            formattedPt.push({
-              id: pt.id,
-              serviceId: pt.serviceId,
-              category: ServiceKeyEnum.MSME.toLowerCase(),
-              type: pt.service.key,
-              certiNumber: pt.certiNumber,
-              certificateUrl: pt.certificateUrl,
-            });
-          } else {
-            if (pt.service.key == ServiceKeyEnum.MARGINALIZED_GROUP) {
-              formattedPt.push({
-                id: pt.id,
-                serviceId: pt.serviceId,
-                category: 'marginalized',
-                type: 'marginalized',
-                certiNumber: pt.certiNumber,
-                certificateUrl: pt.certificateUrl,
-              });
-            } else {
-              formattedPt.push({
-                id: pt.id,
-                serviceId: pt.serviceId,
-                category: pt.service.key.toLowerCase(),
-                type: pt.service.key.toLowerCase(),
-                certiNumber: pt.certiNumber,
-                certificateUrl: pt.certificateUrl,
-              });
-            }
-          }
-          if (vendorEntity) {
-            const certeficate = await this.baService.getCerteficate(
-              vendorEntity.id,
-            );
-            vendorEntity.certificate = certeficate?.certificateUrl;
-            vendorEntity.preferential = formattedPt;
-          }
-        }
+
+      if (vendorEntity) {
+        const certeficate = await this.baService.getCerteficate(
+          vendorEntity.id,
+        );
+        vendorEntity.certificate = certeficate?.certificateUrl;
+        vendorEntity.preferential = [...ptResult];
       }
+
       return vendorEntity;
     } catch (error) {
       throw error;

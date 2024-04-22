@@ -610,11 +610,12 @@ export class VendorRegistrationsController {
       ]
     };
     const result = await this.regService.generatePDFForReview(data, user);
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': 'attachment; filename="document.pdf"',
-    });
+    // res.set({
+    //   'Content-Type': 'application/pdf',
+    //   'Content-Disposition': 'attachment; filename="document.pdf"',
+    // });
     // result.pipe(res);
+    return res.end(result);
   }
 
   @Post('event-test')
