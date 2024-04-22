@@ -5,7 +5,7 @@ import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
 import {
   CardListShell,
   SingleCardWrapper,
-} from '@/app/(features)/vendor/_components/cardList/cardListShell';
+} from '@/app/(features)/my-workspace/_components/cardList/cardListShell';
 import { usePrivilege } from '../../new/_context/privilege-context';
 
 interface Props extends Partial<PassFormDataProps> {

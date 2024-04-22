@@ -41,16 +41,23 @@ function Page() {
   );
 
   const [uploadFile, uploadFileInfo] = useLazyUploadPaymentSlipQuery();
-  const { register, formState, setValue, watch, handleSubmit } =
-    useForm<IPaymentSlipUploadSchema>({
-      defaultValues: {
-        invoiceIds: [],
-        serviceId: '',
-        transactionNumber: '',
-        file: undefined,
-      },
-      resolver: zodResolver(paymentSlipUploadSchema),
-    });
+  const {
+    register,
+    formState,
+    setValue,
+    watch,
+    handleSubmit,
+    setError,
+    control,
+  } = useForm<IPaymentSlipUploadSchema>({
+    defaultValues: {
+      invoiceIds: [],
+      serviceId: '',
+      transactionNumber: '',
+      file: undefined,
+    },
+    resolver: zodResolver(paymentSlipUploadSchema),
+  });
 
   const onSubmitHandler: SubmitHandler<IPaymentSlipUploadSchema> = (values) => {
     uploadFile(values);
@@ -104,13 +111,29 @@ function Page() {
       NotificationService.successNotification('Payed Successfully!');
       router.push('preferential');
     }
-    if (uploadFileInfo.error) {
-      NotificationService.requestErrorNotification(
-        'Failed to save Payment receipt',
-      );
+    if (uploadFileInfo.isError) {
+      if (
+        (uploadFileInfo.error as any).data?.message ===
+        ' Transaction NUmber must be unique'
+      ) {
+        setError(`transactionNumber`, {
+          message: (uploadFileInfo.error as any).data?.message,
+        });
+        NotificationService.requestErrorNotification(
+          (uploadFileInfo.error as any).data?.message,
+        );
+      } else
+        NotificationService.requestErrorNotification(
+          'Failed to save Payment receipt',
+        );
     }
     return () => {};
-  }, [invoiceInfo.data, uploadFileInfo.data]);
+  }, [
+    invoiceInfo.data,
+    uploadFileInfo.data,
+    uploadFileInfo.error,
+    uploadFileInfo.isError,
+  ]);
 
   if (invoiceInfo.isLoading) {
     return (
@@ -165,7 +188,6 @@ function Page() {
               />
               <TextInput
                 label="Transaction Number"
-                required
                 {...register('transactionNumber')}
                 error={formState.errors.transactionNumber?.message}
               />

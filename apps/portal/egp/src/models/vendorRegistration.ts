@@ -24,34 +24,36 @@ export interface FormData {
   basic: {
     name: string;
     businessType: string;
-    origin: string;
+    countryOfRegistration: string;
     tinNumber: string;
-    tinIssuedDate: '';
+    tinIssuedDate: string;
     registrationNumber: string;
     registrationIssuedDate: string;
   };
   address: {
+    physicalAddress: string;
     postalAddress: string;
     primaryEmail: string;
+    region: string;
+    district: string;
     alternateEmail: string;
-    mobilePhone: string;
     telephone: string;
     fax: string;
     website: string;
   };
   bankAccountDetails: {
-    accountHolderFullName: string;
-    accountNumber: number;
-    branchAddress: string;
-    currency: string;
-    bankSwift: string;
-    IBAN: string;
-    status: string;
     bankId: string;
-    bankName: string;
     hashValue: string;
+    bankType: 'International' | 'Local';
+    bankName: string;
     branchName: string;
-    accountType: '';
+    accountType: 'Saving' | 'Credit' | 'Current';
+    accountNumber: string;
+    branchAddress?: string;
+    accountHolderFullName: string;
+    currency: string;
+    IBAN?: string;
+    swiftCode?: string;
     isDefualt: boolean;
   }[];
   contactPersons: {
@@ -70,20 +72,20 @@ export interface FormData {
       currency: string;
     };
     numberOfEmployees: string;
-    ownershipType: string;
+    // ownershipType: string;
   };
-  shareHolders: {
+  beneficialOwnershipShareholders: {
     firstName: string;
+    middleName: string;
     lastName: string;
     nationality: string;
-    share: string;
-  }[];
-  beneficialOwnership: {
-    firstName: string;
-    lastName: string;
-    nationality: string;
+    countryOfResidence: string;
+    share: number;
+    votingRights: number;
+    authorityToAppointGov: boolean;
   }[];
   areasOfBusinessInterest: AreasOfBusinessInterestType[] | [];
+  lineOfBusiness: lineOfBusinessSchema[] | [];
   preferential: PreferentialTreatment[] | [];
   //TODO: Check this later
   invoice: InvoiceData | null;
@@ -104,13 +106,20 @@ export interface FormData {
   businessAreas: {}[];
 }
 
+export interface lineOfBusinessSchema {
+  id: string;
+  name: string;
+}
+
 export interface AreasOfBusinessInterestType {
   category: string;
-  lineOfBusiness: {
-    id: string;
-    name: string;
-  }[];
   priceRange: string;
+  userType: string; // User type (Contractor, Consultant)
+  classification: string; // Classification of Contractor or consultants
+  activationDate: string; // Activation date
+  expiryDate: string; // Expiry date
+  ncicRegistrationNumber: string;
+  ncicRegistrationDate: string;
 }
 
 export interface PreferentialTreatment {
@@ -120,6 +129,8 @@ export interface PreferentialTreatment {
   serviceId: string;
   certiNumber: string;
   certificateUrl: any;
+  certificateIssuedDate: string;
+  certificateValidityPeriod: string;
 }
 
 export interface AddFormRequestData extends FormData {
@@ -185,7 +196,7 @@ export interface GetApplicationListResponse {
 
 export interface CreateVendorIdRequest {
   name: string;
-  origin: string;
+  countryOfRegistration: string;
   tinNumber: string;
   tinIssuedDate: string;
   registrationNumber: string;

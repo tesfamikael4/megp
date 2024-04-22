@@ -3,6 +3,7 @@ import { Controller, useFieldArray } from 'react-hook-form';
 import {
   Fieldset,
   Flex,
+  Grid,
   Group,
   Input,
   LoadingOverlay,
@@ -10,9 +11,11 @@ import {
 } from '@mantine/core';
 import { PassFormDataProps } from './formShell';
 import { usePrivilege } from '../../_context/privilege-context';
-import FileUploader from '@/app/(features)/vendor/_components/uploader';
 import { useGetPreferentialQuery } from '@/store/api/preferential-treatment/preferential-treatment.api';
 import { preferential } from '../../../_constants';
+import { DatePickerInput } from '@mantine/dates';
+import { IconCalendar } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import MultiCheckBox from '@/app/(features)/my-workspace/_components/multiCheckBox';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
@@ -31,6 +34,7 @@ export const PreferentialTreatment: React.FC<Props> = ({
   name,
   register,
   adjustment,
+  setValue,
 }) => {
   const { lockElements } = usePrivilege();
 
@@ -59,6 +63,8 @@ export const PreferentialTreatment: React.FC<Props> = ({
   const { data, isLoading } = useGetPreferentialQuery({});
   const fieldState = control.getFieldState(name, control._formState);
 
+  console.log(fieldState);
+
   const getCategoryProps = () => {
     return {
       value: fields.map((item) => {
@@ -86,6 +92,8 @@ export const PreferentialTreatment: React.FC<Props> = ({
               type: category !== 'msme' ? category : '',
               certificateUrl: '',
               certiNumber: '',
+              certificateIssuedDate: '',
+              certificateValidityPeriod: '',
               serviceId:
                 category !== 'msme' ? findServiceIdByType(data, category) : '',
             });
@@ -131,50 +139,120 @@ export const PreferentialTreatment: React.FC<Props> = ({
               key={field.id}
             >
               <Flex direction={'column'} gap={'sm'} className="w-full">
-                <Flex align={'flex-start'} gap={'sm'}>
+                <Grid grow gutter={{ base: 'md' }}>
                   {field.category === 'msme' && (
-                    <Select
-                      label="Micro, Small, or Medium Enterprise (MSME) Type"
-                      placeholder="Select MSME Registration Type"
-                      data={['Micro', 'Small', 'Medium']}
-                      className="w-1/2"
-                      {...register(`preferential.${index}.type`, 'select')}
-                      onChange={(value) => {
-                        register(
-                          `preferential.${index}.type`,
-                          'select',
-                        ).onChange(value);
-                        register(
-                          `preferential.${index}.serviceId`,
-                          'select',
-                        ).onChange(findServiceIdByType(data, value));
-                      }}
-                      error={
-                        register(`preferential.${index}.type`, 'select').error
-                      }
-                      withAsterisk
-                    />
+                    <Grid.Col span={5}>
+                      <Select
+                        label="Micro, Small, or Medium Enterprise (MSME) Type"
+                        placeholder="Select MSME Registration Type"
+                        data={['Micro', 'Small', 'Medium']}
+                        {...register(`preferential.${index}.type`, 'select')}
+                        onChange={(value) => {
+                          register(
+                            `preferential.${index}.type`,
+                            'select',
+                          ).onChange(value);
+                          register(
+                            `preferential.${index}.serviceId`,
+                            'select',
+                          ).onChange(findServiceIdByType(data, value));
+                        }}
+                        error={
+                          register(`preferential.${index}.type`, 'select').error
+                        }
+                        withAsterisk
+                      />
+                    </Grid.Col>
                   )}
-                  <Input.Wrapper
-                    label="Certificate Number "
-                    className={field.category === 'msme' ? `w-1/2` : 'w-1/2'}
-                    withAsterisk
-                    error={
-                      register(`preferential.${index}.certificateNumber`).error
-                    }
-                  >
-                    <Input
-                      placeholder="Certificate Number"
-                      {...register(`preferential.${index}.certiNumber`)}
+                  <Grid.Col span={5}>
+                    <Input.Wrapper
+                      label="Certificate Number "
+                      // className={field.category === 'msme' ? `w-1/2` : 'w-1/2'}
+                      withAsterisk
+                      error={
+                        register(`preferential.${index}.certiNumber`).error
+                      }
+                    >
+                      <Input
+                        placeholder="Certificate Number"
+                        {...register(`preferential.${index}.certiNumber`)}
+                      />
+                    </Input.Wrapper>
+                  </Grid.Col>
+                  <Grid.Col span={5}>
+                    <Controller
+                      name={`preferential.${index}.certificateValidityPeriod`}
+                      control={control}
+                      render={({ field }) => (
+                        <DatePickerInput
+                          // name={`preferential.${index}.certificateValidityPeriod`}
+                          valueFormat="YYYY/MM/DD"
+                          required
+                          label="Certificate Valid Period"
+                          placeholder="Certificate Valid Period"
+                          leftSection={
+                            <IconCalendar size={'1.2rem'} stroke={1.5} />
+                          }
+                          maxDate={dayjs(new Date()).toDate()}
+                          // {...register(`${name}.${index}.activationDate`)}
+                          onChange={async (value: any) =>
+                            value &&
+                            field.onChange(
+                              dayjs(value)
+                                .format('YYYY/MM/DD')
+                                .toString()
+                                .replace(/\//g, '-'),
+                            )
+                          }
+                          error={
+                            register(
+                              `preferential.${index}.certificateValidityPeriod`,
+                            ).error
+                          }
+                        />
+                      )}
                     />
-                  </Input.Wrapper>
-                </Flex>
-                <Controller
+                  </Grid.Col>
+                  <Grid.Col span={5}>
+                    <Controller
+                      name={`preferential.${index}.certificateIssuedDate`}
+                      control={control}
+                      render={({ field }) => (
+                        <DatePickerInput
+                          // name={`preferential.${index}.certificateIssuedDate`}}`}
+                          valueFormat="YYYY/MM/DD"
+                          required
+                          label="Certificate Issued Period"
+                          placeholder="Certificate Issued Period"
+                          leftSection={
+                            <IconCalendar size={'1.2rem'} stroke={1.5} />
+                          }
+                          maxDate={dayjs(new Date()).toDate()}
+                          // {...register(`${name}.${index}.activationDate`)}
+                          onChange={async (value: any) =>
+                            value &&
+                            field.onChange(
+                              dayjs(value)
+                                .format('YYYY/MM/DD')
+                                .toString()
+                                .replace(/\//g, '-'),
+                            )
+                          }
+                          error={
+                            register(
+                              `preferential.${index}.certificateIssuedDate}`,
+                            ).error
+                          }
+                        />
+                      )}
+                    />
+                  </Grid.Col>
+                  {/* <Controller
                   name={`preferential.${index}.certificateUrl`}
                   control={control}
                   render={({ field: { onChange } }) => (
                     <FileUploader
-                      id={`preferential.${index}.certificateUrl`}
+                    id={`preferential.${index}.certificateUrl`}
                       label={`${field.category} Certificate`}
                       placeholder="Choose File"
                       onChange={onChange}
@@ -188,11 +266,12 @@ export const PreferentialTreatment: React.FC<Props> = ({
                       }
                       disabled={
                         register(`preferential.${index}.certificateUrl`)
-                          .disabled
+                        .disabled
                       }
-                    />
-                  )}
-                />
+                      />
+                      )}
+                      /> */}
+                </Grid>
               </Flex>
             </Fieldset>
           );

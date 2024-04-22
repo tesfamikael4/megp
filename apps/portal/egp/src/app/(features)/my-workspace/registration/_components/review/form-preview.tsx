@@ -5,7 +5,7 @@ import { Accordion, Box, Modal } from '@mantine/core';
 import classes from './accordion.module.scss';
 import { renderTable } from './renderTable';
 import { useDisclosure } from '@mantine/hooks';
-import { formatColumns, tab } from '../../_constants';
+import { formatColumns as _formatColumns, tab } from '../../_constants';
 import { ShowFile } from './panels/showFile';
 import { FormattedPanel } from './panels/formatedPanel';
 import { RenderObject } from './panels/renderObject';
@@ -23,6 +23,8 @@ function FormPreview({
   const [url, setUrl] = useState({ url: '', filename: '' });
   const [opened, { close, open }] = useDisclosure(false);
   const { user } = useAuth();
+
+  const formatColumns = _formatColumns(data.basic.countryOfRegistration);
 
   return (
     <Accordion variant="separated" classNames={classes}>

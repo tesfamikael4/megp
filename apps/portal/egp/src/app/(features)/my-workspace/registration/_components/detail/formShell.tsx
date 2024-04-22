@@ -24,7 +24,7 @@ import classes from './accordion.module.scss';
 import { useTabs } from './accordion.data';
 import { usePrivilege } from '../../new/_context/privilege-context';
 import { useAddFormMutation } from '../../_api/query';
-import { NotificationService } from '@/app/(features)/vendor/_components/notification';
+import { NotificationService } from '@/app/(features)/my-workspace/_components/notification';
 import {
   useSaveAsDraftApproveVendorInfoMutation,
   useUpdateSaveAsDraftApproveVendorInfoMutation,
@@ -204,7 +204,7 @@ const RegistrationForm = ({
           NotificationService.successNotification(
             'Form Submitted Successfully',
           );
-          router.push(`/my-workspace/registration/track-applications`);
+          router.push(`/vendor/registration/track-applications`);
         });
     } catch (error) {
       NotificationService.requestErrorNotification(

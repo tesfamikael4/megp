@@ -13,7 +13,9 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           withAsterisk
           id="name"
           {...register(`basic.name`)}
-          disabled={register('basic.origin', 'select').value !== 'Malawi'}
+          disabled={
+            register('basic.countryOfRegistration', 'select').value !== 'Malawi'
+          }
         />
         <TextInput
           label="Tax Identification Number (TIN)"
@@ -31,12 +33,13 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
         <Select
           label="Country of Registration"
           data={getNationalityValues()}
-          {...register(`basic.origin`, 'select')}
+          {...register(`basic.countryOfRegistration`, 'select')}
           disabled
         />
       </Group>
       <Group grow>
-        {register('basic.origin', 'select').value === 'Malawi' ? (
+        {register('basic.countryOfRegistration', 'select').value ===
+        'Malawi' ? (
           <Select
             label="District"
             withAsterisk

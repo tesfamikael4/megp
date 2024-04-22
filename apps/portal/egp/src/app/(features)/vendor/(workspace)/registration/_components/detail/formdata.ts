@@ -1,6 +1,6 @@
 import { GetFormResponse } from '@/models/vendorRegistration';
 
-export const formData: GetFormResponse = {
+export const formData: any = {
   status: '',
   initial: {
     level: '',

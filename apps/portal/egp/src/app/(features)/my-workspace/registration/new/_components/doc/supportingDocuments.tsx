@@ -1,4 +1,5 @@
 'use client';
+
 import { Flex, Button, Box, LoadingOverlay } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -10,7 +11,8 @@ import {
 } from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { usePrivilege } from '../../_context/privilege-context';
-import FileUploader from '@/app/(features)/vendor/_components/uploader';
+import FileUploader from '@/app/(features)/my-workspace/_components/uploader';
+
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 export default function SupportingDocuments() {
@@ -19,91 +21,55 @@ export default function SupportingDocuments() {
   const docInfo = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
   const [save, saveValues] = useAddFormMutation();
   const { updateAccess, updateStatus } = usePrivilege();
+  const [files, setFiles] = useState<
+    {
+      key:
+        | 'businessRegistration_IncorporationCertificate'
+        | 'mRA_TPINCertificate'
+        | 'generalReceipt_BankDepositSlip'
+        | 'mRATaxClearanceCertificate'
+        | 'previousPPDARegistrationCertificate'
+        | 'MSMECertificate'
+        | 'ibmCertificate'
+        | 'marginalizedCertificate';
+      file: File | null;
+      imageUrl: string | null;
+    }[]
+  >([
+    {
+      key: 'businessRegistration_IncorporationCertificate',
+      file: null,
+      imageUrl: null,
+    },
+    { key: 'mRA_TPINCertificate', file: null, imageUrl: null },
+    { key: 'generalReceipt_BankDepositSlip', file: null, imageUrl: null },
+    { key: 'mRATaxClearanceCertificate', file: null, imageUrl: null },
+    { key: 'previousPPDARegistrationCertificate', file: null, imageUrl: null },
+    { key: 'MSMECertificate', file: null, imageUrl: null },
+    { key: 'ibmCertificate', file: null, imageUrl: null },
+    { key: 'marginalizedCertificate', file: null, imageUrl: null },
+  ]);
 
   const [uploadFile, uploadFileInfo] = useLazyUploadSupportingDocQuery();
 
-  const [businessRegistrationFile, setBusinessRegistrationFile] =
-    useState<File | null>(null);
-  const [mRATPINCertificateFile, setMRATPINCertificateFile] =
-    useState<File | null>(null);
-  const [generalReceiptFile, setGeneralReceiptFile] = useState<File | null>(
-    null,
-  );
-  const [mRATaxClearanceFile, setMRATaxClearanceFile] = useState<File | null>(
-    null,
-  );
-  const [previousPPDARegistrationFile, setPreviousPPDARegistrationFile] =
-    useState<File | null>(null);
-
-  // Define state variables for each imageUrl
-  const [businessRegistrationImageUrl, setBusinessRegistrationImageUrl] =
-    useState<string | null>(null);
-  const [mRATPINCertificateImageUrl, setMRATPINCertificateImageUrl] = useState<
-    string | null
-  >(null);
-  const [generalReceiptImageUrl, setGeneralReceiptImageUrl] = useState<
-    string | null
-  >(null);
-  const [mRATaxClearanceImageUrl, setMRATaxClearanceImageUrl] = useState<
-    string | null
-  >(null);
-  const [
-    previousPPDARegistrationImageUrl,
-    setPreviousPPDARegistrationImageUrl,
-  ] = useState<string | null>(null);
-
-  // Define separate handler functions for each FileUploader
-  const handleBusinessRegistrationChange = (file: File) => {
-    setBusinessRegistrationFile(file);
-    // Your additional logic here
-  };
-
-  const handleMRATPINCertificateChange = (file: File) => {
-    setMRATPINCertificateFile(file);
-    // Your additional logic here
-  };
-
-  const handleGeneralReceiptChange = (file: File) => {
-    setGeneralReceiptFile(file);
-    // Your additional logic here
-  };
-
-  const handleMRATaxClearanceChange = (file: File) => {
-    setMRATaxClearanceFile(file);
-    // Your additional logic here
-  };
-
-  const handlePreviousPPDARegistrationChange = (file: File) => {
-    setPreviousPPDARegistrationFile(file);
-    // Your additional logic here
+  // Define handler function for file change
+  const handleFileChange = (file, key) => {
+    setFiles((prevFiles) =>
+      prevFiles.map((item) => (item.key === key ? { ...item, file } : item)),
+    );
   };
 
   useEffect(() => {
     if (docInfo.data && docInfo.data?.supportingDocuments) {
-      docInfo.data?.supportingDocuments
-        .businessRegistration_IncorporationCertificate &&
-        setBusinessRegistrationImageUrl(
-          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.businessRegistration_IncorporationCertificate}`,
-        );
-      docInfo.data?.supportingDocuments.mRA_TPINCertificate &&
-        setMRATPINCertificateImageUrl(
-          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.mRA_TPINCertificate}`,
-        );
-      docInfo.data?.supportingDocuments.previousPPDARegistrationCertificate &&
-        setPreviousPPDARegistrationImageUrl(
-          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.previousPPDARegistrationCertificate}`,
-        );
-      docInfo.data?.supportingDocuments.generalReceipt_BankDepositSlip &&
-        setGeneralReceiptImageUrl(
-          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.generalReceipt_BankDepositSlip}`,
-        );
-      docInfo.data?.supportingDocuments.mRATaxClearanceCertificate &&
-        setMRATaxClearanceImageUrl(
-          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.mRATaxClearanceCertificate}`,
-        );
+      setFiles((prevFiles) =>
+        prevFiles.map((item) => ({
+          ...item,
+          imageUrl: docInfo.data?.supportingDocuments[item.key]
+            ? `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments[item.key]}`
+            : null,
+        })),
+      );
     }
-
-    return () => {};
   }, [docInfo.data]);
 
   useEffect(() => {
@@ -111,29 +77,22 @@ export default function SupportingDocuments() {
       updateAccess(requestInfo.data?.initial.level);
       updateStatus(requestInfo.data?.initial.status);
     }
-
-    return () => {};
   }, [updateAccess, requestInfo.data?.initial.level]);
 
-  console.log(requestInfo.data?.supportingDocuments);
   useEffect(() => {
     if (requestInfo.isError) {
       NotificationService.requestErrorNotification('Error on fetching data');
-      //  router.push(`basic`);
     }
-
-    return () => {};
-  }, [requestInfo, router]);
+  }, [requestInfo]);
 
   useEffect(() => {
     if (saveValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
-      router.push(`review`);
+      router.push('review');
     }
     if (saveValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');
     }
-    return () => {};
   }, [saveValues.isSuccess, saveValues.isError, router]);
 
   useEffect(() => {
@@ -148,50 +107,22 @@ export default function SupportingDocuments() {
         },
       });
     }
-
-    return () => {};
   }, [requestInfo.data]);
+  console.log(docInfo.data, docInfo.data?.basic.countryOfRegistration);
 
   const onSave = async () => {
     try {
-      if (businessRegistrationFile) {
-        await uploadFile({
-          file: businessRegistrationFile,
-          fieldName: 'businessRegistration_IncorporationCertificate',
-        });
-      }
-
-      if (mRATPINCertificateFile) {
-        await uploadFile({
-          file: mRATPINCertificateFile,
-          fieldName: 'mRA_TPINCertificate',
-        });
-      }
-
-      if (generalReceiptFile) {
-        await uploadFile({
-          file: generalReceiptFile,
-          fieldName: 'generalReceipt_BankDepositSlip',
-        });
-      }
-
-      if (mRATaxClearanceFile) {
-        await uploadFile({
-          file: mRATaxClearanceFile,
-          fieldName: 'mRATaxClearanceCertificate',
-        });
-      }
-
-      if (previousPPDARegistrationFile) {
-        await uploadFile({
-          file: previousPPDARegistrationFile,
-          fieldName: 'previousPPDARegistrationCertificate',
-        });
-      }
+      await Promise.all(
+        files.map(async ({ file, key }) => {
+          if (file) {
+            await uploadFile({
+              file,
+              fieldName: key,
+            });
+          }
+        }),
+      );
       request({});
-
-      // Now that all files are uploaded, you can proceed with saving the data
-
       NotificationService.successNotification('Files Uploaded Successfully!');
       router.push('review');
     } catch (error) {
@@ -201,7 +132,6 @@ export default function SupportingDocuments() {
     }
   };
 
-  const FILE_SERVER_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
   if (requestInfo.isLoading) {
     return (
       <Box pos="relative" className="w-full h-full">
@@ -213,66 +143,60 @@ export default function SupportingDocuments() {
       </Box>
     );
   }
+
   if (requestInfo.data?.supportingDocuments === null || requestInfo.isError) {
     return null;
   }
+
   return (
     <Flex className="w-full flex-col gap-2">
-      {requestInfo.data?.supportingDocuments !== null && (
-        <>
-          <FileUploader
-            id="businessRegistration_IncorporationCertificate"
-            label="Business Registration/Incorporation Certificate"
-            placeholder="Choose File"
-            onChange={handleBusinessRegistrationChange}
-            getImageUrl={businessRegistrationImageUrl}
-          />
-
-          <FileUploader
-            id="mRA_TPINCertificate"
-            label="MRA TPIN Certificate"
-            placeholder="Choose File"
-            onChange={handleMRATPINCertificateChange}
-            getImageUrl={mRATPINCertificateImageUrl}
-          />
-
-          {/* FileUploader for General Receipt/Bank Deposit Slip */}
-          <FileUploader
-            id="generalReceipt_BankDepositSlip"
-            label="General Receipt/Bank Deposit Slip"
-            placeholder="Choose File"
-            onChange={handleGeneralReceiptChange}
-            getImageUrl={generalReceiptImageUrl}
-          />
-
-          {/* FileUploader for MRA Tax Clearance Certificate */}
-          <FileUploader
-            id="mRATaxClearanceCertificate"
-            label="MRA Tax Clearance Certificate"
-            placeholder="Choose File"
-            onChange={handleMRATaxClearanceChange}
-            getImageUrl={mRATaxClearanceImageUrl}
-          />
-
-          {/* FileUploader for Previous PPDA Registration Certificate */}
-          <FileUploader
-            id="previousPPDARegistrationCertificate"
-            label="Previous PPDA Registration Certificate"
-            placeholder="Choose File"
-            onChange={handlePreviousPPDARegistrationChange}
-            getImageUrl={previousPPDARegistrationImageUrl}
-          />
-          <Flex justify="end" className="gap-2 mt-4">
-            <Button
-              onClick={() => router.push('preferential')}
-              variant="outline"
-            >
-              Back
-            </Button>
-            <Button onClick={onSave}>Save</Button>
-          </Flex>
-        </>
-      )}
+      <Flex align={'center'} gap={16} wrap={'wrap'}>
+        {files.map(({ key, file, imageUrl }) => {
+          if (
+            docInfo.data?.basic.countryOfRegistration !== 'Malawi' &&
+            [
+              'MSMECertificate',
+              'ibmCertificate',
+              'marginalizedCertificate',
+            ].includes(key)
+          )
+            return null;
+          else
+            return (
+              <FileUploader
+                key={key}
+                id={key}
+                label={getLabelByKey(key)}
+                placeholder="Choose File"
+                onChange={(file) => handleFileChange(file, key)}
+                getImageUrl={imageUrl}
+              />
+            );
+        })}
+      </Flex>
+      <Flex justify="end" className="gap-2 mt-4">
+        <Button onClick={() => router.push('preferential')} variant="outline">
+          Back
+        </Button>
+        <Button onClick={onSave}>Save</Button>
+      </Flex>
     </Flex>
   );
+}
+
+// Helper function to get label by key
+function getLabelByKey(key) {
+  const labels = {
+    businessRegistration_IncorporationCertificate:
+      'Business Registration /Incorporation Certificate',
+    mRA_TPINCertificate: 'MRA TPIN Certificate',
+    generalReceipt_BankDepositSlip: 'General Receipt/Bank Deposit Slip',
+    mRATaxClearanceCertificate: 'MRA Tax Clearance Certificate',
+    previousPPDARegistrationCertificate:
+      'Previous PPDA Registration Certificate',
+    MSMECertificate: 'Copy of MSME Certificate',
+    ibmCertificate: 'IBM Certificate',
+    marginalizedCertificate: 'Marginalized Certificate',
+  };
+  return labels[key];
 }

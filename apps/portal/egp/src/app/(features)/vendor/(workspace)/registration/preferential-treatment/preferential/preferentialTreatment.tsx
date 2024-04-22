@@ -66,8 +66,8 @@ export const PreferentialTreatment: React.FC<Props> = ({
             append({
               category,
               type: category !== 'msme' ? category : '',
-              certificateUrl: '' as any,
               certiNumber: '',
+              certificateUrl: '' as any,
               serviceId:
                 category !== 'msme' ? findServiceIdByType(data, category) : '',
             });

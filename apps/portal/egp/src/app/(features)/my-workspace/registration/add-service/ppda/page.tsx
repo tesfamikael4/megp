@@ -20,7 +20,7 @@ function Page() {
     isSuccess,
     isError,
   } = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
-  const { data: myDraftServices } = useGetMyDraftServicesQuery({});
+  // const { data: myDraftServices } = useGetMyDraftServicesQuery({});
   useEffect(() => {
     if (isError) {
       NotificationService.requestErrorNotification('Error on fetching data');
@@ -36,11 +36,16 @@ function Page() {
           visible={isLoading}
           overlayProps={{ radius: 'sm', blur: 2 }}
         />
-        {vendor && isSuccess ? (
-          <AreasOfBusinessInterestForm
-            vendorInfo={vendor.initial}
-            initialValues={{ areasOfBusinessInterest: myDraftServices }}
-          />
+        {vendor ? (
+          <>
+            <AreasOfBusinessInterestForm
+              vendorInfo={vendor.initial}
+              initialValues={{
+                areasOfBusinessInterest: [],
+                lineOfBusiness: vendor.lineOfBusiness,
+              }}
+            />
+          </>
         ) : (
           <></>
         )}
