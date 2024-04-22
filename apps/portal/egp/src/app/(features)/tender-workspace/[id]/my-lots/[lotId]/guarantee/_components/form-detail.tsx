@@ -123,13 +123,13 @@ export function FormDetail({ mode }: Props) {
   }, [lotId]);
   const onSubmit = async (data) => {
     try {
-      const result = await submit({
+      await update({
         ...data,
         id: guaranteeId?.toString(),
+        status: 'REQUESTED',
       }).unwrap();
-
       router.push(
-        `/tender-workspace/${id}/my-lots/${lotId}/guarantee/${result.id}`,
+        `/tender-workspace/${id}/my-lots/${lotId}/guarantee/${guaranteeId?.toString()}`,
       );
 
       notifications.show({
