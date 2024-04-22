@@ -27,6 +27,9 @@ import { RegionController } from './controller/region.controller';
 import { ItemSubCategoryService } from './service/item-sub-category.service';
 import { ItemSubCategoryController } from './controller/item-sub-category.controller';
 import { ItemSubCategory } from 'src/entities/item-sub-category.entity';
+import { Donor } from 'src/entities/donor.entity';
+import { DonorService } from './service/donor.service';
+import { DonorController } from './controller/donor.controller';
 
 @Module({
   imports: [
@@ -40,6 +43,7 @@ import { ItemSubCategory } from 'src/entities/item-sub-category.entity';
       UnitOfMeasurement,
       Tag,
       ItemSubCategory,
+      Donor,
     ]),
   ],
   providers: [
@@ -52,6 +56,7 @@ import { ItemSubCategory } from 'src/entities/item-sub-category.entity';
     UnitOfMeasurementService,
     TagService,
     ItemSubCategoryService,
+    DonorService,
   ],
   controllers: [
     ItemCategoriesController,
@@ -63,6 +68,7 @@ import { ItemSubCategory } from 'src/entities/item-sub-category.entity';
     UnitOfMeasurementController,
     TagController,
     ItemSubCategoryController,
+    DonorController,
   ],
 })
 export class lookUpDataModule {}
