@@ -6,11 +6,10 @@ import {
   Post,
   Res,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AllowAnonymous, CurrentUser, JwtGuard } from 'src/shared/authorization';
+import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from '../services/file.service';
 import { Response } from 'express';
