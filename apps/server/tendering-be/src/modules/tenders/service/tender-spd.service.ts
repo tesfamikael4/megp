@@ -76,7 +76,7 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
       }
 
       if (!entity) {
-        [entity] = manager.getRepository(TenderSpd).create(itemData);
+        entity = manager.getRepository(TenderSpd).create(itemData) as any;
         await manager.getRepository(TenderSpd).insert(entity);
         await this.createEqc(manager, lotIds, spd);
 
