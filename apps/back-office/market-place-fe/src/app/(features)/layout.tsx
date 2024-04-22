@@ -6,8 +6,8 @@ import { ShellProvider } from './shell';
 import Protected from './protected';
 
 export const metadata: Metadata = {
-  title: 'M-egp | market-place',
-  description: 'market-place',
+  title: 'M-egp | Market Place',
+  description: 'Market Place',
   icons: {
     icon: '/market-place/favicon/android-chrome-512x512.png',
   },

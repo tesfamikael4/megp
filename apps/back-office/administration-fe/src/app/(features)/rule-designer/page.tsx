@@ -16,8 +16,7 @@ import React, { useEffect, useState } from 'react';
 import RuleDesigner from './_component/rule-designer';
 import { IconCaretDown, IconCirclePlus, IconSearch } from '@tabler/icons-react';
 import { useDebouncedState } from '@mantine/hooks';
-
-const perPage = 10;
+z;
 
 function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
   if (totalItems <= 0 || itemsPerPage <= 0) {

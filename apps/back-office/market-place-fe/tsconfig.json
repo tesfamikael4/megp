@@ -8,9 +8,15 @@
       "@/models/*": ["models/*"],
       "@/contexts/*": ["contexts/*"],
       "@/store/*": ["store/*"],
-      "@/shared/*": ["shared/*"],
-    },
+      "@/shared/*": ["shared/*"]
+    }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/app/(features)/procurement-requisition/_components/form-builder.tsx"
+  ],
+  "exclude": ["node_modules"]
 }

@@ -3,6 +3,8 @@ import { Providers } from '@/store/provider';
 import type { Metadata } from 'next';
 import RootStyleRegistry from './mantine';
 
+import 'mantine-datatable/styles.css';
+
 import { Inter, Roboto_Mono } from 'next/font/google';
 
 const inter = Inter({
