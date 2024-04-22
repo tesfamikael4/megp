@@ -32,8 +32,8 @@ export function Unit({
   measurementId,
 }: FormDetailProps) {
   const unitSchema: ZodType<Partial<MeasurementUnit>> = z.object({
-    name: z.string().min(1, 'Name is required'),
-    abbreviation: z.string().optional(),
+    name: z.string().min(1, { message: 'Name is required' }),
+    abbreviation: z.string().min(1, { message: 'Abbreviation is required' }),
   });
 
   const { id } = useParams();
@@ -134,11 +134,10 @@ export function Unit({
         required
       />
       <TextInput
-        // withAsterisk
+        withAsterisk
         label="Abbreviation"
         {...register('abbreviation')}
         error={errors?.key ? errors?.key?.message?.toString() : ''}
-        // required
       />
       <Flex gap="md" justify="flex-start" align="flex-start" direction="row">
         <EntityButton

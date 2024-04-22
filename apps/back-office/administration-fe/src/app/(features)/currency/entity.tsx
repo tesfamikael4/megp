@@ -12,7 +12,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
 
   const config: EntityConfig<Currency> = useMemo(() => {
     return {
-      basePath: '/currencies',
+      basePath: '/currency',
       mode: 'list',
       entity: 'currencies',
       primaryKey: 'id',
@@ -61,8 +61,8 @@ export function Entity({ children }: { children: React.ReactElement }) {
     pathname === `/currency`
       ? 'list'
       : pathname === `/currency/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
   const onRequestChange = (request: CollectionQuery) => {
     trigger(request);
   };

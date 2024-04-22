@@ -41,6 +41,17 @@ import { useDisclosure } from '@mantine/hooks';
 interface FormDetailProps {
   mode: 'new' | 'detail';
 }
+const defaultValues = {
+  commodityCode: '',
+  commodityName: '',
+  description: '',
+  itemSubcategoryName: '',
+  itemSubcategoryId: '',
+  uOMId: null,
+  uOMName: '',
+  measurementId: null,
+  itemTags: [],
+};
 
 const itemSchema: ZodType<Partial<ItemMaster>> = z.object({
   commodityCode: z.string({
@@ -181,16 +192,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     }
   };
   const onReset = async () => {
-    reset({
-      commodityCode: '',
-      commodityName: '',
-      description: '',
-      itemSubcategoryName: '',
-      itemSubcategoryId: '',
-      uOMId: '',
-      uOMName: '',
-      itemTags: [],
-    });
+    reset({ ...defaultValues });
   };
 
   //hooks
@@ -222,7 +224,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   }, [isItemTagSuccess, itemTags, setValue]);
 
   useEffect(() => {
-    const id: string | undefined = watch('measurementId');
+    const id: string | null = watch('measurementId') ?? null;
     if (id) {
       getUnitOfMeasurements(id);
     }
