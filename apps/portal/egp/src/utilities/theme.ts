@@ -11,7 +11,6 @@ export const theme: Partial<MantineThemeOverride> = {
     lg: '1024px',
     xl: '1280px',
   },
-
   colors: {
     primary: [
       '#f6faf3',
