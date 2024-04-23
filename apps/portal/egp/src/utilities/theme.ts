@@ -25,7 +25,6 @@ export const theme: Partial<MantineThemeOverride> = {
       '#2b4522',
     ],
   },
-
   components: {
     Container: {
       defaultProps: {

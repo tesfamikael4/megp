@@ -33,12 +33,12 @@ build:
   before_script:
     - apk --update add nodejs npm git
     - node -v
-    - npm install -g pnpm@9.0.4 node-gyp
+    - npm install -g pnpm@9.0.4
   script:
     - pnpm install
+    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
-    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD^]" --concurrency=3
+    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD]" --concurrency=3
       -- $CI_PIPELINE_ID $GITLAB_PASSWORD
   cache:
     key:
