@@ -1,28 +1,48 @@
 'use client';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BillOfMaterial } from '@/models/tender/lot/item/bill-of-material.model';
 import { NumberInput } from '@mantine/core';
 import { logger } from '@megp/core-fe';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 interface BOQ extends BillOfMaterial {
   children: BOQ[];
 }
 export function BillOfMaterialTreeTable({
   boq,
+  itemId,
 }: {
   boq: BOQ[];
+  itemId: string;
 }): React.ReactNode {
   const {
     formState: { errors },
     reset,
-    register,
     control,
   } = useFormContext();
+  useEffect(() => {
+    if (boq) {
+      logger.log(boq);
+      reset({
+        billOfMaterial: boq,
+        itemId: itemId,
+      });
+    }
+  }, [boq, reset]);
+
+  useEffect(() => {
+    logger.log(errors);
+  }, [errors]);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
-  const render = (record) => (
-    <NodeTree childrenScoring={record.children} padding={10} />
+  const render = (record, index) => (
+    <NodeTree
+      childrenScoring={record.children}
+      padding={10}
+      errors={errors}
+      control={control}
+      formControl={['billOfMaterial', index, 'children']}
+    />
   );
 
   return (
@@ -67,9 +87,30 @@ export function BillOfMaterialTreeTable({
           {
             accessor: 'unitRate',
             title: 'Unit Rate',
-            render: (record) => (
+            render: (record, index) => (
               <>
-                {record.children?.length === 0 && <NumberInput withAsterisk />}
+                {record.children.length === 0 && (
+                  <Controller
+                    name={`billOfMaterial.${index}.rate`}
+                    control={control}
+                    render={({ field: { name, value, onChange } }) => (
+                      <NumberInput
+                        withAsterisk
+                        placeholder="Rate"
+                        value={value}
+                        onChange={(d) => onChange(d)}
+                        error={
+                          errors['billOfMaterial'] &&
+                          (errors['billOfMaterial'] ?? '')[`${index}`]
+                            ? (errors['billOfMaterial'] ?? '')[`${index}`][
+                                'rate'
+                              ]?.message?.toString()
+                            : ''
+                        }
+                      />
+                    )}
+                  />
+                )}
               </>
             ),
             width: 200,
@@ -82,12 +123,8 @@ export function BillOfMaterialTreeTable({
             recordIds: expandedIds,
             onRecordIdsChange: setExpandedIds,
           },
-          content: ({ record }) => (
-            <>
-              {boq.filter((s) => s.parentCode === record.code).length > 0
-                ? render(record)
-                : null}
-            </>
+          content: ({ record, index }) => (
+            <>{record.children?.length > 0 ? render(record, index) : null}</>
           ),
         }}
       />
@@ -98,15 +135,35 @@ export function BillOfMaterialTreeTable({
 export function NodeTree({
   childrenScoring,
   padding,
+  errors,
+  control,
+  formControl,
 }: {
   childrenScoring: BOQ[];
   padding: number;
+  errors: any;
+  control: any;
+  formControl: string[];
 }): React.ReactNode {
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
-  const render = (record: BOQ) => {
+  const render = (record: BOQ, index) => {
     return (
-      <NodeTree childrenScoring={record.children} padding={20 + padding} />
+      <NodeTree
+        childrenScoring={record.children}
+        padding={20 + padding}
+        errors={errors}
+        control={control}
+        formControl={[...formControl, index, 'children']}
+      />
     );
+  };
+
+  const error = () => {
+    let err;
+    formControl.forEach((cont) => {
+      err = err ? err[cont] : errors[cont];
+    });
+    return err;
   };
 
   return (
@@ -151,9 +208,31 @@ export function NodeTree({
           {
             accessor: 'unitRate',
             title: 'Unit Rate',
-            render: (record) => (
+            render: (record, index) => (
               <>
-                {record.children?.length === 0 && <NumberInput withAsterisk />}
+                {record.children.length === 0 && (
+                  <Controller
+                    name={`${formControl.join('.')}.${index}.rate`}
+                    control={control}
+                    render={({ field: { name, value, onChange } }) => (
+                      <>
+                        <NumberInput
+                          withAsterisk
+                          placeholder="Rate"
+                          value={value}
+                          onChange={(d) => onChange(d)}
+                          error={
+                            error() && (error() ?? '')[`${index}`]
+                              ? (error() ?? '')[`${index}`][
+                                  'rate'
+                                ]?.message?.toString()
+                              : ''
+                          }
+                        />
+                      </>
+                    )}
+                  />
+                )}
               </>
             ),
             width: 200,
@@ -166,8 +245,8 @@ export function NodeTree({
             recordIds: expandedIds,
             onRecordIdsChange: setExpandedIds,
           },
-          content: ({ record, collapse }: any) =>
-            record.children?.length > 0 ? <>{render(record)}</> : null,
+          content: ({ record, index }: any) =>
+            record.children?.length > 0 ? <>{render(record, index)}</> : null,
         }}
       />
     </>

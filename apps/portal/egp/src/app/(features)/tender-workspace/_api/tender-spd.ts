@@ -1,5 +1,4 @@
 import { baseQuery } from '@/store/base-query';
-import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const getTenderSpdApi = createApi({

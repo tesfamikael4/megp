@@ -1,7 +1,7 @@
 'use client';
 import { ExpandableTable, Section } from '@megp/core-fe';
 import { CollectionQuery } from '@megp/entity';
-import { Item } from '@/models/tender/lot/item';
+import type { Item } from '@/models/tender/lot/item';
 import { useLazyGetMaterialQuery } from '@/app/(features)/vendor/_api/item.api';
 import { NumberInput } from '@mantine/core';
 export default function Material({ item }: { item: Item }) {

@@ -18,7 +18,7 @@ export const ItemBidResponseApi = createApi({
     }),
     saveFinancialBidResponse: builder.mutation<any, any>({
       query: (data: ItemBidResponse) => ({
-        url: `bid-registrations`,
+        url: `bid-item-responses/financial-response`,
         method: 'POST',
         body: data,
       }),

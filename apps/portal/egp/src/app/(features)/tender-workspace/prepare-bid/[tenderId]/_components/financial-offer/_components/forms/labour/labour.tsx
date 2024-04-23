@@ -1,11 +1,7 @@
 'use client';
 import { ExpandableTable, Section } from '@megp/core-fe';
-import { Button } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
-import { useDisclosure } from '@mantine/hooks';
-import { useState } from 'react';
 import { CollectionQuery } from '@megp/entity';
-import { Item } from '@/models/tender/lot/item';
+import type { Item } from '@/models/tender/lot/item';
 import { useLazyGetLaborQuery } from '@/app/(features)/vendor/_api/item.api';
 
 export default function Labour({ item }: { item: Item }) {

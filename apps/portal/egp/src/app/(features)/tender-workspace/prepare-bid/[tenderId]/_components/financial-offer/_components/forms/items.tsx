@@ -1,6 +1,6 @@
 'use client';
-import { ExpandableTable, Section, notify } from '@megp/core-fe';
-import { LoadingOverlay, ActionIcon, Button, Box } from '@mantine/core';
+import { ExpandableTable, Section, logger, notify } from '@megp/core-fe';
+import { LoadingOverlay, Button, Box } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
@@ -21,8 +21,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, FormProvider } from 'react-hook-form';
 
 export default function ItemList() {
-  const router = useRouter();
-  const { id } = useParams();
   const searchParams = useSearchParams();
   const prepareBidContext = useContext(PrepareBidContext);
   const [trigger, { data, isFetching }] = useLazyItemsQuery();
@@ -47,29 +45,93 @@ export default function ItemList() {
       .then(() => {
         notify('Success', 'tender created successfully');
       })
-      .catch(() => {
-        notify('Error', 'Already Registered');
+      .catch((error) => {
+        let message = '';
+        if (error.data.message === `rate_not_found`) {
+          message = 'Rate is not filled for some rows please check';
+        }
+        notify('Error', message);
       });
   };
-  let billOfMaterialSchema;
 
-  billOfMaterialSchema = z.object({
-    parentCode: z.string().optional(),
-    code: z.string().optional(),
-    id: z.string().optional(),
-    itemId: z.string().optional(),
-    payItem: z.string().optional(),
-    description: z.string().optional(),
-    unit: z.string().optional(),
-    quantity: z.number().optional(),
-    rate: z.number(),
-    amount: z.string().optional(),
-    children: z.array(billOfMaterialSchema),
+  let billOfMaterialSchema: z.ZodType<any> = z.lazy(() => {
+    return z
+      .object({
+        parentCode: z.any().optional(),
+        code: z.any().optional(),
+        id: z.any().optional(),
+        itemId: z.any().optional(),
+        payItem: z.any().optional(),
+        description: z.any().optional(),
+        unit: z.any().optional(),
+        quantity: z.any().optional(),
+        rate: z.coerce
+          .number({ required_error: 'rate is required' })
+          .nullable()
+          .optional(),
+        amount: z.any().optional(),
+        children: z.array(billOfMaterialSchema).optional(),
+      })
+      .refine((data) => data.children && data.children.length === 0, {
+        message: 'Rate is Required',
+        path: ['rate'],
+      })
+      .refine((data) => data.children && data.children.length > 0, {
+        message: 'children is Required',
+        path: ['children'],
+      });
   });
+
   const bidPriceSchema: ZodType<any> = z.object({
     billOfMaterial: z.array(billOfMaterialSchema),
     itemId: z.string().min(1, { message: 'this field is required' }),
   });
+  const result = bidPriceSchema.safeParse({
+    billOfMaterial: [
+      {
+        parentCode: '',
+        code: '',
+        id: '',
+        itemId: '',
+        payItem: '',
+        description: '',
+        unit: '',
+        quantity: '',
+        rate: 0,
+        amount: 0,
+        children: [
+          {
+            parentCode: '',
+            code: '',
+            id: '',
+            itemId: '',
+            payItem: '',
+            description: '',
+            unit: '',
+            quantity: '',
+            rate: 0,
+            amount: 0,
+            children: [],
+          },
+        ],
+      },
+      {
+        parentCode: '',
+        code: '',
+        id: '',
+        itemId: '',
+        payItem: '',
+        description: '',
+        unit: '',
+        quantity: '',
+        rate: 0,
+        amount: 0,
+        children: [],
+      },
+    ],
+    itemId: '',
+  });
+  !result.success && logger.log(result.error.issues);
 
   const methods = useForm({
     resolver: zodResolver(bidPriceSchema),
@@ -119,7 +181,10 @@ export default function ItemList() {
               <ReimburseableExpense item={item} />
             </div>
             <Box className="flex justify-end">
-              <Button>
+              <Button
+                loading={isSaving}
+                onClick={methods.handleSubmit(handleSaveChanges)}
+              >
                 <IconDeviceFloppy size={14} /> Save Changes
               </Button>
             </Box>
