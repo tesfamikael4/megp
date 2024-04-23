@@ -1,11 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { EntityCrudService } from 'src/shared/service';
+import { ExtraCrudService } from 'src/shared/service';
 import { SpdDocumentaryEvidence } from 'src/entities';
 
 @Injectable()
-export class SpdDocumentaryEvidenceService extends EntityCrudService<SpdDocumentaryEvidence> {
+export class SpdDocumentaryEvidenceService extends ExtraCrudService<SpdDocumentaryEvidence> {
   constructor(
     @InjectRepository(SpdDocumentaryEvidence)
     private readonly spdDocumentaryEvidenceRepository: Repository<SpdDocumentaryEvidence>,
