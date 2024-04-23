@@ -33,7 +33,7 @@ build:
   before_script:
     - apk --update add nodejs npm git
     - node -v
-    - npm install -g pnpm@9.0.4
+    - npm install -g pnpm@9.0.4 node-gyp
   script:
     - pnpm install
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
