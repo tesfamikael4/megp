@@ -43,7 +43,7 @@ const MyTendersPage = () => {
         width: 100,
       },
     ],
-    isExpandable: true,
+    isExpandable: false,
     isSearchable: true,
     primaryColumn: 'title',
     isFetching: isFetching,

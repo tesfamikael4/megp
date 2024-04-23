@@ -6,7 +6,8 @@ import { useGetBillOfMaterialQuery } from '@/app/(features)/tender-workspace/_ap
 import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 import { useSearchParams } from 'next/navigation';
 import { useContext } from 'react';
-export default function BillOfMaterial({ item }: { item: Item }) {
+
+export default function BillOfMaterial({ item }: Readonly<{ item: Item }>) {
   const searchParams = useSearchParams();
   const prepareBidContext = useContext(PrepareBidContext);
   const { data: billOfMaterial } = useGetBillOfMaterialQuery({
@@ -25,6 +26,7 @@ export default function BillOfMaterial({ item }: { item: Item }) {
     >
       <BillOfMaterialTreeTable
         boq={billOfMaterial ? billOfMaterial.items : []}
+        itemId={item.id}
       />
     </Section>
   );

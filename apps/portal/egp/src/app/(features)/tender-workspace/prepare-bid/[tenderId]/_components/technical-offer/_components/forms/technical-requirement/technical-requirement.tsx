@@ -106,6 +106,7 @@ export default function TechnicalRequirement({
       itemId: item.id,
       documentType: 'RESPONSE',
       key: type,
+      isTree: false,
       password: prepareBidContext?.password,
     });
   };
@@ -119,8 +120,8 @@ export default function TechnicalRequirement({
     >
       <ExpandableTable
         config={config}
-        data={data ?? []}
-        total={data?.length ?? 0}
+        data={data?.items ?? []}
+        total={data?.total ?? 0}
         onRequestChange={onRequestChange}
       />
     </Section>

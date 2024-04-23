@@ -1,8 +1,8 @@
 'use client';
 import { ExpandableTable, Section } from '@megp/core-fe';
-import { ReimburseableExpense } from '@/models/tender/lot/item/reimburseable-expense.model';
+import type { ReimburseableExpense } from '@/models/tender/lot/item/reimburseable-expense.model';
 import { CollectionQuery } from '@megp/entity';
-import { Item } from '@/models/tender/lot/item';
+import type { Item } from '@/models/tender/lot/item';
 import { useLazyGetReimbursableExpenseQuery } from '@/app/(features)/vendor/_api/item.api';
 import { NumberInput } from '@mantine/core';
 export default function ReimburseableExpense({ item }: { item: Item }) {

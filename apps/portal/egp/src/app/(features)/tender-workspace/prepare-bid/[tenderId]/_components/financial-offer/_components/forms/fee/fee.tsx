@@ -1,6 +1,6 @@
 'use client';
 import { ExpandableTable, Section } from '@megp/core-fe';
-import { Fee } from '@/models/tender/lot/item/fee.model';
+import type { Fee } from '@/models/tender/lot/item/fee.model';
 import { CollectionQuery } from '@megp/entity';
 import { Item } from '@/models/tender/lot/item';
 import { useLazyGetFeeQuery } from '@/app/(features)/vendor/_api/item.api';
