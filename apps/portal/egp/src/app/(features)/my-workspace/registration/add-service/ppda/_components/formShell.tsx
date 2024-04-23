@@ -55,7 +55,7 @@ export const areasOfBusinessInterestSchema = z
     z.object({
       category: z.literal('Works'),
       priceRange: z.string().min(1, 'Price range must be selected'),
-      userType: z.union([z.literal('Contractor'), z.literal('Consultant')]),
+      userType: z.string(),
       classification: z.string(),
       activationDate: z.string(),
       expiryDate: z.string(),

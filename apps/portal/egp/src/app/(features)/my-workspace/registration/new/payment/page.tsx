@@ -109,7 +109,7 @@ function Page() {
   useEffect(() => {
     if (paymentReceiptItemSchema.safeParse(uploadFileInfo.data).success) {
       NotificationService.successNotification('Payed Successfully!');
-      router.push('preferential');
+      router.push('doc');
     }
     if (uploadFileInfo.isError) {
       if (
@@ -150,7 +150,7 @@ function Page() {
     return null;
   }
   if (!invoiceInfo.data?.invoice) {
-    return router.push('preferential');
+    return router.push('doc');
   }
 
   return (

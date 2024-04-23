@@ -30,6 +30,7 @@ import MultiCheckBox from '@/app/(features)/my-workspace/_components/multiCheckB
 import dayjs from 'dayjs';
 import { IconCalendar } from '@tabler/icons-react';
 import { DatePickerInput } from '@mantine/dates';
+import { UserType } from '@/app/(features)/my-workspace/_constants/user-type';
 
 export const AreasOfBusinessInterest = ({
   name,
@@ -111,14 +112,6 @@ export const AreasOfBusinessInterest = ({
                   <>
                     <Grid.Col span={6}>
                       <Select
-                        label="User Type"
-                        placeholder="Select User Type"
-                        data={['Contractor', 'Consultants']}
-                        {...register(`${name}.${index}.userType`, 'select')}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <Select
                         label="Classification"
                         placeholder="Select"
                         data={['Contractor', 'Consultants']}
@@ -126,6 +119,25 @@ export const AreasOfBusinessInterest = ({
                           `${name}.${index}.classification`,
                           'select',
                         )}
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                      <Select
+                        label="User Type"
+                        placeholder="Select User Type"
+                        data={
+                          UserType[
+                            register(
+                              `${name}.${index}.classification`,
+                              'select',
+                            ).value
+                          ]
+                        }
+                        {...register(`${name}.${index}.userType`, 'select')}
+                        disabled={
+                          !register(`${name}.${index}.classification`, 'select')
+                            .value
+                        }
                       />
                     </Grid.Col>
                     <Grid.Col span={6}>
