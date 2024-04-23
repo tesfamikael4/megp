@@ -10,6 +10,7 @@ import {
 } from '@/app/(features)/my-workspace/_components/cardList/cardListShell';
 import { getNationalityValues } from '../../new/_components/mockup/nationality';
 import { usePrivilege } from '../../new/_context/privilege-context';
+import { IconPercentage } from '@tabler/icons-react';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
@@ -157,10 +158,19 @@ export const BeneficialOwnership: React.FC<Props> = ({
                       icon={<IconUser size={25} stroke={1.5} color={'green'} />}
                       bold
                     />
-
                     <CardItem
                       label={value.nationality}
                       icon={<IconFlag size={25} stroke={1.5} color={'green'} />}
+                    />
+                    <CardItem
+                      label={value.share}
+                      icon={
+                        <IconPercentage
+                          size={25}
+                          stroke={1.5}
+                          color={'green'}
+                        />
+                      }
                     />
                   </Stack>
                 </SingleCardWrapper>

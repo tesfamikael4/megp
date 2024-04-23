@@ -54,6 +54,23 @@ const renderCell = (header, item, open, setUrl, userId) => {
     return renderObjectCell(cellValue);
   }
 
+  if ((header.name ?? header) === 'isDefualt') {
+    return (
+      <>
+        <Table.Td>{cellValue ? 'Yes' : 'No'}</Table.Td>
+      </>
+    );
+  }
+  if (
+    (header.name ?? header) === 'share' ||
+    (header.name ?? header) === 'votingRights'
+  ) {
+    return (
+      <>
+        <Table.Td>{cellValue + '%'}</Table.Td>
+      </>
+    );
+  }
   if ((header.name ?? header) === 'certificateUrl') {
     return (
       <>
