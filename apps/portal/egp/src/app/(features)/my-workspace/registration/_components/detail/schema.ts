@@ -230,6 +230,9 @@ export const formDataSchema = z
       .array(contactPersonSchema)
       .refine((arr) => arr.length > 0, {
         message: 'At least one contact person is required',
+      })
+      .refine((arr) => arr.length <= 3, {
+        message: 'Maximum number of contact persons is 3',
       }),
     bankAccountDetails: z
       .array(bankAccountSchema)
@@ -240,7 +243,20 @@ export const formDataSchema = z
       .array(beneficialOwnershipShareholderSchema)
       .refine((arr) => arr.length > 0, {
         message: 'At least one beneficial ownership is required',
-      }),
+      })
+      .refine(
+        (arr) => arr.reduce((acc, cur) => acc + Number(cur.share), 0) <= 100,
+        {
+          message: 'Total share must be less than or equal to 100%',
+        },
+      )
+      .refine(
+        (arr) =>
+          arr.reduce((acc, cur) => acc + Number(cur.votingRights), 0) <= 100,
+        {
+          message: 'Total voting rights must be less than or equal to 100%',
+        },
+      ),
   })
   .refine(
     (vendor) => {
