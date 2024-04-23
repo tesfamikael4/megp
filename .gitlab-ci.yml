@@ -1,9 +1,18 @@
+default:
+  image: node:20.7.0
+
 stages:
-  - merge
   - test
+  - merge
   - build
 variables:
   AWS_WEB_IDENTITY_TOKEN_FILE: "/tmp/web-identity-token"
+
+sast:
+  stage: test
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
 merge:
   stage: merge
   image: node:20.7.0
@@ -11,7 +20,7 @@ merge:
     - merge_requests
   before_script:
     - corepack enable
-    - corepack prepare pnpm@9.0.4 --activate
+    - corepack prepare pnpm@latest-9 --activate
     - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install
@@ -33,7 +42,7 @@ build:
   before_script:
     - apk --update add nodejs npm git
     - node -v
-    - npm install -g pnpm@9.0.4
+    - npm install -g pnpm@latest-9
   script:
     - pnpm install
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
@@ -46,7 +55,3 @@ build:
         - pnpm-lock.yaml
     paths:
       - ".pnpm-store"
-sast:
-  stage: test
-include:
-  - template: Security/SAST.gitlab-ci.yml
