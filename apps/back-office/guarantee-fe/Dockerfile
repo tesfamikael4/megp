@@ -10,7 +10,7 @@ RUN apk update
 
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo pnpm
+RUN yarn global add turbo pnpm@9.0.4
 COPY . .
 RUN turbo prune --scope=guarantee-fe --docker
 
@@ -21,7 +21,7 @@ RUN apk update
 WORKDIR /app
 
 # Install pnpm
-RUN yarn global add pnpm
+RUN yarn global add pnpm@9.0.4
  
 
 # First install the dependencies (as they change less often)
