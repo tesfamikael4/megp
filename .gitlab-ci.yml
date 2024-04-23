@@ -1,7 +1,7 @@
 stages:
   - merge
-  - build
   - test
+  - build
 variables:
   AWS_WEB_IDENTITY_TOKEN_FILE: "/tmp/web-identity-token"
 merge:
@@ -31,7 +31,7 @@ build:
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   before_script:
-    - apk --update add nodejs npm git
+    - apk --update add nodejs npm git python3 py3-pip
     - npm install -g pnpm@9.0.4
   script:
     - pnpm install
