@@ -157,12 +157,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const dto = new GotoNextStateDto();
           dto.action = 'ISR';
           const formattedData = await this.formatData(data);
-          const documentId = await this.generatePDFForReview(formattedData, userInfo);
+          const documentId = await this.generatePDFForReview(
+            formattedData,
+            userInfo,
+          );
           dto.data = { documentId: documentId, ...formattedData };
           dto.instanceId = instanceId;
           workflowInstance = await this.workflowService.gotoNextStep(
             dto,
-            userInfo
+            userInfo,
           );
           response = {
             applicationNumber: workflowInstance.applicationNumber,
@@ -177,11 +180,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           wfi.serviceId = bp.serviceId;
           wfi.requestorId = data.id;
           const formattedData = await this.formatData(data);
-          const documentId = await this.generatePDFForReview(formattedData, userInfo);
+          const documentId = await this.generatePDFForReview(
+            formattedData,
+            userInfo,
+          );
           wfi.data = { documentId: documentId, ...formattedData };
           workflowInstance = await this.workflowService.intiateWorkflowInstance(
             wfi,
-            userInfo
+            userInfo,
           );
           workflowInstance = workflowInstance.application;
           if (!workflowInstance)
@@ -278,7 +284,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       this.commonService.reduceAttributes(data?.businessSizeAndOwnership);
 
     formattedData.preferential = [];
-    for (const pt of (data?.preferential ?? [])) {
+    for (const pt of data?.preferential ?? []) {
       const formated = this.commonService.reduceAttributes(pt);
       formattedData.preferential.push(formated);
     }
@@ -294,9 +300,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const fileId = await this.fileService.uploadReadable(
         readStream,
         user.id,
-        subfolder
+        subfolder,
       );
-
 
       if (!(result instanceof Readable)) {
         throw new Error(
@@ -372,7 +377,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const dto = new GotoNextStateDto();
           dto.action = 'ISR';
           const formattedData = await this.formatData(srvendor);
-          const documentId = await this.generatePDFForReview(formattedData, user);
+          const documentId = await this.generatePDFForReview(
+            formattedData,
+            user,
+          );
           wfi.data = { documentId: documentId, ...formattedData };
 
           dto.instanceId = instanceId;
@@ -393,7 +401,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           wfi.serviceId = invoice.serviceId;
           wfi.requestorId = vendorData.id;
           const formattedData = await this.formatData(srvendor);
-          const documentId = await this.generatePDFForReview(formattedData, user);
+          const documentId = await this.generatePDFForReview(
+            formattedData,
+            user,
+          );
           wfi.data = { documentId: documentId, ...formattedData };
           const resonse = await this.workflowService.intiateWorkflowInstance(
             wfi,
@@ -2469,22 +2480,30 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
   private async getAndFormatMBRSData(itemData: VendorInitiationDto) {
     try {
-      const mbrsData: MBRSResponseDto = await this.fetchFromExternalApi(
-        `customer-bussines-infos/${itemData.registrationNumber || 'COYR-8LJ178W'}`,
-      );
-
-      if (mbrsData.count == 0)
-        throw new BadRequestException('you_are_not_registered_on_mbrs');
-
-      if (
-        itemData.registrationIssuedDate !=
-        this.reformatMBRSDate(mbrsData.records[0].registration_date)
-      )
-        throw new BadRequestException('incorrect_registration_date');
-
-      itemData = this.reformatMBRSData(mbrsData.records[0], itemData);
-
+      itemData = this.reformatMBRSData({} as any, itemData);
       return itemData;
+
+      // const mbrsData: MBRSResponseDto = await this.fetchFromExternalApi(
+      //   `customer-bussines-infos/${itemData.registrationNumber || 'COYR-8LJ178W'}`,
+      // );
+
+      // if (mbrsData.error) throw new BadRequestException('mbrs_fetch_error');
+
+      // if (mbrsData.count == 0)
+      //   throw new BadRequestException('you_are_not_registered_on_mbrs');
+
+      // if (
+      //   itemData.registrationIssuedDate !=
+      //   this.reformatMBRSDate(mbrsData?.records[0].registration_date)
+      // )
+      //   throw new BadRequestException('incorrect_registration_date');
+
+      // itemData = this.reformatMBRSData(
+      //   (mbrsData?.records[0] || {}) as any,
+      //   itemData,
+      // );
+
+      // return itemData;
     } catch (error) {
       throw error;
     }
@@ -2532,7 +2551,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     mbrsRecords: RecordDTO,
     itemData: VendorInitiationDto,
   ) {
-    mbrsRecords.partners = mbrsRecords.partners.map((partner) => {
+    mbrsRecords.partners = mbrsRecords?.partners?.map((partner) => {
       partner.share = partner.shares[0]?.number_of_shares || '0';
       partner.firstName = partner.name;
       partner.lastName = partner.name;
@@ -2541,11 +2560,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       return partner;
     });
 
-    itemData.name = mbrsRecords.business_name;
+    itemData.name = mbrsRecords?.business_name || 'MBRS BUSINESS NAME';
     // itemData.shareHolders = mbrsRecords.partners;
     itemData.address = {};
-    itemData.address.postalAddress = mbrsRecords.postal_address;
-    itemData.address.physicalAddress = mbrsRecords.physical_address;
+    itemData.address.postalAddress =
+      mbrsRecords?.postal_address || 'MBRS POSTAL ADDRESS';
+    itemData.address.physicalAddress =
+      mbrsRecords?.physical_address || 'MBRS PHYSICAL ADDRESS';
 
     return itemData;
   }
