@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
-export class CreateNotifcationDto {
+export class CreateNotificationDto {
   @ApiProperty()
   @IsNotEmpty()
   userId: string;
@@ -15,13 +15,13 @@ export class CreateNotifcationDto {
   @IsOptional()
   status: string;
 }
-export class UpdateNotifcationDto extends CreateNotifcationDto {
+export class UpdateNotificationDto extends CreateNotificationDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsUUID()
   id: string;
 }
-export class NotifcationResponseDto extends UpdateNotifcationDto {
+export class NotificationResponseDto extends UpdateNotificationDto {
   @ApiProperty()
   status: string;
 }

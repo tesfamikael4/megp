@@ -20,14 +20,14 @@ import { EntityCrudController } from 'src/shared/controller';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { JwtGuard } from 'src/shared/authorization';
 import {
-  CreateNotifcationDto,
-  UpdateNotifcationDto,
+  CreateNotificationDto,
+  UpdateNotificationDto,
 } from '../dto/notification.dto';
 import { NotificationsService } from '../services/notification.service';
 import { Notification } from 'src/entities/notification.entity';
 const options: EntityCrudOptions = {
-  createDto: CreateNotifcationDto,
-  updateDto: UpdateNotifcationDto,
+  createDto: CreateNotificationDto,
+  updateDto: UpdateNotificationDto,
 };
 @ApiBearerAuth()
 @Controller('notifications')
@@ -43,7 +43,7 @@ export class NotificationsController extends EntityCrudController<Notification>(
   }
 
   @Post()
-  async create(@Body() dto: CreateNotifcationDto) {
+  async create(@Body() dto: CreateNotificationDto) {
     return await super.create(dto);
   }
 
@@ -54,7 +54,7 @@ export class NotificationsController extends EntityCrudController<Notification>(
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: string,
-    @Body() updateDto: UpdateNotifcationDto,
+    @Body() updateDto: UpdateNotificationDto,
   ) {
     return await super.update(id, updateDto);
   }

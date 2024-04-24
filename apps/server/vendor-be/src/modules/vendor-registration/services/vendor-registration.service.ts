@@ -1477,8 +1477,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const apps = [];
     const result = await this.workflowService.getMyApplications(user);
     for (const row of result) {
-      // const business = await this.baService.getBusinessAreaByInstanceId(row.id);
       const status = row.businessArea.status;
+      const applicationDoc = row.taskTrackers?.find((item) => item.data?.documentId)
       apps.push({
         service: row.service.name,
         key: row.service.key,
@@ -1486,6 +1486,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         submittedAt: row.submittedAt,
         remark: row?.businessArea?.remark,
         status: status,
+        data: applicationDoc
       });
     }
     return apps;
