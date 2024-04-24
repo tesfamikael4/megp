@@ -446,6 +446,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         procurementRequisitionItems: true,
         procurementRequisitionTechnicalTeams: true,
         procurementMechanisms: true,
+        budget: true,
       },
     });
     return pr;
