@@ -1,3 +1,3 @@
-export default function DistrictPage() {
+export default function RegionsPage() {
   return <></>;
 }

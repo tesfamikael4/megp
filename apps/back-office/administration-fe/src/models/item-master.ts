@@ -2,13 +2,15 @@ export interface ItemMaster {
   description: string;
   commodityCode: string;
   commodityName: string;
-  itemSubcategoryName: string;
   uOMId: string | null;
-  uOMName: string | null;
+  uOMName: string;
   isActive: boolean;
   itemCode: string;
   id: string;
-  itemSubcategoryId: string;
   measurementId: string | null;
   itemTags: string[];
+  itemCategoryName: string;
+  itemCategoryId: string | null;
+  itemSubCategoryName: string;
+  itemSubCategoryId: string;
 }

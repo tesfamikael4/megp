@@ -37,6 +37,7 @@ import {
 import ClassificationSelector from './classification-selector';
 import { useLazyListQuery } from '../../item-category/_api/item-category';
 import { useDisclosure } from '@mantine/hooks';
+import { useListQuery as useListItemSubCatQuery } from '../../item-sub-category/_api/item-sub-category';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -45,12 +46,14 @@ const defaultValues = {
   commodityCode: '',
   commodityName: '',
   description: '',
-  itemSubcategoryName: '',
-  itemSubcategoryId: '',
+  itemSubCategoryName: '',
+  itemSubCategoryId: '',
   uOMId: null,
   uOMName: '',
   measurementId: null,
   itemTags: [],
+  itemCategoryName: '',
+  itemCategoryId: null,
 };
 
 const itemSchema: ZodType<Partial<ItemMaster>> = z.object({
@@ -72,11 +75,17 @@ const itemSchema: ZodType<Partial<ItemMaster>> = z.object({
   measurementId: z.string({
     required_error: 'Measurement is required',
   }),
-  itemSubcategoryName: z.string({
+  itemCategoryName: z.string({
     required_error: 'Item Category is required',
   }),
-  itemSubcategoryId: z.string({
+  itemCategoryId: z.string({
     required_error: 'Item Category is required',
+  }),
+  itemSubCategoryName: z.string({
+    required_error: 'Item Sub Category is required',
+  }),
+  itemSubCategoryId: z.string({
+    required_error: 'Item Sub Category is required',
   }),
   itemTags: z.array(
     z.string({
@@ -113,6 +122,11 @@ export function FormDetail({ mode }: FormDetailProps) {
       isSuccess: isUnitOfMeasurementsSuccess,
     },
   ] = useLazyGetUnitOfMeasurementsQuery();
+  const {
+    data: ItemSubCat,
+    isLoading: isItemSubCatLoading,
+    isSuccess: isItemSubCatSuccess,
+  } = useListItemSubCatQuery({});
   const [getItemTags, { data: itemTags, isSuccess: isItemTagSuccess }] =
     useLazyGetTagsByItemMasterQuery();
   const [getItemMasters, { data, isSuccess }] = useLazyReadQuery();
@@ -123,8 +137,8 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
   const treeConfig: TreeConfig<any> = {
-    id: 'itemSubcategoryId',
-    label: 'itemSubcategoryName',
+    id: 'itemCategoryId',
+    label: 'itemCategoryName',
     selectable: true,
     multipleSelect: true,
     selectedIds: selectedCategories,
@@ -139,7 +153,7 @@ export function FormDetail({ mode }: FormDetailProps) {
           [
             {
               column: 'parentId',
-              value: data.itemSubcategoryId,
+              value: data.itemCategoryId,
               operator: 'ILIKE',
             },
           ],
@@ -148,8 +162,8 @@ export function FormDetail({ mode }: FormDetailProps) {
       return {
         result:
           res?.items?.map((c) => ({
-            itemSubcategoryName: c.name,
-            itemSubcategoryId: c.id,
+            itemCategoryName: c.name,
+            itemCategoryId: c.id,
           })) ?? [],
         loading: isCategoriesLoading,
       };
@@ -206,8 +220,10 @@ export function FormDetail({ mode }: FormDetailProps) {
       setValue('description', data?.description);
       setValue('commodityCode', data?.commodityCode);
       setValue('commodityName', data?.commodityName);
-      setValue('itemSubcategoryId', data?.itemSubcategoryId);
-      setValue('itemSubcategoryName', data?.itemSubcategoryName);
+      setValue('itemCategoryId', data?.itemCategoryId);
+      setValue('itemCategoryName', data?.itemCategoryName);
+      setValue('itemSubCategoryId', data?.itemSubCategoryId);
+      setValue('itemSubCategoryName', data?.itemSubCategoryName);
       setValue('uOMId', data?.uOMId);
       setValue('uOMName', data?.uOMName);
       setValue('measurementId', data?.measurementId);
@@ -252,15 +268,27 @@ export function FormDetail({ mode }: FormDetailProps) {
     if (selectedCategories.length > 0) {
       const temp = selectedCategories[selectedCategories.length - 1];
       logger.log({ temp });
-      setValue('itemSubcategoryName', temp.itemSubcategoryName);
-      setValue('itemSubcategoryId', temp.itemSubcategoryId);
+      setValue('itemCategoryName', temp.itemCategoryName);
+      setValue('itemCategoryId', temp.itemCategoryId);
     }
   }, [selectedCategories, setValue]);
+
+  useEffect(() => {
+    if (isItemSubCatSuccess) {
+      setValue('itemSubCategoryName', ItemSubCat.items[0].name);
+      setValue('itemSubCategoryId', ItemSubCat.items[0].id);
+    }
+  }, [ItemSubCat, isItemSubCatSuccess, setValue]);
 
   return (
     <Box pos="relative">
       <LoadingOverlay
-        visible={isMeasurementLoading || isTagLoading || isCategoriesLoading}
+        visible={
+          isMeasurementLoading ||
+          isTagLoading ||
+          isCategoriesLoading ||
+          isItemSubCatLoading
+        }
       />
       <Stack>
         {mode == 'detail' && (
@@ -287,10 +315,31 @@ export function FormDetail({ mode }: FormDetailProps) {
           label="Item Category"
           withAsterisk
           readOnly
-          value={watch('itemSubcategoryName')}
-          error={errors.itemSubcategoryName?.message as string}
+          value={watch('itemCategoryName') ?? ''}
+          error={errors.itemCategoryName?.message as string}
           onClick={open}
         />
+        <Controller
+          name="itemSubCategoryName"
+          control={control}
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              name={name}
+              value={value}
+              onChange={onChange}
+              data={ItemSubCat?.items?.map((item) => ({
+                value: item.id,
+                label: item.name,
+              }))}
+              label="Item Sub Category"
+              withAsterisk
+              onReset={onReset}
+              clearable
+              error={errors.itemSubCategoryId?.message as string | undefined}
+            />
+          )}
+        />
+
         <Flex gap="md">
           <Controller
             name="measurementId"
@@ -394,8 +443,8 @@ export function FormDetail({ mode }: FormDetailProps) {
             config={treeConfig}
             data={
               categories?.items?.map((c) => ({
-                itemSubcategoryName: c.name,
-                itemSubcategoryId: c.id,
+                itemCategoryName: c.name,
+                itemCategoryId: c.id,
               })) ?? []
             }
           />

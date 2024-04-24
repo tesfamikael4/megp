@@ -1,3 +1,3 @@
-export default function PricingPage() {
+export default function ItemMasterPage() {
   return <></>;
 }

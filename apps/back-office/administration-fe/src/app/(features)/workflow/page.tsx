@@ -1,3 +1,3 @@
-export default function Workflow() {
+export default function WorkflowPage() {
   return <></>;
 }

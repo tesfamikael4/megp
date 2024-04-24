@@ -1,3 +1,3 @@
-export default function organizationsPage() {
+export default function OrganizationsPage() {
   return <></>;
 }

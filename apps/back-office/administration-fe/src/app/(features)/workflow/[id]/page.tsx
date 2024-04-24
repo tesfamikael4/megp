@@ -5,7 +5,7 @@ import { Permissions } from '../_components/permissions';
 import { Designer } from '../_components/workflow-designer';
 import { usePathname, useRouter } from 'next/navigation';
 
-export default function WorkflowPage() {
+export default function WorkflowDetailPage() {
   return (
     <Stack>
       <Section title="Default steps" defaultCollapsed>
