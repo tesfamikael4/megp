@@ -1,9 +1,9 @@
 'use client';
-import { ExpandableTable, Section, logger, notify } from '@megp/core-fe';
+import { ExpandableTable, Section, notify } from '@megp/core-fe';
 import { LoadingOverlay, Button, Box } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { CollectionQuery } from '@megp/entity';
 import BillOfMaterial from './bill-of-material/bill-of-material';
 import Labour from './labour/labour';
@@ -65,73 +65,36 @@ export default function ItemList() {
         description: z.any().optional(),
         unit: z.any().optional(),
         quantity: z.any().optional(),
-        rate: z.coerce
+        rate: z
           .number({ required_error: 'rate is required' })
-          .nullable()
-          .optional(),
+          .optional()
+          .nullable(),
         amount: z.any().optional(),
-        children: z.array(billOfMaterialSchema).optional(),
+        children: z.array(z.lazy(() => billOfMaterialSchema)).optional(),
       })
-      .refine((data) => data.children && data.children.length === 0, {
-        message: 'Rate is Required',
-        path: ['rate'],
-      })
-      .refine((data) => data.children && data.children.length > 0, {
-        message: 'children is Required',
-        path: ['children'],
-      });
+      .refine(
+        (data) => {
+          const hasChildren = data.children && data.children.length > 0;
+          const rateIsProvided = data.rate !== null && data.rate !== undefined;
+
+          if (hasChildren && rateIsProvided) {
+            return true;
+          } else if (!hasChildren && !rateIsProvided) {
+            return false;
+          }
+          return true;
+        },
+        {
+          message: 'Rate is required',
+          path: ['rate'],
+        },
+      );
   });
 
   const bidPriceSchema: ZodType<any> = z.object({
     billOfMaterial: z.array(billOfMaterialSchema),
     itemId: z.string().min(1, { message: 'this field is required' }),
   });
-  const result = bidPriceSchema.safeParse({
-    billOfMaterial: [
-      {
-        parentCode: '',
-        code: '',
-        id: '',
-        itemId: '',
-        payItem: '',
-        description: '',
-        unit: '',
-        quantity: '',
-        rate: 0,
-        amount: 0,
-        children: [
-          {
-            parentCode: '',
-            code: '',
-            id: '',
-            itemId: '',
-            payItem: '',
-            description: '',
-            unit: '',
-            quantity: '',
-            rate: 0,
-            amount: 0,
-            children: [],
-          },
-        ],
-      },
-      {
-        parentCode: '',
-        code: '',
-        id: '',
-        itemId: '',
-        payItem: '',
-        description: '',
-        unit: '',
-        quantity: '',
-        rate: 0,
-        amount: 0,
-        children: [],
-      },
-    ],
-    itemId: '',
-  });
-  !result.success && logger.log(result.error.issues);
 
   const methods = useForm({
     resolver: zodResolver(bidPriceSchema),
@@ -213,7 +176,7 @@ export default function ItemList() {
       },
       type: 'financial',
     });
-  }, [searchParams, trigger]);
+  }, [prepareBidContext?.password, searchParams, trigger]);
 
   return (
     <Section

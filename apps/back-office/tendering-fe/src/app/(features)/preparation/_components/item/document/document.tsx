@@ -26,7 +26,7 @@ import {
   useLazyDownloadFilesQuery,
 } from '@/app/(features)/preparation/_api/item/sor-document.api';
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
-import { FileViewer } from '@/app/(features)/_components/file-viewer';
+import { FileViewer } from '@/app/(features)/_components/file-viewer/file-viewer';
 import { DocumentFormDetail } from './document-form-detail';
 import { useDeleteMutation } from '../../../_api/item/document.api';
 import { useParams, useRouter } from 'next/navigation';

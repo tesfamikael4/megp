@@ -17,7 +17,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { ReimburseableExpense } from '@/models/tender/lot/item/reimburseable-expense.model';
+import type { ReimburseableExpense } from '@/models/tender/lot/item/reimburseable-expense.model';
 import { CollectionQuery } from '@megp/entity';
 import { Item } from '@/models/tender/lot/item';
 import { ReimburseableExpenseFormDetail } from './reimburseable-expense-form-detail';

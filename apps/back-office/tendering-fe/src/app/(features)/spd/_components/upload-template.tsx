@@ -12,7 +12,7 @@ import {
   useLazyGetFilesQuery,
   useUploadSpdMutation,
 } from '../_api/template-spd.api';
-import { FileViewer } from '../../_components/file-viewer';
+import { FileViewer } from '../../_components/file-viewer/file-viewer';
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
 const UploadTemplate = () => {
@@ -230,6 +230,57 @@ const UploadTemplate = () => {
                       onClick={() => {
                         open();
                         setCurrentView('invitation');
+                      }}
+                    >
+                      Preview
+                    </Button>
+                  }
+                </div>
+              </div>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td className="bg-slate-200 font-semibold w-2/6">
+              Bid Security
+            </Table.Td>
+            <Table.Td>
+              <div className="flex space-x-4">
+                <div className="my-auto">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'bid-security');
+                    }}
+                    accept=".docx"
+                  >
+                    {(props) => (
+                      <Button variant="subtle" {...props}>
+                        Select
+                      </Button>
+                    )}
+                  </FileButton>
+                </div>
+                <div>
+                  <List>
+                    {file['bid-security'] && (
+                      <List.Item>{file['bid-security']?.name}</List.Item>
+                    )}
+                  </List>
+                  {file['bid-security'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('scc');
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  )}
+                  {
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('bid-security');
                       }}
                     >
                       Preview

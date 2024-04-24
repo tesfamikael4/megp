@@ -25,7 +25,7 @@ import { useEffect, useState } from 'react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { CollectionQuery } from '@megp/entity';
-import { FileViewer } from '../../_components/file-viewer';
+import { FileViewer } from '../../_components/file-viewer/file-viewer';
 import { useLazyGetFilesQuery } from '../_api/bid-form-upload.api';
 
 export default function BidForm({ spdId }: { spdId: string }) {

@@ -29,13 +29,12 @@ export default function TechnicalRequirement({
   } = useFormContext();
   useEffect(() => {
     if (data) {
-      logger.log(data);
       reset({
-        [type]: data,
+        [type]: data.items,
         itemId: item.id,
       });
     }
-  }, [data, reset, type]);
+  }, [data, item.id, reset, type]);
   const config = {
     columns: [
       { accessor: 'category', title: 'Category', width: 300 },

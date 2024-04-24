@@ -20,7 +20,7 @@ import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import {
   SorType,
-  TechnicalRequirement,
+  type TechnicalRequirement,
 } from '@/models/tender/lot/item/technical-requirement.model';
 import { CollectionQuery } from '@megp/entity';
 import { Item } from '@/models/tender/lot/item';

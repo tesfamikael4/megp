@@ -26,7 +26,7 @@ import { SpdProfessionalSettingFormDetail } from './professional-setting-form-de
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
-import { SpdProfessionalSetting } from '@/models/spd/professional-setting.model';
+import type { SpdProfessionalSetting } from '@/models/spd/professional-setting.model';
 
 export default function SpdProfessionalSetting() {
   const [trigger, { data, isFetching }] = useLazyListQuery();
