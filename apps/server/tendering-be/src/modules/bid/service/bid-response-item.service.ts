@@ -463,7 +463,7 @@ export class BidResponseItemService {
     const calculateItem = (items: any[], current: any) => {
       let val = 0;
       for (const item of items) {
-        if (item.children) {
+        if (item.children && item.children.length > 0) {
           item.rate = calculateItem(item.children, item);
           val += item.rate;
         } else {
@@ -477,12 +477,12 @@ export class BidResponseItemService {
     };
     for (const item of items) {
       let val = 0;
-      if (item.children) {
+      if (item.children && item.children.length > 0) {
         val += calculateItem(item.children, item);
         item.rate = val;
       } else {
         if (!item.rate) {
-          throw new BadRequestException('false');
+          throw new BadRequestException('rate_not_found');
         }
         item.rate = item.quantity * item.rate;
       }
