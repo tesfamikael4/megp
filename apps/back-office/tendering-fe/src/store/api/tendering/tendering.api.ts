@@ -6,7 +6,7 @@ export const tenderingApi = createApi({
   reducerPath: 'tenderingApi',
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
-  tagTypes: ['opening', 'teams', 'teamMembers'],
+  tagTypes: ['opening', 'teams', 'teamMembers', 'bidAttribute'],
   endpoints: (builder) => ({
     getTenderDetail: builder.query<any, any>({
       query: (id: string) => `tenders/${id}`,
@@ -78,6 +78,7 @@ export const tenderingApi = createApi({
           url: `/bid-opening-checklist/checklist-status/${lotId}/${bidderId}`,
         };
       },
+      providesTags: ['bidAttribute'],
     }),
     openTender: builder.mutation<any, any>({
       query: (data) => ({
@@ -126,6 +127,15 @@ export const tenderingApi = createApi({
       query: (teamId) => `/team-members/list/${teamId}`,
       providesTags: ['teamMembers'],
     }),
+
+    checkBidAttribute: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `/bid-opening-checklist`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['bidAttribute'],
+    }),
   }),
 });
 
@@ -142,4 +152,5 @@ export const {
   useLazyGetTeamsByTenderIdQuery,
   useCreateTeamMemberMutation,
   useLazyGetTeamMembersQuery,
+  useCheckBidAttributeMutation,
 } = tenderingApi;
