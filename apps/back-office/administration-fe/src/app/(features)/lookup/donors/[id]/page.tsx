@@ -1,9 +1,9 @@
 import { Section } from '@megp/core-fe';
 import { FormDetail } from '../_components/form-detail';
 
-export default function BudgetCategoryDetailPage() {
+export default function DonorsDetailPage() {
   return (
-    <Section title="Budget Catgory Detail" collapsible={false}>
+    <Section title="Donors Detail" collapsible={false}>
       <FormDetail mode="detail" />
     </Section>
   );

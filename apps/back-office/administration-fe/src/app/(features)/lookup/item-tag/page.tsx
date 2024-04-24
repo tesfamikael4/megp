@@ -1,3 +1,3 @@
-export default function ItemTag() {
+export default function ItemTagPage() {
   return <></>;
 }

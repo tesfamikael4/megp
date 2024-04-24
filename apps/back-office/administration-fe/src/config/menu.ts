@@ -39,9 +39,10 @@ export const Menu: MenuItem[] = [
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,
     links: [
+      { label: 'Donors', link: '/lookup/donors' },
+      { label: 'Budget Category', link: '/lookup/budget-category' },
       { label: 'Procurement Institution', link: '/procurement-institution' },
       { label: 'Procurement Method', link: '/lookup/procurement-method' },
-      { label: 'Budget Category', link: '/lookup/budget-category' },
       {
         label: 'Procurement Procedures',
         link: '/lookup/procurement-procedures',

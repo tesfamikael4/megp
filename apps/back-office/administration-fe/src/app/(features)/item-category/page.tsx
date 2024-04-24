@@ -1,3 +1,3 @@
-export default function itemCategoryPage() {
+export default function ItemCategoryPage() {
   return <></>;
 }

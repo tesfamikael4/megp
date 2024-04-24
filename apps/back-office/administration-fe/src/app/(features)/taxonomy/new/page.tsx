@@ -1,7 +1,5 @@
-import React from 'react';
-
-const TaxonomyList = () => {
+const NewTaxonomyListPage = () => {
   return <></>;
 };
 
-export default TaxonomyList;
+export default NewTaxonomyListPage;

@@ -1,3 +1,3 @@
-export default function CurrencyPage() {
+export default function ProcurementThresholdsPage() {
   return <></>;
 }

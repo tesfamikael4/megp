@@ -1,3 +1,3 @@
-export default function ProcurementMethod() {
+export default function ProcurementMethodPage() {
   return <></>;
 }

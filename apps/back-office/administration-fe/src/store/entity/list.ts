@@ -123,4 +123,9 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     entity: 'adhoc-team',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api/',
   },
+  {
+    entity: 'donors',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
+  },
 ];
