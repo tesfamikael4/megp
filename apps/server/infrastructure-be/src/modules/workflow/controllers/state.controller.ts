@@ -16,13 +16,4 @@ export class StateController extends ExtraCrudController<State>(options) {
   constructor(private readonly stateService: StateService) {
     super(stateService);
   }
-
-  // @Post()
-  // async create(@Body() data: any, @CurrentUser() user): Promise<any> {
-  //   this.stateService.createState(
-  //     data.activityId,
-  //     user.organization.id,
-  //     data.itemId,
-  //   );
-  // }
 }
