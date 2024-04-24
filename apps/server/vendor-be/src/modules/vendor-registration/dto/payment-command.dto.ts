@@ -7,6 +7,8 @@ export class PaymentCommand {
   currency: string;
   applicationKey: string; //Vendor
   callbackUrl: string;
+  service: string;
+  description: string;
 }
 export class PaymentReceiptCommand {
   @ApiProperty()

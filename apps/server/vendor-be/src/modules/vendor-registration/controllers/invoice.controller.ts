@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { InvoiceService } from '../services/invoice.service';
 import { ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, JwtGuard } from 'src/shared/authorization';
+import { AllowAnonymous, CurrentUser, JwtGuard } from 'src/shared/authorization';
 import { UpgradeInfoDTO } from '../dto/vendor-upgrade.dto';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
 import { InvoiceResponseDto } from '../dto/invoice.dto';
@@ -30,20 +30,24 @@ import {
 @UseGuards(JwtGuard)
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class InvoicesController {
-  constructor(private invoiceService: InvoiceService) {}
-  @Post('pay')
+  constructor(private invoiceService: InvoiceService) { }
+  @Post('pay/:invoiceId')
   async pay(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
     const PaymentGateway =
       process.env.MEGP_PAYMENT_GATEWAY ?? '/infrastructure/api/';
-    const url = PaymentGateway + '/mpgs-payments';
+    const url = PaymentGateway + 'mpgs-payments';
     const invoice = await this.invoiceService.getInvoiceActiveById(invoiceId);
     if (invoice) {
       const payload = new PaymentCommand();
       payload.invoiceReference = invoice.refNumber;
       payload.currency = 'MWK';
       payload.applicationKey = 'Vendor';
-      payload.amount = invoice.amount;
-      payload.callbackUrl = '';
+      payload.amount = Number(invoice.amount);
+      payload.service = invoice.remark;
+      payload.description = invoice.refNumber;
+      const vendorBaseURL = process.env.VENDOR_API ?? '/vendors/api'
+      const url = vendorBaseURL + '/invoices/update-payment-status';
+      payload.callbackUrl = url;
       const headers = {
         'Content-Type': 'application/json',
         // 'x-api-key': process.env.MEGP_PAYMENT_GATEWAY_API_KEY ?? 'qywteqajdfhasdfagsdhfasdfkdfgdkfg',
@@ -53,6 +57,8 @@ export class InvoicesController {
         console.log('response-----', response);
         if (response.status === 201) {
           const responseData = response.data;
+          invoice.paymentLink = response.data.paymentLink;
+          await this.invoiceService.update(invoice.id, invoice);
           return responseData;
         } else {
           return null;
@@ -64,6 +70,8 @@ export class InvoicesController {
       throw new NotFoundException('Invoice Not found');
     }
   }
+  //open for testing purpose only 
+  @AllowAnonymous()
   @Post('update-payment-status')
   async updateStatus(@Body() receipt: PaymentReceiptCommand) {
     return this.invoiceService.updateStatus(receipt);

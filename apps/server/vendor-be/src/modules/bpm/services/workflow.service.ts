@@ -622,6 +622,7 @@ export class WorkflowService {
         'wf.id = ba.instanceId',
       )
       .innerJoinAndSelect('wf.service', 'service')
+      .innerJoinAndSelect('wf.taskTrackers', 'trak')
       .where('wf.userId = :userId', { userId: user.id })
       .andWhere('ba.status In(:...statuses)', {
         statuses: [
@@ -632,6 +633,7 @@ export class WorkflowService {
         ],
       })
       .orderBy('wf.updatedAt', 'DESC')
+      .addOrderBy('trak.executedAt', 'DESC')
       .getMany();
     return result;
   }

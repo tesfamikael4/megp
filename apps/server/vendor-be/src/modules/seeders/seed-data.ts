@@ -426,7 +426,6 @@ export const bpsToSeed = [
                         },
                     },
                 },
-
                 'Review Medium Enterprise Registration Request by Registration Officer': {
                     on: {
                         ADJUST: 'Submission of Medium Enterprise Registration Request',
@@ -477,26 +476,24 @@ export const bpsToSeed = [
         organizationId: null,
         organizationName: null,
     },
-
     //small Enterprise new WF tasks
-    //will be updated
-
     {
         tenantId: 0,
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
         serviceId: 'a63fb5b2-9896-8c73-4fd0-882d4e9a6e4a',
         workflow: {
-            id: 'Small Enterprise WF',
+            id: 'Small Enterprises(SE)',
             states: {
                 End: {
                     on: {},
                     meta: {
                         type: 'end',
+                        apiUrl: '',
                     },
                 },
                 'Submission of Small Enterprises(SE) Registration Request': {
                     on: {
-                        ISR: 'Approval of Small Enterprise Registration Request',
+                        ISR: 'Review Small Enterprises(SE) Registration Request by Registration Officer',
                     },
                     meta: {
                         type: {
@@ -504,15 +501,36 @@ export const bpsToSeed = [
                         },
                     },
                 },
-                'Approval of Small Enterprise Registration Request': {
+
+                'Review Small Enterprises(SE) Registration Request by Registration Officer': {
                     on: {
-                        ADJUST:
-                            'Submission of Small Enterprises(SE) Registration Request',
-                        REJECT: 'End',
-                        APPROVE: 'Generate Vendor Registration Certificate',
+                        ADJUST: 'Submission of Small Enterprises(SE) Registration Request',
+                        CANCEL: 'End',
+                        APPROVE: 'Approval of Small Enterprises(SE) Registration Request by Senior or chief registration officer or RRM/DRRM',
                     },
                     meta: {
-                        type: 'Approval',
+                        type: 'InitialReview',
+                    },
+                },
+                'Approval of Small Enterprises(SE) Registration Request by Senior or chief registration officer or RRM/DRRM':
+                {
+                    on: {
+                        NO: 'Submission of Small Enterprises(SE) Registration Request',
+                        YES: 'Approval of Small Enterprises(SE) Registration Request by Director General (DG)',
+                    },
+                    meta: {
+                        type: 'Confirmation',
+                    },
+                },
+                'Approval of Small Enterprises(SE) Registration Request by Director General (DG)':
+                {
+                    on: {
+                        ADJUST: 'Submission of Small Enterprises(SE) Registration Request',
+                        APPROVE: 'Generate Vendor Registration Certificate',
+                        REJECT: 'End',
+                    },
+                    meta: {
+                        type: 'Confirmation',
                     },
                 },
                 'Generate Vendor Registration Certificate': {
@@ -538,17 +556,18 @@ export const bpsToSeed = [
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
         serviceId: 'a54fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
         workflow: {
-            id: 'Micro Enterprise WF',
+            id: 'Micro Enterprises(ME)',
             states: {
                 End: {
                     on: {},
                     meta: {
                         type: 'end',
+                        apiUrl: '',
                     },
                 },
                 'Submission of Micro Enterprises(ME) Registration Request': {
                     on: {
-                        ISR: 'Approval of Micro Enterprise Registration Request',
+                        ISR: 'Review Micro Enterprises(ME) Registration Request by Registration Officer',
                     },
                     meta: {
                         type: {
@@ -556,14 +575,35 @@ export const bpsToSeed = [
                         },
                     },
                 },
-                'Approval of Micro Enterprise Registration Request': {
+                'Review Micro Enterprises(ME) Registration Request by Registration Officer': {
                     on: {
                         ADJUST: 'Submission of Micro Enterprises(ME) Registration Request',
-                        REJECT: 'End',
-                        APPROVE: 'Generate Vendor Registration Certificate',
+                        CANCEL: 'End',
+                        APPROVE: 'Approval of Micro Enterprises(ME) Registration Request by Senior or chief registration officer or RRM/DRRM',
                     },
                     meta: {
-                        type: 'Approval',
+                        type: 'InitialReview',
+                    },
+                },
+                'Approval of Micro Enterprises(ME) Registration Request by Senior or chief registration officer or RRM/DRRM':
+                {
+                    on: {
+                        NO: 'Submission of Micro Enterprises(ME) Registration Request',
+                        YES: 'Approval of Micro Enterprises(ME) Registration Request by Director General (DG)',
+                    },
+                    meta: {
+                        type: 'Confirmation',
+                    },
+                },
+                'Approval of Micro Enterprises(ME) Registration Request by Director General (DG)':
+                {
+                    on: {
+                        ADJUST: 'Submission of Micro Enterprises(ME) Registration Request',
+                        APPROVE: 'Generate Vendor Registration Certificate',
+                        REJECT: 'End',
+                    },
+                    meta: {
+                        type: 'Confirmation',
                     },
                 },
                 'Generate Vendor Registration Certificate': {
@@ -575,7 +615,6 @@ export const bpsToSeed = [
                         type: 'Certificate',
                     },
                 },
-
             },
             initial: 'Submission of Micro Enterprises(ME) Registration Request',
         },
@@ -906,55 +945,14 @@ export const tasksToSeed = [
         ],
         orderBy: 5,
     },
-    ///micro
+
+    //micro enterprise new tasks
     {
         id: '96752a13-201f-45eb-8b6f-118ebf0c89c7',
         name: 'Submission of Micro Enterprises(ME) Registration Request',
-        label: 'Submitted Micro Enterprise Application Request',
-        description: 'Submission of Micro Enterprises Registration Request',
+        label: 'Submitted Micro Enterprises(ME) Request',
+        description: 'Submission of Micro Enterprises(ME) Registration Request',
         bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
-        handlerType: 'Requestor',
-        taskType: 'ISR',
-        checkList: null,
-        orderBy: 1,
-    },
-    {
-        id: '12752a13-201f-45eb-8b6f-118ebf0c89c9',
-        name: 'Approval of Micro Enterprise Registration Request',
-        label: 'Submitted Micro Enterprise request',
-        description: 'Approval of Micro Enterprises Registration Request',
-        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
-        handlerType: 'Assignee',
-        taskType: 'Approval',
-        checkList: [
-            {
-                id: '96d95fdb-7852-4ddc-912f-0e94d23d15d3',
-                description:
-                    'The Attached ME certeficate and other documents are valid.',
-                isMandatory: 'true',
-            },
-        ],
-        orderBy: 2,
-    },
-    {
-        id: '85d95fdb-7852-4ddc-912f-0e94d23d15d3',
-        name: 'Generate Vendor Registration Certificate',
-        label: 'Generated Certeficate',
-        description: 'Generate Vendor Registration Certificate',
-        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
-        handlerType: 'Assignee',
-        taskType: 'Certificate',
-        checkList: [
-        ],
-        orderBy: 3,
-    },
-    //small
-    {
-        id: '95752a14-201f-45eb-8b6f-218ebf0c89c7',
-        name: 'Submission of Small Enterprises(SE) Registration Request',
-        label: 'Submitted SE Request',
-        description: 'Submission of Small Enterprises Registration Request',
-        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
         handlerType: 'Requestor',
         taskType: 'ISR',
         checkList: null,
@@ -962,29 +960,308 @@ export const tasksToSeed = [
     },
     {
         id: '26752a13-201f-45eb-8b6f-118ebf0c79c9',
-        name: 'Approval of Small Enterprise Registration Request',
-        label: 'Submitted SE Request',
-        description: 'Approval of Small Enterprises Registration Request',
+        name: 'Review Micro Enterprises(ME) Registration Request by Registration Officer',
+        label: 'Reviewed ME Registration Request',
+        description: 'Reviewing Vendor ME Applications',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
+        handlerType: 'Assignee',
+        taskType: 'InitialReview',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 2,
+    },
+    {
+        id: '16752a13-205f-15eb-8b5f-118ebf0c21c7',
+        name: 'Approval of Micro Enterprises(ME) Registration Request by Senior or chief registration officer or RRM/DRRM',
+        label: 'Reviewed by RO',
+        description: 'Approve  Micro Enterprises(ME) registration request for Goods by senior or chief registration officer',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
+        handlerType: 'Assignee',
+        taskType: 'Confirmation',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 3,
+    },
+    {
+        id: '12752a13-205f-15eb-8b5f-118ebf0c29c6',
+        name: 'Approval of Micro Enterprises(ME) Registration Request by Director General (DG)',
+        label: 'Approved by DG',
+        description: 'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 4,
+    },
+    {
+        id: '85d95fdb-7852-4ddc-912f-0e94d23d15d3',
+        name: 'Generate Vendor Registration Certificate',
+        label: 'Generated Certificate',
+        description: 'Generate Vendor Registration Certificate',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
+        handlerType: 'Assignee',
+        taskType: 'Certificate',
+        checkList: [
+        ],
+        orderBy: 5,
+    },
+
+    // small enteprise new tasks
+    {
+        id: '95752a14-201f-45eb-8b6f-218ebf0c89c7',
+        name: 'Submission of Small Enterprises(SE) Registration Request',
+        label: 'Submitted Small Enterprises(SE) Request',
+        description: 'Submission of Small Enterprises(SE) Registration Request',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: null,
+        orderBy: 1,
+    },
+    {
+        id: '26752a13-201f-45eb-8b6f-118ebf0c19c9',
+        name: 'Review Small Enterprises(SE) Registration Request by Registration Officer',
+        label: 'Reviewed ME Registration Request',
+        description: 'Reviewing Vendor ME Applications',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
+        handlerType: 'Assignee',
+        taskType: 'InitialReview',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 2,
+    },
+    {
+        id: '16752a13-205f-15eb-8b5f-118ebf0c29c7',
+        name: 'Approval of Small Enterprises(SE) Registration Request by Senior or chief registration officer or RRM/DRRM',
+        label: 'Reviewed by RO',
+        description: 'Approve Small Enterprises(SE) registration request for Goods by senior or chief registration officer',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
+        handlerType: 'Assignee',
+        taskType: 'Confirmation',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 3,
+    },
+    {
+        id: '56752a13-205f-15eb-8b5f-118ebf0c29c6',
+        name: 'Approval of Small Enterprises(SE) Registration Request by Director General (DG)',
+        label: 'Approved by DG',
+        description: 'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
         bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
         handlerType: 'Assignee',
         taskType: 'Approval',
         checkList: [
             {
-                id: '96d95fdb-7852-4ddc-912f-0e94d23d15d3',
+                id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
                 description:
-                    'The Attached MSME certeficate and other documents are valid.',
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 4,
+    },
+    {
+        id: 'c0aa3814-f987-4ff1-af34-0ceda8cc9b51',
+        name: 'Generate Vendor Registration Certificate',
+        label: 'Generated Certificate',
+        description: 'Generate Vendor Registration Certificate',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
+        handlerType: 'Assignee',
+        taskType: 'Certificate',
+        checkList: [],
+        orderBy: 5,
+    },
+
+    //new Meduim  Enterprise tasks
+    {
+        id: '16752a13-201f-45eb-8b6f-118ebf0c89c4',
+        name: 'Submission of Medium Enterprise Registration Request',
+        label: 'Submitted Medium Enterprise Request',
+        description: 'Submission of Medium Enterprises Registration Request',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: null,
+        orderBy: 1,
+    },
+    {
+        id: '96752a13-201f-45eb-8b6f-118ebf0c89c9',
+        name: 'Review Medium Enterprise Registration Request by Registration Officer',
+        label: 'Reviewed ME Registration Request',
+        description: 'Reviewing Vendor ME Applications',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
+        handlerType: 'Assignee',
+        taskType: 'InitialReview',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
+                description:
+                    'All the required information and related documents fullfilled',
                 isMandatory: 'true',
             },
         ],
         orderBy: 2,
-    }
-    ,
+    },
     {
-        id: 'c0aa3814-f987-4ff1-af34-0ceda8cc9b51',
+        id: '96752a13-205f-15eb-8b5f-118ebf0c29c1',
+        name: 'Approval of Medium Enterprise Registration Request by Senior or chief registration officer or RRM/DRRM',
+        label: 'Reviewed by RO',
+        description: 'Approve  Medium Enterprise registration request for Goods by senior or chief registration officer',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
+        handlerType: 'Assignee',
+        taskType: 'Confirmation',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 3,
+    },
+    {
+        id: '16752a13-205f-15eb-8b5f-118ebf0c29c1',
+        name: 'Approval of Medium Enterprise Registration Request by Director General (DG)',
+        label: 'Approved by DG',
+        description: 'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
+        checkList: [{
+            id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
+            description:
+                'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+        },
+        ],
+        orderBy: 4,
+    },
+    {
+        id: '16752a13-205f-11eb-8b5f-118ebf0c29c2',
+        name: 'Generate Vendor Registration Certificate',
+        label: 'Generated Certificate',
+        description: 'Generate Vendor Registration Certificate',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
+        handlerType: 'Assignee',
+        taskType: 'Certificate',
+        checkList: [],
+        orderBy: 5,
+    },
+
+    //new BP task of IBM
+    {
+        id: '96752a13-205f-45eb-8b5f-118ebf0c89c7',
+        name: 'Submission of indigenous black Malawian(IBM) Registration Request',
+        label: 'Submitted IBM request',
+        description:
+            'Submission of indigenous black Malawian(IBM) Registration Request',
+        bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-912f-0e94d23d15d3',
+                description:
+                    'The Attached IBM certeficate and  other documents are valid.',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 1,
+    },
+    {
+        id: '96752a13-205f-45eb-8b5f-118ebf0c29c7',
+        name: 'Review indigenous black Malawian(IBM) Registration Request by Registration Officer',
+        label: 'Reviewed IBM Registration Request',
+        description: 'Reviewing Vendor IBM Applications',
+        bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
+        handlerType: 'Assignee',
+        taskType: 'InitialReview',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 2,
+    },
+    {
+        id: '96752a13-205f-15eb-8b5f-118ebf0c29c7',
+        name: 'Approval of indigenous black Malawian(IBM) Registration Request by Senior or chief registration officer or RRM/DRRM',
+        label: 'Reviewed by RO',
+        description:
+            'aprove indigenous black Malawian(IBM)  registration request for Goods by senior or chief registration officer',
+        bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
+        handlerType: 'Assignee',
+        taskType: 'Confirmation',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 3,
+    },
+    {
+        id: '16752a13-205f-15eb-8b5f-118ebf0c29c8',
+        name: 'Approval of indigenous black Malawian(IBM) Registration Request by Director General (DG)',
+        label: 'Approved by DG',
+        description:
+            'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
+        bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
+        checkList: [
+            {
+                id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
+                description:
+                    'All the required information and related documents fullfilled',
+                isMandatory: 'true',
+            },
+        ],
+        orderBy: 4,
+    },
+    {
+        id: '16752a13-205f-45eb-8b5f-118ebf0c29c1',
         name: 'Generate Vendor Registration Certificate',
         label: 'Generated Certeficate',
         description: 'Generate Vendor Registration Certificate',
-        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
+        bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
         handlerType: 'Assignee',
         taskType: 'Certificate',
         checkList: [
@@ -992,11 +1269,7 @@ export const tasksToSeed = [
         orderBy: 3,
     },
 
-
     //marginalized
-
-
-
     // new Marginalized group tasks
     {
         id: '85752a13-201f-45eb-8b6f-118ebf0c89c7',
@@ -1081,85 +1354,6 @@ export const tasksToSeed = [
 
 
 
-    //meduim
-    //new meduim  Enterpize tasks
-    {
-        id: '16752a13-201f-45eb-8b6f-118ebf0c89c4',
-        name: 'Submission of Medium Enterprise Registration Request',
-        label: 'Submitted Medium Enterprise Request',
-        description: 'Submission of Medium Enterprises Registration Request',
-        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
-        handlerType: 'Requestor',
-        taskType: 'ISR',
-        checkList: null,
-        orderBy: 1,
-    },
-    {
-        id: '96752a13-201f-45eb-8b6f-118ebf0c89c9',
-        name: 'Review Medium Enterprise Registration Request by Registration Officer',
-        label: 'Reviewed ME Registration Request',
-        description: 'Reviewing Vendor ME Applications',
-        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
-        handlerType: 'Assignee',
-        taskType: 'InitialReview',
-        checkList: [
-            {
-                id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
-                description:
-                    'All the required information and related documents fullfilled',
-                isMandatory: 'true',
-            },
-        ],
-        orderBy: 2,
-    },
-    {
-        id: '96752a13-205f-15eb-8b5f-118ebf0c29c1',
-        name: 'Approval of Medium Enterprise Registration Request by Senior or chief registration officer or RRM/DRRM',
-        label: 'Reviewed by RO',
-        description: 'aprove  Medium Enterprise registration request for Goods by senior or chief registration officer',
-        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
-        handlerType: 'Assignee',
-        taskType: 'Confirmation',
-        checkList: [
-            {
-                id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
-                description:
-                    'All the required information and related documents fullfilled',
-                isMandatory: 'true',
-            },
-        ],
-        orderBy: 3,
-    },
-    {
-        id: '16752a13-205f-15eb-8b5f-118ebf0c29c1',
-        name: 'Approval of Medium Enterprise Registration Request by Director General (DG)',
-        label: 'Approved by DG',
-        description:
-            'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
-        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
-        handlerType: 'Assignee',
-        taskType: 'Approval',
-        checkList: [
-            {
-                id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
-                description:
-                    'All the required information and related documents fullfilled',
-                isMandatory: 'true',
-            },
-        ],
-        orderBy: 4,
-    },
-    {
-        id: '16752a13-205f-11eb-8b5f-118ebf0c29c2',
-        name: 'Generate Vendor Registration Certificate',
-        label: 'Generated Certeficate',
-        description: 'Generate Vendor Registration Certificate',
-        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
-        handlerType: 'Assignee',
-        taskType: 'Certificate',
-        checkList: [],
-        orderBy: 3,
-    },
     //new BP task of IBM
     {
         id: '96752a13-205f-45eb-8b5f-118ebf0c89c7',
