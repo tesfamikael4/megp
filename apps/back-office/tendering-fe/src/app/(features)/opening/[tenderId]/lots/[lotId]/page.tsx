@@ -19,22 +19,16 @@ export default function BidOpening() {
       {
         accessor: 'bidderName',
         sortable: true,
+        render: (record) => record.bidder.bidderName,
       },
       {
         accessor: 'status',
         width: 150,
         render: (record) => {
-          //   const color =
-          //     record.status === 'Opened'
-          //       ? 'green'
-          //       : record.status === 'Key not shared'
-          //         ? 'red'
-          //         : 'yellow';
+          const color = record.status === 'completed' ? 'green' : 'yellow';
           return (
-            <Badge color={'green'} size="sm">
-              Opened
-              {/* <Badge color={color} size="sm">
-              {record.status} */}
+            <Badge color={color} size="sm">
+              {record.status}
             </Badge>
           );
         },
@@ -46,7 +40,9 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/opening/${tenderId}/lots/${lotId}/${record.id}`);
+              router.push(
+                `/opening/${tenderId}/lots/${lotId}/${record.bidder.bidderId}`,
+              );
             }}
           >
             <IconChevronRight size={14} />
