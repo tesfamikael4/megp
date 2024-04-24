@@ -1,5 +1,6 @@
 import { MenuItem } from '@megp/core-fe';
 import {
+  IconAdjustmentsHorizontal,
   IconBuildingBank,
   IconCoins,
   IconFileStack,
@@ -39,5 +40,23 @@ export const Menu: MenuItem[] = [
     label: 'Report',
     icon: IconReportAnalytics,
     link: '/report',
+  },
+  {
+    label: 'Guarantees',
+    icon: IconAdjustmentsHorizontal,
+    links: [
+      {
+        label: 'Guarantee Release',
+        link: '/guarantee-release',
+      },
+      {
+        label: 'Guarantee Forfeit',
+        link: '/guarantee-forfeit',
+      },
+      {
+        label: 'Guarantee Extension',
+        link: '/guarantee-extension',
+      },
+    ],
   },
 ];

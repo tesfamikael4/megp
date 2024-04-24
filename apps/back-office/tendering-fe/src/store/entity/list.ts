@@ -198,4 +198,8 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     entity: 'spd-documentary-evidences',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
+  {
+    entity: 'guarantees',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
 ];
