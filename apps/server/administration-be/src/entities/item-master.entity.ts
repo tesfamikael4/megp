@@ -7,11 +7,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ItemCategory } from './item-category.entity';
-import { Classification } from './classification.entity';
 import { ItemTag } from './item-tag.entity';
 import { UnitOfMeasurement } from './uom.entity';
 import { Audit } from 'src/shared/entities';
 import { ItemMetaData } from './item-meta-data.entity';
+import { ItemSubCategory } from './item-sub-category.entity';
 
 @Entity({ name: 'item_masters' })
 export class ItemMaster extends Audit {
@@ -30,13 +30,7 @@ export class ItemMaster extends Audit {
   @Column()
   commodityName: string;
 
-  @Column()
-  itemSubcategoryId: string;
-
-  @Column()
-  itemSubcategoryName: string;
-
-  @Column()
+  @Column({ type: 'uuid' })
   uOMId: string;
 
   @Column()
@@ -44,6 +38,12 @@ export class ItemMaster extends Audit {
 
   @Column()
   uOMName: string;
+
+  @Column()
+  itemSubCategoryId: string;
+
+  @Column()
+  itemCategoryId: string;
 
   @Column({ default: true })
   isActive: boolean;
@@ -58,9 +58,16 @@ export class ItemMaster extends Audit {
   })
   itemMetaData: ItemMetaData[];
 
-  @ManyToOne(() => ItemCategory)
-  @JoinColumn({ name: 'itemSubcategoryId' })
-  itemSubcategory: ItemCategory;
+  @ManyToOne(() => ItemCategory, (itemCategory) => itemCategory.itemMasters)
+  @JoinColumn({ name: 'itemCategoryId' })
+  itemCategory: ItemCategory;
+
+  @ManyToOne(
+    () => ItemSubCategory,
+    (itemSubCategory) => itemSubCategory.itemMaster,
+  )
+  @JoinColumn({ name: 'itemSubCategoryId' })
+  itemSubCategory: ItemSubCategory;
 
   // @ManyToOne(() => Classification)
   // @JoinColumn({ name: 'commodityCode' })

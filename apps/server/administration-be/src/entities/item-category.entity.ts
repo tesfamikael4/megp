@@ -30,6 +30,6 @@ export class ItemCategory extends Audit {
   })
   childCategories: ItemCategory[];
 
-  @OneToMany(() => ItemMaster, (itemMaster) => itemMaster.itemSubcategory)
+  @OneToMany(() => ItemMaster, (itemMaster) => itemMaster.itemCategory)
   itemMasters: ItemMaster[];
 }

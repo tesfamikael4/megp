@@ -1,5 +1,12 @@
 import { Audit } from 'src/shared/entities';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ItemMaster } from './item-master.entity';
 
 export enum ParentCategory {
   Goods = 'Goods',
@@ -20,4 +27,10 @@ export class ItemSubCategory extends Audit {
 
   @Column({ type: 'enum', enum: ParentCategory })
   parentCategories: string;
+
+  @OneToMany(() => ItemMaster, (itemMaster) => itemMaster.itemCategory, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  itemMaster: ItemMaster[];
 }
