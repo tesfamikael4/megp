@@ -17,7 +17,7 @@ import {
   UseFormSetValue,
   useForm,
 } from 'react-hook-form';
-import { z } from 'zod';
+import { string, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   useAddFormMutation,
@@ -79,7 +79,7 @@ export const areasOfBusinessInterestSchema = z
     z.object({
       category: z.literal('Works'),
       priceRange: z.string().min(1, 'Price range must be selected'),
-      userType: z.union([z.literal('Contractor'), z.literal('Consultant')]),
+      userType: string(),
       classification: z.string(),
       activationDate: z.string(),
       expiryDate: z.string(),
@@ -146,7 +146,7 @@ export const AreasOfBusinessInterestForm = ({
   useEffect(() => {
     if (saveValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
-      router.push(`payment`);
+      router.push(`preferential`);
     }
     if (saveValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');

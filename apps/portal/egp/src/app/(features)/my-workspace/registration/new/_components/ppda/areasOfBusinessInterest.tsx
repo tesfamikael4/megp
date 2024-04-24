@@ -23,6 +23,7 @@ import { DatePickerInput } from '@mantine/dates';
 import { IconCalendar } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import MultiCheckBox from '@/app/(features)/my-workspace/_components/multiCheckBox';
+import { UserType } from '@/app/(features)/my-workspace/_constants/user-type';
 interface Props extends PassFormDataProps {
   name: any;
   adjustment?: boolean;
@@ -68,6 +69,12 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
           />
         )}
         {fields.map((field, index) => {
+          console.log(
+            UserType[
+              register(`${name}.${index}.classification`, 'select').value
+            ],
+            register(`${name}.${index}.classification`, 'select').value,
+          );
           return (
             <Fieldset
               tt="uppercase"
@@ -91,14 +98,6 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                   <>
                     <Grid.Col span={6}>
                       <Select
-                        label="User Type"
-                        placeholder="Select User Type"
-                        data={['Contractor', 'Consultants']}
-                        {...register(`${name}.${index}.userType`, 'select')}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <Select
                         label="Classification"
                         placeholder="Select"
                         data={['Contractor', 'Consultants']}
@@ -106,6 +105,25 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                           `${name}.${index}.classification`,
                           'select',
                         )}
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                      <Select
+                        label="User Type"
+                        placeholder="Select User Type"
+                        data={
+                          UserType[
+                            register(
+                              `${name}.${index}.classification`,
+                              'select',
+                            ).value
+                          ]
+                        }
+                        {...register(`${name}.${index}.userType`, 'select')}
+                        disabled={
+                          !register(`${name}.${index}.classification`, 'select')
+                            .value
+                        }
                       />
                     </Grid.Col>
                     <Grid.Col span={6}>

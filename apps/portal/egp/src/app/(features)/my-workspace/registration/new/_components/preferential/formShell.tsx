@@ -106,7 +106,7 @@ export const PreferentialTreatmentForm = ({
   useEffect(() => {
     if (saveAttachmentValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
-      router.push(`doc`);
+      router.push(`payment`);
     }
     if (saveAttachmentValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');

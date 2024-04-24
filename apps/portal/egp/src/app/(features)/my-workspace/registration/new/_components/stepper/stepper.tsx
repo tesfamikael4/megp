@@ -17,8 +17,8 @@ function StyledStepper() {
     'basic',
     'detail',
     'ppda',
-    'payment',
     'preferential',
+    'payment',
     'doc',
     'review',
   ];
@@ -93,14 +93,14 @@ function StyledStepper() {
             description="The registration process entails selecting categories (service, goods, and works), specifying a line of business, and establishing price ranges."
           />
           <Stepper.Step
-            completedIcon={4}
-            label="Payment"
-            description="Successful payment allows to be vendor to proceed; otherwise, progression is hindered until payment is confirmed, ensuring a systematic and accountable procurement process"
-          />
-          <Stepper.Step
             completedIcon={5}
             label="Eligibility to Preferential Treatment"
             description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+          />
+          <Stepper.Step
+            completedIcon={4}
+            label="Payment"
+            description="Successful payment allows to be vendor to proceed; otherwise, progression is hindered until payment is confirmed, ensuring a systematic and accountable procurement process"
           />
           <Stepper.Step
             completedIcon={6}
