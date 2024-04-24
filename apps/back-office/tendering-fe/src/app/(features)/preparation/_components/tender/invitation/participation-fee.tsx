@@ -1,4 +1,4 @@
-import { ParticipationFee } from '@/models/tender/participation-fee.model';
+import type { ParticipationFee } from '@/models/tender/participation-fee.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   LoadingOverlay,

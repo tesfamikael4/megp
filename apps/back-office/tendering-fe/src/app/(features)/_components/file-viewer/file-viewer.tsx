@@ -4,7 +4,16 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-export const FileViewer = ({ url }: { url: string; filename: string }) => {
+export const FileViewer = ({
+  url,
+  width,
+  height,
+}: {
+  url: string;
+  filename: string;
+  width?: number;
+  height?: number;
+}) => {
   const [numPages, setNumPages] = useState<number>(0);
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
@@ -17,20 +26,20 @@ export const FileViewer = ({ url }: { url: string; filename: string }) => {
 
   return (
     <>
-      <div
-        style={{ height: 'calc(100vh - 64px)' }}
-        className="flex items-center"
-      >
-        <div className="h-full flex justify-center mx-auto">
+      <div className="h-screen flex items-center overflow-auto">
+        <div className="h-full flex justify-center mx-auto container">
           <Document
             file={url}
             onLoadSuccess={onDocumentLoadSuccess}
             options={options}
-            renderMode="canvas"
-            className=""
           >
             {Array.from(new Array(numPages), (el, index) => (
-              <Page key={`page_${index + 1}`} pageNumber={index + 1} />
+              <Page
+                height={height ?? 300}
+                width={width ?? 900}
+                key={`page_${index + 1}`}
+                pageNumber={index + 1}
+              />
             ))}
           </Document>
         </div>

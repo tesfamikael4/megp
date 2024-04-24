@@ -4,7 +4,6 @@ import { DataTable } from 'mantine-datatable';
 import React, { useEffect, useState } from 'react';
 import { BillOfMaterial } from '@/models/tender/lot/item/bill-of-material.model';
 import { NumberInput } from '@mantine/core';
-import { logger } from '@megp/core-fe';
 import { Controller, useFormContext } from 'react-hook-form';
 interface BOQ extends BillOfMaterial {
   children: BOQ[];
@@ -23,7 +22,6 @@ export function BillOfMaterialTreeTable({
   } = useFormContext();
   useEffect(() => {
     if (boq) {
-      logger.log(boq);
       reset({
         billOfMaterial: boq,
         itemId: itemId,
@@ -31,9 +29,6 @@ export function BillOfMaterialTreeTable({
     }
   }, [boq, reset]);
 
-  useEffect(() => {
-    logger.log(errors);
-  }, [errors]);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const render = (record, index) => (
     <NodeTree
@@ -59,14 +54,15 @@ export function BillOfMaterialTreeTable({
             render: (record) => (
               <>
                 <div className="flex">
-                  <div>
-                    {record.children?.length > 0 &&
-                    expandedIds.includes(record.id) ? (
-                      <IconChevronDown size={20} />
-                    ) : (
-                      <IconChevronRight size={20} />
-                    )}
-                  </div>
+                  {record.children?.length > 0 && (
+                    <div>
+                      {expandedIds.includes(record.id) ? (
+                        <IconChevronDown size={20} />
+                      ) : (
+                        <IconChevronRight size={20} />
+                      )}
+                    </div>
+                  )}
                   <span className="whitespace-pre-line">
                     {record.description}
                   </span>
@@ -121,7 +117,21 @@ export function BillOfMaterialTreeTable({
           allowMultiple: true,
           expanded: {
             recordIds: expandedIds,
-            onRecordIdsChange: setExpandedIds,
+            onRecordIdsChange: (record) => {
+              if (record.length > 0) {
+                const newlyAdded = record.filter(
+                  (single) => !expandedIds.find((rec) => rec === single),
+                );
+                const child = boq.find((child) => child.id === newlyAdded[0]);
+                if (child) {
+                  child?.children?.length > 0 ? setExpandedIds(record) : null;
+                } else {
+                  setExpandedIds(record);
+                }
+              } else {
+                setExpandedIds(record);
+              }
+            },
           },
           content: ({ record, index }) => (
             <>{record.children?.length > 0 ? render(record, index) : null}</>
@@ -180,14 +190,15 @@ export function NodeTree({
             render: (record: BOQ) => (
               <>
                 <div className={`flex pl-${padding}`}>
-                  <div>
-                    {record.children?.length > 0 &&
-                    expandedIds.includes(record.id) ? (
-                      <IconChevronDown size={20} />
-                    ) : (
-                      <IconChevronRight size={20} />
-                    )}
-                  </div>
+                  {record.children?.length > 0 && (
+                    <div>
+                      {expandedIds.includes(record.id) ? (
+                        <IconChevronDown size={20} />
+                      ) : (
+                        <IconChevronRight size={20} />
+                      )}
+                    </div>
+                  )}
                   <span className="whitespace-pre-line">
                     {record.description}
                   </span>
@@ -243,7 +254,23 @@ export function NodeTree({
           allowMultiple: true,
           expanded: {
             recordIds: expandedIds,
-            onRecordIdsChange: setExpandedIds,
+            onRecordIdsChange: (record) => {
+              if (record.length > 0) {
+                const newlyAdded = record.filter(
+                  (single) => !expandedIds.find((rec) => rec === single),
+                );
+                const child = childrenScoring.find(
+                  (child) => child.id === newlyAdded[0],
+                );
+                if (child) {
+                  child?.children?.length > 0 ? setExpandedIds(record) : null;
+                } else {
+                  setExpandedIds(record);
+                }
+              } else {
+                setExpandedIds(record);
+              }
+            },
           },
           content: ({ record, index }: any) =>
             record.children?.length > 0 ? <>{render(record, index)}</> : null,

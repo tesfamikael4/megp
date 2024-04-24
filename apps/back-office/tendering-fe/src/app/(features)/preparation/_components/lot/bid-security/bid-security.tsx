@@ -1,4 +1,4 @@
-import { BidSecurity } from '@/models/tender/lot/bid-security.model';
+import type { BidSecurity } from '@/models/tender/lot/bid-security.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Checkbox,

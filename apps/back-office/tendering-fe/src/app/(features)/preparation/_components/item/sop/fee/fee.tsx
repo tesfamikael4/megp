@@ -17,7 +17,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { Fee } from '@/models/tender/lot/item/fee.model';
+import type { Fee } from '@/models/tender/lot/item/fee.model';
 import { CollectionQuery } from '@megp/entity';
 import { Item } from '@/models/tender/lot/item';
 import { FeeFormDetail } from './fee-form-detail';

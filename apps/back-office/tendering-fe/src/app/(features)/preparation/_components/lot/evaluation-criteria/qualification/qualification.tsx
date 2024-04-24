@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { QualificationFormDetail } from './qualification-form-detail';
 import { useDisclosure } from '@mantine/hooks';
 import { DetailQualification } from './qualification-detail';
-import { Qualification } from '@/models/tender/lot/qualification.model';
+import type { Qualification } from '@/models/tender/lot/qualification.model';
 import { CollectionQuery } from '@megp/entity';
 
 export default function Qualification({

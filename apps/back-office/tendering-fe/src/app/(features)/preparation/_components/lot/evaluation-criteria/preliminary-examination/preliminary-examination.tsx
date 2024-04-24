@@ -18,7 +18,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { PreliminaryExamination } from '@/models/tender/lot/preliminary-examination.model';
+import type { PreliminaryExamination } from '@/models/tender/lot/preliminary-examination.model';
 import { CollectionQuery } from '@megp/entity';
 
 export default function PreliminaryExamination({
