@@ -14,9 +14,6 @@ export class Audit {
 
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt!: Date;
-
-  @DeleteDateColumn({ type: 'timestamp' })
-  public deletedAt!: Date;
 }
 export class OrgAudit extends Audit {
   @Column({ type: 'uuid' })
