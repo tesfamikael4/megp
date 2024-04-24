@@ -92,4 +92,7 @@ export class MBRSResponseDto {
   @ValidateNested({ each: true })
   @Type(() => RecordDTO)
   records: RecordDTO[];
+
+  @IsOptional()
+  error: any;
 }
