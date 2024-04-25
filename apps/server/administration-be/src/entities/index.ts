@@ -15,3 +15,14 @@ export * from './uom.entity';
 export * from './procurement-threshold.entity';
 
 export * from './item-meta-data.entity';
+
+export * from './specification-template.entity';
+export * from './product-catalog.entity';
+export * from './product-catalog-image.entity';
+
+//contract catalog
+export * from './contract-catalog.entity';
+export * from './contract-allocated-item.entity';
+export * from './contract-beneficiary.entity';
+export * from './contract-item.entity';
+export * from './contract-item-price.entity';

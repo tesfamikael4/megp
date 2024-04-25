@@ -15,10 +15,11 @@ export class Audit {
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt!: Date;
 }
+
 export class OrgAudit extends Audit {
   @Column({ type: 'uuid' })
   public organizationId: string;
 
-  @Column({ type: 'string' })
+  @Column()
   public organizationName: string;
 }

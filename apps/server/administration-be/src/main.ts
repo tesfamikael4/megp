@@ -2,7 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerCustomOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
@@ -36,6 +40,11 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
+  const customOptions: SwaggerCustomOptions = {
+    swaggerOptions: {
+      docExpansion: 'none',
+    },
+  };
   const document = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
@@ -45,7 +54,7 @@ async function bootstrap() {
       .build(),
   );
 
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('docs', app, document, customOptions);
 
   await app.listen(port, () => {
     console.log('[WEB]', process.env.BASE_URL + '/docs');
