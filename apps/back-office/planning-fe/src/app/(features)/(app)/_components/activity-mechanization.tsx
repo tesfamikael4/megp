@@ -5,6 +5,7 @@ import {
   Group,
   LoadingOverlay,
   MultiSelect,
+  Select,
   Stack,
   TextInput,
 } from '@mantine/core';
@@ -49,6 +50,7 @@ import {
   targetGroups,
 } from '../_constants/procurement-method';
 import { CustomSelect } from './custom-select';
+import { useGetDonorsQuery } from '@/store/api/administration/administration.api';
 
 const activitiesSchema: ZodType<Partial<any>> = z
   .object({
@@ -103,6 +105,7 @@ export const ActivityMechanization = ({
   const [preCreate, { isLoading: isPreCreating }] = useCreateMutation();
   const [postCreate, { isLoading: isPostCreating }] = useCreatePostMutation();
   const [prCreate, { isLoading: isPrCreating }] = useCreatePrMutation();
+  const { data: donors } = useGetDonorsQuery({} as any);
 
   const [preUpdate, { isLoading: isPreUpdating }] = useUpdateMutation();
   const [postUpdate, { isLoading: isPostUpdating }] = useUpdatePostMutation();
@@ -499,13 +502,18 @@ export const ActivityMechanization = ({
               control={control}
               name="donor"
               render={({ field: { name, value, onChange } }) => (
-                <TextInput
-                  name={name}
+                <Select
                   label="Donor"
-                  withAsterisk
-                  value={value?.[0] ?? ''}
+                  data={
+                    donors.items?.map((d) => ({
+                      value: d.id,
+                      label: d.name,
+                    })) ?? []
+                  }
+                  name={name}
+                  value={value?.[0] ?? null}
                   onChange={(e) => {
-                    onChange([e.target.value]);
+                    onChange([e]);
                   }}
                   disabled={disableFields}
                   error={errors?.donor?.message?.toString()}

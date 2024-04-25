@@ -57,6 +57,9 @@ export const administrationApi = createApi({
     getClassificationPath: builder.query<any, any>({
       query: (code) => `classifications/path/${code}`,
     }),
+    getDonors: builder.query<any, any>({
+      query: () => `donors`,
+    }),
   }),
 });
 
@@ -73,4 +76,5 @@ export const {
   useGetCurrenciesQuery,
   useLazyGetClassificationPathQuery,
   useGetClassificationPathQuery,
+  useGetDonorsQuery,
 } = administrationApi;

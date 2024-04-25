@@ -48,7 +48,7 @@ export const Menu: MenuItem[] = [
     link: '/report',
   },
   {
-    label: 'PPDA Report',
+    label: 'PDE Report and Analytics',
     icon: IconReportAnalytics,
     link: '/ppda-report',
   },
