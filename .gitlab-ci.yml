@@ -1,13 +1,7 @@
-default:
-  image: node:20.7.0
-
 stages:
   - test
   - merge
   - build
-variables:
-  AWS_WEB_IDENTITY_TOKEN_FILE: "/tmp/web-identity-token"
-
 sast:
   stage: test
 include:
@@ -20,18 +14,19 @@ merge:
     - merge_requests
   before_script:
     - corepack enable
-    - corepack prepare pnpm --activate
+    - corepack prepare pnpm@latest-8 --activate
     - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
-    - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]" --concurrency=3
+    - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]" --concurrency=70%
   cache:
     key:
       files:
         - pnpm-lock.yaml
     paths:
-      - ".pnpm-store"
+      - .pnpm-store
+
 build:
   stage: build
   image: docker:latest
@@ -39,19 +34,19 @@ build:
     - docker:dind
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+
   before_script:
     - apk --update add nodejs npm git
-    - node -v
-    - npm install -g pnpm
+    - npm install -g pnpm@8.15.7
   script:
-    - pnpm install
-    - pnpm -w run turbo run lint  --filter="...[origin/main]"
+    - pnpm install --no-frozen-lockfile
+    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - pnpm -w run turbo run gitops  --filter="...[origin/main]" --concurrency=3
-      -- $CI_PIPELINE_ID $GITLAB_PASSWORD
+    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD^]" --concurrency=70% -- $CI_PIPELINE_ID $GITLAB_PASSWORD
+
   cache:
     key:
       files:
         - pnpm-lock.yaml
     paths:
-      - ".pnpm-store"
+      - .pnpm-store
