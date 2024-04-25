@@ -427,7 +427,10 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
                     (currency, index) => {
                       if (index == 0)
                         return (
-                          <Text className="font-semibold  text-end">
+                          <Text
+                            className="font-semibold  text-end"
+                            key={currency}
+                          >
                             {analytics?.currencyTotalAmounts?.[
                               currency
                             ].toLocaleString('en-US', {
