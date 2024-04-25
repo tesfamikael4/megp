@@ -33,7 +33,24 @@ export const administrationApi = createApi({
         };
       },
     }),
+    getRegions: builder.query<any, any>({
+      query: () => ({
+        url: `/regions`,
+        method: 'GET',
+      }),
+    }),
+    getDistrictsByRegion: builder.query<any, { regionId: string }>({
+      query: (data) => ({
+        url: `/districts/list/${data.regionId}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useGetLineOfBusinessesQuery } = administrationApi;
+export const {
+  useGetLineOfBusinessesQuery,
+  useGetRegionsQuery,
+  useGetDistrictsByRegionQuery,
+  useLazyGetDistrictsByRegionQuery,
+} = administrationApi;
