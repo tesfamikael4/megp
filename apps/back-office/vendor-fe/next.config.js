@@ -12,6 +12,7 @@ const nextConfig = {
   // @ts-ignore - rules is a private property that is not typed
   const fileLoaderRule = config.module.rules.find((rule) => rule.test?.test?.('.svg'));
 
+  config.externals.push({ canvas: 'commonjs canvas' })
   config.module.rules.push(
     // Reapply the existing rule, but only for svg imports ending in ?url
     {

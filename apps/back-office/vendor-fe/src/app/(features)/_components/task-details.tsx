@@ -13,6 +13,7 @@ export default function TaskDetails({
   setContent: React.Dispatch<React.SetStateAction<'details' | 'tasks'>>;
   data: any;
   uniqueTabs: { tabValue: string; tabName: string }[];
+  isPicked?: boolean;
 }) {
   if (tracker.task.taskType === 'ISR') {
     return (

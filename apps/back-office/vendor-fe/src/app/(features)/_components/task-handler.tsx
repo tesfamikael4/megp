@@ -118,21 +118,6 @@ export default function TaskHandler({
     });
   };
 
-  if (taskType === 'Certificate') {
-    return (
-      <Flex gap="md">
-        <GeneratePdf
-          label="Download Cerficate"
-          id={`${requesterID as string}/${instanceID as string}`}
-          className=""
-          mode="view"
-          apiUrl={`${process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'}`}
-          setHideUnPick={setHideUnPick}
-        />
-      </Flex>
-    );
-  }
-
   return (
     <Box className="my-4">
       {taskCheckLists?.map((checkLIstItem) => (

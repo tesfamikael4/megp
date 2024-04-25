@@ -59,13 +59,13 @@ export default function VendorsDetail() {
               <Box className="text-primary-800 font-bold" size="xl">
                 {response?.name}
               </Box>
-              <Box>Country: {response?.origin}</Box>
+              <Box>Country: {response?.countryOfRegistration}</Box>
             </Flex>
           </Flex>
           <Flex direction="column" className="border-l-gray-50 w-4/12 ml-3">
             <Flex direction="row" className="items-center gap-1 text-sm">
               <IconTicket size={18} />
-              <Box>{response?.tin}</Box>
+              <Box>{response?.tinNumber}</Box>
             </Flex>
             <Flex direction="row" className="items-center gap-1 text-sm">
               <IconBriefcase size={18} />
