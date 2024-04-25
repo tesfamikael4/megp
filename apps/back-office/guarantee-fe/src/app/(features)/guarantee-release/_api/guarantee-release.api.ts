@@ -1,4 +1,4 @@
-import { GuaranteeRelsease } from '@/models/guarantee-release';
+import { GuaranteeRelsease } from '@/models/guarantee-release/guarantee-release';
 import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 

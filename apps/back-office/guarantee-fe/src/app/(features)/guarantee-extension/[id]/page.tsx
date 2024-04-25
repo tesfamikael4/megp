@@ -26,8 +26,9 @@ export default function ForfeitDetail() {
     <>
       <Flex gap={10} mt={10}>
         <Box className=" bg-white w-3/4 h-full">
-          <Section title=" Guarantee Forfeit Detail" collapsible={false}>
+          <Section title=" Guarantee Extension Detail" collapsible={false}>
             <DetailTable data={data} />
+
             <Flex justify="flex-end" gap={10}>
               <Button className="mt-5">Approve</Button>
               <Button variant="outline" className="mt-5">

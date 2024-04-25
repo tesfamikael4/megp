@@ -1,4 +1,4 @@
-import { GuaranteeRequest } from '@/models/guarantee-request';
+import { GuaranteeRequest } from '@/models/guarantee-request/guarantee-request';
 import { baseQuery } from '@/store/base-query';
 import { createApi } from '@reduxjs/toolkit/query/react';
 const URL =
