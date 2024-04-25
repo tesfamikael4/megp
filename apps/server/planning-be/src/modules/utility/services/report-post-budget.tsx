@@ -7,6 +7,7 @@ import {
   PDFViewer,
   StyleSheet,
   renderToBuffer,
+  Font,
 } from '@react-pdf/renderer';
 
 export const postReportPdf = async ({ activities }: any) => {
@@ -97,10 +98,11 @@ export const postReportPdf = async ({ activities }: any) => {
                           padding: '10px',
                           borderRadius: '2px',
                           marginTop: '5px',
+                          marginHorizontal: '20px',
                         }}
                       >
                         <Text style={{ color: 'red' }}>
-                          Justification for{' '}
+                          🛈 Justification for{' '}
                           {reason.type === 'procurementMethod'
                             ? 'Procurement Method'
                             : 'Target Group'}
@@ -254,6 +256,11 @@ export const postReportPdf = async ({ activities }: any) => {
   );
   return buffer;
 };
+
+Font.registerEmojiSource({
+  format: 'png',
+  url: 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/',
+});
 
 const styles = StyleSheet.create({
   page: {

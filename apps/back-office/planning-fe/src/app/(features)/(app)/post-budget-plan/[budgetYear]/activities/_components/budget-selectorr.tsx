@@ -42,6 +42,8 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
     useGetPostBudgetPlanQuery(budgetYear as string);
 
   const config: ExpandableTableConfig = {
+    isSearchable: true,
+    primaryColumn: 'budgetCode',
     disableMultiSelect: true,
     selectedItems: selectedContract,
     setSelectedItems: (data) => {
