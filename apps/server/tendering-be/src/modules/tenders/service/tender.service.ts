@@ -76,7 +76,7 @@ export class TenderService extends EntityCrudService<Tender> {
         procurementReferenceNumber: prResponse.procurementReference,
         budgetAmount: Number(prResponse.totalEstimatedAmount),
         budgetAmountCurrency: prResponse.currency,
-        budgetCode: prResponse?.budgetCode ?? Date.now().toString(),
+        budgetCode: prResponse.budget?.budgetCode,
         prId: prId,
         marketEstimate: Number(prResponse.calculatedAmount),
         marketEstimateCurrency: prResponse.currency,
