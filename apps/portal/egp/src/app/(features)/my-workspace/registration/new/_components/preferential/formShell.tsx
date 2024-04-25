@@ -235,11 +235,11 @@ export const PreferentialTreatmentForm = ({
               {checkAccess('preferential') ? (
                 <Button type="submit">Save & Continue</Button>
               ) : (
-                <Button onClick={() => router.push('doc')}>Continue</Button>
+                <Button onClick={() => router.push('payment')}>Continue</Button>
               )}
             </>
           ) : (
-            <Button onClick={() => router.push('doc')}>Skip</Button>
+            <Button onClick={() => router.push('payment')}>Skip</Button>
           )}
         </Flex>
       </form>

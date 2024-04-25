@@ -1,12 +1,32 @@
 import { Group, Select, Stack, TextInput } from '@mantine/core';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { PassFormDataProps } from './formShell';
 import { malawianDistricts } from '../../_constants';
+import {
+  useGetRegionsQuery,
+  useLazyGetDistrictsByRegionQuery,
+} from '@/store/api/administrationApi';
+import { NotificationService } from '../../../_components/notification';
 
 export const AddressInformation: React.FC<PassFormDataProps> = ({
   register,
   control,
 }) => {
+  const { data: regions, isError } = useGetRegionsQuery({});
+  const [fetchDistricts, { data: districts, isError: isDistrictError }] =
+    useLazyGetDistrictsByRegionQuery();
+
+  useEffect(() => {
+    if (!regions && isError)
+      NotificationService.requestErrorNotification('Can not fetch regions');
+    if (
+      register(`address.region`, 'select').value &&
+      !districts &&
+      isDistrictError
+    )
+      NotificationService.requestErrorNotification('Can not fetch districts');
+  }, [districts, regions, register(`address.region`, 'select').value]);
+
   return (
     <Stack>
       {/* <Group grow>
@@ -38,20 +58,37 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
           <Select
             withAsterisk
             label="Region"
-            data={malawianDistricts}
+            data={
+              regions && regions.items
+                ? regions.items.map((region) => ({
+                    label: region.name,
+                    value: region.id,
+                  }))
+                : []
+            }
             placeholder="Select region"
             {...register(`address.region`, 'select')}
-          />
-          <TextInput
-            withAsterisk
-            label="District"
-            {...register(`address.district`)}
-            onBlur={(data) => {
-              if (!data)
-                control.setError(`address.district`, {
-                  message: 'Address is required',
-                });
+            onChange={(value) => {
+              if (value) {
+                register(`address.region`, 'select').onChange(value);
+                fetchDistricts({ regionId: value });
+              }
             }}
+          />
+          <Select
+            withAsterisk
+            label="Districts"
+            data={
+              districts && districts.items
+                ? districts.items.map((region) => ({
+                    label: region.name,
+                    value: region.id,
+                  }))
+                : []
+            }
+            placeholder="Select district"
+            {...register(`address.district`, 'select')}
+            disabled={!register(`address.region`, 'select').value}
           />
         </Group>
       )}

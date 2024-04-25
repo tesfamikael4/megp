@@ -36,16 +36,16 @@ export const tab = [
     tabName: 'Line Of Business',
   },
   {
-    tabValue: 'supportingDocuments',
-    tabName: 'Supporting Documents',
+    tabValue: 'preferential',
+    tabName: 'Eligibility for Preferential Services',
   },
   {
     tabValue: 'paymentReceipt',
     tabName: 'Payment Receipts',
   },
   {
-    tabValue: 'preferential',
-    tabName: 'Eligibility for Preferential Services',
+    tabValue: 'supportingDocuments',
+    tabName: 'Supporting Documents',
   },
 ];
 

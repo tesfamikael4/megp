@@ -65,52 +65,6 @@ export const CardListShell: React.FC<CardListProps> = ({
   const { fields, append, remove, update } = useFieldArray({ control, name });
   const fieldState = control.getFieldState(name, control._formState);
 
-  const validateField = (field: string | any) => {
-    if (typeof field === 'string') {
-      const validation = itemSchema
-        .pick({ [field]: true })
-        .safeParse({ [field]: item[field] }) as {
-        success: boolean;
-        data?: any;
-        error?: any;
-      };
-      if (validation.error) {
-        setValidationErrors((prevErrors) => ({
-          ...prevErrors,
-          [field]: validation.error.issues[0].message || 'error',
-        }));
-      }
-      return false;
-    }
-
-    if (typeof field === 'object' && field) {
-      const validation = itemSchema.safeParse({ ...field }) as {
-        success: boolean;
-        data?: any;
-        error?: any;
-      };
-
-      if (validation.error) {
-        for (const fieldName in validation.error.flatten().fieldErrors) {
-          const fieldValidation = itemSchema
-            .pick({ [fieldName]: true })
-            .safeParse({ [fieldName]: item[fieldName] }) as {
-            success: boolean;
-            data?: any;
-            error?: any;
-          };
-
-          setValidationErrors((prevErrors) => ({
-            ...prevErrors,
-            [fieldName]: fieldValidation.error.issues[0].message || 'error',
-          }));
-        }
-        return false;
-      }
-    }
-    return true;
-  };
-
   const validateItem = (item: any, fieldName?: string) => {
     const result = itemSchema.safeParse(item);
     console.log(result, item);
@@ -178,7 +132,6 @@ export const CardListShell: React.FC<CardListProps> = ({
   });
 
   const handleAddItem = () => {
-    console.log(validationErrors, Object.values(item));
     if (validateItem(item)) {
       modalType.type == 'ADD' && append(item);
       if ((modalType.type === 'EDIT' && modalType.id) || modalType.id == 0) {
@@ -217,27 +170,53 @@ export const CardListShell: React.FC<CardListProps> = ({
         p="xs"
       >
         {card(handleEdit, handleRemove)}
-        <Card
-          withBorder
-          shadow="md"
-          bg={'#f7f7f7'}
-          onClick={open}
-          className="cursor-pointer"
-        >
-          <Center h={'100%'} mih="100px">
-            <Flex align={'center'} gap={10}>
-              <Avatar size={'sm'} bg={'#1D8E3F'}>
-                <IconPlus size={18} stroke={1} color="white" />
-              </Avatar>
-              <Text className="text-sm">Add {title}</Text>
-            </Flex>
-          </Center>
-          {fieldState?.error?.message && (
-            <span className="text-[var(--mantine-color-error)] text-xs">
-              {fieldState?.error?.message}
-            </span>
-          )}
-        </Card>
+        {title === 'Contact Persons' ? (
+          control?._formValues?.contactPersons.length < 3 && (
+            <Card
+              withBorder
+              shadow="md"
+              bg={'#f7f7f7'}
+              onClick={open}
+              className="cursor-pointer"
+            >
+              <Center h={'100%'} mih="100px">
+                <Flex align={'center'} gap={10}>
+                  <Avatar size={'sm'} bg={'#1D8E3F'}>
+                    <IconPlus size={18} stroke={1} color="white" />
+                  </Avatar>
+                  <Text className="text-sm">Add {title}</Text>
+                </Flex>
+              </Center>
+              {fieldState?.error?.message && (
+                <span className="text-[var(--mantine-color-error)] text-xs">
+                  {fieldState?.error?.message}
+                </span>
+              )}
+            </Card>
+          )
+        ) : (
+          <Card
+            withBorder
+            shadow="md"
+            bg={'#f7f7f7'}
+            onClick={open}
+            className="cursor-pointer"
+          >
+            <Center h={'100%'} mih="100px">
+              <Flex align={'center'} gap={10}>
+                <Avatar size={'sm'} bg={'#1D8E3F'}>
+                  <IconPlus size={18} stroke={1} color="white" />
+                </Avatar>
+                <Text className="text-sm">Add {title}</Text>
+              </Flex>
+            </Center>
+            {fieldState?.error?.message && (
+              <span className="text-[var(--mantine-color-error)] text-xs">
+                {fieldState?.error?.message}
+              </span>
+            )}
+          </Card>
+        )}
       </SimpleGrid>
 
       <Modal

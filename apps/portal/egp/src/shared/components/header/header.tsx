@@ -31,6 +31,7 @@ import { useAuth } from '@megp/auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { IconSearch } from '@tabler/icons-react';
 import LogoIcon from './logo-icon';
+import Notification from '@/app/(features)/_components/Notifications';
 
 function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
@@ -39,6 +40,7 @@ function Header() {
   const [userInfo, setUserInfo] = useState<any>(undefined);
   const [userInfoLoading, setIsUserInfoLoading] = useState(false);
   const { getUserInfo, isAuthenticated, logOut, user } = useAuth();
+  const [openNotification, setOpenNotification] = useState(false);
   const router = useRouter();
   const currentPath = usePathname();
 
@@ -161,8 +163,6 @@ function Header() {
                         </Text>
                         <IconChevronDown size={16} stroke={1.6} />
                       </Flex>
-
-                      <IconBellRinging size={19} stroke={1.2} />
                     </Flex>
                   </Menu.Target>
 
@@ -181,6 +181,20 @@ function Header() {
                       }}
                     >
                       Log out
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+                <Menu withArrow position="bottom-end">
+                  <Menu.Target>
+                    <IconBellRinging
+                      size={20}
+                      stroke={1.2}
+                      className="cursor-pointer"
+                    />
+                  </Menu.Target>
+                  <Menu.Dropdown styles={{ dropdown: { padding: 0 } }}>
+                    <Menu.Item styles={{ item: { padding: 0 } }}>
+                      <Notification />
                     </Menu.Item>
                   </Menu.Dropdown>
                 </Menu>

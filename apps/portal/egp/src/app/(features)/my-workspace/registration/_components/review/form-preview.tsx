@@ -64,6 +64,7 @@ function FormPreview({
                                 : 'paymentReceipt'
                           }/${data[tabValue]}`}
                           filename={data[tabValue]}
+                          zoom
                         />
                       ) : (
                         <Box className="flex items-center h-20 w-full justify-center">
