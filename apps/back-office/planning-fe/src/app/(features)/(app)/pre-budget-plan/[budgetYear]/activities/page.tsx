@@ -1,7 +1,6 @@
 'use client';
 
-import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
-import { Section } from '@megp/core-fe';
+import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { useLazyListByIdQuery } from './_api/activities.api';
 import { useParams, useRouter } from 'next/navigation';
 import { ActionIcon, Button, Tooltip } from '@mantine/core';
@@ -18,7 +17,7 @@ export default function PreBudget() {
   const [listById, { data: list }] = useLazyListByIdQuery();
   const router = useRouter();
 
-  const config = {
+  const config: ExpandableTableConfig = {
     columns: [
       {
         accessor: 'procurementReference',

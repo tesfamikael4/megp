@@ -15,7 +15,7 @@ export const Compare = ({ activityId }: { activityId: string }) => {
       { accessor: 'quantity' },
       { accessor: 'unitPrice' },
     ],
-    minHeight: 50,
+    minHeight: 100,
   };
 
   const timelineConfig: ExpandableTableConfig = {
@@ -36,6 +36,15 @@ export const Compare = ({ activityId }: { activityId: string }) => {
             month: 'short',
             day: 'numeric',
           }),
+      },
+    ],
+  };
+
+  const requisitionerConfig: ExpandableTableConfig = {
+    minHeight: 100,
+    columns: [
+      {
+        accessor: 'name',
       },
     ],
   };
@@ -133,24 +142,28 @@ export const Compare = ({ activityId }: { activityId: string }) => {
             modifiedKeys={data?.modifiedKeys}
             data={[
               {
+                key: 'postProcurementMechanism.procurementType',
                 title: 'Procurement Type',
                 value:
                   data?.modifiedToCompare?.postProcurementMechanism
                     ?.procurementType ?? '',
               },
               {
+                key: 'postProcurementMechanism.procurementMethod',
                 title: 'Procurement Method',
                 value:
                   data?.modifiedToCompare?.postProcurementMechanism
                     ?.procurementMethod ?? '',
               },
               {
+                key: 'postProcurementMechanism.fundingSource',
                 title: 'Funding Source',
                 value:
                   data?.modifiedToCompare?.postProcurementMechanism
                     ?.fundingSource ?? '',
               },
               {
+                key: 'postProcurementMechanism.isOnline',
                 title: 'Procurement Process',
                 value: data?.modifiedToCompare?.postProcurementMechanism
                   ?.isOnline
@@ -158,6 +171,7 @@ export const Compare = ({ activityId }: { activityId: string }) => {
                   : 'Offline' ?? '',
               },
               {
+                key: 'postProcurementMechanism.targetGroup',
                 title: 'Supplier Target Group',
                 value:
                   data?.modifiedToCompare?.postProcurementMechanism?.targetGroup.join(
@@ -173,24 +187,28 @@ export const Compare = ({ activityId }: { activityId: string }) => {
             modifiedKeys={data?.modifiedKeys}
             data={[
               {
+                key: 'postProcurementMechanism.procurementType',
                 title: 'Procurement Type',
                 value:
                   data?.modifiedCompareWith?.postProcurementMechanism
                     ?.procurementType ?? '',
               },
               {
+                key: 'postProcurementMechanism.procurementMethod',
                 title: 'Procurement Method',
                 value:
                   data?.modifiedCompareWith?.postProcurementMechanism
                     ?.procurementMethod ?? '',
               },
               {
+                key: 'postProcurementMechanism.fundingSource',
                 title: 'Funding Source',
                 value:
                   data?.modifiedCompareWith?.postProcurementMechanism
                     ?.fundingSource ?? '',
               },
               {
+                key: 'postProcurementMechanism.isOnline',
                 title: 'Procurement Process',
                 value: data?.modifiedCompareWith?.postProcurementMechanism
                   ?.isOnline
@@ -198,6 +216,7 @@ export const Compare = ({ activityId }: { activityId: string }) => {
                   : 'Offline' ?? '',
               },
               {
+                key: 'postProcurementMechanism.targetGroup',
                 title: 'Supplier Target Group',
                 value:
                   data?.modifiedCompareWith?.postProcurementMechanism?.targetGroup.join(
@@ -230,17 +249,35 @@ export const Compare = ({ activityId }: { activityId: string }) => {
       {/*Timeline*/}
       <Flex gap={10}>
         <Box className="w-full">
-          <p className="mt-10 mb-2 font-semibold">Activity Timeline </p>
+          <p className="my-2 font-semibold">Activity Timeline </p>
           <ExpandableTable
             data={data?.modifiedToCompare?.postBudgetPlanTimelines ?? []}
             config={timelineConfig}
           />
         </Box>
         <Box className="w-full">
-          <p className="mt-10 mb-2 font-semibold">Activity Timeline </p>
+          <p className="my-2 font-semibold">Activity Timeline </p>
           <ExpandableTable
             data={data?.modifiedCompareWith?.postBudgetPlanTimelines ?? []}
             config={timelineConfig}
+          />
+        </Box>
+      </Flex>
+
+      {/*requisitioner*/}
+      <Flex gap={10}>
+        <Box className="w-full">
+          <p className="my-2 font-semibold">Activity Requisitioner </p>
+          <ExpandableTable
+            data={data?.modifiedToCompare?.postBudgetRequisitioners ?? []}
+            config={requisitionerConfig}
+          />
+        </Box>
+        <Box className="w-full">
+          <p className="my-2 font-semibold">Activity Requisitioner </p>
+          <ExpandableTable
+            data={data?.modifiedCompareWith?.postBudgetRequisitioners ?? []}
+            config={requisitionerConfig}
           />
         </Box>
       </Flex>

@@ -85,6 +85,7 @@ export function ExpandableTable({
         }}
         columns={config.columns}
         defaultColumnRender={defaultColumnRender}
+        height="auto"
         highlightOnHover
         idAccessor={config.idAccessor ?? 'id'}
         minHeight={config.minHeight ?? 300}
