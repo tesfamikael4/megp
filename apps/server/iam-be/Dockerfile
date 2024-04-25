@@ -9,7 +9,7 @@ RUN apk update
 RUN apk update
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo pnpm@latest-9
+RUN yarn global add turbo pnpm
 COPY . .
 RUN turbo prune --scope=iam-be --docker
 
@@ -20,7 +20,7 @@ RUN apk update
 WORKDIR /app
 
 # Install pnpm
-RUN yarn global add pnpm@latest-9
+RUN yarn global add pnpm
 
 
 # First install the dependencies (as they change less often)
@@ -44,7 +44,7 @@ FROM base AS runner
 WORKDIR /
 
 # Install pnpm
-RUN yarn global add pnpm@latest-9
+RUN yarn global add pnpm
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs
