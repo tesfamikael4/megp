@@ -11,30 +11,24 @@ stages:
   - test
   - merge
   - build
-# sast:
-#   stage: test
-# include:
-#   - template: Security/SAST.gitlab-ci.yml
+sast:
+  stage: test
+include:
+  - template: Security/SAST.gitlab-ci.yml
 
-# merge:
-#   stage: merge
-#   image: node:20.7.0
-#   only:
-#     - merge_requests
-#   before_script:
-#     - corepack enable
-#     - corepack prepare pnpm@latest-8 --activate
-#     - pnpm config set store-dir .pnpm-store
-#   script:
-#     - pnpm install
-#     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
-#     - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]" --concurrency=70%
-#   cache:
-#     key:
-#       files:
-#         - pnpm-lock.yaml
-#     paths:
-#       - .pnpm-store
+merge:
+  stage: merge
+  image: node:20.7.0
+  only:
+    - merge_requests
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@latest-8 --activate
+    - pnpm config set store-dir .pnpm-store
+  script:
+    - pnpm install
+    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
+    - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]" --concurrency=70%
 
 build:
   stage: build
@@ -47,17 +41,7 @@ build:
     - apk --update add nodejs npm git
     - npm install -g pnpm@8.15.7
   script:
-    - git fetch --all
-    - git branch -a
-    - git diff "remotes/origin/main..HEAD^"
     - pnpm install --no-frozen-lockfile
     - pnpm -w run turbo run lint  --filter "...[origin/main..HEAD^]"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - pnpm -w run turbo run gitops  --filter "...[origin/main..HEAD^]" --concurrency=70% -- $CI_PIPELINE_ID $GITLAB_PASSWORD
-
-  cache:
-    key:
-      files:
-        - pnpm-lock.yaml
-    paths:
-      - .pnpm-store
