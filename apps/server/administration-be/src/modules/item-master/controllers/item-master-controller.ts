@@ -4,8 +4,10 @@ import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { ItemCodeGeneratorService } from '../services/item-code-generator.service';
 import { ItemMaster } from 'src/entities/item-master.entity';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
-import { CreateItemMasterDto } from '../dtos/create-item-master.dto';
-import { UpdateItemMasterDto } from '../dtos/update-item-master.dto';
+import {
+  CreateItemMasterDto,
+  UpdateItemMasterDto,
+} from '../dtos/item-master.dto';
 import { EntityCrudController } from 'src/shared/controller';
 const options: EntityCrudOptions = {
   createDto: CreateItemMasterDto,
