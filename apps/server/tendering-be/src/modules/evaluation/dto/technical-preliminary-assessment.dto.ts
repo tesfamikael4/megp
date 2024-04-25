@@ -6,42 +6,38 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
+import { OrgAudit } from 'src/shared/entities';
 
-export class CreateBidOpeningCheckList {
+export class CreatePreliminaryAssessment extends OrgAudit {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  tenderId: string;
-
-  @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  lotId: string;
+  bidRegistrationDetailId: string;
 
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  spdOpeningChecklistId: string;
+  spdPreliminaryEvaluationId: string;
 
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  bidderId: string;
+  evaluatorId: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  checked: string;
-
-  @ApiProperty()
+  @IsOptional()
   @IsBoolean()
-  @IsOptional()
-  isTeamLead: string;
+  isTeamAssessment: boolean;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  status: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  remark: string;
+  version: string;
 }
 
 export class SubmitDto {

@@ -22,6 +22,7 @@ import { Team } from './team.entity';
 import { MilestonesTracker } from './milestones-tracker.entity';
 import { BidGuarantee } from './bid-guarantee.entity';
 import { EqcDocumentaryEvidence } from './eqc-documentary-evidence.entity';
+import { TenderMilestone } from './tender-milestone.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -95,7 +96,7 @@ export class Lot extends Audit {
   )
   bidOpeningCheckLists: BidOpeningChecklist[];
 
-  @OneToMany(() => Team, (team) => team.lots)
+  @OneToMany(() => Team, (team) => team.lot)
   teams: Team[];
 
   @OneToOne(
@@ -106,4 +107,10 @@ export class Lot extends Audit {
 
   @OneToMany(() => BidGuarantee, (bidGuarantee) => bidGuarantee.lot)
   bidGuarantee: BidGuarantee[];
+
+  @OneToMany(
+    () => TenderMilestone,
+    (tenderTenderMilestone) => tenderTenderMilestone.lot,
+  )
+  tenderMilestones: TenderMilestone[];
 }

@@ -49,3 +49,5 @@ export * from './bid-opening-minute.entity';
 export * from './bid-opening-checklist.entity';
 export * from './opening.entity';
 export * from './shared-bidder-keys.entity';
+
+export * from './technical-preliminary-assessment.entity';

@@ -27,7 +27,7 @@ export class Team extends OrgAudit {
 
   @ManyToOne(() => Lot, (lot) => lot.teams)
   @JoinColumn({ name: 'lotId' })
-  lots: Lot;
+  lot: Lot;
 
   @Column('uuid')
   tenderId: string;

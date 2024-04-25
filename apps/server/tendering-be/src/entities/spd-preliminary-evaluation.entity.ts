@@ -3,10 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Audit } from 'src/shared/entities';
 import { Spd } from './spd.entity';
+import { TechnicalPreliminaryAssessment } from './technical-preliminary-assessment.entity';
 
 @Entity({ name: 'spd_preliminary_evaluations' })
 export class SpdPreliminaryEvaluation extends Audit {
@@ -34,4 +36,12 @@ export class SpdPreliminaryEvaluation extends Audit {
   @ManyToOne(() => Spd, (spd) => spd.spdPreliminaryEvaluations)
   @JoinColumn({ name: 'spdId' })
   spd: Spd;
+
+  @OneToMany(
+    () => TechnicalPreliminaryAssessment,
+    (technicalPreliminaryAssessment) =>
+      technicalPreliminaryAssessment.SpdPreliminaryEvaluation,
+  )
+  @JoinColumn()
+  technicalPreliminaryAssessment: TechnicalPreliminaryAssessment;
 }

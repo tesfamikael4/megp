@@ -48,6 +48,9 @@ export class BidOpeningChecklist extends OrgAudit {
   @Column()
   openerName: string;
 
+  @Column({ default: false })
+  isTeamLead: boolean;
+
   @Column()
   checked: boolean;
 
