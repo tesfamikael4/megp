@@ -43,7 +43,6 @@ build:
     - docker:dind
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
-
   before_script:
     - apk --update add nodejs npm git
     - npm install -g pnpm@8.15.7
