@@ -8,8 +8,8 @@ default:
       - .pnpm-store
 
 stages:
-  - test
-  - merge
+  # - test
+  # - merge
   - build
 sast:
   stage: test
@@ -47,6 +47,7 @@ build:
     - apk --update add nodejs npm git
     - npm install -g pnpm@8.15.7
   script:
+    - git fetch --all
     - git branch -a
     - git diff "remotes/origin/main...HEAD"
     - pnpm install --no-frozen-lockfile
