@@ -1,3 +1,12 @@
+default:
+  image: node:20.7.0
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+
 stages:
   - test
   - merge
@@ -39,6 +48,8 @@ build:
     - apk --update add nodejs npm git
     - npm install -g pnpm@8.15.7
   script:
+    - git branch -a
+    - git diff origin/main...HEAD
     - pnpm install --no-frozen-lockfile
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
