@@ -8,33 +8,33 @@ default:
       - .pnpm-store
 
 stages:
-  # - test
-  # - merge
+  - test
+  - merge
   - build
-sast:
-  stage: test
-include:
-  - template: Security/SAST.gitlab-ci.yml
+# sast:
+#   stage: test
+# include:
+#   - template: Security/SAST.gitlab-ci.yml
 
-merge:
-  stage: merge
-  image: node:20.7.0
-  only:
-    - merge_requests
-  before_script:
-    - corepack enable
-    - corepack prepare pnpm@latest-8 --activate
-    - pnpm config set store-dir .pnpm-store
-  script:
-    - pnpm install
-    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
-    - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]" --concurrency=70%
-  cache:
-    key:
-      files:
-        - pnpm-lock.yaml
-    paths:
-      - .pnpm-store
+# merge:
+#   stage: merge
+#   image: node:20.7.0
+#   only:
+#     - merge_requests
+#   before_script:
+#     - corepack enable
+#     - corepack prepare pnpm@latest-8 --activate
+#     - pnpm config set store-dir .pnpm-store
+#   script:
+#     - pnpm install
+#     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
+#     - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]" --concurrency=70%
+#   cache:
+#     key:
+#       files:
+#         - pnpm-lock.yaml
+#     paths:
+#       - .pnpm-store
 
 build:
   stage: build
