@@ -1,6 +1,12 @@
 'use client';
 import { Stack, Button, Modal, Box, Group } from '@mantine/core';
-import { Section, logger, notify } from '@megp/core-fe';
+import {
+  ExpandableTable,
+  ExpandableTableConfig,
+  Section,
+  logger,
+  notify,
+} from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
@@ -12,7 +18,6 @@ import {
   useLazyGetBudgetSummationQuery,
 } from '@/store/api/budget/budget.api';
 import DataImport from '../../_components/data-import';
-import { ExpandableTable } from '../../_components/expandable-table';
 
 const ModalDetail = ({ data }: { data: any }) => {
   const detailData = [
@@ -95,7 +100,9 @@ export default function DetailPage() {
   const [getBudgetSummation, { data: budgetSummation }] =
     useLazyGetBudgetSummationQuery();
 
-  const config = {
+  const config: ExpandableTableConfig = {
+    isSearchable: true,
+    primaryColumn: 'budgetCode',
     columns: [
       {
         accessor: 'budgetCode',
