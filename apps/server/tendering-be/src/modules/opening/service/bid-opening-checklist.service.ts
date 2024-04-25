@@ -20,10 +20,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     @InjectRepository(BidOpeningChecklist)
     private readonly bidOpeningChecklistsRepository: Repository<BidOpeningChecklist>,
 
-    // @InjectRepository(TeamMember)
-    // private readonly teamMembersRepository: Repository<TeamMember>,
-
-    private readonly bidSecurityService: BidRegistrationService,
+    private readonly bidRegistrationService: BidRegistrationService,
 
     @Inject(REQUEST) private request: Request,
   ) {
@@ -34,13 +31,30 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     if (req?.user?.organization) {
       itemData.organizationName = req.user.organization.name;
       itemData.organizationId = req.user.organization.id;
-      itemData.openerId = req.user.organization.userId;
-      itemData.openerId = req.user.username;
+      itemData.openerId = req.user.userId;
+      itemData.openerName = req.user.firstName + ' ' + req.user.lastName;
     }
+
+    itemData.submit = false;
 
     const item = this.bidOpeningChecklistsRepository.create(itemData);
     await this.bidOpeningChecklistsRepository.insert(item);
     return item;
+  }
+
+  async submit(itemData: SubmitDto, req?: any): Promise<any> {
+    const checklist = await this.bidOpeningChecklistsRepository.findOne({
+      where: {
+        lotId: itemData.lotId,
+        bidderId: itemData.bidderId,
+      },
+    });
+    if (!checklist) {
+      throw new NotFoundException('Bid Opening Checklist not found');
+    }
+    await this.bidOpeningChecklistsRepository.update(checklist.id, {
+      submit: true,
+    });
   }
 
   async checklistStatus(lotId: string, bidderId: string, req: any) {
@@ -86,7 +100,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     //Todo check if the opener is in the team
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const teamMember = await manager.getRepository(TeamMember).find({
+    const teamMember = await manager.getRepository(TeamMember).exists({
       where: {
         team: {
           tender: {
@@ -94,36 +108,36 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
               id: lotId,
             },
           },
+          teamMembers: {
+            personnelId: openerId,
+          },
         },
       },
     });
-    if (!teamMember) {
-      throw new NotFoundException('team not found');
-    }
-    if (!teamMember.find((x) => x.personnelId == openerId)) {
+
+    if (teamMember) {
       throw new Error('You are not part of the team');
     }
     //Todo check if the opener has checked all the spd for that bidder
 
     const query = decodeCollectionQuery(q);
-    const bidders = await this.bidSecurityService.getSubmittedBiddersByLotId(
-      lotId,
-      query,
-    );
+    const [bidders, spdChecklist] = await Promise.all([
+      this.bidRegistrationService.getSubmittedBiddersByLotId(lotId, query),
 
-    const spdChecklist = await manager.getRepository(SpdOpeningChecklist).find({
-      where: {
-        spd: {
-          tenderSpd: {
-            tender: {
-              lots: {
-                id: lotId,
+      manager.getRepository(SpdOpeningChecklist).find({
+        where: {
+          spd: {
+            tenderSpd: {
+              tender: {
+                lots: {
+                  id: lotId,
+                },
               },
             },
           },
         },
-      },
-    });
+      }),
+    ]);
 
     const response: {
       items: { bidder: BidRegistration; status: string }[];

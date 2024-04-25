@@ -1,10 +1,13 @@
-import { Controller, Get, Param, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { BidOpeningChecklist } from 'src/entities';
 import { BidOpeningChecklistService } from '../service/bid-opening-checklist.service';
-import { CreateBidOpeningCheckList } from '../dto/bid-opening-checklist.dto';
+import {
+  CreateBidOpeningCheckList,
+  SubmitDto,
+} from '../dto/bid-opening-checklist.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',
@@ -41,5 +44,10 @@ export class BidOpeningChecklistController extends ExtraCrudController<BidOpenin
     @Query('q') q: string,
   ) {
     return await this.bidOpeningChecklistService.openingStatus(lotId, q, req);
+  }
+
+  @Put('submit-checklist/:lotId')
+  async submitChecklist(@Body() itemData: SubmitDto, @Req() req) {
+    return await this.bidOpeningChecklistService.submit(itemData, req);
   }
 }

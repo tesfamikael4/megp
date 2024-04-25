@@ -4,9 +4,11 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { OrgAudit } from 'src/shared/entities';
 import { Team } from './team.entity';
+import { TechnicalPreliminaryAssessment } from './technical-preliminary-assessment.entity';
 
 @Entity({ name: 'team_members' })
 export class TeamMember extends OrgAudit {
@@ -31,4 +33,12 @@ export class TeamMember extends OrgAudit {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @OneToMany(
+    () => TechnicalPreliminaryAssessment,
+    (technicalPreliminaryAssessment) =>
+      technicalPreliminaryAssessment.evaluatorId,
+  )
+  @JoinColumn()
+  technicalPreliminaryAssessment: TechnicalPreliminaryAssessment;
 }

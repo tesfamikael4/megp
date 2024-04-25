@@ -16,6 +16,7 @@ import { OpeningModule } from './modules/opening/opening.module';
 import { TeamModule } from './modules/team/team.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
+import { EvaluationModule } from './modules/evaluation/technical-evaluation.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
     SccModule,
     OpeningModule,
     TeamModule,
+    EvaluationModule,
   ],
   providers: [
     EventEmitterModule,

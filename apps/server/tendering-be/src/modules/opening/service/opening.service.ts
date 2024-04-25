@@ -26,6 +26,7 @@ export class OpeningService extends ExtraCrudService<Opening> {
       itemData.organizationId = req.user.organization.id;
       itemData.organizationName = req.user.organization.name;
     }
+
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const teamMember = await manager.getRepository(TeamMember).findOne({
       where: {
@@ -43,7 +44,6 @@ export class OpeningService extends ExtraCrudService<Opening> {
     });
 
     itemData.teamId = teamMember.team.id;
-    // itemData.teamId = '2539866e-a202-41a9-88f3-0f3ac7133d65';
     itemData.openingType = teamMember.team.tender.bdsSubmission.envelopType;
 
     const item = this.openingRepository.create(itemData);

@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
@@ -15,6 +16,7 @@ import { BidResponseLot } from './bid-response-lot.entity';
 import { BidResponseItem } from './bid-response-item.entity';
 import { OpenedBidResponseItem } from './opened-bid-response-item.entity';
 import { OpenedBidResponseLot } from './opened-bid-response-lot.entity';
+import { TechnicalPreliminaryAssessment } from './technical-preliminary-assessment.entity';
 
 @Entity({ name: 'bid_registration_details' })
 @Unique(['bidRegistrationId', 'lotId'])
@@ -72,4 +74,12 @@ export class BidRegistrationDetail extends Audit {
     (bidResponseLots) => bidResponseLots.bidRegistrationDetail,
   )
   openedBidResponseLots: OpenedBidResponseLot[];
+
+  @OneToOne(
+    () => TechnicalPreliminaryAssessment,
+    (technicalPreliminaryAssessment) =>
+      technicalPreliminaryAssessment.bidRegistrationDetail,
+  )
+  @JoinColumn()
+  technicalPreliminaryAssessment: TechnicalPreliminaryAssessment;
 }
