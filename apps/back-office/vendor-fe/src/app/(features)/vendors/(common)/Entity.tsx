@@ -67,9 +67,9 @@ export default function Entity({
         },
 
         {
-          id: 'origin',
-          header: 'Country',
-          accessorKey: 'origin',
+          id: 'countryOfRegistration',
+          header: 'Country of Registration',
+          accessorKey: 'countryOfRegistration',
           meta: {
             widget: 'expand',
           },

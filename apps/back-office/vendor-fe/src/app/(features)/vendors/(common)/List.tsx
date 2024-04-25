@@ -56,7 +56,7 @@ const ApplicationList = ({
     if (filter.country) {
       filters.push([
         {
-          column: 'origin',
+          column: 'countryOfRegistration',
           operator: 'LIKE',
           value: `${filter.country}`,
         },

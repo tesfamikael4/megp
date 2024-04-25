@@ -18,136 +18,15 @@ import { renderTable } from '../../util/renderTable';
 import { addSpacesToCamelCase } from '../../util/addSpaceToCamelCase';
 import { displayFormattedObject } from '../../util/displayFormattedObject';
 import Link from 'next/link';
+import { accordionTabs, formatColumns } from '../../_constants/reviewTabs';
 
 const tabs = [
   {
     tabValue: 'certificate',
     tabName: 'Certificate',
   },
-  {
-    tabValue: 'basic',
-    tabName: 'Basic Registration',
-  },
-  {
-    tabValue: 'address',
-    tabName: 'Address Information',
-  },
-  {
-    tabValue: 'contactPersons',
-    tabName: 'Contact Persons',
-  },
-  {
-    tabValue: 'businessSizeAndOwnership',
-    tabName: 'Business Size and Ownership',
-  },
-  {
-    tabValue: 'shareholders',
-    tabName: 'Shareholders',
-  },
-  {
-    tabValue: 'beneficialOwnership',
-    tabName: 'Beneficial Ownership',
-  },
-  {
-    tabValue: 'bankAccountDetails',
-    tabName: 'Bank Account Details',
-  },
-  {
-    tabValue: 'vendorAccounts',
-    tabName: 'Bank Account Details',
-  },
-  {
-    tabValue: 'areasOfBusinessInterest',
-    tabName: 'Areas of Business Interest',
-  },
-  {
-    tabValue: 'customCats',
-    tabName: 'Custom Categories',
-  },
-  {
-    tabValue: 'businessCats',
-    tabName: 'Business Categories',
-  },
-  {
-    tabValue: 'supportingDocuments',
-    tabName: 'Supporting Documents',
-  },
-  {
-    tabValue: 'paymentReceipt',
-    tabName: 'Payment Receipts',
-  },
-  {
-    tabValue: 'businessAreas',
-    tabName: 'Business Areas',
-  },
-  {
-    tabValue: 'preferentail',
-    tabName: 'Eligibility for Preferential Services',
-  },
+  ...accordionTabs,
 ];
-
-const formatColumns = {
-  address: [
-    { name: 'mobilePhone', displayName: 'Telephone 1 ' },
-    { name: 'primaryEmail' },
-    { name: 'postalAddress' },
-    { name: 'alternateEmail' },
-    { name: 'telephone', displayName: 'Telephone 2 ' },
-    { name: 'website' },
-    { name: 'fax' },
-  ],
-  vendorAccounts: [
-    { name: 'accountHolderFullName', displayName: 'fullName' },
-    { name: 'accountNumber' },
-    { name: 'bankName' },
-    { name: 'branchName' },
-    { name: 'branchAddress' },
-    { name: 'IBAN' },
-    { name: 'isDefualt' },
-  ],
-  contactPersons: [
-    { name: 'firstName' },
-    { name: 'lastName' },
-    { name: 'email' },
-    { name: 'mobileNumber' },
-  ],
-  businessAreas: [
-    { name: 'category' },
-    { name: 'priceFrom' },
-    { name: 'priceTo' },
-    { name: 'currency' },
-    { name: 'approvedAt', displayName: 'Approved On' },
-    { name: 'expireDate', displayName: 'Expiry Date' },
-    { name: 'certificateUrl', displayName: 'Certificate URL' },
-  ],
-  bankAccountDetails: [
-    { name: 'accountHolderFullName', displayName: 'fullName' },
-    { name: 'accountNumber' },
-    { name: 'bankName' },
-    { name: 'branchName' },
-    { name: 'branchAddress' },
-    { name: 'IBAN' },
-    { name: 'isDefualt' },
-  ],
-  businessSizeAndOwnership: [
-    { name: 'registeredCapital' },
-    { name: 'paidUpCapital' },
-    { name: 'numberOfEmployees' },
-    { name: 'ownershipType' },
-  ],
-
-  service: [
-    {
-      name: 'name',
-      displayName: 'Preferential Treatment Type',
-    },
-  ],
-  preferentail: [
-    { name: 'type', displayName: 'Preferential Service' },
-    { name: 'certiNumber', displayName: 'Certificate Number' },
-    { name: 'certificateUrl', displayName: 'Certificate' },
-  ],
-};
 
 const findATabNameByValue = (value) =>
   tabs.find((tab) => tab.tabValue === value);
@@ -193,82 +72,127 @@ function FormPreview({ data }: { data: any }) {
           </Accordion>
         </Box>
       </Section>
-      <Section
-        collapsible={false}
-        title={findATabNameByValue(selected)?.tabName || 'Company Details'}
-        className="w-2/3 min-h-[700px]"
-        w="66.666667%"
-      >
-        {!selected ||
-          (!data[selected] && (
-            <Flex
-              align={'center'}
-              justify={'center'}
-              className="w-full min-h-[700px]"
-            >
-              <Text fw={700}>No data to display</Text>
-            </Flex>
-          ))}
+      <TabsRightSide
+        data={data}
+        selected={selected}
+        setUrl={setUrl}
+        currentTab={data[selected]}
+        open={open}
+        filteredColumns={formatColumns(data?.countryOfRegistration)}
+      />
 
-        {selected &&
-          data[selected] &&
-          (typeof data[selected] === 'string' ? (
-            <Accordion variant="separated" styles={{}} key={data[selected]}>
-              <Accordion.Item
-                key={addSpacesToCamelCase(selected)}
-                className={classes.item}
-                value={addSpacesToCamelCase(selected)}
-              >
-                <Accordion.Control
-                  styles={{
-                    control: {
-                      border: 'none',
-                      borderBottom: '1px solid #E5E7EB',
-                    },
-                  }}
-                >
-                  {addSpacesToCamelCase(selected)}
-                </Accordion.Control>
-                <Accordion.Panel>
-                  {data[selected] ? (
-                    <ShowFile
-                      url={`${
-                        process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
-                      }/upload/get-file-bo/${
-                        selected === 'supportingDocuments'
-                          ? 'SupportingDocument'
-                          : selected === 'certificate'
-                            ? 'certificate'
-                            : 'paymentReceipt'
-                      }/${data[selected]}/${data?.userId}`}
-                      filename={data[selected]}
-                    />
-                  ) : (
-                    <Box className="flex items-center h-20 w-full justify-center">
-                      No file uploaded
-                    </Box>
-                  )}
-                </Accordion.Panel>
-              </Accordion.Item>
-            </Accordion>
-          ) : Array.isArray(data[selected]) ? (
-            <Table.ScrollContainer
-              minWidth={300}
-              style={{
-                minWidth: '100px',
-              }}
+      <Modal
+        opened={opened}
+        onClose={close}
+        size={'60%'}
+        centered
+        title={'Attachment'}
+      >
+        {url && <ShowFile url={url} filename={data[selected]} />}
+      </Modal>
+    </Flex>
+  );
+}
+
+export default FormPreview;
+
+export const TabsRightSide = ({
+  data,
+  selected,
+  setUrl,
+  currentTab,
+  open,
+  filteredColumns,
+}: {
+  data: any;
+  selected: any;
+  setUrl: any;
+  currentTab: any;
+  open: () => void;
+  filteredColumns?: any;
+}) => {
+  return (
+    <Section
+      collapsible={false}
+      title={findATabNameByValue(selected)?.tabName || 'Company Details'}
+      className="w-2/3 min-h-[700px]"
+      w="66.666667%"
+    >
+      {!selected ||
+        (!currentTab && (
+          <Flex
+            align={'center'}
+            justify={'center'}
+            className="w-full min-h-[700px]"
+          >
+            <Text fw={700}>No data to display</Text>
+          </Flex>
+        ))}
+
+      {selected &&
+        currentTab &&
+        (typeof currentTab === 'string' ? (
+          <Accordion variant="separated" styles={{}} key={currentTab}>
+            <Accordion.Item
+              key={addSpacesToCamelCase(selected)}
+              className={classes.item}
+              value={addSpacesToCamelCase(selected)}
             >
-              {renderTable(
-                data[selected],
-                formatColumns,
-                selected,
-                open,
-                setUrl,
-                data.userId,
-              )}
-            </Table.ScrollContainer>
-          ) : (
-            Object.keys(data[selected]).map((fieldKey) => {
+              <Accordion.Control
+                styles={{
+                  control: {
+                    border: 'none',
+                    borderBottom: '1px solid #E5E7EB',
+                  },
+                }}
+              >
+                {addSpacesToCamelCase(selected)}
+              </Accordion.Control>
+              <Accordion.Panel>
+                {currentTab ? (
+                  <ShowFile
+                    url={`${
+                      process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
+                    }/upload/get-file-bo/${
+                      selected === 'supportingDocuments'
+                        ? 'SupportingDocument'
+                        : selected === 'certificate'
+                          ? 'certificate'
+                          : 'paymentReceipt'
+                    }/${currentTab}/${data?.userId}`}
+                    filename={currentTab}
+                  />
+                ) : (
+                  <Box className="flex items-center h-20 w-full justify-center">
+                    No file uploaded
+                  </Box>
+                )}
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
+        ) : Array.isArray(currentTab) ? (
+          <Table.ScrollContainer
+            minWidth={300}
+            style={{
+              minWidth: '100px',
+            }}
+          >
+            {renderTable(
+              currentTab,
+              formatColumns(data?.countryOfRegistration),
+              selected,
+              open,
+              setUrl,
+              data.userId,
+            )}
+          </Table.ScrollContainer>
+        ) : (
+          (filteredColumns[selected] ?? Object.keys(currentTab)).map(
+            (_fieldKey: any) => {
+              const fieldKey = filteredColumns[selected]
+                ? _fieldKey.name
+                : _fieldKey;
+
               return selected === 'supportingDocuments' ||
                 selected === 'certificate' ||
                 (selected === 'paymentReceipt' && fieldKey === 'attachment') ? (
@@ -293,7 +217,7 @@ function FormPreview({ data }: { data: any }) {
                         addSpacesToCamelCase(selected)}
                     </Accordion.Control>
                     <Accordion.Panel>
-                      {data[selected][fieldKey] ? (
+                      {currentTab[fieldKey] ? (
                         <ShowFile
                           url={`${
                             process.env.NEXT_PUBLIC_VENDOR_API ??
@@ -304,8 +228,8 @@ function FormPreview({ data }: { data: any }) {
                               : selected === 'certificate'
                                 ? 'Certificate'
                                 : 'paymentReceipt'
-                          }/${data[selected][fieldKey]}/${data?.userId}`}
-                          filename={data[selected][fieldKey]}
+                          }/${currentTab[fieldKey]}/${data?.userId}`}
+                          filename={currentTab[fieldKey]}
                         />
                       ) : (
                         <Box className="flex items-center h-20 w-full justify-center">
@@ -330,13 +254,15 @@ function FormPreview({ data }: { data: any }) {
                           Website:
                         </Text>
                         <Text size="sm" tt="capitalize">
-                          {data[selected][fieldKey] ? (
+                          {(filteredColumns[selected] ?? currentTab)[
+                            fieldKey
+                          ] ? (
                             <Link
-                              href={data[selected][fieldKey]}
+                              href={currentTab[fieldKey]}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              {data[selected][fieldKey]}
+                              {currentTab[fieldKey]}
                             </Link>
                           ) : (
                             'No website provided'
@@ -345,7 +271,7 @@ function FormPreview({ data }: { data: any }) {
                       </Flex>
                     )}
 
-                    {typeof data[selected][fieldKey] === 'string' &&
+                    {typeof currentTab[fieldKey] === 'string' &&
                       fieldKey !== 'website' && (
                         <>
                           <Flex className="" align="center" gap={'lg'}>
@@ -358,13 +284,13 @@ function FormPreview({ data }: { data: any }) {
                               {addSpacesToCamelCase(fieldKey)}:
                             </Text>
                             <Text size="sm" tt="capitalize">
-                              {data[selected][fieldKey]}
+                              {currentTab[fieldKey]}
                             </Text>
                           </Flex>
                         </>
                       )}
-                    {data[selected][fieldKey] !== null &&
-                      typeof data[selected][fieldKey] === 'object' &&
+                    {currentTab[fieldKey] !== null &&
+                      typeof currentTab[fieldKey] === 'object' &&
                       fieldKey !== 'invoiceIds' && (
                         <Flex className="" align={'center'} gap={'lg'}>
                           <Text
@@ -381,13 +307,10 @@ function FormPreview({ data }: { data: any }) {
                             tt="capitalize"
                           >
                             {selected === 'businessSizeAndOwnership'
-                              ? displayFormattedObject(
-                                  data[selected][fieldKey],
-                                  {
-                                    [fieldKey]: 'amount+currency',
-                                  },
-                                )
-                              : data[selected][fieldKey]}
+                              ? displayFormattedObject(currentTab[fieldKey], {
+                                  [fieldKey]: 'amount+currency',
+                                })
+                              : currentTab[fieldKey]}
                           </Text>
                           <Text
                             className="text-center"
@@ -395,7 +318,7 @@ function FormPreview({ data }: { data: any }) {
                             tt="capitalize"
                           >
                             {selected === 'shareHolders' &&
-                              data[selected][fieldKey]}
+                              currentTab[fieldKey]}
                           </Text>
                         </Flex>
                       )}
@@ -403,23 +326,12 @@ function FormPreview({ data }: { data: any }) {
                   <Divider />
                 </>
               );
-            })
-          ))}
-      </Section>
-      <Modal
-        opened={opened}
-        onClose={close}
-        size={'60%'}
-        centered
-        title={'Attachment'}
-      >
-        {url && <ShowFile url={url} filename={data[selected]} />}
-      </Modal>
-    </Flex>
+            },
+          )
+        ))}
+    </Section>
   );
-}
-
-export default FormPreview;
+};
 
 export const ShowFile = ({
   url,
