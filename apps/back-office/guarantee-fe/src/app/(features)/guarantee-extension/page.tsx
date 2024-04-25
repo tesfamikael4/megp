@@ -1,13 +1,12 @@
 'use client';
 
-import { ActionIcon, Badge, Box } from '@mantine/core';
+import { ActionIcon, Badge } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useListQuery } from './_api/guarantee-request.api';
-import GuaranteeDetail from './[id]/page';
+import ForfeitDetail from './[id]/page';
 
-export default function GuaranteeRequest() {
+export default function Extension() {
   const router = useRouter();
   // const { data: list } = useListQuery({});
   const data = [
@@ -17,14 +16,14 @@ export default function GuaranteeRequest() {
       title: 'title',
       name: 'name',
       type: 'type',
-      status: 'status',
+      status: 'Extended',
     },
   ];
 
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
-    expandedRowContent: (record) => <GuaranteeDetail />,
+    expandedRowContent: (record) => <ForfeitDetail />,
 
     columns: [
       {
@@ -75,7 +74,7 @@ export default function GuaranteeRequest() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/guarantee-request/${record?.id}`);
+              router.push(`/guarantee-extension/${record?.id}`);
             }}
           >
             <IconChevronRight size={14} />
@@ -86,7 +85,7 @@ export default function GuaranteeRequest() {
   };
 
   return (
-    <Section collapsible={false} title="Guarantee Request">
+    <Section collapsible={false} title="Guarantee Extension">
       <ExpandableTable config={config} data={data ?? []} total={data?.length} />
     </Section>
   );

@@ -1,12 +1,15 @@
-import { GuaranteeRequest } from '@/models/guarantee-request';
+import { GuaranteeRequest } from '@/models/guarantee-request/guarantee-request';
 import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
 // get base group api
-const guaranteeRequestApi = entityApi.entitySliceApi['guarantees'];
+const guaranteeRequestApi = entityApi.entitySliceApi['bid-guarantees'];
 
 export const guaranteeRequestSliceApi: typeof EntitySliceApi =
-  createEntitySlice<GuaranteeRequest>(guaranteeRequestApi as any, 'guarantees');
+  createEntitySlice<GuaranteeRequest>(
+    guaranteeRequestApi as any,
+    'bid-guarantees',
+  );
 
 export const {
   useListQuery,

@@ -1,5 +1,5 @@
 import { MenuItem } from '@megp/core-fe';
-import { IconCoin } from '@tabler/icons-react';
+import { IconAdjustmentsHorizontal, IconCoin } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
   {
@@ -16,5 +16,20 @@ export const Menu: MenuItem[] = [
     label: 'Guarantee Forfeit',
     icon: IconCoin,
     link: '/guarantee-forfeit',
+  },
+  {
+    label: 'Guarantee Extension',
+    icon: IconCoin,
+    link: '/guarantee-extension',
+  },
+  {
+    label: 'Settings',
+    icon: IconAdjustmentsHorizontal,
+    links: [
+      {
+        label: 'Approval Workflow',
+        link: '/workflow',
+      },
+    ],
   },
 ];
