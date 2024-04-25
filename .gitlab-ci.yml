@@ -48,7 +48,7 @@ build:
     - npm install -g pnpm@8.15.7
   script:
     - git branch -a
-    - git diff origin/main...HEAD
+    - git diff "remotes/origin/main...HEAD"
     - pnpm install --no-frozen-lockfile
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
