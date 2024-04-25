@@ -18,6 +18,8 @@ import { ProcurementThresholdModule } from './modules/procurement-threshold/proc
 import { OrganizationBudgetCategoryModule } from './modules/organization-budget-category/organization-budget-category.module';
 import { GuaranteeServiceModule } from './modules/guarantee-services/guarantee-service.module';
 import { ClarificationModule } from './modules/clarification/clarification.module';
+import { ProductCatalogModule } from './modules/product-catalog/product-catalog.module';
+import { ContractCatalogModule } from './modules/contract-catalog/contract-catalog.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { ClarificationModule } from './modules/clarification/clarification.modul
     OrganizationBudgetCategoryModule,
     GuaranteeServiceModule,
     ClarificationModule,
+    ProductCatalogModule,
+    ContractCatalogModule,
   ],
   controllers: [],
   providers: [],

@@ -23,8 +23,8 @@
       "type": "node-terminal"
     },
     {
-      "command": "cd .\\apps\\server\\procurement-requisition-be\\ && pnpm run start:dev",
-      "name": "Run PR",
+      "command": "cd .\\apps\\server\\administration-be\\ && pnpm run start:dev",
+      "name": "Run Administration",
       "request": "launch",
       "type": "node-terminal"
     },
