@@ -49,11 +49,11 @@ build:
   script:
     - git fetch --all
     - git branch -a
-    - git diff "remotes/origin/main...HEAD"
+    - git diff "remotes/origin/main..HEAD^"
     - pnpm install --no-frozen-lockfile
-    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
+    - pnpm -w run turbo run lint  --filter "...[origin/main..HEAD^]"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD^]" --concurrency=70% -- $CI_PIPELINE_ID $GITLAB_PASSWORD
+    - pnpm -w run turbo run gitops  --filter "...[origin/main..HEAD^]" --concurrency=70% -- $CI_PIPELINE_ID $GITLAB_PASSWORD
 
   cache:
     key:
