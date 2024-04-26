@@ -125,7 +125,7 @@ export class PostBudgetPlanActivity extends OrgAudit {
   @Column({ type: 'jsonb', nullable: true })
   classification: any;
 
-  @Column({ nullable: true, default: null })
+  @Column({ nullable: true, unique: true })
   userReference: string;
 
   @BeforeInsert()
