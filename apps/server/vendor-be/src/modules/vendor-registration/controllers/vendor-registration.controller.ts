@@ -455,161 +455,171 @@ export class VendorRegistrationsController {
 
 
     const data2 = {
-      "vendor": {
-        "id": "850a9f47-81a8-4eb6-9254-96bc90902caa",
-        "basic": {
-          "name": "Terrastone Construction Limited44-b",
-          "level": "detail",
-          "origin": "Malawi",
-          "status": "Draft",
-          "district": "Chiradzulu",
-          "tinNumber": "222222221",
-          "businessType": "privateLimitedCompany",
-          "tinIssuedDate": "2024-04-04"
-        },
-        "remark": null,
-        "status": "Approved",
-        "userId": "bd1a4b88-3015-4663-bbd3-bba11ccb5d98",
+      "tenantId": 0,
+      "createdAt": "2024-04-26T06:54:32.528Z",
+      "updatedAt": "2024-04-26T07:03:05.413Z",
+      "deletedAt": null,
+      "id": "7ba7a718-e449-41e8-b063-3793743f4041",
+      "userId": "c6dfab3b-015c-4cc0-965f-62f7f8f12c19",
+      "tinNumber": "11000067",
+      "status": "Submit",
+      "initial": {
+        "level": "Submit",
+        "status": "Submit",
+        "userId": "c6dfab3b-015c-4cc0-965f-62f7f8f12c19",
+        "issueDate": "2024-04-26",
+        "isPPDARegistered": false
+      },
+      "basic": {
+        "name": "MBRS BUSINESS NAME",
+        "status": "Draft",
         "address": {
-          "fax": "+345234",
-          "website": "https://dev.megp.peragosystems.com",
-          "telephone": "+5234523452345",
-          "mobilePhone": "0909090909",
-          "primaryEmail": "dfasdfas@asdfasdf.cc",
-          "postalAddress": "12312342",
-          "alternateEmail": "deme1@gmsil.com"
+          "postalAddress": "MBRS POSTAL ADDRESS",
+          "physicalAddress": "MBRS PHYSICAL ADDRESS"
         },
-        "initial": {
-          "level": "doc",
-          "status": "Save",
-          "userId": "bd1a4b88-3015-4663-bbd3-bba11ccb5d98",
-          "issueDate": "2024-04-04"
+        "tinNumber": "11000067",
+        "businessType": "partnership",
+        "tinIssuedDate": "2024-04-26",
+        "registrationNumber": "1234567",
+        "countryOfRegistration": "Malawi",
+        "registrationIssuedDate": "2024-04-26"
+      },
+      "address": {
+        "fax": "21341234",
+        "region": "dd8fbf0a-a737-4751-9627-b468b1e9887f",
+        "website": "https://dev.megp.peragosystems.com",
+        "district": "76746f34-345a-45f4-b62f-2442ff044e5f",
+        "telephone": "32423412341",
+        "primaryEmail": "deme111@gmsil.com",
+        "postalAddress": "MBRS POSTAL ADDRESS",
+        "alternateEmail": "deme1@gmsil.com",
+        "physicalAddress": "MBRS PHYSICAL ADDRESS"
+      },
+      "contactPersons": [
+        {
+          "email": "admin@admin.com",
+          "lastName": "Mergia",
+          "firstName": "Demeke ",
+          "mobileNumber": "0941234126"
+        }
+      ],
+      "businessSizeAndOwnership": {
+        "ownershipType": "",
+        "paidUpCapital": {
+          "amount": "3,333",
+          "currency": "ETB"
         },
-        "invoice": {
-
-        },
-        "tenantId": 0,
-        "createdAt": "2024-04-04T13:07:08.844Z",
-        "deletedAt": null,
-        "tinNumber": "222222221",
-        "updatedAt": "2024-04-04T14:23:37.667Z",
-        "shareHolders": [
-          {
-            "share": 67,
-            "lastName": "Getaneh",
-            "firstName": "Demeke ",
-            "nationality": "Åland Islands"
-          }
-        ],
-        "contactPersons": [
-          {
-            "email": "demekeg@wldu.edu.et",
-            "lastName": "Mergia",
-            "firstName": "Demeke ",
-            "mobileNumber": "0941234126"
-          }
-        ],
-        "lineOfBusiness": ['Ecobank Malawi', 'Ecobank Malawi 2'],
-        "paymentReceipt": {
-          "invoiceId": "[\"f4b06506-a017-41c6-8d9c-28a647446e98\"]",
-          "attachment": "1712240617496-434064850_certeficate.png",
-          "transactionNumber": "452345325452"
-        },
-        "bankAccountDetails": [
-          {
-            "IBAN": "234523",
-            "bankId": "56e1a7b0-622d-4bf0-9a95-8ce22cfa3d2b",
-            "status": "",
-            "bankName": "Ecobank Malawi",
-            "currency": "ETB",
-            "bankSwift": "2345234",
-            "hashValue": "",
-            "isDefualt": true,
-            "branchName": "23452345",
-            "accountType": "",
-            "accountNumber": "452345234",
-            "branchAddress": "34523",
-            "accountHolderFullName": "ServiceKeyEnum.REGISTRATION_RENEWAL"
-          }
-        ],
-        "beneficialOwnershipAndShares": [
-          {
-            "lastName": "Mergia",
-            "middleName": "",
-            "firstName": "Demeke ",
-            "nationality": "Åland Islands",
-            "share": "",
-            "countryOfResidence": "",
-            "votingRights": "",
-            "authorityToAppointGov": "",
-          }
-        ],
-        "supportingDocuments": {
-          "mRA_TPINCertificate": "",
-          "mRATaxClearanceCertificate": "",
-          "generalReceipt_BankDepositSlip": "",
-          "previousPPDARegistrationCertificate": "",
-          "businessRegistration_IncorporationCertificate": ""
-        },
-        "areasOfBusinessInterest": [
-          {
-            "category": "Goods",
-            "priceRange": "uto 100MK",
-            "lineOfBusiness": [
-              {
-                "id": "641a3198-42ab-f65a-a8df-7005f7f4cb46",
-                "name": "Office equipment"
-              }
-            ]
-          }
-        ],
-        "businessSizeAndOwnership": {
-          "ownershipType": "Malawian",
-          "paidUpCapital": {
-            "amount": "456",
-            "currency": "KW"
-          },
-          "numberOfEmployees": "67",
-          "registeredCapital": {
-            "amount": "45,232,999",
-            "currency": "KW"
-          }
+        "numberOfEmployees": "67",
+        "registeredCapital": {
+          "amount": "452,324",
+          "currency": "ETB"
         }
       },
+      "beneficialOwnershipShareholders": [
+        {
+          "share": 67,
+          "lastName": "Mergia",
+          "firstName": "Demeke ",
+          "middleName": "Getaneh",
+          "nationality": "Afghanistan",
+          "votingRights": 56,
+          "countryOfResidence": "Åland Islands",
+          "authorityToAppointGov": true
+        }
+      ],
+      "bankAccountDetails": [
+        {
+          "IBAN": "345234",
+          "bankId": "56e1a7b0-622d-4bf0-9a95-8ce22cfa3d2b",
+          "status": "",
+          "bankName": "Ecobank Malawi",
+          "bankType": "International",
+          "currency": "EUR",
+          "hashValue": "",
+          "isDefualt": true,
+          "swiftCode": "3452345",
+          "branchName": "3452345",
+          "accountType": "Current",
+          "accountNumber": "4523452345",
+          "branchAddress": "452345234",
+          "accountHolderFullName": "xxxxvvvv"
+        }
+      ],
+      "areasOfBusinessInterest": [
+        {
+          "category": "Goods",
+          "priceRange": "aa4da85e-39fb-42c1-8808-2a06767f3ae9",
+          "classification": null,
+          "lineOfBusiness": []
+        }
+      ],
+      "lineOfBusiness": [
+        {
+          "id": "ef5009b0-329f-40d7-baa9-37de96a2f5d0",
+          "name": "Live Plant and Animal Material and Accessories and Supplies"
+        },
+        {
+          "id": "a2f52b53-f286-4e99-bd3c-882fc0041eab",
+          "name": "Chemicals including Bio Chemicals and Gas Materials"
+        }
+      ],
+      "invoice": {},
+      "supportingDocuments": {
+        "mRA_TPINCertificate": "",
+        "mRATaxClearanceCertificate": "",
+        "generalReceipt_BankDepositSlip": "",
+        "previousPPDARegistrationCertificate": "",
+        "businessRegistration_IncorporationCertificate": "1714114963088-903263000_1.png"
+      },
+      "paymentReceipt": {
+        "attachment": "1714114917087-282453256_1.png",
+        "invoiceIds": [
+          "388b2e0d-9107-4dde-b285-211ffd5ca292"
+        ],
+        "transactionId": "452345"
+      },
+      "remark": null,
+      "registrationNumber": null,
+      "businessAreas": [],
+      "areasOfBusinessInterestView": [
+        {
+          "category": "Goods",
+          "priceRange": "Above MK10 million  - MK30 million",
+          "lineOfBusiness": []
+        }
+      ],
       "preferential": [
         {
-          'category': '',
-          'type': 'Micro Interprize',
-          "certiNumber": "er451425123451",
-          'certificateIssuanceDate': '',
-          'certificateValidityPeriod': '',
-          "status": "Submitted",
-          "userId": "bd1a4b88-3015-4663-bbd3-bba11ccb5d98",
-
-        },
-        {
-          'category': '',
-          'type': 'IBM',
-          "certiNumber": "er451425123451",
-          'certificateIssuanceDate': '',
-          'certificateValidityPeriod': '',
-          "status": "Submitted",
-          "userId": "bd1a4b88-3015-4663-bbd3-bba11ccb5d98",
-
-        },
-        {
-          'category': '',
-          'type': 'Marginalized',
-          "certiNumber": "er451425123451",
-          'certificateIssuanceDate': '',
-          'certificateValidityPeriod': '',
-          "status": "Submitted",
-          "userId": "bd1a4b88-3015-4663-bbd3-bba11ccb5d98",
-
+          "tenantId": 0,
+          "createdAt": "2024-04-26T07:01:35.446Z",
+          "updatedAt": "2024-04-26T07:01:35.446Z",
+          "deletedAt": null,
+          "id": "5eed3d4b-5e9b-463d-91f5-2b70ec27dda3",
+          "serviceId": "26ff8e51-0f68-9c28-2ea4-a32a5e1f184f",
+          "userId": "c6dfab3b-015c-4cc0-965f-62f7f8f12c19",
+          "certificateUrl": null,
+          "certiNumber": "23421451245",
+          "category": "ibm",
+          "type": "ibm",
+          "certificateValidityPeriod": "2024-04-18T21:00:00.000Z",
+          "certificateIssuedDate": "2024-04-25T21:00:00.000Z",
+          "status": "Draft",
+          "service": {
+            "tenantId": 0,
+            "createdAt": "2024-04-17T06:39:55.386Z",
+            "updatedAt": "2024-04-17T06:39:55.386Z",
+            "deletedAt": null,
+            "id": "26ff8e51-0f68-9c28-2ea4-a32a5e1f184f",
+            "name": "IBM",
+            "key": "IBM",
+            "description": null,
+            "isActive": true
+          }
         }
       ]
-    };
-    const result = await this.regService.generatePDFForReview(data, user);
+    }
+    delete data2.basic.address;
+    const result = await this.regService.generatePDFForReview(data2, user);
     // res.set({
     //   'Content-Type': 'application/pdf',
     //   'Content-Disposition': 'attachment; filename="document.pdf"',

@@ -41,6 +41,7 @@ import { AssignmentEnum } from 'src/modules/handling/enums/assignment.enum';
 import { HandlerTypeEnum } from 'src/modules/handling/enums/handler-type.enum';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
+import { NotificationsService } from 'src/modules/notifications/services/notification.service';
 // import { ServiceKeyEnum } from '../dto/workflow-instance.enum';
 @Injectable()
 export class WorkflowService {
@@ -55,7 +56,8 @@ export class WorkflowService {
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
-    private readonly emailSerice: EmailService,
+    private readonly emailService: EmailService,
+    private readonly notificationService: NotificationsService,
     @Inject(forwardRef(() => VendorRegistrationsService))
     private readonly vendorRegService: VendorRegistrationsService,
     private readonly businessAreaService: BusinessAreaService,
@@ -135,6 +137,11 @@ export class WorkflowService {
       nextCommand.action = 'ISR';
       nextCommand.data = { ...dto?.data };
       await this.gotoNextStep(nextCommand, user);
+      this.notificationService.sendSubmissionNotification(
+        user.id,
+        instanceEntity.applicationNumber,
+        serviceBp.service.name,
+      );
     }
     const vendor = await this.vendorRegService.findOne(wfinstance.requestorId);
     if (vendor) {
@@ -155,7 +162,7 @@ export class WorkflowService {
     nextCommand.action = nextCommand.action.toUpperCase();
     const taskInfo = new TaskEntity();
     const workflowInstance = await this.workflowInstanceRepository.findOne({
-      relations: { businessProcess: true, taskHandler: true },
+      relations: { businessProcess: { service: true }, taskHandler: true },
       where: { id: nextCommand.instanceId },
     });
     if (!workflowInstance || !workflowInstance.taskHandler)
@@ -194,15 +201,36 @@ export class WorkflowService {
         if (
           curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
           nextCommand.action.toUpperCase() ==
-          ApplicationStatus.CANCEL.toUpperCase()
+            ApplicationStatus.CANCEL.toUpperCase()
         ) {
           response = await this.vendorRegService.cancelApplication(wfInstance);
+          this.notificationService.sendCancelNotification(
+            user.id,
+            workflowInstance.applicationNumber,
+            bp.service.name,
+          );
         } else {
           response = await this.notifyCompletion(
             wfInstance,
             apiUrl,
             nextCommand,
           );
+          if (
+            nextCommand.action.toLowerCase ==
+            ApplicationStatus.APPROVE.toLowerCase
+          ) {
+            this.notificationService.sendCompletionNotification(
+              user.id,
+              workflowInstance.applicationNumber,
+              bp.service.name,
+            );
+          } else {
+            this.notificationService.sendRejectNotification(
+              user.id,
+              workflowInstance.applicationNumber,
+              bp.service.name,
+            );
+          }
         }
         if (response) {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
@@ -228,12 +256,18 @@ export class WorkflowService {
         taskInfo.handlerType = task.handlerType;
         taskInfo.taskType = task.taskType;
         console.log(' taskInfo.taskType ', taskInfo.taskType);
+        const notification = {
+          userId: user.id,
+          applicationNumber: workflowInstance?.applicationNumber,
+          serviceName: bp.service?.name,
+        };
         const status = await this.handleEvent(
           stateMetaData,
           nextCommand,
           curruntTask,
           workflowInstance,
           user,
+          notification,
         );
 
         if (!status) {
@@ -339,6 +373,7 @@ export class WorkflowService {
     task: TaskEntity,
     wfi: WorkflowInstanceEntity,
     user: any,
+    notification: any = null,
   ) {
     switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
@@ -351,6 +386,14 @@ export class WorkflowService {
             stateMetadata['apiUrl'],
             command,
           );
+          if (notification) {
+            this.notificationService.sendAdjustmentNotification(
+              notification.userId,
+              notification.applicationNumber,
+              notification.serviceName,
+            );
+          }
+
           if (result) {
             const vendor = await this.vendorRegService.findOne(wfi.requestorId);
             if (vendor) {
@@ -432,8 +475,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-        commandLower == 'yes' ||
-        commandLower == 'success'
+      commandLower == 'yes' ||
+      commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {
@@ -508,6 +551,7 @@ export class WorkflowService {
     //     }
     //
     const result = await this.vendorRegService.adjustVendor(payload);
+
     if (result) {
       return true;
     } else {
@@ -546,7 +590,7 @@ export class WorkflowService {
         const responseData = response.data;
         const subject = 'subject of the email';
         const body = 'this is to inform you that';
-        await this.emailSerice.sendEmail(
+        await this.emailService.sendEmail(
           'demeke.get23@gmail.com',
           subject,
           body,
