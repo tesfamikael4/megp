@@ -13,4 +13,4 @@ import { BidModule } from '../bid/bid.module';
   providers: [TechnicalPreliminaryAssessmentService],
   controllers: [TechnicalPreliminaryAssessmentController],
 })
-export class EvaluationModule {}
+export class EvaluationModule { }
