@@ -23,6 +23,7 @@ import { ServicePricingModule } from '../pricing/pricing.module';
 import { CategoriesModule } from '../categories/category.module';
 import { VendorRegistrationModule } from '../vendor-registration/vendor-registration.module';
 import { BanksEntity, BusinessProcessEntity, InvoiceEntity, TaskAssignmentEntity, TaskEntity, TaskHandlerEntity, TaskTrackerEntity, WorkflowInstanceEntity } from '@entities';
+import { NotificationModule } from '../notifications/notification.module';
 
 
 @Module({
@@ -43,6 +44,7 @@ import { BanksEntity, BusinessProcessEntity, InvoiceEntity, TaskAssignmentEntity
     ServiceModule,
     ServicePricingModule,
     CategoriesModule,
+    NotificationModule,
     forwardRef(() => VendorRegistrationModule),
   ],
   exports: [

@@ -180,6 +180,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           wfi.serviceId = bp.serviceId;
           wfi.requestorId = data.id;
           const formattedData = await this.formatData(data);
+          console.log(formattedData);
           const documentId = await this.generatePDFForReview(
             formattedData,
             userInfo,
@@ -256,7 +257,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   async formatData(data: any) {
+    delete data.basic?.address;
     const formattedData: any = { ...data };
+
     formattedData.areasOfBusinessInterest = [];
     for (const ba of data.areasOfBusinessInterest) {
       const priceRange = await this.pricingService.findOne(ba.priceRange);

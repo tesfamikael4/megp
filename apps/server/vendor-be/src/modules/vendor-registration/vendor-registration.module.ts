@@ -60,6 +60,7 @@ import { VendorDiscoveryService } from './services/vendor-discovery.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { BankAccountDetailController } from './controllers/bank-account-detail.controller';
 import { BankAccountDetailService } from './services/bank-account-detail.service';
+import { NotificationModule } from '../notifications/notification.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -94,6 +95,7 @@ import { BankAccountDetailService } from './services/bank-account-detail.service
     HttpModule,
     ServicePricingModule,
     ServiceModule,
+    NotificationModule,
     ClientsModule.register([
       {
         name: 'VENDOR_REGISTRATION_SERVICE',

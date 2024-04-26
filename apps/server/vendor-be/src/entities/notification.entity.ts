@@ -13,4 +13,7 @@ export class Notification extends Audit {
   content: string;
   @Column({ default: 'new' })
   status: string;
+  @Column({ default: 'Activity_Notification' })
+  category: string;
+
 }
