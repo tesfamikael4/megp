@@ -43,7 +43,7 @@ export class ProcurementRequisition extends OrgAudit {
   @Column({ unique: true })
   userReference: string;
 
-  @Column()
+  @Column({ default: false })
   isUsed: boolean;
 
   @Column({
