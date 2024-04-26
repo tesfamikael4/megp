@@ -68,6 +68,7 @@ const activitiesSchema: ZodType<Partial<BudgetPlanActivities>> = z.object({
     message: 'Estimated Amount is required',
   }),
   remark: z.string().default(''),
+  userReference: z.string().default(''),
   isMultiYear: z.boolean().default(false),
 });
 
@@ -282,6 +283,7 @@ export const FormDetail = ({
           procurementReference: preActivity?.procurementReference,
           remark: preActivity?.remark,
           estimatedAmount: preActivity?.estimatedAmount,
+          userReference: preActivity?.userReference,
         });
         setTags(preActivity?.classification ?? []);
       }
@@ -294,6 +296,7 @@ export const FormDetail = ({
           procurementReference: postActivity?.procurementReference,
           remark: postActivity?.remark,
           estimatedAmount: postActivity?.estimatedAmount,
+          userReference: postActivity?.userReference,
         });
         setTags(postActivity?.classification ?? []);
       }
@@ -311,6 +314,24 @@ export const FormDetail = ({
   return (
     <Section title="Activity Identification" collapsible={false}>
       <Stack>
+        {mode === 'detail' && (
+          <Flex gap="md">
+            <TextInput
+              label="System Reference Number"
+              {...register('procurementReference')}
+              disabled
+              className="w-full"
+            />
+            <TextInput
+              label="Optional Reference Number"
+              {...register('userReference')}
+              error={errors.userReference?.message}
+              disabled={disableFields}
+              placeholder="Optional Reference Number"
+              className="w-full"
+            />
+          </Flex>
+        )}
         <Flex gap="md">
           <Box className="w-1/2">
             <TextInput
