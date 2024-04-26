@@ -1,4 +1,4 @@
-import { Box, Text } from '@mantine/core';
+import { Badge, Box, Text } from '@mantine/core';
 import { DetailTable } from '../../_components/detail-table';
 
 export const DetailActivity = ({
@@ -36,7 +36,15 @@ export const DetailActivity = ({
         },
         {
           key: 'Procurement Process',
-          value: tempMethod.isOnline ? 'Online' : 'Offline',
+          value: tempMethod.isOnline ? (
+            <Badge color="green" size="xs">
+              Online
+            </Badge>
+          ) : (
+            <Badge color="red" size="xs">
+              Offline
+            </Badge>
+          ),
         },
         {
           key: 'Supplier Target Group',
@@ -53,6 +61,10 @@ export const DetailActivity = ({
     {
       key: 'Reference',
       value: activity.procurementReference,
+    },
+    {
+      key: 'Optional Reference Number',
+      value: activity.userReference,
     },
     {
       key: 'Name',

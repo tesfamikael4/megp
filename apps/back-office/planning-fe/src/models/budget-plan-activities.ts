@@ -17,4 +17,5 @@ export interface BudgetPlanActivities {
   preference: string;
   procurementProcess: string;
   remark: string;
+  userReference?: string;
 }
