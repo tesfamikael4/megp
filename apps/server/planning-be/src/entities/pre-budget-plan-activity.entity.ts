@@ -101,6 +101,9 @@ export class PreBudgetPlanActivity extends OrgAudit {
   @Column({ type: 'jsonb', nullable: true })
   classification: any;
 
+  @Column({ unique: true })
+  userReference: string;
+
   @BeforeInsert()
   generateRandomNumber(): void {
     const randomNum = Math.floor(10000 + Math.random() * 90000); // Generates a random 5-digit number

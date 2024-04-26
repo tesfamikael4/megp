@@ -25,7 +25,11 @@ import { ProcurementRequisitionStatusEnum } from 'src/shared/enums';
 import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
 import { DocumentService } from 'src/modules/utility/services/document.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
-import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
@@ -441,7 +445,11 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
 
   async getProcurementRequisitionById(id: string) {
     const pr = await this.repositoryProcurementRequisition.findOne({
-      where: { id },
+      where: {
+        id,
+        isUsed: false,
+        status: 'Approved',
+      },
       relations: {
         procurementRequisitionItems: true,
         procurementRequisitionTechnicalTeams: true,
@@ -450,5 +458,43 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       },
     });
     return pr;
+  }
+
+  async getProcurementRequisitionStatus(query: CollectionQuery, req?: any) {
+    query.where.push([
+      {
+        column: 'status',
+        value: 'Approved',
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'isUsed',
+        value: true,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'organizationId',
+        value: req.user.organization.id,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    const dataQuery = QueryConstructor.constructQuery<ProcurementRequisition>(
+      this.repositoryProcurementRequisition,
+      query,
+    );
+
+    const response = new DataResponseFormat<ProcurementRequisition>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }
