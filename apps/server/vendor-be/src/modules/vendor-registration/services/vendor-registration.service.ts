@@ -1492,7 +1492,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const result = await this.workflowService.getMyApplications(user);
     for (const row of result) {
       const status = row.businessArea.status;
-      const applicationDoc = row.taskTrackers?.find((item) => item.data?.documentId)
+      const applicationDoc = row.taskTrackers?.find(
+        (item) => item.data?.documentId,
+      );
       apps.push({
         service: row.service.name,
         key: row.service.key,
@@ -1500,7 +1502,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         submittedAt: row.submittedAt,
         remark: row?.businessArea?.remark,
         status: status,
-        data: applicationDoc
+        data: applicationDoc,
       });
     }
     return apps;
@@ -2483,30 +2485,25 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
   private async getAndFormatMBRSData(itemData: VendorInitiationDto) {
     try {
-      itemData = this.reformatMBRSData({} as any, itemData);
+      const mbrsData: MBRSResponseDto = await this.fetchFromExternalApi(
+        `customer-bussines-infos/${itemData.registrationNumber}`,
+      );
+
+      if (mbrsData.error || !mbrsData.records)
+        throw new BadRequestException('mbrs_fetch_error');
+
+      if (mbrsData.count == 0)
+        throw new BadRequestException('you_are_not_registered_on_mbrs');
+
+      if (
+        itemData.registrationIssuedDate !=
+        this.reformatMBRSDate(mbrsData?.records[0]?.registration_date)
+      )
+        throw new BadRequestException('incorrect_registration_date');
+
+      itemData = this.reformatMBRSData(mbrsData?.records[0] as any, itemData);
+
       return itemData;
-
-      // const mbrsData: MBRSResponseDto = await this.fetchFromExternalApi(
-      //   `customer-bussines-infos/${itemData.registrationNumber || 'COYR-8LJ178W'}`,
-      // );
-
-      // if (mbrsData.error) throw new BadRequestException('mbrs_fetch_error');
-
-      // if (mbrsData.count == 0)
-      //   throw new BadRequestException('you_are_not_registered_on_mbrs');
-
-      // if (
-      //   itemData.registrationIssuedDate !=
-      //   this.reformatMBRSDate(mbrsData?.records[0].registration_date)
-      // )
-      //   throw new BadRequestException('incorrect_registration_date');
-
-      // itemData = this.reformatMBRSData(
-      //   (mbrsData?.records[0] || {}) as any,
-      //   itemData,
-      // );
-
-      // return itemData;
     } catch (error) {
       throw error;
     }
@@ -2563,13 +2560,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       return partner;
     });
 
-    itemData.name = mbrsRecords?.business_name || 'MBRS BUSINESS NAME';
+    itemData.name = mbrsRecords?.business_name;
     // itemData.shareHolders = mbrsRecords.partners;
     itemData.address = {};
-    itemData.address.postalAddress =
-      mbrsRecords?.postal_address || 'MBRS POSTAL ADDRESS';
-    itemData.address.physicalAddress =
-      mbrsRecords?.physical_address || 'MBRS PHYSICAL ADDRESS';
+    itemData.address.postalAddress = mbrsRecords?.postal_address;
+    itemData.address.physicalAddress = mbrsRecords?.physical_address;
 
     return itemData;
   }
