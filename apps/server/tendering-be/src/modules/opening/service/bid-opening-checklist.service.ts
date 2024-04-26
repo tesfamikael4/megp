@@ -89,7 +89,6 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
         ? true
         : false,
     }));
-
     return response;
   }
 

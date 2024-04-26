@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Query,
+  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -96,6 +97,20 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
   async getProcurementRequisitionByReference(@Param('id') id: string) {
     return await this.procurementRequisitionService.getProcurementRequisitionById(
       id,
+    );
+  }
+
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  @Get('procurement-requisition-status/:id')
+  @ApiPaginatedResponse(ProcurementRequisition)
+  async getProcurementRequisitionStatus(
+    @Query('q') q?: string,
+    @Req() req?: any,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return this.procurementRequisitionService.getProcurementRequisitionStatus(
+      query,
     );
   }
 }
