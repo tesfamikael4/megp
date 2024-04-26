@@ -32,6 +32,8 @@ import {
 } from '../dto';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
 import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
+import { TenderMilestone } from 'src/entities/tender-milestone.entity';
+import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 
 @Injectable()
 export class TenderService extends EntityCrudService<Tender> {
@@ -118,12 +120,13 @@ export class TenderService extends EntityCrudService<Tender> {
         .getRepository(ProcurementMechanism)
         .insert(procurementMechanism);
 
-      const lot = new Lot();
-      lot.number = 1;
-      lot.name = `Lot 1`;
-      lot.status = `DRAFT`;
-      lot.tenderId = tender.id;
-      const lotResult = await manager.getRepository(Lot).insert(lot);
+      const lot = manager.getRepository(Lot).create({
+        number: 1,
+        name: `Lot 1`,
+        status: `DRAFT`,
+        tenderId: tender.id,
+      });
+      await manager.getRepository(Lot).insert(lot);
 
       const items: Item[] = [];
       for (const iterator of prResponse.procurementRequisitionItems) {
@@ -137,11 +140,17 @@ export class TenderService extends EntityCrudService<Tender> {
         item.estimatedPrice = Number(iterator.unitPrice);
         item.estimatedPriceCurrency = iterator.currency;
         item.hasBom = false;
-        item.lotId = lotResult.identifiers[0].id;
+        item.lotId = lot.id;
         items.push(item);
       }
       await manager.getRepository(Item).insert(items);
-
+      await manager.getRepository(TenderMilestone).insert({
+        tenderId: tender.id,
+        lotId: lot.id,
+        isCurrent: true,
+        milestoneNum: TenderMilestoneEnum.Initiation,
+        milestoneTxt: 'Initiation',
+      });
       // await axios.post('', {
 
       // })

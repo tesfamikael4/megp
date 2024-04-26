@@ -7,3 +7,10 @@ export class CreateOpeningDto {
   @IsNotEmpty()
   tenderId: string;
 }
+
+export class CompleteOpeningDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenderId: string;
+}
