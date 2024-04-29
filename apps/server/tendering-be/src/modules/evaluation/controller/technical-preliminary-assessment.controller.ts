@@ -71,4 +71,24 @@ export class TechnicalPreliminaryAssessmentController extends ExtraCrudControlle
     );
   }
 
+  @Get('can-complete/:lotId')
+  async canComplete(@Param('lotId') lotId: string, @Req() req) {
+    return await this.technicalPreliminaryAssessmentService.canComplete(
+      lotId,
+      req,
+    );
+  }
+
+  @Get('members-report/:lotId/:bidderId/spdId')
+  async membersReport(
+    @Param('lotId') lotId: string,
+    @Param('bidderId') bidderId: string,
+    @Param('spdId') spdId: string,
+  ) {
+    return await this.technicalPreliminaryAssessmentService.membersReport(
+      spdId,
+      bidderId,
+      lotId,
+    );
+  }
 }

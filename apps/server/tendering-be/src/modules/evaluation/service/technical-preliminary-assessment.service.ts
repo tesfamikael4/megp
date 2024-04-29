@@ -325,17 +325,112 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
 
     await this.technicalPreliminaryAssessmentRepository.update(
       {
-        bidRegistrationDetail: {
-          bidRegistration: {
-            tenderId: itemData.tenderId,
-          },
-        },
-        evaluatorId: req.user.userId,
+        id: In(checklist.map((list) => list.id)),
         isTeamAssessment: itemData.isTeamLead,
       },
       {
         submit: true,
       },
     );
+  }
+
+  async canComplete(
+    lotId: string,
+    req: any,
+  ): Promise<{
+    isTeamLead: {
+      isTeam: boolean;
+      hasCompleted: boolean;
+    };
+    hasCompleted: boolean;
+    canTeamAssess: boolean;
+  }> {
+    const response: {
+      isTeamLead: { isTeam: boolean; hasCompleted: boolean };
+      hasCompleted: boolean;
+      canTeamAssess: boolean;
+    } = {
+      isTeamLead: { isTeam: false, hasCompleted: false },
+      hasCompleted: false,
+      canTeamAssess: false,
+    };
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const evaluatorId = req.user.userId;
+    const [isTeamLead, evaluationChecklist, canTeam] = await Promise.all([
+      manager.getRepository(TeamMember).exists({
+        where: {
+          team: {
+            tender: {
+              lots: {
+                id: lotId,
+              },
+            },
+          },
+          personnelId: evaluatorId,
+          isTeamLead: true,
+        },
+      }),
+      manager.getRepository(TechnicalPreliminaryAssessment).exists({
+        where: {
+          bidRegistrationDetail: {
+            lotId,
+          },
+          evaluatorId,
+          submit: false,
+        },
+      }),
+      manager.getRepository(TechnicalPreliminaryAssessment).exists({
+        where: {
+          bidRegistrationDetail: {
+            lotId,
+          },
+          submit: false,
+        },
+      }),
+    ]);
+    response.isTeamLead.isTeam = isTeamLead;
+    response.hasCompleted = !evaluationChecklist;
+    response.canTeamAssess = !canTeam;
+
+    if (isTeamLead) {
+      const teamCompleted =
+        await this.technicalPreliminaryAssessmentRepository.find({
+          where: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+            evaluatorId,
+            isTeamAssessment: true,
+            submit: false,
+          },
+        });
+      if (teamCompleted.length > 0) {
+        response.isTeamLead.hasCompleted = false;
+      }
+    }
+
+    return response;
+  }
+
+  async membersReport(
+    spdPreliminaryEvaluationId: string,
+    bidderId: string,
+    lotId: string,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const report = await manager
+      .getRepository(TechnicalPreliminaryAssessment)
+      .find({
+        where: {
+          spdPreliminaryEvaluationId,
+          bidRegistrationDetail: {
+            bidRegistration: {
+              bidderId,
+            },
+            lotId,
+          },
+        },
+      });
+    return report;
   }
 }
