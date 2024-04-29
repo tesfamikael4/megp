@@ -85,7 +85,7 @@ export function SpdAdministrativeComplianceFormDetail({
 
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, pdId: id, type: type, id: adId?.toString() });
+      await update({ ...data, type: type, id: adId?.toString() });
       returnFunction();
       notify('Success', 'Preliminary examination updated successfully');
     } catch {

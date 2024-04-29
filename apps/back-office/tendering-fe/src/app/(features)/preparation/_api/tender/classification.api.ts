@@ -15,6 +15,7 @@ export const tenderClassificationSliceApi: typeof EntitySliceApi =
 export const {
   useListQuery,
   useLazyListQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useLazyReadQuery,
   useCreateMutation,

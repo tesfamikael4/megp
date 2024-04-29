@@ -3,12 +3,14 @@ import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { Section } from '@megp/core-fe';
 import { Button, Modal } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
-import { useLazyListQuery } from '@/app/(features)/preparation/_api/tender/classification.api';
+import { useLazyListByIdQuery } from '@/app/(features)/preparation/_api/tender/classification.api';
 import { useDisclosure } from '@mantine/hooks';
 import ClassificationSelector from './classification-selector';
+import { useParams } from 'next/navigation';
 
 export default function Classification() {
-  const [trigger, { data, isFetching }] = useLazyListQuery();
+  const { id } = useParams();
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const config = {
     columns: [
@@ -23,7 +25,7 @@ export default function Classification() {
   };
 
   const onRequestChange = (request: any) => {
-    trigger(request);
+    trigger({ id: id.toString(), collectionQuery: request });
   };
 
   return (
@@ -39,7 +41,7 @@ export default function Classification() {
     >
       <ExpandableTable
         config={config}
-        data={data?.items ?? []}
+        data={data?.items[0]?.classification ?? []}
         total={data?.total ?? 0}
         onRequestChange={onRequestChange}
       />

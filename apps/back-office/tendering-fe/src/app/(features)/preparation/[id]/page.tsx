@@ -49,6 +49,10 @@ import {
 } from '../_api/tender/tender-template.api';
 import TenderPersonnelList from '../_components/tender/tender-personnel-list';
 import DocumentaryEvidence from '../_components/lot/evaluation-criteria/documentery-evidence/documentary-evidence';
+import {
+  useApproveTenderMutation,
+  useGenerateBidMutation,
+} from '../_api/tender/approve-tender.api';
 
 export default function TenderDetailPage() {
   const router = useRouter();
@@ -62,7 +66,8 @@ export default function TenderDetailPage() {
   const { id } = useParams();
   const { data: selected, isLoading } = useReadQuery(id?.toString());
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
-  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [update, { isLoading: isUpdating }] = useApproveTenderMutation();
+  const [generate, { isLoading: isGenerating }] = useGenerateBidMutation();
   const [uploadBdsFile, { isLoading: isBdsUploading }] =
     useUploadBdsTemplateMutation();
   const [uploadSccFile, { isLoading: isSccUploading }] =
@@ -112,6 +117,10 @@ export default function TenderDetailPage() {
     update({ ...data, id: id?.toString() });
     notify('Success', 'Tendering Updated successfully');
   };
+  const onGenerate = () => {
+    generate({ id: id?.toString() });
+    notify('Success', 'Tender document generated successfully');
+  };
   return (
     <>
       <LoadingOverlay visible={isLoading} />
@@ -129,19 +138,34 @@ export default function TenderDetailPage() {
                 {selected?.name}
               </Flex>
             </Tooltip>
-            <Button
-              variant="filled"
-              className="my-auto"
-              loading={isUpdating}
-              onClick={() => {
-                onUpdate({
-                  ...selected,
-                  status: 'PUBLISHED',
-                });
-              }}
-            >
-              Submit
-            </Button>
+            <Box className="flex space-x-4">
+              <Button
+                variant="filled"
+                className="my-auto"
+                loading={isUpdating}
+                onClick={() => {
+                  onUpdate({
+                    status: 'SUBMITTED',
+                  });
+                }}
+              >
+                {selected?.status === 'DRAFT'
+                  ? 'Submit to review'
+                  : 'Submit to revision'}
+              </Button>
+              {selected?.status === 'SUBMITTED' && (
+                <Button
+                  variant="filled"
+                  className="my-auto"
+                  loading={isGenerating}
+                  onClick={() => {
+                    onGenerate();
+                  }}
+                >
+                  Generate
+                </Button>
+              )}
+            </Box>
           </div>
           <div className="flex">
             <div>

@@ -8,8 +8,16 @@ export const approveTenderApi = createApi({
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   endpoints: (builder) => ({
     approveTender: builder.mutation<any, any>({
-      query: (data: { id: string; itemName: string }) => ({
-        url: `spd/approve`,
+      query: (data: { id: string; status: string }) => ({
+        url: `tenders/change-status`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['spd'],
+    }),
+    generateBid: builder.mutation<any, any>({
+      query: (data: { id: string }) => ({
+        url: `tenders/generate-tender-document`,
         method: 'POST',
         body: data,
       }),
@@ -18,4 +26,5 @@ export const approveTenderApi = createApi({
   }),
 });
 
-export const { useApproveTenderMutation } = approveTenderApi;
+export const { useApproveTenderMutation, useGenerateBidMutation } =
+  approveTenderApi;
