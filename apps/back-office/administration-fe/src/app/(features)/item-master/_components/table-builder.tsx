@@ -8,6 +8,7 @@ import { IconCirclePlus } from '@tabler/icons-react';
 import {
   useCopyTemplateMutation,
   useCreateTemplateMutation,
+  useDeleteTemplateMutation,
   useLazyGetTemplateQuery,
   useUpdateTemplateMutation,
 } from '../_api/template.api';
@@ -27,6 +28,7 @@ export function Builder() {
   const [createTemplate] = useCreateTemplateMutation();
   const [update] = useUpdateTemplateMutation();
   const [copy] = useCopyTemplateMutation();
+  const [onRemove] = useDeleteTemplateMutation();
 
   const { control } = useForm<Partial<any>>({
     defaultValues: {
@@ -40,34 +42,11 @@ export function Builder() {
   });
 
   const onSave = async (data: any) => {
-    await createTemplate({
-      itemMasterId: id,
-      properties: updatedItems?.map((field: any) => {
-        return {
-          key: field.key,
-          dataType: field?.dataType,
-          validation: {
-            type: field?.dataType,
-            min: field?.min,
-            max: field?.max,
-          },
-          measurement: field?.measurement,
-          defaultValue: field?.defaultValue,
-          displayName: field?.displayName,
-          category: 'Basic specification',
-          order: field.order,
-        };
-      }),
-      deliveries: [],
-    }).unwrap();
-  };
-  const onUpdate = async () => {
     try {
-      await update({
-        id: data?.id,
+      await createTemplate({
         itemMasterId: id,
-        quantity: 0,
-        properties: fields.map((field: any) => {
+        quantity: 10,
+        properties: updatedItems?.map((field: any) => {
           return {
             key: field.key,
             dataType: field?.dataType,
@@ -75,6 +54,41 @@ export function Builder() {
               type: field?.dataType,
               min: field?.min,
               max: field?.max,
+              isRequired: field?.isRequired,
+              enum: field?.selectFrom,
+            },
+            measurement: field?.measurement,
+            uom: field?.uom,
+            defaultValue: field?.defaultValue,
+            displayName: field?.displayName,
+            category: 'Basic specification',
+            order: field.order,
+          };
+        }),
+        deliveries: [],
+      }).unwrap();
+      setUpdatedItems([]);
+      notify('Success', 'Created successfully');
+    } catch (err) {
+      notify('Error', 'Something went wrong');
+    }
+  };
+  const onUpdate = async () => {
+    try {
+      await update({
+        id: data?.id,
+        itemMasterId: id,
+        quantity: 10,
+        properties: updatedItems.map((field: any) => {
+          return {
+            key: field.key,
+            dataType: field?.dataType,
+            validation: {
+              type: field?.dataType,
+              min: field?.min,
+              max: field?.max,
+              isRequired: field?.isRequired,
+              enum: field?.selectFrom,
             },
             measurement: field?.measurement,
             defaultValue: field?.defaultValue,
@@ -84,7 +98,19 @@ export function Builder() {
         }),
         deliveries: [],
       }).unwrap();
+      setUpdatedItems([]);
+
       notify('Success', 'Template updated successfully');
+    } catch (e) {
+      notify('Error', 'Something went wrong!');
+    }
+  };
+
+  const onDelete = async () => {
+    try {
+      await onRemove(data?.id?.toString()).unwrap();
+
+      notify('Success', 'Template deleted successfully');
     } catch (e) {
       notify('Error', 'Something went wrong!');
     }
@@ -104,7 +130,7 @@ export function Builder() {
 
   useEffect(() => {
     trigger(id.toString());
-  }, [id]);
+  }, [id, isSuccess, trigger]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -113,8 +139,10 @@ export function Builder() {
   }, [isSuccess, data]);
 
   useEffect(() => {
-    setUpdatedItems(fields);
-  }, [fields]);
+    if (isSuccess) {
+      setUpdatedItems(fields);
+    }
+  }, [fields, isSuccess]);
 
   return (
     <>
@@ -142,8 +170,13 @@ export function Builder() {
         />
 
         {isSuccess && updatedItems?.length > 0 ? (
-          data.properties ? (
-            <Button onClick={onUpdate}>Update</Button>
+          data?.properties ? (
+            <>
+              <Button onClick={onUpdate}>Update</Button>
+              <Button onClick={onDelete} ml={'sm'} color="red">
+                Delete
+              </Button>
+            </>
           ) : (
             <Button onClick={onSave}>Save</Button>
           )

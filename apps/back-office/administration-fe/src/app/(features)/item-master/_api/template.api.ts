@@ -40,6 +40,13 @@ export const specApi = createApi({
       }),
       invalidatesTags: ['SpecificationTemplate'],
     }),
+    deleteTemplate: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `specification-templates/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['SpecificationTemplate'],
+    }),
   }),
 });
 
@@ -51,4 +58,5 @@ export const {
   useUpdateTemplateMutation,
 
   useCopyTemplateMutation,
+  useDeleteTemplateMutation,
 } = specApi;
