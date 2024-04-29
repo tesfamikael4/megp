@@ -22,8 +22,8 @@ merge:
     - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install
-    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
-    - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]" --concurrency=3
+    - pnpm -w run turbo run lint  --filter "...[origin/main..HEAD]"
+    - pnpm -w run turbo run build  --filter "...[origin/main..HEAD]" --concurrency=3
 
 build:
   stage: build
