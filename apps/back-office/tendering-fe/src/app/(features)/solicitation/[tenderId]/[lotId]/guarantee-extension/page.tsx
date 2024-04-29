@@ -3,32 +3,25 @@
 import { ActionIcon, Badge } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
-import ForfeitDetail from './[id]/page';
+import { useParams, useRouter } from 'next/navigation';
+import { ListData } from '../_components/data';
 
-export default function GuaranteeForfeit() {
+export default function Extension() {
   const router = useRouter();
+  const { tenderId, lotId } = useParams();
   // const { data: list } = useListQuery({});
-  const data = [
-    {
-      id: '1f344819-d64d-4986-b192-ee06f5bf0e98',
-      organizationName: 'organizationName',
-      title: 'title',
-      name: 'name',
-      type: 'type',
-      status: 'Forfeit',
-    },
-  ];
 
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
-    expandedRowContent: (record) => <ForfeitDetail />,
 
     columns: [
       {
+        accessor: 'vendorName',
+        sortable: true,
+      },
+      {
         accessor: 'organizationName',
-
         sortable: true,
       },
 
@@ -74,7 +67,9 @@ export default function GuaranteeForfeit() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/guarantee-forfeit/${record?.id}`);
+              router.push(
+                `/solicitation/${tenderId}/${lotId}/guarantee-extension/${record?.id}`,
+              );
             }}
           >
             <IconChevronRight size={14} />
@@ -85,8 +80,12 @@ export default function GuaranteeForfeit() {
   };
 
   return (
-    <Section collapsible={false} title="Guarantee Forfeit">
-      <ExpandableTable config={config} data={data ?? []} total={data?.length} />
+    <Section collapsible={false} title="Guarantee Extension">
+      <ExpandableTable
+        config={config}
+        data={ListData ?? []}
+        total={ListData?.length}
+      />
     </Section>
   );
 }
