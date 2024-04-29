@@ -17,11 +17,12 @@ import {
   useSubmitEvaluationMutation,
 } from '@/store/api/tendering/preliminary-compliance.api';
 import { modals } from '@mantine/modals';
+
 export default function BidOpening() {
   const router = useRouter();
   const { tenderId, lotId } = useParams();
-  const { data: lotStatus } = useGetLotStatusQuery(lotId as string);
   const [submit, { isLoading }] = useSubmitEvaluationMutation();
+  const { data: lotStatus } = useGetLotStatusQuery(lotId as string);
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
@@ -52,7 +53,7 @@ export default function BidOpening() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/evaluation/${tenderId}/${lotId}/${record.bidder.bidderId}`,
+                `/evaluation/team-assessment/${tenderId}/${lotId}/${record.bidder.bidderId}`,
               );
             }}
           >
@@ -65,7 +66,6 @@ export default function BidOpening() {
   };
 
   const [getBidders, { data: bidders }] = useLazyGetPassedBiddersQuery();
-
   const onSubmit = () => {
     modals.openConfirmModal({
       centered: true,
@@ -86,8 +86,7 @@ export default function BidOpening() {
     try {
       await submit({
         lotId: lotId as string,
-        isTeamLead: false,
-        //  isTeamLead: true,
+        isTeamLead: true,
       }).unwrap();
       notify('Success', 'Evaluation successfully submitted');
     } catch (err) {
@@ -107,19 +106,16 @@ export default function BidOpening() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  router.push(
-                    `/evaluation/team-assessment/${tenderId}/${lotId}`,
-                  );
+                  router.push(`/opening/team-assessment/${tenderId}`);
                 }}
-                disabled={!lotStatus?.canTeamAssess}
               >
-                Team Assessment
+                Personal Assessment
               </Button>
             )}
             <Button
               onClick={onSubmit}
               loading={isLoading}
-              disabled={lotStatus?.hasCompleted}
+              disabled={lotStatus?.isTeamLead?.hasCompleted}
             >
               Submit
             </Button>
@@ -131,7 +127,7 @@ export default function BidOpening() {
           data={bidders?.items ?? []}
           total={bidders?.total ?? 0}
           onRequestChange={(request) => {
-            getBidders({ lotId, collectionQuery: request });
+            getBidders({ lotId, collectionQuery: request, team: 'teamLeader' });
           }}
         />
       </Section>
