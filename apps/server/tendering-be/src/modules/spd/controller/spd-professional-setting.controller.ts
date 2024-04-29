@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { EntityCrudController } from 'src/shared/controller';
+import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { SpdProfessionalSetting } from 'src/entities';
 import { SpdProfessionalSettingService } from '../service/spd-professional-setting.service';
@@ -17,7 +17,7 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('spd-professional-settings')
 @ApiTags('Spd Professional Settings')
-export class SpdProfessionalSettingController extends EntityCrudController<SpdProfessionalSetting>(
+export class SpdProfessionalSettingController extends ExtraCrudController<SpdProfessionalSetting>(
   options,
 ) {
   constructor(

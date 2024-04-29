@@ -26,6 +26,6 @@ export class TenderPersonal extends Audit {
   @Column()
   evaluated: boolean;
 
-  @Column()
-  order: string;
+  @Column({ type: 'integer' })
+  order: number;
 }

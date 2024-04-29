@@ -3,6 +3,7 @@ export * from './lot.controller';
 export * from './note.controller';
 export * from './procurement-mechanism.controller';
 export * from './procurement-technical-team.controller';
+export * from './revision-approval.controller';
 export * from './tender-classification.controller';
 export * from './tender-participation-fee.controller';
 export * from './tender-personal.controller';

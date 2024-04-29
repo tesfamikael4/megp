@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SpdTechnicalScoring } from './spd-technical-scoring.entity';
 import { Audit } from 'src/shared/entities';
 import { SpdPreferenceMargin } from './spd-preference-margin.entity';
@@ -129,6 +123,6 @@ export class Spd extends Audit {
   )
   spdDocumentaryEvidences: SpdDocumentaryEvidence[];
 
-  @OneToOne(() => TenderSpd, (tender) => tender.spd)
-  tenderSpd: TenderSpd;
+  @OneToMany(() => TenderSpd, (tender) => tender.spd)
+  tenders: TenderSpd[];
 }

@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { EntityCrudController } from 'src/shared/controller';
+import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { SpdQualification } from 'src/entities';
 import { CreateSpdQualificationDto, UpdateSpdQualificationDto } from '../dto';
@@ -15,7 +15,7 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('spd-qualifications')
 @ApiTags('Spd Qualifications')
-export class SpdQualificationController extends EntityCrudController<SpdQualification>(
+export class SpdQualificationController extends ExtraCrudController<SpdQualification>(
   options,
 ) {
   constructor(
