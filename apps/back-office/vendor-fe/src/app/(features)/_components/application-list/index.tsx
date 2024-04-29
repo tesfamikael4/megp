@@ -64,7 +64,6 @@ export default function ApplicationList({
       collectionQuery: {
         skip: from,
         take: perPage,
-        // where: [where],
         includes: ['isrVendor'],
       },
     });
