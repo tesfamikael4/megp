@@ -76,7 +76,7 @@ export default function SpdDocumentaryModal({
     z.object({
       evidenceTitle: z
         .string()
-        .min(10, { message: 'Evidence Title is required' }),
+        .min(1, { message: 'Evidence Title is required' }),
       evidenceType: z.string().min(1, { message: 'Evidence Type is required' }),
       spdDocumentaryEvidenceId: z.string(),
       checkOnFirstCompliance: z.boolean({
@@ -92,8 +92,8 @@ export default function SpdDocumentaryModal({
         required_error: 'Check On second Opening is required',
       }),
       isRequired: z.boolean(),
-      requiredTo: z.string().min(10, { message: 'Required To is required' }),
-      sectionLink: z.string().min(10, { message: 'Section Link is required' }),
+      requiredTo: z.string().min(1, { message: 'Required To is required' }),
+      sectionLink: z.string().min(1, { message: 'Section Link is required' }),
     });
 
   const {
@@ -114,7 +114,7 @@ export default function SpdDocumentaryModal({
         spdId: id.toString() ?? '',
       });
       notify('Success', 'SPD Documentary Evidence created successfully');
-      returnFunction;
+      returnFunction();
     } catch (err) {
       notify('Error', 'Error in creating SPD Documentary Evidence');
     }

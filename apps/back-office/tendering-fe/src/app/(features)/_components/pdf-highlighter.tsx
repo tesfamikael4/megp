@@ -17,6 +17,7 @@ import {
   Flex,
   Group,
   Loader,
+  LoadingOverlay,
   Text,
   Textarea,
 } from '@mantine/core';
@@ -29,7 +30,12 @@ import {
 } from '@tabler/icons-react';
 import { Sidebar } from './pdf-highlighter-sidebar';
 import { logger, notify } from '@megp/core-fe';
-import { useCreateMutation, useListQuery } from '../revision/_api/note.api';
+import {
+  useCreateMutation,
+  useListQuery,
+  useLazyListByIdQuery,
+} from '../revision/_api/note.api';
+import { useParams } from 'next/navigation';
 const getNextId = (): string => String(Math.random()).slice(2);
 
 const parseIdFromHash = (): string => {
@@ -63,21 +69,18 @@ export function PDFHighlighter({
   title: string;
   workflow?: React.ReactNode;
 }): ReactElement {
+  const { id } = useParams();
   const [create] = useCreateMutation();
   const [zoomLevel, setZoomLevel] = useState<string>('1');
-  const { data } = useListQuery({
-    where: [
-      [{ column: 'objectId', value: objectId, operator: '=' }],
-      [{ column: 'key', value: 'comment', operator: '=' }],
-    ],
-  });
+
+  const [trigger, { data, isLoading }] = useLazyListByIdQuery();
   const scrollToRef = useRef<((highlight: IHighlight) => void) | undefined>(
     undefined,
   );
   const getHighlightById = (id: string): IHighlight | undefined => {
     const highlights =
       data?.items.map((highlight) => ({
-        ...highlight.metaData.highlight,
+        ...highlight.metadata?.highlight,
         id: highlight.id,
       })) ?? [];
     return highlights.find((highlight) => highlight.id === id);
@@ -98,6 +101,12 @@ export function PDFHighlighter({
         window.removeEventListener('hashchange', scrollToHighlightFromHash);
     };
   }, [scrollToHighlightFromHash]);
+
+  useEffect(() => {
+    if (id) {
+      trigger({ id: id.toString(), collectionQuery: { skip: 0, take: 10 } });
+    }
+  }, [id, trigger]);
 
   const handleDownload = async () => {
     await fetch(pdfUrl)
@@ -171,99 +180,106 @@ export function PDFHighlighter({
       objectType: 'document',
       content: highlight.comment.text,
       key: 'comment',
-      metaData: { highlight },
+      metadata: { highlight },
+      tenderId: id?.toString(),
     };
-    try {
-      await create(postData).unwrap();
-      notify('Success', 'Comment saved successfully');
-    } catch (err) {
-      notify('Error', 'Something went wrong');
-    }
+    await create(postData)
+      .unwrap()
+      .then(() => {
+        notify('Success', 'Comment saved successfully');
+        trigger({ id: id.toString(), collectionQuery: { skip: 0, take: 10 } });
+      })
+      .catch((err) => {
+        notify('Error', 'Something went wrong');
+      });
   };
 
   return (
-    <div className="border-2 border-slate-800 rounded">
-      <Flex className="bg-slate-800 p-2" justify="space-between">
-        <h2 className="text-white font-semibold">{title}</h2>
+    <>
+      <LoadingOverlay visible={isLoading} />
+      <div className="border-2 border-slate-800 rounded">
+        <Flex className="bg-slate-800 p-2" justify="space-between">
+          <h2 className="text-white font-semibold">{title}</h2>
 
-        <Group gap={2}>
-          <ActionIcon
-            variant="subtle"
-            onClick={() => {
-              if (parseFloat(zoomLevel) > 0.5) {
-                setZoomLevel((prev) => `${parseFloat(prev) - 0.1}`);
-              }
-            }}
-          >
-            <IconMinus color="white" size={16} />
-          </ActionIcon>
-          <Text c="white" size="sm">
-            {parseInt((parseFloat(zoomLevel) * 100).toString())}%
-          </Text>
-          <ActionIcon
-            variant="subtle"
-            onClick={() => {
-              if (parseInt(zoomLevel) < 2) {
-                setZoomLevel((prev) => `${parseFloat(prev) + 0.1}`);
-              }
-            }}
-          >
-            <IconPlus color="white" size={16} />
-          </ActionIcon>
-        </Group>
-
-        <Group gap={2}>
-          <ActionIcon variant="subtle" onClick={handleDownload}>
-            <IconDownload color="white" size={16} />
-          </ActionIcon>
-          <ActionIcon variant="subtle">
-            <IconPrinter color="white" size={16} />
-          </ActionIcon>
-        </Group>
-      </Flex>
-      <div
-        className=" h-full bg-white overflow-hidden"
-        style={{ display: 'flex', height: '100vh' }}
-      >
-        <div style={{ height: '100vh', width: '75vw', position: 'relative' }}>
-          <PdfLoader beforeLoad={<Loader />} url={pdfUrl}>
-            {(pdfDocument) => (
-              <PdfHighlighter
-                pdfScaleValue={zoomLevel}
-                enableAreaSelection={(event) => event.altKey}
-                highlightTransform={highlightTransform}
-                highlights={
-                  data?.items?.map(
-                    (highlight) => highlight.metaData?.highlight,
-                  ) ?? []
+          <Group gap={2}>
+            <ActionIcon
+              variant="subtle"
+              onClick={() => {
+                if (parseFloat(zoomLevel) > 0.5) {
+                  setZoomLevel((prev) => `${parseFloat(prev) - 0.1}`);
                 }
-                onScrollChange={resetHash}
-                onSelectionFinished={onSelectionFinished}
-                pdfDocument={pdfDocument}
-                scrollRef={(_scrollTo) => {
-                  scrollToRef.current = _scrollTo;
-                }}
-              />
-            )}
-          </PdfLoader>
+              }}
+            >
+              <IconMinus color="white" size={16} />
+            </ActionIcon>
+            <Text c="white" size="sm">
+              {parseInt((parseFloat(zoomLevel) * 100).toString())}%
+            </Text>
+            <ActionIcon
+              variant="subtle"
+              onClick={() => {
+                if (parseInt(zoomLevel) < 2) {
+                  setZoomLevel((prev) => `${parseFloat(prev) + 0.1}`);
+                }
+              }}
+            >
+              <IconPlus color="white" size={16} />
+            </ActionIcon>
+          </Group>
+
+          <Group gap={2}>
+            <ActionIcon variant="subtle" onClick={handleDownload}>
+              <IconDownload color="white" size={16} />
+            </ActionIcon>
+            <ActionIcon variant="subtle">
+              <IconPrinter color="white" size={16} />
+            </ActionIcon>
+          </Group>
+        </Flex>
+        <div
+          className=" h-full bg-white overflow-hidden"
+          style={{ display: 'flex', height: '100vh' }}
+        >
+          <div style={{ height: '100vh', width: '75vw', position: 'relative' }}>
+            <PdfLoader beforeLoad={<Loader />} url={pdfUrl}>
+              {(pdfDocument) => (
+                <PdfHighlighter
+                  pdfScaleValue={zoomLevel}
+                  enableAreaSelection={(event) => event.altKey}
+                  highlightTransform={highlightTransform}
+                  highlights={
+                    data?.items?.map(
+                      (highlight) => highlight.metadata?.highlight,
+                    ) ?? []
+                  }
+                  onScrollChange={resetHash}
+                  onSelectionFinished={onSelectionFinished}
+                  pdfDocument={pdfDocument}
+                  scrollRef={(_scrollTo) => {
+                    scrollToRef.current = _scrollTo;
+                  }}
+                />
+              )}
+            </PdfLoader>
+          </div>
+          <Sidebar
+            workflow={workflow}
+            highlights={
+              data?.items?.map((highlight) => ({
+                from: {
+                  fullName: highlight.metadata?.fullName ?? '',
+                  id: highlight.metadata?.userId ?? '',
+                },
+                highlight: {
+                  ...(highlight.metadata?.highlight ?? {}),
+                  id: highlight.id ?? '',
+                },
+              })) ?? []
+            }
+          />
         </div>
-        <Sidebar
-          workflow={workflow}
-          highlights={
-            data?.items?.map((highlight) => ({
-              from: {
-                fullName: highlight.metaData.fullName,
-                id: highlight.metaData.userId,
-              },
-              highlight: {
-                ...highlight.metaData?.highlight,
-                id: highlight.id,
-              },
-            })) ?? []
-          }
-        />
       </div>
-    </div>
+    </>
   );
 }
 

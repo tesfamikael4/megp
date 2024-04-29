@@ -21,31 +21,45 @@ import { useParams } from 'next/navigation';
 
 export default function BidProEvaluation() {
   const { id } = useParams();
-  const EvaluationSchema: ZodType<Partial<ITenderEvaluation>> = z.object({
-    bidEvaluationCurrency: z.array(
-      z.string({
-        required_error: 'Evaluation Currency is required',
-      }),
-    ),
-    evaluationMethod: z.enum(['point system', 'compliance']),
-    selectionMethod: z.enum([
-      'lowest price',
-      'meat',
-      'lcs',
-      'qcbs',
-      'fbs',
-      'cqs',
-      'sss',
-    ]),
-    awardType: z.enum(['item based', 'lot based']),
-    technicalWeight: z.number().min(1, { message: 'This field is required' }),
-    financialWeight: z.number().min(1, { message: 'This field is required' }),
-    passingMark: z.number().min(1, { message: 'This field is required' }),
-  });
+  const EvaluationSchema: ZodType<Partial<ITenderEvaluation>> = z
+    .object({
+      bidEvaluationCurrency: z.array(
+        z.string({
+          required_error: 'Evaluation Currency is required',
+        }),
+      ),
+      evaluationMethod: z.enum(['point system', 'compliance']),
+      selectionMethod: z.enum([
+        'lowest price',
+        'meat',
+        'lcs',
+        'qcbs',
+        'fbs',
+        'cqs',
+        'sss',
+      ]),
+      awardType: z.enum(['item based', 'lot based']),
+      technicalWeight: z.number().optional(),
+      financialWeight: z.number().optional(),
+      passingMark: z.number().optional(),
+    })
+    .refine((data) => data.evaluationMethod === 'compliance', {
+      message: 'Technical weight is required',
+      path: ['technicalWeight'],
+    })
+    .refine((data) => data.evaluationMethod === 'compliance', {
+      message: 'Financial weight is required',
+      path: ['financialWeight'],
+    })
+    .refine((data) => data.evaluationMethod === 'compliance', {
+      message: 'Passing Mark is required',
+      path: ['passingMark'],
+    });
 
   const {
     handleSubmit,
     formState: { errors },
+    watch,
     reset,
     control,
     register,
@@ -53,6 +67,7 @@ export default function BidProEvaluation() {
     resolver: zodResolver(EvaluationSchema),
   });
 
+  const method = watch('evaluationMethod');
   const { data: selected, isSuccess, isLoading } = useReadQuery(id?.toString());
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
@@ -96,6 +111,9 @@ export default function BidProEvaluation() {
       });
     }
   }, [reset, selected, isSuccess]);
+  useEffect(() => {
+    logger.log(errors);
+  }, [errors]);
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
@@ -167,67 +185,75 @@ export default function BidProEvaluation() {
           {...register('awardType')}
         />
       </div>
-      <div className="flex gap-3">
-        <Controller
-          name="technicalWeight"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <NumberInput
-              label="Technical Weight"
-              name={name}
-              value={value}
-              className="w-1/2"
-              onChange={(d) => onChange(parseInt(d as string))}
-              error={
-                errors['technicalWeight']
-                  ? errors['technicalWeight']?.message?.toString()
-                  : ''
-              }
-              withAsterisk
+      {method !== 'compliance' && (
+        <>
+          <div className="flex gap-3">
+            <div>
+              <Controller
+                name="technicalWeight"
+                control={control}
+                render={({ field: { name, value, onChange } }) => (
+                  <NumberInput
+                    label="Technical Weight"
+                    name={name}
+                    value={value}
+                    className="w-1/2"
+                    onChange={(d) => onChange(parseInt(d as string))}
+                    error={
+                      errors['technicalWeight']
+                        ? errors['technicalWeight']?.message?.toString()
+                        : ''
+                    }
+                    withAsterisk
+                  />
+                )}
+              />
+            </div>
+            <div>
+              <Controller
+                name="financialWeight"
+                control={control}
+                render={({ field: { name, value, onChange } }) => (
+                  <NumberInput
+                    label="Financial Weight"
+                    name={name}
+                    value={value}
+                    className="w-1/2"
+                    onChange={(d) => onChange(parseInt(d as string))}
+                    error={
+                      errors['financialWeight']
+                        ? errors['financialWeight']?.message?.toString()
+                        : ''
+                    }
+                    withAsterisk
+                  />
+                )}
+              />
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <Controller
+              name="passingMark"
+              control={control}
+              render={({ field: { name, value, onChange } }) => (
+                <NumberInput
+                  label="Passing Mark"
+                  name={name}
+                  value={value}
+                  className="w-1/2"
+                  onChange={(d) => onChange(parseInt(d as string))}
+                  error={
+                    errors['passingMark']
+                      ? errors['passingMark']?.message?.toString()
+                      : ''
+                  }
+                  withAsterisk
+                />
+              )}
             />
-          )}
-        />
-        <Controller
-          name="financialWeight"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <NumberInput
-              label="Financial Weight"
-              name={name}
-              value={value}
-              className="w-1/2"
-              onChange={(d) => onChange(parseInt(d as string))}
-              error={
-                errors['financialWeight']
-                  ? errors['financialWeight']?.message?.toString()
-                  : ''
-              }
-              withAsterisk
-            />
-          )}
-        />
-      </div>
-      <div className="flex gap-3">
-        <Controller
-          name="passingMark"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <NumberInput
-              label="Passing Mark"
-              name={name}
-              value={value}
-              className="w-1/2"
-              onChange={(d) => onChange(parseInt(d as string))}
-              error={
-                errors['passingMark']
-                  ? errors['passingMark']?.message?.toString()
-                  : ''
-              }
-              withAsterisk
-            />
-          )}
-        />
-      </div>
+          </div>
+        </>
+      )}
 
       <EntityButton
         mode={selected ? 'detail' : 'new'}

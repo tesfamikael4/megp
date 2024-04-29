@@ -2,7 +2,14 @@
 import { useParams, useRouter } from 'next/navigation';
 import { PDFHighlighter } from '../../_components/pdf-highlighter';
 import { useGetFilesQuery } from '../_api/bid-document.api';
-import { Box, Button, Flex, LoadingOverlay, Tooltip } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Flex,
+  LoadingOverlay,
+  Menu,
+  Tooltip,
+} from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useReadQuery, useUpdateMutation } from '../_api/tender.api';
 import { notify } from '@megp/core-fe';
@@ -39,19 +46,32 @@ export default function DocumentPage() {
                 {selected?.name}
               </Flex>
             </Tooltip>
-            <Button
-              variant="filled"
-              className="my-auto"
-              loading={isUpdating}
-              onClick={() => {
-                onUpdate({
-                  ...selected,
-                  status: 'PUBLISHED',
-                });
-              }}
+            <Menu
+              shadow="md"
+              width={200}
+              trigger="hover"
+              openDelay={100}
+              closeDelay={400}
             >
-              Submit
-            </Button>
+              <Menu.Target>
+                <Button loading={isUpdating}>Submit</Button>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <Menu.Item
+                  onClick={() => {
+                    onUpdate({
+                      ...selected,
+                      status: 'PUBLISHED',
+                    });
+                  }}
+                >
+                  Approve
+                </Menu.Item>
+                <Menu.Item>Approve with comment</Menu.Item>
+                <Menu.Item>Adjust with comment</Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
           </div>
         </div>
       </div>

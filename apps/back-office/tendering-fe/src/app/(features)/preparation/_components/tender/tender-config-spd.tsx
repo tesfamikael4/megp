@@ -38,21 +38,23 @@ export default function TenderConfigSpd() {
     onCreate(data);
   };
   const onCreate = async (data) => {
-    try {
-      await create({
-        spdId: data.id,
-        tenderId: id?.toString(),
+    await create({
+      spdId: data.id,
+      tenderId: id?.toString(),
+    })
+      .unwrap()
+      .then(() => {
+        notify(
+          'Success',
+          'Tendering Standard Procurement Document created successfully',
+        );
+      })
+      .catch((err) => {
+        notify(
+          'Error',
+          'Error in creating Tendering Standard Procurement Document',
+        );
       });
-      notify(
-        'Success',
-        'Tendering Standard Procurement Document created successfully',
-      );
-    } catch (err) {
-      notify(
-        'Error',
-        'Error in creating Tendering Standard Procurement Document',
-      );
-    }
   };
 
   useEffect(() => {
