@@ -136,6 +136,11 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
           },
           evaluatorId,
         },
+        relations: {
+          bidRegistrationDetail: {
+            bidRegistration: true,
+          },
+        },
       },
     );
 
@@ -147,7 +152,7 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
         checklists.filter(
           (x) =>
             x.bidRegistrationDetail.bidRegistration.bidderId ==
-            bidder.bidderId && x.isTeamAssessment == isTeamAssessment,
+              bidder.bidderId && x.isTeamAssessment == isTeamAssessment,
         ).length
       ) {
         response.items.push({ bidder, status: 'completed' });
@@ -155,7 +160,7 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
         checklists.filter(
           (x) =>
             x.bidRegistrationDetail.bidRegistration.bidderId ==
-            bidder.bidderId && x.isTeamAssessment == isTeamAssessment,
+              bidder.bidderId && x.isTeamAssessment == isTeamAssessment,
         ).length == 0
       ) {
         response.items.push({ bidder, status: 'not started' });

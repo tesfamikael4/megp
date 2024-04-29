@@ -6,11 +6,13 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { SpdPreliminaryEvaluation } from './spd-preliminary-evaluation.entity';
 import { TeamMember } from './team-member.entity';
 
+@Unique(['bidRegistrationDetailId', 'spdPreliminaryEvaluationId'])
 @Entity({ name: 'technical_preliminary_assessments' })
 export class TechnicalPreliminaryAssessment extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -19,7 +21,7 @@ export class TechnicalPreliminaryAssessment extends Audit {
   @Column()
   bidRegistrationDetailId: string;
 
-  @OneToOne(
+  @ManyToOne(
     () => BidRegistrationDetail,
     (BidRegistrationDetail) =>
       BidRegistrationDetail.technicalPreliminaryAssessment,
