@@ -23,6 +23,7 @@ import { publicVendorsApi } from '@/app/(features)/_api/vendors.api';
 import { getRegistrationApi } from '@/app/(features)/_api/registration.api';
 import { ItemBidResponseApi } from '@/app/(features)/tender-workspace/_api/item-bid-response.api';
 import { administrationApi } from './api/administrationApi';
+import { noteSliceApi } from './api/notes/notes.api';
 
 const middleware = [
   vendorRegistrationApi.middleware,
@@ -47,6 +48,7 @@ const middleware = [
   publicVendorsApi.middleware,
   ItemBidResponseApi.middleware,
   administrationApi.middleware,
+  noteSliceApi.middleware,
 ];
 
 export { middleware };

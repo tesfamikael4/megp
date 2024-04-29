@@ -9,10 +9,10 @@ export const notificationsApi = vendorRegistrationApi.injectEndpoints({
       { total: number; items: Notifications[] },
       any
     >({
-      query: () => `notifications`,
+      query: () => `notifications/get-my-notifications`,
     }),
     getNotificationsByUserId: builder.query<any, { id: string }>({
-      query: ({ id }) => `notifications/${id}`,
+      query: ({ id }) => `notifications/get-my-notifications`,
     }),
   }),
 });

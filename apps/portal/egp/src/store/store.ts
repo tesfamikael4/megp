@@ -24,6 +24,7 @@ import { publicVendorsApi } from '@/app/(features)/_api/vendors.api';
 import { getRegistrationApi } from '@/app/(features)/_api/registration.api';
 import { ItemBidResponseApi } from '@/app/(features)/tender-workspace/_api/item-bid-response.api';
 import { administrationApi } from './api/administrationApi';
+import { noteSliceApi } from './api/notes/notes.api';
 
 export const store = configureStore({
   reducer: {
@@ -49,6 +50,7 @@ export const store = configureStore({
     [publicVendorsApi.reducerPath]: publicVendorsApi.reducer,
     [ItemBidResponseApi.reducerPath]: ItemBidResponseApi.reducer,
     [administrationApi.reducerPath]: administrationApi.reducer,
+    [noteSliceApi.reducerPath]: noteSliceApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) => {
