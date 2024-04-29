@@ -18,6 +18,16 @@ export const tenderingApi = createApi({
           const query = encodeCollectionQuery(collectionQuery);
           q = `?q=${query}`;
         }
+        return { url: `/opening/closed-tenders${q}`, method: 'GET' };
+      },
+    }),
+    getOpenedTenders: builder.query<any, any>({
+      query: ({ collectionQuery }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
         return { url: `/tenders/closed-tenders${q}`, method: 'GET' };
       },
     }),
@@ -61,21 +71,29 @@ export const tenderingApi = createApi({
       },
     }),
     getAllbiddersByLotId: builder.query<any, any>({
-      query: ({ lotId, collectionQuery }) => {
+      query: ({ lotId, collectionQuery, team = 'member' }) => {
         let q = '';
         if (collectionQuery) {
           const query = encodeCollectionQuery(collectionQuery);
           q = `?q=${query}`;
         }
         return {
-          url: `/bid-opening-checklist/opening-status/${lotId}${q}`,
+          url: `/bid-opening-checklist/bidders-status/${lotId}/${team}${q}`,
         };
       },
     }),
     getBidOpeningChecklistByLotId: builder.query<any, any>({
-      query: ({ lotId, bidderId }: { lotId: string; bidderId: string }) => {
+      query: ({
+        lotId,
+        bidderId,
+        team = 'member',
+      }: {
+        lotId: string;
+        bidderId: string;
+        team: string;
+      }) => {
         return {
-          url: `/bid-opening-checklist/checklist-status/${lotId}/${bidderId}`,
+          url: `/bid-opening-checklist/checklist-status/${lotId}/${bidderId}/${team}`,
         };
       },
       providesTags: ['bidAttribute'],
@@ -136,6 +154,28 @@ export const tenderingApi = createApi({
       }),
       invalidatesTags: ['bidAttribute'],
     }),
+    completeOpening: builder.mutation<any, any>({
+      query: (data: { tenderId: string; isTeamLead: boolean }) => {
+        return {
+          url: `/bid-opening-checklist/submit-checklist`,
+          method: 'PUT',
+          body: data,
+        };
+      },
+      invalidatesTags: ['opening'],
+    }),
+    getTenderOpeningStatus: builder.query<any, any>({
+      query: (tenderId) => {
+        return {
+          url: `/bid-opening-checklist/can-complete/${tenderId}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['opening'],
+    }),
+    getOpeningMinutes: builder.query<any, any>({
+      query: (tenderId) => `/bid-opening-checklist/opening-minutes/${tenderId}`,
+    }),
   }),
 });
 
@@ -153,4 +193,8 @@ export const {
   useCreateTeamMemberMutation,
   useLazyGetTeamMembersQuery,
   useCheckBidAttributeMutation,
+  useCompleteOpeningMutation,
+  useLazyGetOpenedTendersQuery,
+  useGetTenderOpeningStatusQuery,
+  useGetOpeningMinutesQuery,
 } = tenderingApi;

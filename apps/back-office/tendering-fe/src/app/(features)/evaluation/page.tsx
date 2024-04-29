@@ -3,9 +3,9 @@
 import { ActionIcon, Box } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
-import { data } from './_constants/data';
 import { DetailTable } from '../_components/detail-table';
 import { useRouter } from 'next/navigation';
+import { useLazyGetOpenedTendersQuery } from '@/store/api/tendering/tendering.api';
 
 export default function BidEvaluation() {
   const router = useRouter();
@@ -13,36 +13,28 @@ export default function BidEvaluation() {
     isSearchable: true,
     isExpandable: true,
     expandedRowContent: (record) => <DetailTender tender={record} />,
+
     columns: [
       {
-        accessor: 'reference',
+        accessor: 'procurementReferenceNumber',
         title: '#Ref',
         width: 100,
         sortable: true,
       },
       {
         accessor: 'name',
+        width: 250,
+        sortable: true,
+      },
+      {
+        accessor: 'procurementCategory',
         width: 150,
         sortable: true,
       },
+
       {
-        accessor: 'envelope',
+        accessor: 'status',
         width: 100,
-        sortable: true,
-      },
-      {
-        accessor: 'bid',
-        width: 100,
-        sortable: true,
-      },
-      {
-        accessor: 'evaluationMethod',
-        width: 100,
-        sortable: true,
-      },
-      {
-        accessor: 'milestone',
-        width: 150,
         sortable: true,
       },
       {
@@ -52,13 +44,7 @@ export default function BidEvaluation() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              if (record.id == '7daab8e2-0c59-49e7-ae12-bf537c5fde6d') {
-                router.push(`/evaluation/lots/${record.id}/responsivness`);
-              } else if (record.id == '4cde31ab-ebb5-4b9a-afc3-1a5b48238f69') {
-                router.push(`/evaluation/lots/${record.id}/bid-price`);
-              } else {
-                router.push(`/evaluation/lots/${record.id}`);
-              }
+              router.push(`/evaluation/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />
@@ -68,9 +54,17 @@ export default function BidEvaluation() {
       },
     ],
   };
+  const [getOpenedTenders, { data: tenders }] = useLazyGetOpenedTendersQuery();
   return (
     <Section title="Tenders List (Evaluation)" collapsible={false}>
-      <ExpandableTable config={config} data={data ?? []} total={data?.length} />
+      <ExpandableTable
+        config={config}
+        data={tenders?.items ?? []}
+        total={tenders?.total ?? 0}
+        onRequestChange={(collectionQuery) => {
+          getOpenedTenders({ collectionQuery });
+        }}
+      />
     </Section>
   );
 }

@@ -43,7 +43,7 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/opening/${tenderId}/lots/${record.id}`);
+              router.push(`/opening/team-assessment/${tenderId}/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />
@@ -96,21 +96,11 @@ export default function BidOpening() {
         className="mt-2"
         action={
           <Group gap="md">
-            {tenderStatus?.isTeamLead?.isTeam && (
-              <Button
-                variant="outline"
-                onClick={() => {
-                  router.push(`/opening/team-assessment/${tenderId}`);
-                }}
-                disabled={!tenderStatus?.canTeamAssess}
-              >
-                Team Assessment
-              </Button>
-            )}
+            <Button variant="outline">Personal Assessment</Button>
             <Button
               onClick={onSubmit}
               loading={isLoading}
-              disabled={tenderStatus?.hasCompleted}
+              disabled={tenderStatus?.isTeamLead?.hasCompleted}
             >
               Submit
             </Button>
