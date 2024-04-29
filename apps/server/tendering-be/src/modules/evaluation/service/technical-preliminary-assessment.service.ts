@@ -22,6 +22,8 @@ import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { NotFoundError } from 'rxjs';
+import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
+import { CreatePreliminaryAssessment } from '../dto/technical-preliminary-assessment.dto';
 
 @Injectable()
 export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<TechnicalPreliminaryAssessment> {
@@ -145,7 +147,7 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
         checklists.filter(
           (x) =>
             x.bidRegistrationDetail.bidRegistration.bidderId ==
-              bidder.bidderId && x.isTeamAssessment == isTeamAssessment,
+            bidder.bidderId && x.isTeamAssessment == isTeamAssessment,
         ).length
       ) {
         response.items.push({ bidder, status: 'completed' });
@@ -153,7 +155,7 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
         checklists.filter(
           (x) =>
             x.bidRegistrationDetail.bidRegistration.bidderId ==
-              bidder.bidderId && x.isTeamAssessment == isTeamAssessment,
+            bidder.bidderId && x.isTeamAssessment == isTeamAssessment,
         ).length == 0
       ) {
         response.items.push({ bidder, status: 'not started' });
@@ -274,6 +276,27 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
     }
 
     itemData.submit = false;
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const bidRegistrationDetail = await manager
+      .getRepository(BidRegistrationDetail)
+      .findOne({
+        where: {
+          bidRegistration: {
+            tenderId: itemData.tenderId,
+            bidderId: itemData.bidderId,
+          },
+
+          lotId: itemData.lotId,
+        },
+      });
+
+    if (!bidRegistrationDetail) {
+      throw new Error('Bid Registration Detail not found');
+    }
+
+    itemData.bidRegistrationDetailId = bidRegistrationDetail.id;
 
     const item = this.technicalPreliminaryAssessmentRepository.create(itemData);
     await this.technicalPreliminaryAssessmentRepository.insert(item);

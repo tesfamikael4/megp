@@ -35,9 +35,14 @@ export class CreatePreliminaryAssessment extends OrgAudit {
   isTeamAssessment: boolean;
 
   @ApiProperty()
-  @IsString()
+  @IsBoolean()
   @IsNotEmpty()
-  status: string;
+  checked: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  remark: string;
 }
 
 export class SubmitDto {
