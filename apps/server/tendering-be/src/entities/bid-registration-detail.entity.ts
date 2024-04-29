@@ -75,7 +75,7 @@ export class BidRegistrationDetail extends Audit {
   )
   openedBidResponseLots: OpenedBidResponseLot[];
 
-  @OneToOne(
+  @OneToMany(
     () => TechnicalPreliminaryAssessment,
     (technicalPreliminaryAssessment) =>
       technicalPreliminaryAssessment.bidRegistrationDetail,
