@@ -1,11 +1,11 @@
 'use client';
 
-import { ActionIcon, Button, Box, Badge } from '@mantine/core';
+import { ActionIcon, Box, Badge } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { bidders } from '../../../_constants/data';
 import { DetailTable } from '../../../_components/detail-table';
+import { useLazyGetAllbiddersByLotIdQuery } from '@/store/api/tendering/tendering.api';
 import { TenderOverView } from '@/app/(features)/opening/_components/tender-overview';
 
 export default function BidOpening() {
@@ -17,29 +17,18 @@ export default function BidOpening() {
     expandedRowContent: (record) => <DetailTender tender={record} />,
     columns: [
       {
-        accessor: 'name',
+        accessor: 'bidderName',
         sortable: true,
-      },
-      {
-        accessor: 'email',
-        sortable: true,
-        with: 100,
+        render: (record) => record.bidder.bidderName,
       },
       {
         accessor: 'status',
         width: 150,
         render: (record) => {
-          //   const color =
-          //     record.status === 'Opened'
-          //       ? 'green'
-          //       : record.status === 'Key not shared'
-          //         ? 'red'
-          //         : 'yellow';
+          const color = record.status === 'completed' ? 'green' : 'yellow';
           return (
-            <Badge color="gray" variant="outline" size="xs">
-              Not Evaluated Yet
-              {/* <Badge color={color} size="sm">
-              {record.status} */}
+            <Badge color={color} size="sm">
+              {record.status}
             </Badge>
           );
         },
@@ -51,15 +40,9 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              if (tenderId == 'ac67ac94-6b2f-4715-b0d3-eb0e2b853a6c') {
-                router.push(
-                  `/evaluation/lots/${tenderId}/${lotId}/qualification`,
-                );
-              } else {
-                router.push(
-                  `/evaluation/lots/${tenderId}/${lotId}/${record.id}`,
-                );
-              }
+              router.push(
+                `/evaluation/${tenderId}/${lotId}/${record.bidder.bidderId}`,
+              );
             }}
           >
             <IconChevronRight size={14} />
@@ -69,19 +52,19 @@ export default function BidOpening() {
       },
     ],
   };
+
+  const [getBidders, { data: bidders }] = useLazyGetAllbiddersByLotIdQuery();
   return (
     <>
       <TenderOverView />
-      <Section
-        title="Bidders List"
-        collapsible={false}
-        className="mt-2"
-        action={<Button>Complete</Button>}
-      >
+      <Section title="Bidders List" collapsible={false} className="mt-2">
         <ExpandableTable
           config={config}
-          data={bidders ?? []}
-          total={bidders?.length}
+          data={bidders?.items ?? []}
+          total={bidders?.total ?? 0}
+          onRequestChange={(request) => {
+            getBidders({ lotId, collectionQuery: request });
+          }}
         />
       </Section>
     </>
@@ -105,7 +88,7 @@ const DetailTender = ({ tender }: any) => {
     },
     {
       key: 'Status',
-      value: 'Not Evaluated Yet',
+      value: tender.status,
     },
   ];
 

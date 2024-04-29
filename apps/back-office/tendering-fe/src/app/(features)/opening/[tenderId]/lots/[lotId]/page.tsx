@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionIcon, Button, Box, Badge } from '@mantine/core';
+import { ActionIcon, Box, Badge } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -57,12 +57,7 @@ export default function BidOpening() {
   return (
     <>
       <TenderOverView />
-      <Section
-        title="Bidders List"
-        collapsible={false}
-        className="mt-2"
-        action={<Button>Complete</Button>}
-      >
+      <Section title="Bidders List" collapsible={false} className="mt-2">
         <ExpandableTable
           config={config}
           data={bidders?.items ?? []}

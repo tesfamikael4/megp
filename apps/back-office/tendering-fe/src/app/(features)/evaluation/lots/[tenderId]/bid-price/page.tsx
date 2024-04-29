@@ -1,6 +1,6 @@
 'use client';
-import { TenderOverView } from '@/app/(features)/evaluation/[id]/_components/tender-overview';
 import { bidders } from '@/app/(features)/evaluation/_constants/data';
+import { TenderOverView } from '@/app/(features)/opening/_components/tender-overview';
 import {
   ActionIcon,
   Box,

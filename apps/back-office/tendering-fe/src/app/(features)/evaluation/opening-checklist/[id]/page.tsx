@@ -10,11 +10,11 @@ import {
   Group,
   Modal,
 } from '@mantine/core';
-import { TenderOverView } from '../../[id]/_components/tender-overview';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useParams, useRouter } from 'next/navigation';
+import { TenderOverView } from '@/app/(features)/opening/_components/tender-overview';
 
 export default function OpeningChecklist() {
   const [opened, { open, close }] = useDisclosure(false);
