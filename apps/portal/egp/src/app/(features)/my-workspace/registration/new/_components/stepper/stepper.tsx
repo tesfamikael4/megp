@@ -85,7 +85,7 @@ function StyledStepper() {
           <Stepper.Step
             completedIcon={2}
             label="Profile Information"
-            description="The e_GP vendor candidate profile integrates vital details, ensuring transparency and secure bank account management for efficient government procurement"
+            description="The MANEPS vendor candidate profile integrates vital details, ensuring transparency and secure bank account management for efficient government procurement"
           />
           <Stepper.Step
             completedIcon={3}
@@ -105,7 +105,7 @@ function StyledStepper() {
           <Stepper.Step
             completedIcon={6}
             label="Document Attachment"
-            description="In e_GP, candidate vendors submit essential documents fostering a transparent and compliant verification process crucial for government procurement."
+            description="In MANEPS, candidate vendors submit essential documents fostering a transparent and compliant verification process crucial for government procurement."
           />
           <Stepper.Step
             completedIcon={7}

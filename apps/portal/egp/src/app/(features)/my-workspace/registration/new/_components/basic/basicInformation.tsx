@@ -225,7 +225,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
               />
               <TextInput
                 className="w-full"
-                label="Registration Number"
+                label="Business Registration Number"
                 id="name"
                 {...register(`registrationNumber`)}
                 error={
@@ -238,7 +238,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
               <DatePickerInput
                 valueFormat="YYYY/MM/DD"
                 required
-                label="Registration Issued date"
+                label="Business Registration Issued date"
                 leftSection={<IconCalendar size={'1.2rem'} stroke={1.5} />}
                 maxDate={dayjs(new Date()).toDate()}
                 onChange={async (value: any) =>

@@ -60,10 +60,7 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
             label="Region"
             data={
               regions && regions.items
-                ? regions.items.map((region) => ({
-                    label: region.name,
-                    value: region.id,
-                  }))
+                ? regions.items.map((region) => region.name)
                 : []
             }
             placeholder="Select region"
@@ -71,7 +68,10 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
             onChange={(value) => {
               if (value) {
                 register(`address.region`, 'select').onChange(value);
-                fetchDistricts({ regionId: value });
+                const region = regions.items.find(
+                  (_region) => _region.name === value,
+                );
+                fetchDistricts({ regionId: region.id });
               }
             }}
           />
@@ -80,10 +80,7 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
             label="Districts"
             data={
               districts && districts.items
-                ? districts.items.map((region) => ({
-                    label: region.name,
-                    value: region.id,
-                  }))
+                ? districts.items.map((district) => district.name)
                 : []
             }
             placeholder="Select district"

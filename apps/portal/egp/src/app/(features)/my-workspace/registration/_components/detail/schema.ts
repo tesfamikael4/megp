@@ -146,7 +146,6 @@ export const formDataSchema = z
         .max(100, { message: 'Name cannot exceed 100 characters' }),
       businessType: z.string().optional(),
       countryOfRegistration: z.string(),
-      district: z.string().optional(),
       tinNumber: z.string(),
     }),
 
