@@ -13,6 +13,7 @@ import { tenderTemplateApi } from '@/app/(features)/preparation/_api/tender/tend
 import { tenderingApi } from './api/tendering/tendering.api';
 import { bidDocumentApi } from '@/app/(features)/revision/_api/bid-document.api';
 import { iamApi } from './api/iam/iam-api';
+import { preliminaryComplianceApi } from './api/tendering/preliminary-compliance.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -20,6 +21,7 @@ export const store = configureStore({
     ...reducers,
     [approveSpdApi.reducerPath]: approveSpdApi.reducer,
     [tenderingApi.reducerPath]: tenderingApi.reducer,
+    [preliminaryComplianceApi.reducerPath]: preliminaryComplianceApi.reducer,
     [iamApi.reducerPath]: iamApi.reducer,
     [technicalScoringTreeApi.reducerPath]: technicalScoringTreeApi.reducer,
     [sorBillOfMaterialTreeApi.reducerPath]: sorBillOfMaterialTreeApi.reducer,
@@ -48,6 +50,7 @@ export const store = configureStore({
       tenderTemplateApi.middleware,
       sorBillOfMaterialBulkCreateApi.middleware,
       tenderingApi.middleware,
+      preliminaryComplianceApi.middleware,
       bidDocumentApi.middleware,
       iamApi.middleware,
     ]),

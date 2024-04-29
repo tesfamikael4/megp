@@ -11,7 +11,11 @@ export const Checklist = () => {
     useLazyGetPreliminaryChecklistByLotIdQuery();
 
   useEffect(() => {
-    getChecklists({ lotId: lotId as string, bidderId: bidderId as string });
+    getChecklists({
+      lotId: lotId as string,
+      bidderId: bidderId as string,
+      team: 'teamLeader',
+    });
   }, []);
   const pathname = usePathname();
   const router = useRouter();

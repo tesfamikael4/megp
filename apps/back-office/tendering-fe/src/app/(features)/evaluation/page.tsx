@@ -5,7 +5,7 @@ import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { DetailTable } from '../_components/detail-table';
 import { useRouter } from 'next/navigation';
-import { useLazyGetOpenedTendersQuery } from '@/store/api/tendering/tendering.api';
+import { useLazyGetOpenedTendersQuery } from '@/store/api/tendering/preliminary-compliance.api';
 
 export default function BidEvaluation() {
   const router = useRouter();
@@ -33,9 +33,10 @@ export default function BidEvaluation() {
       },
 
       {
-        accessor: 'status',
+        accessor: 'milestone',
         width: 100,
         sortable: true,
+        render: (record) => record.tenderMilestones[0].milestoneTxt ?? '',
       },
       {
         accessor: '',

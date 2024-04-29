@@ -21,16 +21,6 @@ export const tenderingApi = createApi({
         return { url: `/opening/closed-tenders${q}`, method: 'GET' };
       },
     }),
-    getOpenedTenders: builder.query<any, any>({
-      query: ({ collectionQuery }) => {
-        let q = '';
-        if (collectionQuery) {
-          const query = encodeCollectionQuery(collectionQuery);
-          q = `?q=${query}`;
-        }
-        return { url: `/tenders/closed-tenders${q}`, method: 'GET' };
-      },
-    }),
     getOpeningByTenderId: builder.query<any, any>({
       query: (tenderId: string) => {
         return {
@@ -194,7 +184,6 @@ export const {
   useLazyGetTeamMembersQuery,
   useCheckBidAttributeMutation,
   useCompleteOpeningMutation,
-  useLazyGetOpenedTendersQuery,
   useGetTenderOpeningStatusQuery,
   useGetOpeningMinutesQuery,
 } = tenderingApi;
