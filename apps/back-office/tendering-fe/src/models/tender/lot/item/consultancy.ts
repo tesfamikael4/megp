@@ -17,3 +17,8 @@ export interface ScheduleOfPrice {
   fee: Fee[];
   incidentalCosts: ServiceCost[];
 }
+export enum SorType {
+  specification = 'specification',
+  personal = 'personal',
+  incidentalRequirement = 'incidental requirement',
+}

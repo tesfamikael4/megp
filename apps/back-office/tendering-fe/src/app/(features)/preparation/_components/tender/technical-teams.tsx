@@ -1,25 +1,31 @@
 import { Section } from '@megp/core-fe';
 import React from 'react';
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
-import { useLazyListQuery } from '@/app/(features)/preparation/_api/tender/procurement-technical-team.api';
+import { useLazyListByIdQuery } from '@/app/(features)/preparation/_api/tender/procurement-technical-team.api';
+import { useParams } from 'next/navigation';
+import { Badge } from '@mantine/core';
 
 export default function TechnicalTeams() {
-  const [trigger, { data, isLoading }] = useLazyListQuery();
-
+  const [trigger, { data, isLoading }] = useLazyListByIdQuery();
+  const { id } = useParams();
   const config = {
     columns: [
       {
-        accessor: 'firstName',
-        title: 'First Name',
+        accessor: 'userName',
+        title: 'Full Name',
         width: 200,
         sortable: true,
       },
-      { accessor: 'lastName', title: 'Last Name', width: 200, sortable: true },
       {
         accessor: 'isTeamLead',
         title: 'Team leader',
         width: 100,
         sortable: true,
+        render: ({ isTeamLead }) => (
+          <Badge color="gray" variant="outline" size="xs">
+            {isTeamLead ? 'Yes' : 'No'}
+          </Badge>
+        ),
       },
     ],
     isExpandable: false,
@@ -28,7 +34,7 @@ export default function TechnicalTeams() {
     primaryColumn: 'firstName',
   };
   const onRequestChange = (request: any) => {
-    trigger(request);
+    trigger({ id: id.toString(), collectionQuery: request });
   };
 
   return (

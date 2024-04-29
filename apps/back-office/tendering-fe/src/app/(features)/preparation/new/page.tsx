@@ -26,15 +26,14 @@ export default function TenderingPage() {
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const onClickPRSelection = async (value: any) => {
-    logger.log(value.id);
-    try {
-      const result = await create({ prId: value.id });
-      if ('data' in result) {
+    create({ prId: value.id })
+      .unwrap()
+      .then((result) => {
         router.push(`/preparation/${result.data.id}`);
-      }
-    } catch (err) {
-      notify('Error', 'Error while creating Tender');
-    }
+      })
+      .catch((err) => {
+        notify('Error', err.data.message);
+      });
   };
 
   const config = {

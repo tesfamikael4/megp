@@ -18,6 +18,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import { useParams } from 'next/navigation';
 
 interface SpdAdministrativeComplianceProps {
   type?: 'technical' | 'financial';
@@ -25,6 +26,7 @@ interface SpdAdministrativeComplianceProps {
 export default function SpdAdministrativeCompliance({
   type = 'technical',
 }: SpdAdministrativeComplianceProps) {
+  const { id } = useParams();
   const [trigger, { data, isFetching }] = useLazyListQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [adId, setId] = useState('');
@@ -39,6 +41,13 @@ export default function SpdAdministrativeCompliance({
           {
             column: 'type',
             value: type,
+            operator: '=',
+          },
+        ],
+        [
+          {
+            column: 'spdId',
+            value: id,
             operator: '=',
           },
         ],
@@ -147,6 +156,13 @@ export default function SpdAdministrativeCompliance({
           {
             column: 'type',
             value: type,
+            operator: '=',
+          },
+        ],
+        [
+          {
+            column: 'spdId',
+            value: id,
             operator: '=',
           },
         ],

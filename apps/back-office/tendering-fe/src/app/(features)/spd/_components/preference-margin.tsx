@@ -26,8 +26,10 @@ import { SpdPreferenceMarginFormDetail } from './preference-margin-form-detail';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 
 export default function SpdPreferenceMargin() {
+  const { id } = useParams();
   const [trigger, { data, isFetching }] = useLazyListQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [pmId, setId] = useState('');
@@ -53,7 +55,17 @@ export default function SpdPreferenceMargin() {
 
   const onReturnFunction = () => {
     close();
-    trigger({ where: [] });
+    trigger({
+      where: [
+        [
+          {
+            column: 'spdId',
+            value: id,
+            operator: '=',
+          },
+        ],
+      ],
+    });
   };
 
   const Action = ({ data }: any) => {
@@ -124,7 +136,18 @@ export default function SpdPreferenceMargin() {
   };
 
   const onRequestChange = (request: any) => {
-    trigger(request);
+    trigger({
+      ...request,
+      where: [
+        [
+          {
+            column: 'spdId',
+            value: id,
+            operator: '=',
+          },
+        ],
+      ],
+    });
   };
 
   return (

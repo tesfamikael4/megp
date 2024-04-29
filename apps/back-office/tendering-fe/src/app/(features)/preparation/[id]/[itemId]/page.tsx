@@ -15,24 +15,31 @@ import {
 } from 'next/navigation';
 import { IconChevronLeft } from '@tabler/icons-react';
 import TechnicalRequirement from '../../_components/item/sor/technical-requirement/technical-requirement';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { DetailItem } from '../../_components/item/detail-item';
 import { useReadQuery } from '../../_api/lot/items.api';
 import { useReadQuery as useReadTenderDetail } from '../../_api/tender/tender.api';
 import BillOfMaterial from '../../_components/item/sop/bill-of-material/bill-of-material';
-import { SorType } from '@/models/tender/lot/item/technical-requirement.model';
 import Labour from '../../_components/item/sop/labour/labour';
 import Material from '../../_components/item/sop/material/material';
 import Equipment from '../../_components/item/sop/equipment/equipment';
 import Document from '../../_components/item/document/document';
 import Fee from '../../_components/item/sop/fee/fee';
 import ReimburseableExpense from '../../_components/item/sop/reimburseable-expense/reimburseable-expense';
+import { Item, ProcurementCategory } from '@/models/tender/lot/item';
+import { SorType as GoodsSorType } from '@/models/tender/lot/item/goods.model';
+import { SorType as WorksSorType } from '@/models/tender/lot/item/work.model';
+import { SorType as ConsultancySorType } from '@/models/tender/lot/item/consultancy';
+import { SorType as NonConsultancySorType } from '@/models/tender/lot/item/non-consultancy.model';
 export default function ItemDetailPage() {
   const router = useRouter();
   const { id, itemId } = useParams();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { data: selected, isLoading } = useReadQuery(itemId?.toString());
+  const { data: selected, isLoading } = useReadQuery<{
+    data: Item;
+    isLoading: boolean;
+  }>(itemId?.toString());
   const { data: tender } = useReadTenderDetail(id?.toString());
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -45,6 +52,17 @@ export default function ItemDetailPage() {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
+  const sorTypeDefinition = (sorTypes) => {
+    return Object.keys(sorTypes).map((sorType) => (
+      <div className="my-4" key={sorType}>
+        <TechnicalRequirement
+          item={selected}
+          type={sorType}
+          title={sorTypes[sorType]}
+        />
+      </div>
+    ));
+  };
   return (
     <>
       <LoadingOverlay visible={isLoading} />
@@ -150,51 +168,64 @@ export default function ItemDetailPage() {
         )}
         {searchParams.get('tab') === 'sor' && (
           <>
-            <div className="my-4">
-              <TechnicalRequirement
-                item={selected}
-                type={SorType.SPECIFICATION}
-              />
-            </div>
-            <div className="my-4">
-              <TechnicalRequirement item={selected} type={SorType.PERSONAL} />
-            </div>
-
-            <div className="my-4">
-              <TechnicalRequirement item={selected} type={SorType.DELIVERY} />
-            </div>
-
-            <div className="my-4">
-              <TechnicalRequirement item={selected} type={SorType.PACKAGING} />
-            </div>
-
-            <div className="my-4">
-              <TechnicalRequirement item={selected} type={SorType.WARRANTY} />
-            </div>
-            <div className="my-4">
-              <TechnicalRequirement item={selected} type={SorType.INCIDENTAL} />
-            </div>
+            {selected?.procurementCategory &&
+              (selected.procurementCategory === ProcurementCategory.GOODS
+                ? sorTypeDefinition(GoodsSorType)
+                : selected.procurementCategory === ProcurementCategory.WORKS
+                  ? sorTypeDefinition(WorksSorType)
+                  : selected.procurementCategory ===
+                      ProcurementCategory.CONSULTANCYSERVICES
+                    ? sorTypeDefinition(ConsultancySorType)
+                    : sorTypeDefinition(NonConsultancySorType))}
           </>
         )}
         {searchParams.get('tab') === 'sop' && (
           <>
             <div className="my-4">
-              <BillOfMaterial item={selected} />
+              {selected?.procurementCategory &&
+                (selected.procurementCategory === ProcurementCategory.GOODS ||
+                  selected.procurementCategory === ProcurementCategory.WORKS ||
+                  selected.procurementCategory ===
+                    ProcurementCategory.NONCONSUTANCYSERVICES) && (
+                  <BillOfMaterial item={selected} />
+                )}
             </div>
             <div className="my-4">
-              <Labour item={selected} />
+              {selected?.procurementCategory &&
+                (selected.procurementCategory ===
+                  ProcurementCategory.NONCONSUTANCYSERVICES ||
+                  selected.procurementCategory ===
+                    ProcurementCategory.WORKS) && <Labour item={selected} />}
             </div>
             <div className="my-4">
-              <Material item={selected} />
+              {selected?.procurementCategory &&
+                (selected.procurementCategory ===
+                  ProcurementCategory.NONCONSUTANCYSERVICES ||
+                  selected.procurementCategory ===
+                    ProcurementCategory.WORKS) && <Material item={selected} />}
             </div>
             <div className="my-4">
-              <Equipment item={selected} />
+              {selected?.procurementCategory &&
+                (selected.procurementCategory ===
+                  ProcurementCategory.NONCONSUTANCYSERVICES ||
+                  selected.procurementCategory ===
+                    ProcurementCategory.WORKS) && <Equipment item={selected} />}
             </div>
             <div className="my-4">
-              <Fee item={selected} />
+              {selected?.procurementCategory &&
+                (selected.procurementCategory ===
+                  ProcurementCategory.NONCONSUTANCYSERVICES ||
+                  selected.procurementCategory ===
+                    ProcurementCategory.WORKS) && <Fee item={selected} />}
             </div>
             <div className="my-4">
-              <ReimburseableExpense item={selected} />
+              {selected?.procurementCategory &&
+                (selected.procurementCategory ===
+                  ProcurementCategory.NONCONSUTANCYSERVICES ||
+                  selected.procurementCategory ===
+                    ProcurementCategory.WORKS) && (
+                  <ReimburseableExpense item={selected} />
+                )}
             </div>
           </>
         )}

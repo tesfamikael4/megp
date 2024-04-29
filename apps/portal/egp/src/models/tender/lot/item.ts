@@ -3,7 +3,7 @@ export interface Item {
   lotId: string;
   itemCode: string;
   itemType: string;
-  procurementCategory: string;
+  procurementCategory: 'Goods' | 'Works';
   name: string;
   description: string;
   quantity: number;
@@ -14,4 +14,10 @@ export interface Item {
   marketPriceCurrency: string;
   hasBom: boolean;
   metadata: { [key: string]: any };
+}
+export enum ProcurementCategory {
+  GOODS = 'goods',
+  WORKS = 'works',
+  CONSULTANCYSERVICES = 'consultancy services',
+  NONCONSUTANCYSERVICES = 'non-consultancy services',
 }

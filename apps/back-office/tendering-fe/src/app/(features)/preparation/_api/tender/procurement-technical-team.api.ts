@@ -8,12 +8,13 @@ const procurementTechnicalTeamApi =
 export const procurementTechnicalTeamSliceApi: typeof EntitySliceApi =
   createEntitySlice<ProcurementTechnicalTeam>(
     procurementTechnicalTeamApi,
-    'procurement-technical-teams',
+    'team-members',
   );
 
 export const {
   useListQuery,
   useLazyListQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useCreateMutation,
   useUpdateMutation,

@@ -18,16 +18,13 @@ import {
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
-import {
-  SorType,
-  TechnicalRequirement,
-} from '@/models/tender/lot/item/technical-requirement.model';
+import { TechnicalRequirement } from '@/models/tender/lot/item/technical-requirement.model';
 import { RequirementCondition } from '@/models/tender/lot/technical-scoring.model';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
   adId: string;
-  type: SorType;
+  type: string;
   returnFunction: () => void;
 }
 

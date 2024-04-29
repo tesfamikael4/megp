@@ -60,15 +60,20 @@ export default function BillOfMaterial({ item }: { item: Item }) {
               setBoq(event);
             }}
           />
-          <Button onClick={onBulkSave} loading={isBulkSaving}>
-            <IconDeviceFloppy size={14} /> Save
-          </Button>
+
           <Button onClick={open}>
             <IconPlus size={14} /> Add
           </Button>
         </>
       }
     >
+      {boq && (
+        <Box className="flex justify-end">
+          <Button onClick={onBulkSave} loading={isBulkSaving}>
+            <IconDeviceFloppy size={14} /> Save
+          </Button>
+        </Box>
+      )}
       <BillOfMaterialTreeTable
         boq={boq ? boq : billOfMaterial ? billOfMaterial.items : []}
       />

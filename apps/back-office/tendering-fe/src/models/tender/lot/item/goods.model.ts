@@ -21,3 +21,10 @@ export interface ScheduleOfPrice {
   billOfMaterial: BillOfMaterial[];
   incidentalCosts: ServiceCost[];
 }
+export enum SorType {
+  specification = 'specification',
+  delivery = 'delivery',
+  packageAndLabeling = 'packaging and labeling',
+  warrantyAndSupport = 'warranty and support',
+  incidentalRequirement = 'incidental requirement',
+}

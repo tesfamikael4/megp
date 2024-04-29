@@ -65,19 +65,27 @@ export function BidFormFormDetail({
 
   const onCreate = async (data) => {
     logger.log('here');
-    try {
-      const formData = new FormData();
-      formData.append('file', file ? file[0] : '');
-      formData.append('spdId', id as any);
-      formData.append('title', data.title);
-      formData.append('code', data.code);
-      formData.append('type', data.type);
-      await uploadFile(formData);
-      returnFunction();
-      notify('Success', 'Bid form created successfully');
-    } catch (err) {
-      notify('Error', 'Error in creating bid form');
-    }
+
+    const formData = new FormData();
+    formData.append('file', file ? file[0] : '');
+    formData.append('spdId', id as any);
+    formData.append('title', data.title);
+    formData.append('code', data.code);
+    formData.append('type', data.type);
+    await uploadFile(formData)
+      .unwrap()
+      .then(() => {
+        notify('Success', `Bid form created successfully`);
+        returnFunction();
+      })
+      .catch((err) => {
+        logger.log(err);
+        const keys = err.data.message.join(',');
+        notify(
+          'Error',
+          `Error in uploading bid form missing keys in the document ${keys}`,
+        );
+      });
   };
 
   const onUpdate = async (data) => {

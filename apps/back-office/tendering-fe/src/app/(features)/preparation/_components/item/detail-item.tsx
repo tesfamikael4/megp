@@ -1,6 +1,5 @@
 import { Item } from '@/models/tender/lot/item';
 import { Box, Text, Table } from '@mantine/core';
-import { DataTable } from 'mantine-datatable';
 
 export const DetailItem = ({ cell }: { cell: Item }) => {
   const data = [

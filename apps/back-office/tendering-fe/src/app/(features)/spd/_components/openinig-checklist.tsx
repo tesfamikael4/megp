@@ -26,8 +26,10 @@ import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
 import { OpeningChecklistFormDetail } from './openinig-checklist-form-detail';
+import { useParams } from 'next/navigation';
 
 export default function OpeningChecklist() {
+  const { id } = useParams();
   const [trigger, { data, isFetching }] = useLazyListQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [pmId, setId] = useState('');
@@ -118,7 +120,18 @@ export default function OpeningChecklist() {
   };
 
   const onRequestChange = (request: any) => {
-    trigger(request);
+    trigger({
+      ...request,
+      where: [
+        [
+          {
+            column: 'spdId',
+            value: id,
+            operator: '=',
+          },
+        ],
+      ],
+    });
   };
 
   return (
