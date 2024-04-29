@@ -3,13 +3,14 @@
 import { ActionIcon, Badge } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
-import { ListData } from '../_components/data';
+import { useRouter, useParams } from 'next/navigation';
+import { useLazyListQuery } from '../../_api/guarantee-request.api';
+import { CollectionQuery } from '@megp/entity';
 
-export default function Extension() {
+export default function GuaranteeForfeit() {
   const router = useRouter();
-  const { tenderId, lotId } = useParams();
-  // const { data: list } = useListQuery({});
+  const { tenderId, lotId, guaranteeId } = useParams();
+  const [trigger, { data }] = useLazyListQuery();
 
   const config: ExpandableTableConfig = {
     isSearchable: true,
@@ -22,6 +23,7 @@ export default function Extension() {
       },
       {
         accessor: 'organizationName',
+
         sortable: true,
       },
 
@@ -68,7 +70,7 @@ export default function Extension() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/solicitation/${tenderId}/${lotId}/guarantee-extension/${record?.id}`,
+                `/solicitation/${tenderId}/${lotId}/${guaranteeId}/guarantee-forfeit/${record?.id}`,
               );
             }}
           >
@@ -78,13 +80,17 @@ export default function Extension() {
       },
     ],
   };
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger(request);
+  };
 
   return (
-    <Section collapsible={false} title="Guarantee Extension">
+    <Section collapsible={false} title="Guarantee Forfeit">
       <ExpandableTable
         config={config}
-        data={ListData ?? []}
-        total={ListData?.length}
+        data={data?.items ?? []}
+        total={data?.total ?? 0}
+        onRequestChange={onRequestChange}
       />
     </Section>
   );

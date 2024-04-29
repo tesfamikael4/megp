@@ -5,6 +5,7 @@ export interface GuaranteeRequest {
   guarantorName: string;
   guarantorBranchId: string;
   guarantorBranchName: string;
+  organizationName: string;
   revisedValidityDate: number;
   contactPerson: {
     email?: string;

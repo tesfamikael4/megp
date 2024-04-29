@@ -1,4 +1,4 @@
-export interface GuaranteeRelsease {
+export interface GuaranteeRelease {
   id: string;
   guaranteeId: string;
   remark: string;

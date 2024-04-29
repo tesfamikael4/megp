@@ -18,9 +18,9 @@ import {
 import { useCallback, useEffect } from 'react';
 import { useLazyListByIdQuery, useReadQuery } from '../../_api/lot.api';
 import { useReadQuery as useTenderRead } from '../../_api/tender.api';
-import Extension from './guarantee-extension/page';
-import GuaranteeRelease from './guarantee-release/page';
-import GuaranteeForfeit from './guarantee-forfeit/page';
+import GuaranteeRelease from './[guaranteeId]/guarantee-release/page';
+import GuaranteeForfeit from './[guaranteeId]/guarantee-forfeit/page';
+import Extension from './[guaranteeId]/guarantee-extension/page';
 
 export default function TenderDetailPage() {
   const router = useRouter();
