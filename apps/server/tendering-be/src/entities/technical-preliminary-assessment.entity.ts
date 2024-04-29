@@ -10,9 +10,13 @@ import {
 } from 'typeorm';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { SpdPreliminaryEvaluation } from './spd-preliminary-evaluation.entity';
-import { TeamMember } from './team-member.entity';
 
-@Unique(['bidRegistrationDetailId', 'spdPreliminaryEvaluationId'])
+@Unique([
+  'bidRegistrationDetailId',
+  'spdPreliminaryEvaluationId',
+  'isTeamAssessment',
+  'evaluatorId',
+])
 @Entity({ name: 'technical_preliminary_assessments' })
 export class TechnicalPreliminaryAssessment extends Audit {
   @PrimaryGeneratedColumn('uuid')
