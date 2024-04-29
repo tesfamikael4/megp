@@ -48,15 +48,21 @@ export class TechnicalPreliminaryAssessment extends Audit {
   @JoinColumn({ name: 'evaluatorId' })
   evaluator: TeamMember;
 
-  @Column({ type: 'boolean' })
-  isTeamAssessment: boolean;
-
   @Column()
-  status: string;
+  evaluatorName: string;
+
+  @Column({ type: 'boolean', default: false })
+  isTeamAssessment: boolean;
 
   @Column({ type: 'boolean' })
   submit: boolean;
 
   @Column({ default: 1 })
   version: number;
+
+  @Column()
+  checked: boolean;
+
+  @Column({ nullable: true })
+  remark: string;
 }

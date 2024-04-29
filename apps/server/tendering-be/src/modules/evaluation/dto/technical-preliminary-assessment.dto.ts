@@ -12,17 +12,22 @@ export class CreatePreliminaryAssessment extends OrgAudit {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  bidRegistrationDetailId: string;
+  lotId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenderId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidderId: string;
 
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   spdPreliminaryEvaluationId: string;
-
-  @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  evaluatorId: string;
 
   @ApiProperty()
   @IsOptional()
@@ -33,11 +38,6 @@ export class CreatePreliminaryAssessment extends OrgAudit {
   @IsString()
   @IsNotEmpty()
   status: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  version: string;
 }
 
 export class SubmitDto {

@@ -6,6 +6,12 @@ import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
 import { EntityManager, In, Repository } from 'typeorm';
 import { SplitItemDto } from '../dto';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
 export class LotService extends ExtraCrudService<Lot> {
@@ -60,5 +66,41 @@ export class LotService extends ExtraCrudService<Lot> {
     } catch (e) {
       throw e;
     }
+  }
+
+  async getAssignedLot(tenderId: string, query: CollectionQuery, req?: any) {
+    query.where.push([
+      {
+        column: 'tenderId',
+        value: tenderId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const dataQuery = QueryConstructor.constructQuery<Lot>(
+      manager.getRepository(Lot),
+      query,
+    )
+      .leftJoin('lots.teams', 'teams')
+      .leftJoin('teams.teamMembers', 'teamMembers')
+      .leftJoin('lots.tender', 'tender')
+      .andWhere('teamMembers.personnelId = :personnelId', {
+        personnelId: req.user.userId,
+      })
+      .andWhere('tender.organizationId = :organizationId', {
+        organizationId: req.user.organization.id,
+      });
+
+    const response = new DataResponseFormat<Lot>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }

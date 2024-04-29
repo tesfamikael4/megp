@@ -6,8 +6,9 @@ import { BidOpeningChecklist } from 'src/entities';
 import { BidOpeningChecklistService } from '../service/bid-opening-checklist.service';
 import {
   CreateBidOpeningCheckList,
-  SubmitDto,
+  SubmitChecklistDto,
 } from '../dto/bid-opening-checklist.dto';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',
@@ -24,30 +25,62 @@ export class BidOpeningChecklistController extends ExtraCrudController<BidOpenin
   ) {
     super(bidOpeningChecklistService);
   }
-  @Get('checklist-status/:lotId/:bidderId')
+  @Get('checklist-status/:lotId/:bidderId/:isTeam')
   async checklistStatus(
     @Param('lotId') lotId: string,
+    @Param('isTeam') isTeam: string,
     @Param('bidderId') bidderId: string,
     @Req() req,
   ) {
     return await this.bidOpeningChecklistService.checklistStatus(
       lotId,
       bidderId,
+      isTeam,
       req,
     );
   }
 
-  @Get('opening-status/:lotId')
+  @Get('bidders-status/:lotId/:isTeam')
   async openingStatus(
     @Param('lotId') lotId: string,
+    @Param('isTeam') isTeam: string,
     @Req() req,
     @Query('q') q: string,
   ) {
-    return await this.bidOpeningChecklistService.openingStatus(lotId, q, req);
+    const query = decodeCollectionQuery(q);
+    return await this.bidOpeningChecklistService.biddersStatus(
+      lotId,
+      isTeam,
+      query,
+      req,
+    );
   }
 
-  @Put('submit-checklist/:lotId')
-  async submitChecklist(@Body() itemData: SubmitDto, @Req() req) {
+  @Put('submit-checklist')
+  async submitChecklist(@Body() itemData: SubmitChecklistDto, @Req() req) {
     return await this.bidOpeningChecklistService.submit(itemData, req);
+  }
+
+  @Get('can-complete/:tenderId')
+  async canComplete(@Param('tenderId') tenderId: string, @Req() req) {
+    return await this.bidOpeningChecklistService.canComplete(tenderId, req);
+  }
+
+  @Get('members-report/:lotId/:bidderId/spdId')
+  async membersReport(
+    @Param('lotId') lotId: string,
+    @Param('bidderId') bidderId: string,
+    @Param('spdId') spdId: string,
+  ) {
+    return await this.bidOpeningChecklistService.membersReport(
+      spdId,
+      bidderId,
+      lotId,
+    );
+  }
+
+  @Get('opening-minutes/:tenderId')
+  async openingMinutes(@Param('tenderId') tenderId: string) {
+    return await this.bidOpeningChecklistService.openingMinutes(tenderId);
   }
 }

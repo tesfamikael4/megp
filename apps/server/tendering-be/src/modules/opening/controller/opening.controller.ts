@@ -1,10 +1,11 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { Opening } from 'src/entities';
 import { OpeningService } from '../service/opening.service';
 import { CreateOpeningDto } from '../dto/opening.dto';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'tenderId',
@@ -18,8 +19,14 @@ export class OpeningController extends ExtraCrudController<Opening>(options) {
     super(openingService);
   }
 
-  @Get('complete/:tenderId')
+  @Post('complete/:tenderId')
   async complete(@Param('tenderId') tenderId: string) {
-    return this.openingService.complete({ tenderId });
+    return await this.openingService.complete({ tenderId });
+  }
+
+  @Get('closed-tenders')
+  async closedTender(@Query('q') q: string, @Req() req) {
+    const query = decodeCollectionQuery(q);
+    return await this.openingService.closedTender(query, req);
   }
 }
