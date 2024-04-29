@@ -12,6 +12,12 @@ import { MilestonesTracker } from 'src/entities/milestones-tracker.entity';
 import { OpeningStatusEnum } from 'src/shared/enums/opening.enum';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
 export class OpeningService extends ExtraCrudService<Opening> {
@@ -67,7 +73,61 @@ export class OpeningService extends ExtraCrudService<Opening> {
         tenderId: itemData.tenderId,
         milestoneNum: TenderMilestoneEnum.TechnicalCompliance,
         milestoneTxt: 'TechnicalCompliance',
+        isCurrent: true,
       }),
     ]);
+  }
+
+  async closedTender(query: CollectionQuery, req) {
+    query.where.push([
+      {
+        column: 'organizationId',
+        value: req.user.organization.id,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+
+    query.where.push([
+      {
+        column: 'status',
+        operator: FilterOperators.EqualTo,
+        value: 'PUBLISHED',
+      },
+    ]);
+    // query.where.push([
+    //   {
+    //     column: 'bdsSubmission.submissionDeadline',
+    //     operator: FilterOperators.LessThanOrEqualTo,
+    //     value: new Date(),
+    //   },
+    // ]);
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const dataQuery = QueryConstructor.constructQuery<Tender>(
+      manager.getRepository(Tender),
+      query,
+    )
+      .leftJoin('tenders.tenderMilestones', 'tenderMilestones')
+      // .leftJoin('tenders.lots', 'lots')
+      // .leftJoin('lots.teams', 'teams')
+      .leftJoin('tenders.teams', 'teams')
+      .leftJoin('teams.teamMembers', 'teamMembers')
+      .andWhere('teamMembers.personnelId = :personnelId', {
+        personnelId: req.user.userId,
+      });
+    // .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true })
+    // .andWhere('tenderMilestones.milestoneNum = :milestoneNum', {
+    //   milestoneNum: 303,
+    // });
+    const response = new DataResponseFormat<Tender>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }

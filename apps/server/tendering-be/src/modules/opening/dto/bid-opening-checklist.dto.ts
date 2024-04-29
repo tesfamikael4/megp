@@ -44,14 +44,19 @@ export class CreateBidOpeningCheckList {
   remark: string;
 }
 
-export class SubmitDto {
+export class SubmitChecklistDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  lotId: string;
+  tenderId: string;
 
   @ApiProperty()
+  @IsNotEmpty()
+  isTeamLead: boolean;
+}
+export class CompleteBidChecklistDto {
+  @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  bidderId: string;
+  tenderId: string;
 }
