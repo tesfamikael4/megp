@@ -26,7 +26,7 @@ interface Specification {
   defaultValue?: string | number | boolean | unknown;
   min?: number;
   max?: number;
-  otherMeasurement?: string[] | undefined;
+  uom?: string[] | undefined;
   isRequired?: boolean;
   spec?: string;
   selectFrom?: any[];
@@ -48,7 +48,7 @@ export function Popup({
     isRequired: z.boolean().default(false),
     min: z.number().optional(),
     max: z.number().optional(),
-    otherMeasurement: z.any().optional().default([]),
+    uom: z.any().optional().default([]),
     spec: z.string().optional(),
     selectFrom: z.array(z.any()).optional().default([]),
   });
@@ -69,10 +69,18 @@ export function Popup({
     const newData = {
       ...data,
       key: v4(),
+      uom: data.uom,
+
       validation: {
+        isRequired: data.isRequired,
         min: data.min,
         max: data.max,
-        type: data.dataType,
+        type:
+          data.dataType == 'singleSelect' || data?.dataType == 'multiSelect'
+            ? 'array'
+            : data.dataType,
+        selectFrom: data.selectFrom,
+        enum: data.selectFrom,
       },
       defaultValue:
         typeof defaultValue == 'number' && defaultValue !== undefined
@@ -104,14 +112,14 @@ export function Popup({
           error={errors.measurement?.message as string}
         />
         <Controller
-          name="otherMeasurement"
+          name="uom"
           control={control}
           render={({ field: { onChange, name, value } }) => (
             <TagsInput
               value={value}
-              label="Other measurement "
-              {...register('otherMeasurement')}
-              error={errors.otherMeasurement?.message as string}
+              label="unit Of Measurement "
+              {...register('uom')}
+              error={errors.uom?.message as string}
               onChange={onChange}
               placeholder="press enter to submit measurement"
             />
