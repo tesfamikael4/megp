@@ -41,12 +41,12 @@ export class TechnicalPreliminaryAssessment extends Audit {
   @Column('uuid')
   evaluatorId: string;
 
-  @ManyToOne(
-    () => TeamMember,
-    (teamMember) => teamMember.technicalPreliminaryAssessment,
-  )
-  @JoinColumn({ name: 'evaluatorId' })
-  evaluator: TeamMember;
+  // @ManyToOne(
+  //   () => TeamMember,
+  //   (teamMember) => teamMember.technicalPreliminaryAssessment,
+  // )
+  // @JoinColumn({ name: 'evaluatorId' })
+  // evaluator: TeamMember;
 
   @Column()
   evaluatorName: string;
