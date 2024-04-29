@@ -1,7 +1,8 @@
 'use client';
 
 import { Box, Button, Tooltip, Stack, ActionIcon } from '@mantine/core';
-import { Section } from '@megp/core-fe';
+import type { TreeConfig } from '@megp/core-fe';
+import { MantineTree, Section } from '@megp/core-fe';
 import { IconHierarchy2, IconPlus } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
@@ -20,6 +21,7 @@ import { actionColumn, selectColumn, newExpand } from '../table/header-column';
 interface EntityListProps<T> {
   mode?: 'list' | 'detail' | 'new' | 'tree';
   config: EntityConfig<T>;
+  treeConfig?: TreeConfig<T>;
   data: T[];
   total?: number;
   hasSearch?: boolean;
@@ -32,6 +34,7 @@ interface EntityListProps<T> {
 export function EntityList<T>({
   mode,
   config,
+  treeConfig,
   data: dataRender = [],
   total = 0,
   hasTree,
@@ -160,18 +163,25 @@ export function EntityList<T>({
       }
       w={mode === 'list' ? '100%' : '35%'}
     >
-      <Stack>
-        <Grid
-          data={data}
-          isLoading={isLoading}
-          mode={mode}
-          onRequestChange={onRequestChange}
-          options={options}
-          table={table}
-          total={total}
-          width={width}
-        />
-      </Stack>
+      {/* {logger.log('mode', mode, treeView)} */}
+      {treeView ? (
+        <Box className="max-h-[30rem] overflow-auto">
+          <MantineTree config={treeConfig ?? ([] as any)} data={data} />
+        </Box>
+      ) : (
+        <Stack>
+          <Grid
+            data={data}
+            isLoading={isLoading}
+            mode={mode}
+            onRequestChange={onRequestChange}
+            options={options}
+            table={table}
+            total={total}
+            width={width}
+          />
+        </Stack>
+      )}
     </Section>
   );
 }

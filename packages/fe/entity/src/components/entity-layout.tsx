@@ -1,3 +1,4 @@
+import type { TreeConfig } from '@megp/core-fe';
 import type { CollectionQuery } from '../models/query';
 import type { EntityConfig } from '../models/entity';
 import { EntityList } from './entity/entity-list';
@@ -5,6 +6,7 @@ import { EntityList } from './entity/entity-list';
 interface EntityLayoutProps<T> {
   mode?: 'list' | 'detail' | 'new';
   config: EntityConfig<T>;
+  treeConfig?: TreeConfig<T>;
   isLoading?: boolean;
   data: T[];
   total?: number;
@@ -22,6 +24,7 @@ export function EntityLayout<T>({
   isLoading,
   detail,
   hasTree,
+  treeConfig,
   hasPagination,
   onRequestChange,
 }: EntityLayoutProps<T>): React.ReactElement {
@@ -40,6 +43,7 @@ export function EntityLayout<T>({
         mode={mode}
         onRequestChange={onRequestChange}
         total={total}
+        treeConfig={treeConfig}
       />
 
       <div className="flex-grow">
