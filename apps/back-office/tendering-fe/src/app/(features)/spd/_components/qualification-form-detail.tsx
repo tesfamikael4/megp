@@ -74,9 +74,6 @@ export function SpdQualificationFormDetail({
       await create({
         ...data,
         spdId: id,
-        value: '',
-        mandate: '',
-        order: 1,
         category: type,
       });
       returnFunction();
@@ -90,11 +87,7 @@ export function SpdQualificationFormDetail({
     try {
       await update({
         ...data,
-        pdId: id,
-        value: '',
         category: type,
-        order: 1,
-        mandate: '',
         id: adId?.toString(),
       });
       returnFunction();
@@ -119,15 +112,10 @@ export function SpdQualificationFormDetail({
         category: selected?.category,
         factor: selected?.factor,
         requirement: selected?.requirement,
-        attribute: selected?.attribute,
-        singleEntityCondition: selected?.singleEntityCondition,
-        jvCominedCondition: selected?.jvCominedCondition,
-        jvEachPartherCondition: selected?.jvEachPartherCondition,
-        jvAtleastOnePartnerCondition: selected?.jvAtleastOnePartnerCondition,
         formLink: selected?.formLink,
         isRequired: selected?.isRequired,
         itbDescription: selected?.itbDescription,
-        reference: selected?.reference,
+        itbReference: selected?.itbReference,
         mandate: selected?.itbDescription,
       });
     }

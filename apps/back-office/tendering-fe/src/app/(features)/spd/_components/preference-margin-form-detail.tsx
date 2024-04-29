@@ -97,7 +97,7 @@ export function SpdPreferenceMarginFormDetail({
         description: selected?.description,
         itbReference: selected?.itbReference,
         itbDescription: selected?.itbDescription,
-        margin: selected?.margin,
+        margin: Number(selected?.margin),
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
