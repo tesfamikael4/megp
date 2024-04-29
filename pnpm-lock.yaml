@@ -1211,6 +1211,9 @@ importers:
       react-pdf:
         specifier: ^7.7.1
         version: 7.7.1(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
+      react-pdf-highlighter:
+        specifier: ^6.1.0
+        version: 6.1.0(react-dom@18.2.0)(react@18.2.0)
       react-qr-code:
         specifier: ^2.0.12
         version: 2.0.12(react@18.2.0)
