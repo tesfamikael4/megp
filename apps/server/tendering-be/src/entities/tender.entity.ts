@@ -31,6 +31,7 @@ import { BidOpeningChecklist } from './bid-opening-checklist.entity';
 import { Team } from './team.entity';
 import { Note } from './note.entity';
 import { TenderMilestone } from './tender-milestone.entity';
+import { RevisionApproval } from './revision-approval.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -179,6 +180,16 @@ export class Tender extends Audit {
 
   @OneToOne(() => Opening, (opening) => opening.tender)
   opening: Opening;
+
+  @OneToMany(
+    () => RevisionApproval,
+    (revisionApproval) => revisionApproval.tender,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  revisionApprovals: RevisionApproval[];
 
   @OneToMany(
     () => BidOpeningChecklist,

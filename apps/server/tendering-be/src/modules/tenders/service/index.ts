@@ -3,6 +3,7 @@ export * from './lot.service';
 export * from './note.service';
 export * from './procurement-mechanism.service';
 export * from './procurement-technical-team.service';
+export * from './revision-approval.service';
 export * from './tender-classification.service';
 export * from './tender-participation-fee.service';
 export * from './tender-personal.service';

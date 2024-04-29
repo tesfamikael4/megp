@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsString,
+  IsInt,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateTenderPersonalDto {
   @ApiProperty()
@@ -19,6 +25,6 @@ export class CreateTenderPersonalDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  order: string;
+  @IsInt()
+  order: number;
 }

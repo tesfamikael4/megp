@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { EntityCrudController } from 'src/shared/controller';
+import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { SpdPreliminaryEvaluation } from 'src/entities';
 import {
@@ -18,7 +18,7 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('spd-preliminary-evaluations')
 @ApiTags('Spd Preliminary Evaluations')
-export class SpdPreliminaryEvaluationController extends EntityCrudController<SpdPreliminaryEvaluation>(
+export class SpdPreliminaryEvaluationController extends ExtraCrudController<SpdPreliminaryEvaluation>(
   options,
 ) {
   constructor(

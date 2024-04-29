@@ -50,7 +50,7 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
       manager.getRepository(SpdOpeningChecklist).count({
         where: {
           spd: {
-            tenderSpd: {
+            tenders: {
               tender: {
                 lots: {
                   id: lotId,

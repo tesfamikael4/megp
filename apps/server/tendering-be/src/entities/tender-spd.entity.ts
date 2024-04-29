@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -24,7 +25,7 @@ export class TenderSpd extends Audit {
   @Column()
   spdId: string;
 
-  @OneToOne(() => Spd, (spd) => spd.tenderSpd)
+  @ManyToOne(() => Spd, (spd) => spd.tenders)
   @JoinColumn()
   spd: Spd;
 
