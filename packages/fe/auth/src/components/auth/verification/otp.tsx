@@ -106,7 +106,7 @@ export function Otp({
 
   return (
     <Stack className="mt-6 md:mt-0" gap={10}>
-      <Flex align="center" justify="center" mb={10} visibleFrom="md">
+      <Flex align="center" justify="center" mb={10}>
         <Text fw={600} fz={22}>
           OTP verification
         </Text>

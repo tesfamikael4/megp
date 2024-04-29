@@ -77,7 +77,7 @@ export function Login({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack className="mt-6 md:mt-0" gap={4}>
-        <Flex align="center" justify="center" mb={10} visibleFrom="md">
+        <Flex align="center" justify="center" mb={10}>
           <Text fw={600} fz={22}>
             Welcome Back!
           </Text>

@@ -43,8 +43,7 @@ const steps: StepProps[] = [
       </span>
     ),
     title: 'Get Approved',
-    description:
-      'Great! you are approved, Lorem ipsum dolor Lorem ipsum dolor Lorem ',
+    description: 'Great! you are approved.',
   },
 ];
 

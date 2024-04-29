@@ -12,7 +12,7 @@
   }
 }
 .layout {
-  @apply w-full h-full grid grid-cols-1 md:grid-cols-2;
+  @apply w-full h-full md:grid grid-cols-1 md:grid-cols-2;
 }
 .leftLayout {
   @apply w-full mt-12 flex justify-center items-center md:mt-0;
@@ -23,7 +23,7 @@
 }
 
 .rightLayout {
-  @apply w-full h-full flex justify-center items-center md:min-h-screen;
+  @apply w-full h-full flex justify-center items-center md:min-h-screen mt-5 md:mt-0;
 }
 
 /* .leftLayout {
