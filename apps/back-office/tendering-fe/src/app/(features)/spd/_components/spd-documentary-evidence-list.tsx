@@ -1,5 +1,4 @@
 'use client';
-import { useLazyListQuery } from '@/app/(features)/preparation/_api/lot/documentary-evidence.api';
 import { Button, Divider, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ExpandableTable, Section, logger } from '@megp/core-fe';
@@ -13,11 +12,12 @@ import {
 import React from 'react';
 import SpdDocumentaryModal from './spd-documentary-modal';
 import { useParams } from 'next/navigation';
+import { useLazyListByIdQuery } from '../_api/spd-documentary-evidence.api';
 
 export default function SpdDocumentaryEvidence() {
   const { id } = useParams();
   const [opened, { open, close }] = useDisclosure(false);
-  const [trigger, { data, isFetching }] = useLazyListQuery();
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const config = {
     columns: [
       {
@@ -93,19 +93,24 @@ export default function SpdDocumentaryEvidence() {
   const onRequestChange = (request: CollectionQuery) => {
     logger.log(id.toString() ?? '');
     trigger({
-      ...request,
+      id: id.toString() ?? '',
+      collectionQuery: {
+        ...request,
+      },
     });
   };
 
   const onReturnFunction = () => {
     close();
-    logger.log(id.toString() ?? '');
-    trigger({});
+    trigger({
+      id: id.toString() ?? '',
+      collectionQuery: {},
+    });
   };
 
   return (
     <Section
-      title="Documentary Evidence"
+      title="SPD Documentary Evidence"
       collapsible={true}
       defaultCollapsed={true}
       action={
@@ -129,7 +134,7 @@ export default function SpdDocumentaryEvidence() {
       >
         <div className="flex justify-between">
           <h2 className="font-medium text-lg capitalize">
-            Create A Documentary Evidence
+            Create SPD Documentary Evidence
           </h2>
           <IconX onClick={close} />
         </div>

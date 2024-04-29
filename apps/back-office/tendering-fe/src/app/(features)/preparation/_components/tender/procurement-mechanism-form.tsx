@@ -5,9 +5,10 @@ import {
   NativeSelect,
   NumberInput,
   Stack,
+  Text,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import {
@@ -16,7 +17,7 @@ import {
   useUpdateMutation,
 } from '../../_api/tender/procurement-mechanisms.api';
 import { useParams } from 'next/navigation';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 
 export default function ProcurementMechanismForm() {
   const { id } = useParams();
@@ -25,7 +26,7 @@ export default function ProcurementMechanismForm() {
       invitationType: z.enum(['direct', 'limited', 'open']),
       stageType: z.enum(['single', 'multiple']),
       marketApproach: z.enum(['local', 'national', 'international']),
-      stage: z.number({ required_error: 'Stage is required' }),
+      stage: z.number(),
     });
   const {
     data: selected,
@@ -35,12 +36,15 @@ export default function ProcurementMechanismForm() {
   const {
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
     register,
     control,
   } = useForm({
     resolver: zodResolver(ProcurementMechanismSchema),
   });
+  const stageTypeValue = watch('stageType');
+  const stageValue = watch('stage');
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
 
@@ -49,6 +53,7 @@ export default function ProcurementMechanismForm() {
       await create({
         ...data,
         tenderId: id,
+        stage: stageTypeValue === 'single' ? 1 : data.stage,
       });
       notify('Success', 'Procurement Mechanism created successfully');
     } catch (err) {
@@ -61,6 +66,7 @@ export default function ProcurementMechanismForm() {
         ...data,
         tenderId: id,
         id: id?.toString(),
+        stage: stageTypeValue === 'single' ? 1 : data.stage,
       });
       notify('Success', 'Qualification updated successfully');
     } catch {
@@ -77,13 +83,17 @@ export default function ProcurementMechanismForm() {
       });
     } else {
       reset({
-        invitationType: 'direct',
-        stageType: 'single',
-        marketApproach: 'local',
-        stage: 0,
+        invitationType: '',
+        stageType: '',
+        marketApproach: '',
+        stage: 1,
       });
     }
   }, [reset, selected, selectedSuccess]);
+
+  useEffect(() => {
+    logger.log(errors);
+  }, [errors]);
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
@@ -101,16 +111,24 @@ export default function ProcurementMechanismForm() {
           }
           {...register('invitationType')}
         />
-        <NativeSelect
-          placeholder="Stage Type"
-          withAsterisk
-          label="Stage Type"
-          className="w-1/2"
-          data={['single', 'multiple']}
-          error={
-            errors?.stageType ? errors?.stageType?.message?.toString() : ''
-          }
-          {...register('stageType')}
+        <Controller
+          name="stageType"
+          control={control}
+          render={({ field: { name, value, onChange } }) => (
+            <NativeSelect
+              label="Stage Type"
+              placeholder="Stage Type"
+              withAsterisk
+              name={name}
+              value={value}
+              className="w-1/2"
+              onChange={(d) => onChange(d)}
+              data={['single', 'multiple']}
+              error={
+                errors?.stageType ? errors?.stageType?.message?.toString() : ''
+              }
+            />
+          )}
         />
       </div>
       <div className="w-full flex space-x-4">
@@ -127,23 +145,31 @@ export default function ProcurementMechanismForm() {
           }
           {...register('marketApproach')}
         />
-        <Controller
-          name="stage"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <NumberInput
-              label="Stage"
-              name={name}
-              value={value}
-              className="w-1/2"
-              onChange={(d) => onChange(parseInt(d as string))}
-              error={
-                errors['stage'] ? errors['stage']?.message?.toString() : ''
-              }
-              withAsterisk
-            />
+        <>
+          <Controller
+            name="stage"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <NumberInput
+                label="Stage"
+                name={name}
+                disabled={stageTypeValue === 'single'}
+                value={value}
+                withAsterisk
+                className="w-1/2"
+                onChange={(d) => onChange(parseInt(d as string))}
+                error={
+                  errors['stage'] ? errors['stage']?.message?.toString() : ''
+                }
+              />
+            )}
+          />
+          {stageTypeValue === 'multiple' && stageValue === 0 && (
+            <Text className="text-red-500" size="xs">
+              Stage is required for multiple stage type
+            </Text>
           )}
-        />
+        </>
       </div>
 
       <EntityButton

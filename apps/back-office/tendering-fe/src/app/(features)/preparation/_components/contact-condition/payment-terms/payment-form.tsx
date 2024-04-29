@@ -5,9 +5,9 @@ import {
   Flex,
   LoadingOverlay,
   MultiSelect,
-  NativeSelect,
   NumberInput,
   Stack,
+  Text,
 } from '@mantine/core';
 import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
@@ -42,29 +42,22 @@ const currencyList = [
 
 export default function PaymentForm() {
   const { id } = useParams();
-  const PaymentTermsform: ZodType<Partial<PaymentTermsForm>> = z
-    .object({
-      contractCurrency: z.array(
-        z.string({ required_error: 'Contract currency is required' }),
-      ),
-      paymentMode: z
-        .array(z.enum(['paymentMethodOne', 'paymentMethodTwo']))
-        .min(1, { message: 'Payment Mode is required' }),
-      advancePaymentAllowed: z.boolean(),
-      advancePaymentLimit: z.number().max(30, {
-        message: 'advance Payment should be less than or equal to 30 percent',
-      }),
-      paymentReleasePeriod: z
-        .number()
-        .min(1, { message: 'Payment Release Period is required' }),
-      latePaymentPenalty: z
-        .number()
-        .min(1, { message: 'Late Payment Penality is required' }),
-    })
-    .refine((data) => data.advancePaymentAllowed, {
-      message: 'Advance Payment Limit is required',
-      path: ['advancePaymentLimit'],
-    });
+  const PaymentTermsform: ZodType<Partial<PaymentTermsForm>> = z.object({
+    contractCurrency: z.array(
+      z.string({ required_error: 'Contract currency is required' }),
+    ),
+    paymentMode: z
+      .array(z.enum(['paymentMethodOne', 'paymentMethodTwo']))
+      .min(1, { message: 'Payment Mode is required' }),
+    advancePaymentAllowed: z.boolean(),
+    advancePaymentLimit: z.number().optional(),
+    paymentReleasePeriod: z
+      .number()
+      .min(1, { message: 'Payment Release Period is required' }),
+    latePaymentPenalty: z
+      .number()
+      .min(1, { message: 'Late Payment Penality is required' }),
+  });
 
   const {
     data: selected,
@@ -78,6 +71,7 @@ export default function PaymentForm() {
   const {
     handleSubmit,
     control,
+    watch,
     formState: { errors },
     register,
     reset,
@@ -85,11 +79,19 @@ export default function PaymentForm() {
     resolver: zodResolver(PaymentTermsform),
   });
 
+  const isAdvanceAllowed: boolean = watch('advancePaymentAllowed');
+  const paymentLimit = watch('advancePaymentLimit');
   const onCreate = async (data) => {
+    if (isAdvanceAllowed) {
+      if (!paymentLimit || paymentLimit > 30) {
+        return;
+      }
+    }
     try {
       await create({
         ...data,
         tenderId: id,
+        advancePaymentLimit: isAdvanceAllowed ? data.advancePaymentLimit : 0,
       });
       notify('Success', 'Contract general provision created successfully');
     } catch (err) {
@@ -98,11 +100,17 @@ export default function PaymentForm() {
   };
 
   const onUpdate = async (data) => {
+    if (isAdvanceAllowed) {
+      if (!paymentLimit || paymentLimit > 30) {
+        return;
+      }
+    }
     try {
       await update({
         ...data,
         tenderId: id,
-        id: id?.toString(),
+        id: selected.id,
+        advancePaymentLimit: isAdvanceAllowed ? data.advancePaymentLimit : 0,
       });
       notify('Success', 'Contract general provision updated successfully');
     } catch {
@@ -116,7 +124,9 @@ export default function PaymentForm() {
         contractCurrency: selected?.contractCurrency,
         paymentMode: selected?.paymentMode,
         advancePaymentAllowed: selected?.advancePaymentAllowed,
-        advancePaymentLimit: selected?.advancePaymentLimit,
+        advancePaymentLimit: selected?.advancePaymentAllowed
+          ? selected?.advancePaymentLimit
+          : 0,
         paymentReleasePeriod: selected?.paymentReleasePeriod,
         latePaymentPenalty: selected?.latePaymentPenalty,
       });
@@ -176,25 +186,33 @@ export default function PaymentForm() {
           className="w-1/2"
           {...register('advancePaymentAllowed')}
         />
-        <Controller
-          name="advancePaymentLimit"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <NumberInput
-              label="Advance Payment Limit"
-              max={31}
-              name={name}
-              value={value}
-              className="w-1/2"
-              onChange={(d) => onChange(parseInt(d as string))}
-              error={
-                errors['advancePaymentLimit']
-                  ? errors['advancePaymentLimit']?.message?.toString()
-                  : ''
-              }
-            />
+
+        <div className="w-1/2">
+          <Controller
+            name="advancePaymentLimit"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <NumberInput
+                label="Advance Payment Limit"
+                max={31}
+                name={name}
+                disabled={!isAdvanceAllowed}
+                value={value}
+                onChange={(d) => onChange(parseInt(d as string))}
+                error={
+                  errors['advancePaymentLimit']
+                    ? errors['advancePaymentLimit']?.message?.toString()
+                    : ''
+                }
+              />
+            )}
+          />
+          {isAdvanceAllowed && !paymentLimit && (
+            <Text className="text-red-500" size="xs">
+              Advance Payment is required
+            </Text>
           )}
-        />
+        </div>
       </Flex>
       <Flex gap="md">
         <Controller

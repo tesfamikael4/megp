@@ -2,7 +2,7 @@ import { ITenderSubmission } from '@/models/tender/bid-procedures/submission.mod
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoadingOverlay, NativeSelect, Stack } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import {
@@ -18,13 +18,13 @@ export default function SubmissionDetail() {
   const { id } = useParams();
   const SubmissionSchema: ZodType<Partial<ITenderSubmission>> = z
     .object({
+      invitationDate: z
+        .date()
+        .min(new Date(), { message: 'This field is required' }),
       submissionDeadline: z
         .date()
         .min(new Date(), { message: 'This field is required' }),
       openingDate: z
-        .date()
-        .min(new Date(), { message: 'This field is required' }),
-      invitationDate: z
         .date()
         .min(new Date(), { message: 'This field is required' }),
       envelopType: z.enum(['single envelop', 'two envelops']),
@@ -49,12 +49,14 @@ export default function SubmissionDetail() {
     handleSubmit,
     reset,
     control,
+    watch,
     formState: { errors },
     register,
   } = useForm({
     resolver: zodResolver(SubmissionSchema),
   });
-
+  const inviteDate = watch('invitationDate');
+  const [initalDate, setInitalDate] = useState<Date | null>(null);
   const { data: selected, isSuccess, isLoading } = useReadQuery(id?.toString());
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -97,6 +99,11 @@ export default function SubmissionDetail() {
     }
   }, [reset, selected, isSuccess]);
 
+  useEffect(() => {
+    if (inviteDate) {
+      setInitalDate(inviteDate);
+    }
+  }, [inviteDate]);
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
@@ -122,6 +129,7 @@ export default function SubmissionDetail() {
             <DateInput
               name={name}
               value={value}
+              minDate={new Date()}
               withAsterisk
               className="w-1/2"
               onChange={onChange}
@@ -137,25 +145,28 @@ export default function SubmissionDetail() {
       </div>
 
       <div className="flex gap-3">
-        <Controller
-          name="submissionDeadline"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <DateInput
-              name={name}
-              value={value}
-              withAsterisk
-              className="w-1/2"
-              onChange={onChange}
-              label="Submission Deadline"
-              error={
-                errors['submissionDeadline']
-                  ? errors['submissionDeadline']?.message?.toString()
-                  : ''
-              }
-            />
-          )}
-        />
+        {initalDate && (
+          <Controller
+            name="submissionDeadline"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <DateInput
+                name={name}
+                value={value}
+                minDate={initalDate}
+                withAsterisk
+                className="w-1/2"
+                onChange={onChange}
+                label="Submission Deadline"
+                error={
+                  errors['submissionDeadline']
+                    ? errors['submissionDeadline']?.message?.toString()
+                    : ''
+                }
+              />
+            )}
+          />
+        )}
 
         <Controller
           name="openingDate"
