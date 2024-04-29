@@ -1,5 +1,5 @@
 'use client';
-import { Box, Flex, Tabs, Text } from '@mantine/core';
+import { Box, Flex, Tabs } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { ForgotPassword } from '../auth/forgot-password/forgot-password';
 import { SecurityQPassReset } from '../auth/questions-reset/questions-reset';
@@ -57,15 +57,6 @@ export function Auth({
   return (
     <PageWrapper app={options.app as any}>
       <Flex className="w-full flex-col items-center">
-        <Text fw={600} fz={18} hiddenFrom="md" mb={6} mt={24}>
-          {path[0].startsWith('login') && 'Welcome Back!'}
-          {path[0].startsWith('signup') && 'Welcome, Sign up to MANEPS!'}
-          {path[0].startsWith('verification') && 'OTP verification'}
-          {path[0].startsWith('forgot-password') && 'Reset Password'}
-          {path.length > 1 &&
-            path[1].startsWith('otp-reset') &&
-            'Reset Password'}
-        </Text>
         {options.app !== 'bo' ? (
           <Box className={classes.root}>
             {(options.app !== 'bo' && path[0].startsWith('login')) ||
