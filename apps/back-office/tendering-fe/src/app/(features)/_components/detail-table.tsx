@@ -9,7 +9,7 @@ export const DetailTable = ({ data }: DetailTableItem) => {
     <>
       <Table highlightOnHover withTableBorder withColumnBorders>
         <Table.Tbody>
-          {data.map((d) => (
+          {data?.map((d) => (
             <>
               <Table.Tr>
                 <Table.Td className="bg-slate-200 font-semibold w-1/5">

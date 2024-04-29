@@ -3,10 +3,14 @@ import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
 // get base group api
-const guaranteeForfeitApi = entityApi.entitySliceApi['guarantees'];
+const guaranteeExtensionApi =
+  entityApi.entitySliceApi['bid-guarantee-extensions'];
 
-export const guaranteeForfeitSliceApi: typeof EntitySliceApi =
-  createEntitySlice<GuaranteeForfeit>(guaranteeForfeitApi as any, 'guarantees');
+export const guaranteeExtensionSliceApi: typeof EntitySliceApi =
+  createEntitySlice<GuaranteeForfeit>(
+    guaranteeExtensionApi as any,
+    'bid-guarantee-extensions',
+  );
 
 export const {
   useListQuery,
@@ -16,4 +20,4 @@ export const {
   useCreateMutation,
   useUpdateMutation,
   useDeleteMutation,
-} = guaranteeForfeitSliceApi;
+} = guaranteeExtensionSliceApi;
