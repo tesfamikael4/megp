@@ -331,7 +331,7 @@ export default function RequestDetail({
               </Flex>
               <PDFHighlighter
                 title={response?.data?.taskHandler?.data?.documentId}
-                objectId={response?.data?.taskHandler?.data?.documentId}
+                objectId={response?.data?.user?.id}
                 pdfUrl={fileUrl}
                 workflow={
                   <TaskHandler
