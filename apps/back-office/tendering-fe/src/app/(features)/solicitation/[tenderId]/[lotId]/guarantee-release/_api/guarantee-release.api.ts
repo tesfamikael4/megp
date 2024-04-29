@@ -1,4 +1,4 @@
-import { GuaranteeRelease } from '@/models/guarantee-release/guarantee-release';
+import { GuaranteeRelsease } from '@/models/guarantee-release/guarantee-release';
 import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
@@ -6,7 +6,10 @@ import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 const guaranteeReleaseApi = entityApi.entitySliceApi['guarantees'];
 
 export const guaranteeReleaseSliceApi: typeof EntitySliceApi =
-  createEntitySlice<GuaranteeRelease>(guaranteeReleaseApi as any, 'guarantees');
+  createEntitySlice<GuaranteeRelsease>(
+    guaranteeReleaseApi as any,
+    'guarantees',
+  );
 
 export const {
   useListQuery,

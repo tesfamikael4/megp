@@ -1,10 +1,7 @@
 export interface GuaranteeForfeit {
   id: string;
-  vendorId: string;
-  guarantorId: string;
-  guarantorBranchId: string;
-  amount: number;
+  guaranteeId: string;
+  reason: string;
   remark: string;
-  status?: string;
-  createdAt?: string;
+  status: string;
 }
