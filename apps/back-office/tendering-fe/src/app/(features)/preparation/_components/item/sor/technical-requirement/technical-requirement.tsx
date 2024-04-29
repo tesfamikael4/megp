@@ -18,19 +18,18 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import {
-  SorType,
-  type TechnicalRequirement,
-} from '@/models/tender/lot/item/technical-requirement.model';
+import { type TechnicalRequirement } from '@/models/tender/lot/item/technical-requirement.model';
 import { CollectionQuery } from '@megp/entity';
 import { Item } from '@/models/tender/lot/item';
 
 export default function TechnicalRequirement({
   item,
-  type = SorType.SPECIFICATION,
+  type,
+  title,
 }: {
   item: Item;
-  type?: SorType;
+  type?: string;
+  title: string;
 }) {
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const [opened, { open, close }] = useDisclosure(false);
@@ -166,7 +165,7 @@ export default function TechnicalRequirement({
   };
   return (
     <Section
-      title={type}
+      title={title}
       collapsible={true}
       defaultCollapsed={true}
       className="capitalize"
@@ -198,7 +197,7 @@ export default function TechnicalRequirement({
           <TechnicalRequirementFormDetail
             mode={mode}
             adId={adId}
-            type={type}
+            type={type ?? ''}
             returnFunction={onReturnFunction}
           />
         </Box>

@@ -7,12 +7,3 @@ export interface TechnicalRequirement {
   requirementType: 'exact' | 'minimum';
   formLink: string;
 }
-
-export enum SorType {
-  SPECIFICATION = 'specification',
-  DELIVERY = 'delivery',
-  PERSONAL = 'personal',
-  PACKAGING = 'packing and labeling',
-  WARRANTY = 'warranty ans support',
-  INCIDENTAL = 'incidental requirement',
-}

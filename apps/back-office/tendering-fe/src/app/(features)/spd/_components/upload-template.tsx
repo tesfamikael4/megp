@@ -25,12 +25,19 @@ const UploadTemplate = () => {
     logger.log(file);
     const formData = new FormData();
     formData.append('file', file?.[type] ?? '');
-    try {
-      await uploadFile({ id: id, type: type, file: formData });
-      notify('Success', `${type} uploaded successfully`);
-    } catch (err) {
-      notify('Error', `Error in uploading ${type}`);
-    }
+    await uploadFile({ id: id, type: type, file: formData })
+      .unwrap()
+      .then(() => {
+        notify('Success', `${type} uploaded successfully`);
+      })
+      .catch((err) => {
+        logger.log(err);
+        const keys = err.data.message.join(',');
+        notify(
+          'Error',
+          `Error in uploading ${type} missing keys in the document ${keys}`,
+        );
+      });
   }
   function onFileChange(file: File | null, key: string) {
     const value = { [key]: file };
@@ -63,11 +70,13 @@ const UploadTemplate = () => {
                 </div>
                 <div>
                   <List>
-                    {file['main-document'] && <List.Item>template</List.Item>}
+                    {file['main-document'] && (
+                      <List.Item>{file['main-document'].name}</List.Item>
+                    )}
                   </List>
                   {file['main-document'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
                         onUpload('main-document');
                       }}
@@ -116,7 +125,7 @@ const UploadTemplate = () => {
                   </List>
                   {file['bds'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
                         onUpload('bds');
                       }}
@@ -165,7 +174,7 @@ const UploadTemplate = () => {
                   </List>
                   {file['scc'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
                         onUpload('scc');
                       }}
@@ -216,9 +225,9 @@ const UploadTemplate = () => {
                   </List>
                   {file['invitation'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
-                        onUpload('scc');
+                        onUpload('invitation');
                       }}
                     >
                       Upload
@@ -267,9 +276,9 @@ const UploadTemplate = () => {
                   </List>
                   {file['bid-security'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
-                        onUpload('scc');
+                        onUpload('bid-security');
                       }}
                     >
                       Upload
@@ -299,7 +308,7 @@ const UploadTemplate = () => {
                 <div className="my-auto">
                   <FileButton
                     onChange={(event) => {
-                      onFileChange(event, 'opening-minutes');
+                      onFileChange(event, 'opening-minute');
                     }}
                     accept=".docx"
                   >
@@ -312,13 +321,13 @@ const UploadTemplate = () => {
                 </div>
                 <div>
                   <List>
-                    {file['opening-minutes'] && (
-                      <List.Item>{file['opening-minutes']?.name}</List.Item>
+                    {file['opening-minute'] && (
+                      <List.Item>{file['opening-minute']?.name}</List.Item>
                     )}
                   </List>
-                  {file['opening-minutes'] && (
+                  {file['opening-minute'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
                         onUpload('opening-minute');
                       }}
@@ -369,7 +378,7 @@ const UploadTemplate = () => {
                   </List>
                   {file['evaluation-result'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
                         onUpload('evaluation-result');
                       }}
@@ -420,7 +429,7 @@ const UploadTemplate = () => {
                   </List>
                   {file['evaluation-report'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
                         onUpload('evaluation-report');
                       }}
@@ -471,7 +480,7 @@ const UploadTemplate = () => {
                   </List>
                   {file['award-notice'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
                         onUpload('award-notice');
                       }}
@@ -522,7 +531,7 @@ const UploadTemplate = () => {
                   </List>
                   {file['contract-notice'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
                         onUpload('contract-notice');
                       }}
@@ -573,7 +582,7 @@ const UploadTemplate = () => {
                   </List>
                   {file['cancelation-notice'] && (
                     <Button
-                      variant="filled"
+                      variant="subtle"
                       onClick={() => {
                         onUpload('cancelation-notice');
                       }}

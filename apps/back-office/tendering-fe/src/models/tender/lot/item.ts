@@ -15,3 +15,9 @@ export interface Item {
   hasBom: boolean;
   metadata: { [key: string]: any };
 }
+export enum ProcurementCategory {
+  GOODS = 'Goods',
+  WORKS = 'Works',
+  CONSULTANCYSERVICES = 'Consultancy Services',
+  NONCONSUTANCYSERVICES = 'Non-consultancy Services',
+}

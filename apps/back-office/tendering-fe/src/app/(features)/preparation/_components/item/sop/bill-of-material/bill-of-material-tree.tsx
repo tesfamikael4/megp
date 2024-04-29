@@ -214,7 +214,7 @@ export function NodeTree({
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const render = ({ record }) => (
     <NodeTree
-      childrenScoring={boq.filter((s) => s.parentCode === record.id)}
+      childrenScoring={boq.filter((s) => s.parentCode === record.code)}
       boq={boq}
       padding={20 + padding}
     />

@@ -16,12 +16,14 @@ import { useState } from 'react';
 import { SpdQualificationFormDetail } from './qualification-form-detail';
 import { useDisclosure } from '@mantine/hooks';
 import { DetailQualification } from './qualification-detail';
+import { useParams } from 'next/navigation';
 
 export default function SpdQualification({
   type = 'legal',
 }: {
   type?: 'legal' | 'professional' | 'technical' | 'financial' | 'performance';
 }) {
+  const { id } = useParams();
   const [trigger, { data, isFetching }] = useLazyListQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [qId, setId] = useState('');
@@ -65,6 +67,13 @@ export default function SpdQualification({
           {
             column: 'category',
             value: type,
+            operator: '=',
+          },
+        ],
+        [
+          {
+            column: 'spdId',
+            value: id,
             operator: '=',
           },
         ],
@@ -153,6 +162,13 @@ export default function SpdQualification({
           {
             column: 'category',
             value: type,
+            operator: '=',
+          },
+        ],
+        [
+          {
+            column: 'spdId',
+            value: id,
             operator: '=',
           },
         ],

@@ -6,8 +6,10 @@ import { useLazyGetTechnicalScoringQuery } from '../_api/technical-scoring-tree.
 import { useDisclosure } from '@mantine/hooks';
 import { SpdTechnicalScoringFormDetail } from './technical-scoring-form-detail';
 import { ScoringTable } from '../../_components/scoring-table';
+import { useParams } from 'next/navigation';
 
 export default function SpdTechnicalScoring() {
+  const { id } = useParams();
   const [trigger, { data, isFetching }] = useLazyGetTechnicalScoringQuery({
     where: [],
   } as any);
@@ -15,13 +17,31 @@ export default function SpdTechnicalScoring() {
   const onRequestChange = (request: any) => {
     trigger({
       ...request,
-      where: [],
+      where: [
+        [
+          {
+            column: 'spdId',
+            value: id,
+            operator: '=',
+          },
+        ],
+      ],
     });
   };
 
   const onReturnFunction = () => {
     close();
-    trigger({ where: [] });
+    trigger({
+      where: [
+        [
+          {
+            column: 'spdId',
+            value: id,
+            operator: '=',
+          },
+        ],
+      ],
+    });
   };
   return (
     <Section
