@@ -10,7 +10,9 @@ import { workflowApi } from './api/workflow/workflow.api';
 import { budgeCategoryApi } from './api/budget-category/budge-category.api';
 import { ruleDesignerApi } from './api/rule/rule.api';
 import { iamApi } from './api/iam/iam.api';
+import { specApi } from '@/app/(features)/item-master/_api/template.api';
 import { itemSubCategorySliceApi } from '@/app/(features)/item-sub-category/_api/item-sub-category';
+import { administrationApi } from './api/administration/administration.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -28,6 +30,8 @@ export const store = configureStore({
     [ruleDesignerApi.reducerPath]: ruleDesignerApi.reducer,
     [iamApi.reducerPath]: iamApi.reducer,
     [itemSubCategorySliceApi.reducerPath]: itemSubCategorySliceApi.reducer,
+    [specApi.reducerPath]: specApi.reducer,
+    [administrationApi.reducerPath]: administrationApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -44,6 +48,8 @@ export const store = configureStore({
       ruleDesignerApi.middleware,
       iamApi.middleware,
       itemSubCategorySliceApi.middleware,
+      specApi.middleware,
+      administrationApi.middleware,
     ]),
 });
 

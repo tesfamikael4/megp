@@ -30,7 +30,6 @@ export function Entity({ children }: { children: React.ReactElement }) {
         route.push(`/item-master/new`);
       },
       onDetail: (selected: ItemMaster) => {
-        logger.log('detail', selected);
         route.push(`/item-master/${selected.id}`);
       },
 
