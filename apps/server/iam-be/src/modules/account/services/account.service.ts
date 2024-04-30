@@ -64,11 +64,8 @@ export class AccountsService {
   public async createAccount(
     createAccountDto: CreateAccountDto,
   ): Promise<any | never> {
-    let { email }: CreateAccountDto = createAccountDto;
-    email = email.toLocaleLowerCase();
-
     let account: Account = await this.repository.findOne({
-      where: { email },
+      where: { email: createAccountDto.email.toLocaleLowerCase() },
     });
 
     if (!account) {
@@ -1091,7 +1088,7 @@ export class AccountsService {
 
     const account = new Account();
     account.username = this.generateUsername();
-    account.email = email;
+    account.email = email?.toLocaleLowerCase();
     account.firstName = firstName;
     account.lastName = lastName;
     account.phone = phone;
