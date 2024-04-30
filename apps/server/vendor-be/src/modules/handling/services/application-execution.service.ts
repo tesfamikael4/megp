@@ -63,7 +63,7 @@ export class ApplicationExcutionService {
     d.total = total;
     return d;
   }
-  async getCurruntTaskDetail(
+  async getCurrentTaskDetail(
     instanceId: string,
   ): Promise<WorkflowInstanceResponse> {
     const appData = await this.wiRepository.findOne({
@@ -261,14 +261,14 @@ export class ApplicationExcutionService {
     //   formattedData.push({...found, })
     // })
 
-    const requestedUpggrades = []
+    const requestedUpgrades = []
     for (const bc of formattedproposedClass) {
       const found = formattedPreviousClass.find((item) => item.category == bc.category)
       if (found) {
-        requestedUpggrades.push({ ...found, ProposedPriceRange: bc.ProposedPriceRange })
+        requestedUpgrades.push({ ...found, ProposedPriceRange: bc.ProposedPriceRange })
       }
     }
-    response.upgrade = [...requestedUpggrades]
+    response.upgrade = [...requestedUpgrades]
     const invoice = await this.invoiceService.getServiceReceipt(
       instance.userId,
       instance.serviceId,
@@ -290,20 +290,20 @@ export class ApplicationExcutionService {
   ) {
     if (vendorInfo?.ProfileInfo) {
       const profileUpdate = vendorInfo?.ProfileInfo[0];
-      for (const price of profileUpdate.profileData.areasOfBusinessInterest) {
-        const tempvalue = {
-          valueFrom: price.priceFrom,
-          valueTo: price.priceTo,
-        };
-        const formattedBC = this.commonService.formatPriceRange(tempvalue);
-        const bls = price?.lineOfBusiness; //.map((item) => item.name);
-        businessInterest.push({
-          category: this.commonService.capitalizeFirstLetter(price.category),
-          priceRange: formattedBC,
-          lineOfBusiness: bls,
-        });
-      }
-      profileUpdate.profileData.areasOfBusinessInterest = [...businessInterest];
+      // for (const price of profileUpdate.profileData.areasOfBusinessInterest) {
+      //   const tempvalue = {
+      //     valueFrom: price.priceFrom,
+      //     valueTo: price.priceTo,
+      //   };
+      //   const formattedBC = this.commonService.formatPriceRange(tempvalue);
+      //   const bls = price?.lineOfBusiness; //.map((item) => item.name);
+      //   businessInterest.push({
+      //     category: this.commonService.capitalizeFirstLetter(price.category),
+      //     priceRange: formattedBC,
+      //     lineOfBusiness: bls,
+      //   });
+      // }
+      //  profileUpdate.profileData.areasOfBusinessInterest = [...businessInterest];
       const bainfo = profileUpdate.profileData.bankAccountDetails.map(
         (item: any) => {
           if (item.isDefualt) {
@@ -319,11 +319,12 @@ export class ApplicationExcutionService {
         this.reduceAttributes(item),
       );
       profileUpdate.profileData.shareholders = shareholders;
-      const beneficialOwnership =
-        profileUpdate.profileData.beneficialOwnership.map((item: any) =>
+      const beneficialOwnershipShareholders =
+        profileUpdate.profileData.beneficialOwnershipShareholders.map((item: any) =>
           this.reduceAttributes(item),
         );
-      profileUpdate.profileData.beneficialOwnership = beneficialOwnership;
+      profileUpdate.profileData.beneficialOwnershipShareholders = beneficialOwnershipShareholders;
+
       const bankAccountDetails =
         profileUpdate.profileData.bankAccountDetails.map((item: any) =>
           this.reduceAttributes(item),

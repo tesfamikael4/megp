@@ -71,6 +71,7 @@ export class NotificationsService extends EntityCrudService<Notification> {
     query.where.push([
       { column: 'userId', value: user.id, operator: FilterOperators.EqualTo },
     ]);
+    query.orderBy.push({ column: 'createdAt', direction: 'DESC' })
     const dataQuery = QueryConstructor.constructQuery<Notification>(
       this.notificationRepository,
       query,

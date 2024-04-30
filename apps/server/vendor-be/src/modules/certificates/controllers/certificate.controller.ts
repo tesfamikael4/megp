@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { Readable } from 'stream';
 import { CertificateService } from '../services/certificate.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AllowAnonymous, CurrentUser, JwtGuard } from 'src/shared/authorization';
+import { CurrentUser, JwtGuard } from 'src/shared/authorization';
 import { FileService } from 'src/modules/vendor-registration/services/file.service';
 @ApiBearerAuth()
 @Controller('certificates')

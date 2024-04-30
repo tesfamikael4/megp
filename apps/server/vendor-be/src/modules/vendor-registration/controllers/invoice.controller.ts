@@ -40,6 +40,7 @@ export class InvoicesController {
     if (invoice) {
       const payload = new PaymentCommand();
       payload.invoiceReference = invoice.refNumber;
+      //payload.status = "Pending";
       payload.currency = 'MWK';
       payload.applicationKey = 'Vendor';
       payload.amount = Number(invoice.amount);
