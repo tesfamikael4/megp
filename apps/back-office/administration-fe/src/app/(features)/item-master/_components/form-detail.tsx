@@ -133,7 +133,6 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
-
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
   const treeConfig: TreeConfig<any> = {
@@ -143,7 +142,6 @@ export function FormDetail({ mode }: FormDetailProps) {
     multipleSelect: true,
     selectedIds: selectedCategories,
     setSelectedIds: (data) => {
-      logger.log({ data });
       setSelectedCategories(data);
     },
     load: async (data) => {
@@ -450,7 +448,18 @@ export function FormDetail({ mode }: FormDetailProps) {
           />
         </Box>
         <Group justify="end" className="mt-2">
-          <Button onClick={close}>Done</Button>
+          <Button
+            onClick={() => {
+              if (selectedCategories.length === 0) {
+                notify('Error', 'No Item Category Selected.');
+              } else {
+                setSelectedCategories(selectedCategories);
+                close();
+              }
+            }}
+          >
+            Done
+          </Button>
         </Group>
       </Modal>
     </Box>

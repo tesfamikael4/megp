@@ -67,8 +67,8 @@ export function FormDetail({ mode }: FormDetailPropType) {
   const onCreate = async (data) => {
     try {
       const result = await create(data);
-      if (result && 'id' in result) {
-        router.push(`/lookup/donors/${result?.id}`);
+      if (result && 'data' in result) {
+        router.push(`/lookup/donors/${result?.data?.id}`);
         notify('Success', 'Donor created successfully.');
       }
     } catch (err) {

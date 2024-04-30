@@ -8,7 +8,7 @@ export default function EntityLayout({
 }) {
   return (
     <PageLayout>
-      <Entity hasTree>{children}</Entity>
+      <Entity>{children}</Entity>
     </PageLayout>
   );
 }
