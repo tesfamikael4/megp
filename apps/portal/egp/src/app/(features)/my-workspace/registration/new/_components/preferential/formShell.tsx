@@ -207,8 +207,8 @@ export const PreferentialTreatmentForm = ({
                   // name={`areasOfBusinessInterest.${index}.activationDate`}
                   valueFormat="YYYY/MM/DD"
                   required
-                  label="Activation Date"
-                  placeholder="Activation Date"
+                  label="Preferential Registration Issued Date"
+                  placeholder="Preferential Registration Issued Date"
                   leftSection={<IconCalendar size={'1.2rem'} stroke={1.5} />}
                   maxDate={dayjs(new Date()).toDate()}
                   // {...register(`areasOfBusinessInterest.${index}.activationDate`)}
@@ -227,7 +227,7 @@ export const PreferentialTreatmentForm = ({
         </Flex>
 
         <Flex className="mt-10 justify-end gap-2">
-          <Button onClick={() => router.push('payment')} variant="outline">
+          <Button onClick={() => router.push('ppda')} variant="outline">
             Back
           </Button>
           {watch('preferential') && watch('preferential').length > 0 ? (
