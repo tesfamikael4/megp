@@ -34,22 +34,6 @@ export default function RequestDetail({
     instanceId: instanceId as string,
   });
 
-  if (!response.isFetching && (response.error || !response.data)) {
-    notifications.clean();
-    notifications.show({
-      title: 'Error',
-      message: 'Something went wrong while fetching.',
-      color: 'red',
-    });
-    router.push(
-      requestType === 'update'
-        ? '/info-change'
-        : requestType === 'preferential'
-          ? 'preferential-service'
-          : `/${requestType}`,
-    );
-  }
-
   const vendorInfo =
     requestType !== 'update'
       ? response.data?.isrvendor
@@ -99,11 +83,13 @@ export default function RequestDetail({
         <Skeleton height={8} mt={10} width="70%" radius="xl" />
       </Paper>
     );
-  } else if (
-    response.error &&
-    'status' in response.error &&
-    response.error.status === 404
-  ) {
+  } else if (response.error) {
+    notifications.clean();
+    notifications.show({
+      title: 'Error',
+      message: 'Something went wrong while fetching.',
+      color: 'red',
+    });
     router.push(
       `/${
         requestType === 'update'
