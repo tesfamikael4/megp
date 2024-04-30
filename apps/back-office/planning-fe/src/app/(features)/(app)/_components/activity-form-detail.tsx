@@ -68,7 +68,7 @@ const activitiesSchema: ZodType<Partial<BudgetPlanActivities>> = z.object({
     message: 'Estimated Amount is required',
   }),
   remark: z.string().default(''),
-  userReference: z.string().default(''),
+  userReference: z.string().nullable().default(null),
   isMultiYear: z.boolean().default(false),
 });
 
