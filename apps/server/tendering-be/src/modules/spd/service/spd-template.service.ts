@@ -29,9 +29,24 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     file: Express.Multer.File,
   ) {
     try {
-      const result = await this.docxService.validateDocument(file.buffer, [
-        'public_body',
-      ]);
+      let result = [];
+      if (type === 'bid-security') {
+        result = await this.docxService.validateDocument(file.buffer, [
+          'public_body',
+          'bidderName',
+          'bidDate',
+          'nameOfContract',
+          'bankName',
+          'country',
+          'day',
+          'month',
+          'year',
+        ]);
+      } else {
+        result = await this.docxService.validateDocument(file.buffer, [
+          'public_body',
+        ]);
+      }
 
       if (result.length != 0) {
         throw new BadRequestException(result);
