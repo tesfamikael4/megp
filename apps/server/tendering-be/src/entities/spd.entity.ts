@@ -124,5 +124,5 @@ export class Spd extends Audit {
   spdDocumentaryEvidences: SpdDocumentaryEvidence[];
 
   @OneToMany(() => TenderSpd, (tender) => tender.spd)
-  tenders: TenderSpd[];
+  tenderSpds: TenderSpd[];
 }
