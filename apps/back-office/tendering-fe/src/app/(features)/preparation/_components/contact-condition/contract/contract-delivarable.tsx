@@ -79,7 +79,7 @@ export default function ContractDelivarable() {
       await update({
         ...data,
         tenderId: id,
-        id: id?.toString(),
+        id: selected?.id.toString(),
       });
       notify('Success', 'Contract deliverables updated successfully');
     } catch {

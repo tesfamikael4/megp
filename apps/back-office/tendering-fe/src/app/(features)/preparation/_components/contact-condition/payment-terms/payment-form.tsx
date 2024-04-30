@@ -109,8 +109,8 @@ export default function PaymentForm() {
       await update({
         ...data,
         tenderId: id,
-        id: selected.id,
         advancePaymentLimit: isAdvanceAllowed ? data.advancePaymentLimit : 0,
+        id: selected?.id.toString(),
       });
       notify('Success', 'Contract general provision updated successfully');
     } catch {

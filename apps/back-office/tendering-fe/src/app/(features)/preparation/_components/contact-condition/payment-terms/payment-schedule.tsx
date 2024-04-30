@@ -84,7 +84,7 @@ export default function PaymentSchedule() {
       await update({
         ...data,
         tenderId: id,
-        id: id?.toString(),
+        id: selected?.id.toString(),
       });
       notify('Success', 'Payment schedule updated successfully');
     } catch {
