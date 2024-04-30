@@ -159,7 +159,6 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                         control={control}
                         render={({ field }) => (
                           <DatePickerInput
-                            // name={`areasOfBusinessInterest.${index}.expiryDate`}}`}
                             valueFormat="YYYY/MM/DD"
                             required
                             label="Expiry Date"
@@ -168,7 +167,9 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                               <IconCalendar size={'1.2rem'} stroke={1.5} />
                             }
                             maxDate={dayjs(new Date()).toDate()}
-                            // {...register(`areasOfBusinessInterest.${index}.expiryDate`)}
+                            {...register(
+                              `areasOfBusinessInterest.${index}.expiryDate`,
+                            )}
                             onChange={async (value: any) =>
                               value &&
                               field.onChange(
@@ -217,6 +218,10 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                                       stroke={1.5}
                                     />
                                   }
+                                  {...register(
+                                    `areasOfBusinessInterest.${index}.ncicRegistrationDate`,
+                                  )}
+                                  value={new Date('2023/02/12')}
                                   maxDate={dayjs(new Date()).toDate()}
                                   onChange={async (value: any) =>
                                     value &&

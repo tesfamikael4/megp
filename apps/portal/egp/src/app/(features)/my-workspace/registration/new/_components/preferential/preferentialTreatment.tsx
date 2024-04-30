@@ -222,8 +222,8 @@ export const PreferentialTreatment: React.FC<Props> = ({
                           // name={`preferential.${index}.certificateIssuedDate`}}`}
                           valueFormat="YYYY/MM/DD"
                           required
-                          label="Certificate Issued Period"
-                          placeholder="Certificate Issued Period"
+                          label="Certificate Issued Date"
+                          placeholder="Certificate Issued Date"
                           leftSection={
                             <IconCalendar size={'1.2rem'} stroke={1.5} />
                           }

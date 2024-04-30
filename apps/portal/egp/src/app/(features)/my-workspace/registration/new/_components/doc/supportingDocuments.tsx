@@ -12,8 +12,22 @@ import {
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { usePrivilege } from '../../_context/privilege-context';
 import FileUploader from '@/app/(features)/my-workspace/_components/uploader';
+import * as z from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
+
+const supportingDocumentsSchema = z.object({
+  businessRegistration_IncorporationCertificate: z.instanceof(File).optional(),
+  mRA_TPINCertificate: z.instanceof(File).optional(),
+  generalReceipt_BankDepositSlip: z.instanceof(File).optional(),
+  mRATaxClearanceCertificate: z.instanceof(File).optional(),
+  previousPPDARegistrationCertificate: z.instanceof(File).optional(),
+  MSMECertificate: z.instanceof(File).optional(),
+  ibmCertificate: z.instanceof(File).optional(),
+  marginalizedCertificate: z.instanceof(File).optional(),
+});
 
 export default function SupportingDocuments() {
   const router = useRouter();
@@ -21,6 +35,10 @@ export default function SupportingDocuments() {
   const docInfo = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
   const [save, saveValues] = useAddFormMutation();
   const { updateAccess, updateStatus } = usePrivilege();
+  const { control, formState, register, setValue, watch, handleSubmit } =
+    useForm<z.infer<typeof supportingDocumentsSchema>>({
+      resolver: zodResolver(supportingDocumentsSchema),
+    });
   const [files, setFiles] = useState<
     {
       key:
@@ -57,6 +75,7 @@ export default function SupportingDocuments() {
     setFiles((prevFiles) =>
       prevFiles.map((item) => (item.key === key ? { ...item, file } : item)),
     );
+    setValue(key, file);
   };
 
   useEffect(() => {
@@ -108,7 +127,6 @@ export default function SupportingDocuments() {
       });
     }
   }, [requestInfo.data]);
-  console.log(docInfo.data, docInfo.data?.basic.countryOfRegistration);
 
   const onSave = async () => {
     try {
@@ -150,36 +168,39 @@ export default function SupportingDocuments() {
 
   return (
     <Flex className="w-full flex-col gap-2">
-      <Flex align={'center'} gap={16} wrap={'wrap'}>
-        {files.map(({ key, file, imageUrl }) => {
-          if (
-            docInfo.data?.basic.countryOfRegistration !== 'Malawi' &&
-            [
-              'MSMECertificate',
-              'ibmCertificate',
-              'marginalizedCertificate',
-            ].includes(key)
-          )
-            return null;
-          else
-            return (
-              <FileUploader
-                key={key}
-                id={key}
-                label={getLabelByKey(key)}
-                placeholder="Choose File"
-                onChange={(file) => handleFileChange(file, key)}
-                getImageUrl={imageUrl}
-              />
-            );
-        })}
-      </Flex>
-      <Flex justify="end" className="gap-2 mt-4">
-        <Button onClick={() => router.push('preferential')} variant="outline">
-          Back
-        </Button>
-        <Button onClick={onSave}>Save</Button>
-      </Flex>
+      <form onSubmit={handleSubmit(onSave)}>
+        <Flex align={'center'} gap={16} wrap={'wrap'}>
+          {files.map(({ key, file, imageUrl }) => {
+            if (
+              docInfo.data?.basic.countryOfRegistration !== 'Malawi' &&
+              [
+                'MSMECertificate',
+                'ibmCertificate',
+                'marginalizedCertificate',
+              ].includes(key)
+            )
+              return null;
+            else
+              return (
+                <FileUploader
+                  key={key}
+                  id={key}
+                  label={getLabelByKey(key)}
+                  placeholder="Choose File"
+                  onChange={(file) => handleFileChange(file, key)}
+                  getImageUrl={imageUrl}
+                  error={formState.errors[key]?.message ?? ''}
+                />
+              );
+          })}
+        </Flex>
+        <Flex justify="end" className="gap-2 mt-4">
+          <Button onClick={() => router.push('preferential')} variant="outline">
+            Back
+          </Button>
+          <Button type="submit">Save</Button>
+        </Flex>
+      </form>
     </Flex>
   );
 }

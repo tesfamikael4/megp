@@ -89,6 +89,7 @@ export const areasOfBusinessInterestSchema = z
   ])
   .refine((data) => activationExpiryValidator(data), {
     message: 'Activation date must be before or equal to expiry date',
+    path: ['expiryDate'],
   });
 
 export const formDataSchema = z.object({

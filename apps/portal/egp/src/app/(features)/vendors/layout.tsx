@@ -3,11 +3,11 @@
 import React, { useEffect } from 'react';
 import Entity from './_components/Entity';
 import { Box, Container, Group, LoadingOverlay } from '@mantine/core';
-import DashboardCard, { InfoCard } from '../vendor/_components/card';
 import { IconBriefcase, IconFileCheck, IconFolder } from '@tabler/icons-react';
 import { Avatar } from '@mantine/core';
 import { useGetReportsQuery } from '../_api/reports';
-import { addSpacesToCamelCase } from '../vendor/(workspace)/registration/_components/review/utils';
+import { InfoCard } from '../my-workspace/_components/card';
+import { addSpacesToCamelCase } from '../my-workspace/registration/_components/review/utils';
 
 const infoCard = {
   ibm: (
