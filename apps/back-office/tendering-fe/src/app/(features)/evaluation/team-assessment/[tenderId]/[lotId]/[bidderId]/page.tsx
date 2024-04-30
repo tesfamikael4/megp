@@ -24,7 +24,7 @@ export default function BiderDetail() {
     logger.log({ checklistData });
     if (checklistData && checklistData?.length > 0) {
       router.push(
-        `/evaluation/${tenderId}/${lotId}/${bidderId}/${checklistData[0].id}`,
+        `/evaluation/team-assessment/${tenderId}/${lotId}/${bidderId}/${checklistData[0].id}`,
       );
     }
   }, [bidderId, checklistData, isSuccess, lotId, router, tenderId]);
