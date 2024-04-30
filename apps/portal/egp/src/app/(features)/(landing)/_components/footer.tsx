@@ -24,6 +24,7 @@ import {
   IconPhoneFilled,
   IconMail,
   IconLocation,
+  IconBrandX,
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { LogoFooter } from './logo';
@@ -63,6 +64,8 @@ export default function Footer() {
 
             <Group className="items-start">
               <ActionIcon
+                component={Link}
+                href={'https://www.facebook.com/ppdamalawi/'}
                 variant="subtle"
                 color="black"
                 radius={'lg'}
@@ -71,34 +74,21 @@ export default function Footer() {
               >
                 <IconBrandFacebookFilled size={18} strokeWidth={2.5} />
               </ActionIcon>
+
               <ActionIcon
+                component={Link}
+                href="https://twitter.com/MwPpda"
                 variant="subtle"
                 color="black"
                 radius={'lg'}
                 bg={'white'}
                 size="lg"
               >
-                <IconBrandInstagram size={18} strokeWidth={2.5} />
+                <IconBrandX size={18} strokeWidth={2.5} />
               </ActionIcon>
               <ActionIcon
-                variant="subtle"
-                color="black"
-                radius={'lg'}
-                bg={'white'}
-                size="lg"
-              >
-                <IconBrandLinkedin size={18} strokeWidth={2.5} />
-              </ActionIcon>
-              <ActionIcon
-                variant="subtle"
-                color="black"
-                radius={'lg'}
-                bg={'white'}
-                size="lg"
-              >
-                <IconBrandTwitterFilled size={18} strokeWidth={2.5} />
-              </ActionIcon>
-              <ActionIcon
+                component={Link}
+                href="https://www.youtube.com/channel/UCDrg3IwFr9nJFrMZzdsG8DQ"
                 variant="subtle"
                 color="black"
                 radius={'lg'}
