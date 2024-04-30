@@ -1,9 +1,9 @@
 'use client';
 import { useLazyGetBidOpeningChecklistByLotIdQuery } from '@/store/api/tendering/tendering.api';
 import { Table } from '@mantine/core';
-import { Section, logger } from '@megp/core-fe';
+import { Section } from '@megp/core-fe';
 import { IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export const Checklist = () => {
@@ -13,9 +13,8 @@ export const Checklist = () => {
   useEffect(() => {
     getChecklists({ lotId: lotId as string, bidderId: bidderId as string });
   }, []);
-  const pathname = usePathname();
   const router = useRouter();
-  const { lotId, bidderId } = useParams();
+  const { tenderId, lotId, bidderId } = useParams();
   return (
     <div>
       <Section title="Bid Attributes" className="h-full" collapsible={false}>
@@ -27,7 +26,11 @@ export const Checklist = () => {
             <Table.Tr
               key={list.id}
               className="cursor-pointer"
-              onClick={() => router.push(`${pathname}?checklistId=${list.id}`)}
+              onClick={() =>
+                router.push(
+                  `/opening/${tenderId}/lots/${lotId}/${bidderId}/${list.id}`,
+                )
+              }
             >
               <Table.Td
                 className={
