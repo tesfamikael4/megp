@@ -16,7 +16,7 @@ const perPage = 10;
 
 function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
   if (totalItems <= 0 || itemsPerPage <= 0) {
-    return 0; // No pages if no items or itemsPerPage is non-positive.
+    return 0;
   }
 
   return Math.ceil(totalItems / itemsPerPage);
@@ -66,7 +66,7 @@ export const CollectionSelector = ({
         cell: ({ row: { original } }: any) => (
           <Radio
             checked={selected == original}
-            onChange={(data) => {
+            onChange={() => {
               setSelected(original);
             }}
           />
