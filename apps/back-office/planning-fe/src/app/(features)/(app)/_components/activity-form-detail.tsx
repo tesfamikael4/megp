@@ -145,7 +145,6 @@ export const FormDetail = ({
       setTags(temp);
     },
     load: async (data) => {
-      // logger.log({ data });
       const res = await getChildren({
         where: [
           [
