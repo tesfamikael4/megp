@@ -2556,6 +2556,9 @@ importers:
       typeorm-extension:
         specifier: ^3.2.0
         version: 3.5.1(typeorm@0.3.20)
+      uuid:
+        specifier: ^9.0.1
+        version: 9.0.1
       xstate:
         specifier: ^4.38.2
         version: 4.38.3

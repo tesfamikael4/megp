@@ -136,7 +136,7 @@ export class WorkflowService {
       const nextCommand = new GotoNextStateDto();
       nextCommand.instanceId = wfinstance.id;
       nextCommand.action = 'ISR';
-      nextCommand.data = { fileId: fileId, ...dto.data };
+      nextCommand.data = { ...dto?.data };
       await this.gotoNextStep(nextCommand, user);
       this.notificationService.sendSubmissionNotification(
         user.id,
@@ -276,7 +276,6 @@ export class WorkflowService {
         const lastExecutedTask = await this.getPrviousHandler(
           workflowInstance.id,
         );
-
         const data = { remark: nextCommand.remark, ...nextCommand.data };
         currentTaskHandler.data = data;
         currentTaskHandler.taskId = task.id;

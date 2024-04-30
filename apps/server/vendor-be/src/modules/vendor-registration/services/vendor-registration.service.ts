@@ -1811,8 +1811,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     for (const bc of previousBusinessClasses) {
       const formatData = {
         category: bc.category,
-        approvedAt: bc.approvedAt,
-        expireDate: bc.expireDate,
+        approvedAt: this.formatDate(bc.approvedAt),
+        expireDate: this.formatDate(bc.expireDate),
         previousPriceRange: this.commonService.formatPriceRange(bc.servicePrice),
       }
       renewalData.push(formatData);
