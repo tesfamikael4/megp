@@ -9,6 +9,7 @@ import {
   SubmitChecklistDto,
 } from '../dto/bid-opening-checklist.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { AllowAnonymous } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',
@@ -79,6 +80,7 @@ export class BidOpeningChecklistController extends ExtraCrudController<BidOpenin
     );
   }
 
+  @AllowAnonymous()
   @Get('opening-minutes/:tenderId')
   async openingMinutes(@Param('tenderId') tenderId: string) {
     return await this.bidOpeningChecklistService.openingMinutes(tenderId);

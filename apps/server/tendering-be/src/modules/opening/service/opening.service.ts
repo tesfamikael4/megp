@@ -115,6 +115,10 @@ export class OpeningService extends ExtraCrudService<Opening> {
       .leftJoin('teams.teamMembers', 'teamMembers')
       .andWhere('teamMembers.personnelId = :personnelId', {
         personnelId: req.user.userId,
+      })
+      .leftJoin('tenders.bdsSubmission', 'bdsSubmission')
+      .andWhere('bdsSubmission.submissionDeadline <= :submissionDeadline', {
+        submissionDeadline: new Date(),
       });
     // .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true })
     // .andWhere('tenderMilestones.milestoneNum = :milestoneNum', {
