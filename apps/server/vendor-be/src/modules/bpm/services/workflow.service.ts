@@ -6,6 +6,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { In, Repository } from 'typeorm';
 import {
   CreateWorkflowInstanceDto,
@@ -118,9 +119,11 @@ export class WorkflowService {
     const task = await this.taskService.getTaskByNameAndBP(serviceBp.id, init);
     if (!task) throw new NotFoundException('Task Not found');
     taskHandler.currentState = init;
+    const fileId = uuidv4();
     taskHandler.instanceId = wfinstance.id;
     taskHandler.taskId = task.id;
-    taskHandler.data = { ...dto.data };
+    taskHandler.data = { fileId: fileId, ...dto.data };
+
     try {
       const insertedTaskHandler =
         await this.handlerRepository.save(taskHandler);
@@ -133,7 +136,7 @@ export class WorkflowService {
       const nextCommand = new GotoNextStateDto();
       nextCommand.instanceId = wfinstance.id;
       nextCommand.action = 'ISR';
-      nextCommand.data = { ...dto?.data };
+      nextCommand.data = { fileId: fileId, ...dto.data };
       await this.gotoNextStep(nextCommand, user);
       this.notificationService.sendSubmissionNotification(
         user.id,
@@ -273,6 +276,7 @@ export class WorkflowService {
         const lastExecutedTask = await this.getPrviousHandler(
           workflowInstance.id,
         );
+
         const data = { remark: nextCommand.remark, ...nextCommand.data };
         currentTaskHandler.data = data;
         currentTaskHandler.taskId = task.id;
