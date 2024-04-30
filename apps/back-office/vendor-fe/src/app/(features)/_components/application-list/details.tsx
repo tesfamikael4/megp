@@ -27,12 +27,28 @@ export default function RequestDetail({
   const [taskType, setTaskType] = useState<string>();
   const [content, setContent] = useState<'details' | 'tasks'>('tasks');
   const [tracker, setTaskTracker] = useState<any>();
-  logger.log(tracker);
+
   const pickLabel = isPicked ? 'Unpick' : 'Pick';
   const router = useRouter();
   const response = useGetApplicationRequestDetailByIdQuery({
     instanceId: instanceId as string,
   });
+
+  if (!response.isFetching && (response.error || !response.data)) {
+    notifications.clean();
+    notifications.show({
+      title: 'Error',
+      message: 'Something went wrong while fetching.',
+      color: 'red',
+    });
+    router.push(
+      requestType === 'update'
+        ? '/info-change'
+        : requestType === 'preferential'
+          ? 'preferential-service'
+          : `/${requestType}`,
+    );
+  }
 
   const vendorInfo =
     requestType !== 'update'

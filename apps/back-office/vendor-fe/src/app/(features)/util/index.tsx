@@ -2,21 +2,25 @@ export function processCompanyName(name: string): {
   initials: string;
   color: string;
 } {
-  const words: string[] = name?.split(' ');
-  let initials = '';
+  if (name) {
+    const words: string[] = name?.split(' ');
+    let initials = '';
 
-  if (words.length === 1) {
-    initials = name.substring(0, 2).toUpperCase();
+    if (words.length === 1) {
+      initials = name.substring(0, 2).toUpperCase();
+    } else {
+      initials = words
+        .slice(0, 2)
+        .map((word) => word[0])
+        .join('')
+        .toUpperCase();
+    }
+
+    const color: string = getUniqueColor(name);
+    return { initials, color };
   } else {
-    initials = words
-      .slice(0, 2)
-      .map((word) => word[0])
-      .join('')
-      .toUpperCase();
+    return { initials: 'N/A', color: getUniqueColor('N/A') };
   }
-
-  const color: string = getUniqueColor(name);
-  return { initials, color };
 }
 
 function getUniqueColor(name: string): string {
