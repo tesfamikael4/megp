@@ -62,7 +62,7 @@ export default function GeneralProvision() {
       await update({
         ...data,
         tenderId: id,
-        id: id?.toString(),
+        id: selected?.id.toString(),
       });
       notify('Success', 'Contract general provision updated successfully');
     } catch {
