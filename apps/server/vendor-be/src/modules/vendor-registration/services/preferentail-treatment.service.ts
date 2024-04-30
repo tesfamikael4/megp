@@ -165,6 +165,8 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           wfi.requestorId = vendor.id;
           wfi.serviceId = dto.serviceId;
           const { serviceId, id, ...preferntial } = entity;
+
+
           wfi.data = { vendor: vendor, preferential: { ...preferntial } };
           wfi.user = user;
           const baexisted =
