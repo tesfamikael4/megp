@@ -21,14 +21,13 @@ export const ChecklistAssessment = () => {
     formState: { errors },
     control,
   } = useForm<any>({ resolver: zodResolver(checklistSchema) });
-  const { lotId, bidderId, tenderId } = useParams();
-  const searchParams = useSearchParams();
+  const { lotId, bidderId, tenderId, checklistId } = useParams();
   const [checkBidAttribute, { isLoading }] = useCheckBidAttributeMutation();
 
   const onSubmit = async (data: any) => {
     const tempData = {
       ...data,
-      spdPreliminaryEvaluationId: searchParams.get('checklistId'),
+      spdPreliminaryEvaluationId: checklistId,
       lotId,
       bidderId,
       tenderId,

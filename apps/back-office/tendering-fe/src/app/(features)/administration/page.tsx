@@ -5,7 +5,7 @@ import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { DetailTable } from '../_components/detail-table';
 import { useRouter } from 'next/navigation';
-import { useLazyGetClosedTendersQuery } from '@/store/api/tendering/tendering.api';
+import { useLazyGetTendersQuery } from '@/store/api/tendering/tendering.api';
 
 export default function Administration() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export default function Administration() {
   };
 
   //rtk
-  const [getClosedTenders, { data: tenders }] = useLazyGetClosedTendersQuery();
+  const [getActiveTenders, { data: tenders }] = useLazyGetTendersQuery();
   return (
     <Section title="Tenders List (Opening)" collapsible={false}>
       <ExpandableTable
@@ -63,7 +63,7 @@ export default function Administration() {
         data={tenders?.items ?? []}
         total={tenders?.total ?? 0}
         onRequestChange={(collectionQuery) => {
-          getClosedTenders({ collectionQuery });
+          getActiveTenders({ collectionQuery });
         }}
       />
     </Section>

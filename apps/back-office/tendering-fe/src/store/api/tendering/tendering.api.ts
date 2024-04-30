@@ -8,6 +8,16 @@ export const tenderingApi = createApi({
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   tagTypes: ['opening', 'teams', 'teamMembers', 'bidAttribute'],
   endpoints: (builder) => ({
+    getTenders: builder.query<any, any>({
+      query: ({ collectionQuery }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `/tenders${q}`, method: 'GET' };
+      },
+    }),
     getTenderDetail: builder.query<any, any>({
       query: (id: string) => `tenders/${id}`,
     }),
@@ -186,4 +196,5 @@ export const {
   useCompleteOpeningMutation,
   useGetTenderOpeningStatusQuery,
   useGetOpeningMinutesQuery,
+  useLazyGetTendersQuery,
 } = tenderingApi;

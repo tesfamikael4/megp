@@ -17,9 +17,8 @@ export const Checklist = () => {
       team: 'teamLeader',
     });
   }, []);
-  const pathname = usePathname();
   const router = useRouter();
-  const { lotId, bidderId } = useParams();
+  const { tenderId, lotId, bidderId } = useParams();
   return (
     <div>
       <Section title="Bid Attributes" className="h-full" collapsible={false}>
@@ -31,7 +30,11 @@ export const Checklist = () => {
             <Table.Tr
               key={list.id}
               className="cursor-pointer"
-              onClick={() => router.push(`${pathname}?checklistId=${list.id}`)}
+              onClick={() =>
+                router.push(
+                  `/evaluation/team-assessment/${tenderId}/${lotId}/${bidderId}/${list.id}`,
+                )
+              }
             >
               <Table.Td
                 className={
