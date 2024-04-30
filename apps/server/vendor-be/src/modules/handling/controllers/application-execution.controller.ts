@@ -150,7 +150,7 @@ export class ApplicationExcutionController {
   @Get('get-currunt-task-detail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async fetchCurruntTaskDetail(@Param('instanceId') instanceId: string) {
-    const result = await this.executeService.getCurruntTaskDetail(instanceId);
+    const result = await this.executeService.getCurrentTaskDetail(instanceId);
     return result;
   }
   @UseGuards(JwtGuard)

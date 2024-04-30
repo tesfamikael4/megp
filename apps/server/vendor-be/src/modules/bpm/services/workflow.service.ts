@@ -115,8 +115,6 @@ export class WorkflowService {
     const taskHandler = new TaskHandlerEntity();
     response['application'] = wfinstance;
     const init = machine.initial.toString();
-    console.log('init', init);
-    console.log('serviceBp.id', serviceBp.id);
     const task = await this.taskService.getTaskByNameAndBP(serviceBp.id, init);
     if (!task) throw new NotFoundException('Task Not found');
     taskHandler.currentState = init;
@@ -186,7 +184,6 @@ export class WorkflowService {
       workflowInstance.status = ApplicationStatus.INPROGRESS;
       currentTaskHandler.currentState = nextStepState.value.toString();
       const stateMetaData = this.getStateMetaData(nextStepState.meta);
-      console.log('stateMetaData', stateMetaData);
       if (stateMetaData['type'] == 'end') {
         workflowInstance.status = ApplicationStatus.COMPLETED;
         // workflowInstance.businessStatus = BusinessStatusEnum.active;
@@ -201,7 +198,7 @@ export class WorkflowService {
         if (
           curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
           nextCommand.action.toUpperCase() ==
-            ApplicationStatus.CANCEL.toUpperCase()
+          ApplicationStatus.CANCEL.toUpperCase()
         ) {
           response = await this.vendorRegService.cancelApplication(wfInstance);
           this.notificationService.sendCancelNotification(
@@ -475,8 +472,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-      commandLower == 'yes' ||
-      commandLower == 'success'
+        commandLower == 'yes' ||
+        commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {

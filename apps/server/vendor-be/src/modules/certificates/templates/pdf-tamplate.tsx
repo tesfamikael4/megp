@@ -11,11 +11,85 @@ const PdfDocumentTemplate = async (data) => {
   return await ReactPDF.renderToStream(
     <Document title="Registered Vendor">
       <Page size="A4" style={styles.page}>
-        <Text style={styles.title}>Submitted New Registration Request</Text>
+        <Text style={styles.title}>{data?.title} </Text>
         <View style={styles.activities}>
+          {/* upgrade Registration */}
+          <View style={styles.activity}>
+            {data?.renewals?.length ? (
+              <Text> Registration Renewal Service Request </Text>
+            ) : null}
+          </View>
+          <View style={styles.activityDetail}>
+            {data?.renewals?.length ? (
+              <ReactPdfTableGrid3
+                config={{
+                  columns: [
+                    {
+                      accessor: 'category',
+                      title: 'Business Category',
+                    },
+                    {
+                      accessor: 'previousPriceRange',
+                      title: 'Current Price Range',
+                    },
+                    {
+                      accessor: 'approvedAt',
+                      title: 'Approved Date',
+                    },
+                    {
+                      accessor: 'expireDate',
+                      title: 'expiry Date',
+                    },
+                  ],
+                  data: data?.renewals,
+                }}
+              />
+            ) : null}
+          </View>
+
+          {/*  Upgrade Service */}
+          <View style={styles.activity}>
+            {data?.upgrades?.length ? (
+              <Text style={{ marginBottom: '8px' }}>
+                Registration Upgrade Service Request
+              </Text>
+            ) : (
+              ''
+            )}
+            {data?.upgrades?.length ? (
+              <ReactPdfTableGrid3
+                config={{
+                  columns: [
+                    {
+                      accessor: 'category',
+                      title: 'Business Category',
+                    },
+                    {
+                      accessor: 'previousPriceRange',
+                      title: 'Current Price Range',
+                    },
+                    {
+                      accessor: 'approvedAt',
+                      title: 'Approved Date',
+                    },
+                    {
+                      accessor: 'expireDate',
+                      title: 'expiry Date',
+                    },
+                    {
+                      accessor: 'proposedPriceRange',
+                      title: 'Proposed Price Range',
+                    },
+                  ],
+                  data: data?.upgrades,
+                }}
+              />
+            ) : null}
+          </View>
+
           {/* Basic Registration */}
           <View style={styles.activity}>
-            <Text>Basic Registration</Text>
+            <Text> Basic Registration</Text>
           </View>
           <View style={styles.activityDetail}>
             <ReactPdfTable
@@ -26,9 +100,10 @@ const PdfDocumentTemplate = async (data) => {
               config={{}}
             />
           </View>
+
           {/* Address Information */}
           <View style={styles.activity}>
-            <Text style={{ marginBottom: '8px' }}>Address Information</Text>
+            <Text style={{ marginBottom: '8px' }}> Address Information</Text>
             <ReactPdfTable
               data={Object.entries(data?.address).map(([key, value]) => ({
                 key,
@@ -66,24 +141,28 @@ const PdfDocumentTemplate = async (data) => {
           </View>
           {/* Business Size and Ownership */}
           <View style={styles.activity}>
-            <Text style={{ marginBottom: '8px' }}>Business And Ownership</Text>
+            <Text style={{ marginBottom: '8px' }}>
+              {' '}
+              Business Size And Ownership
+            </Text>
             <ReactPdfTable
               data={[
+                // {
+                //   key: 'Ownership Type',
+                //   value: data?.businessSizeAndOwnership.ownershipType,
+                // },
+
                 {
-                  key: 'Ownership Type',
-                  value: data?.businessSizeAndOwnership.ownershipType,
+                  key: 'Registered Capital',
+                  value: `${data?.businessSizeAndOwnership.registeredCapital.amount} ${data?.businessSizeAndOwnership.registeredCapital.currency}`,
                 },
                 {
-                  key: 'paidUp Capital',
+                  key: 'Paid Up Capital',
                   value: `${data?.businessSizeAndOwnership.paidUpCapital.amount} ${data?.businessSizeAndOwnership.paidUpCapital.currency}`,
                 },
                 {
-                  key: 'number of Employees',
+                  key: 'Number of Employees',
                   value: data?.businessSizeAndOwnership.numberOfEmployees,
-                },
-                {
-                  key: 'registration Capital',
-                  value: `${data?.businessSizeAndOwnership.registeredCapital.amount} ${data?.businessSizeAndOwnership.registeredCapital.currency}`,
                 },
               ]}
               config={{}}
@@ -93,7 +172,7 @@ const PdfDocumentTemplate = async (data) => {
           {/* Beneficial Ownership */}
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}>
-              Beneficial Ownership and Shares
+              Beneficial Ownership and Shareholders
             </Text>
             <ReactPdfTableGrid3
               config={{
@@ -115,16 +194,12 @@ const PdfDocumentTemplate = async (data) => {
                     title: 'Nationality',
                   },
                   {
-                    accessor: 'nationality',
-                    title: 'Nationality',
-                  },
-                  {
                     accessor: 'share',
                     title: 'Share',
                   },
                   {
                     accessor: 'countryOfResidence',
-                    title: 'country of Residence',
+                    title: 'Country of Residence',
                   },
                   {
                     accessor: 'votingRights',
@@ -132,7 +207,7 @@ const PdfDocumentTemplate = async (data) => {
                   },
                   {
                     accessor: 'authorityToAppointGov',
-                    title: 'authority to Appoint Govt.',
+                    title: 'Authority to Appoint Govt.',
                   },
                 ],
                 data: data?.beneficialOwnershipShareholders,
@@ -141,15 +216,35 @@ const PdfDocumentTemplate = async (data) => {
           </View>
           {/* Bank Account Details */}
           <View style={styles.activity}>
-            <Text style={{ marginBottom: '8px' }}>Bank Account Details</Text>
+            <Text style={{ marginBottom: '8px' }}> Bank Account Details </Text>
             <ReactPdfTableGrid3
               config={{
                 columns: [
+                  {
+                    accessor: 'bankType',
+                    title: 'bankType',
+                  },
+                  {
+                    accessor: 'accountType',
+                    title: 'accountType',
+                  },
                   {
                     accessor: 'accountHolderFullName',
                     title: 'Full Name',
                   },
                   { accessor: 'accountNumber', title: 'Account Number' },
+                  {
+                    accessor: 'bankName',
+                    title: 'Bank Name',
+                  },
+                  {
+                    accessor: 'branchName',
+                    title: 'Branch Name',
+                  },
+                  {
+                    accessor: 'branchAddress',
+                    title: 'Address',
+                  },
                   {
                     accessor: 'currency',
                     title: 'currency',
@@ -163,27 +258,6 @@ const PdfDocumentTemplate = async (data) => {
                     title: 'IBAN',
                   },
                   {
-                    accessor: 'accountType',
-                    title: 'accountType',
-                  },
-                  {
-                    accessor: 'bankType',
-                    title: 'bankType',
-                  },
-                  {
-                    accessor: 'bankName',
-                    title: 'Bank Name',
-                  },
-                  {
-                    accessor: 'branchName',
-                    title: 'Branch Name',
-                  },
-                  {
-                    accessor: 'branchAddress',
-                    title: 'Address',
-                  },
-
-                  {
                     accessor: 'isDefualt',
                     title: 'Defualt',
                   },
@@ -195,7 +269,8 @@ const PdfDocumentTemplate = async (data) => {
           {/* Areas of Business Interest */}
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}>
-              Areas of Business Interest
+              {' '}
+              Purpose of Registration
             </Text>
             <ReactPdfTableGrid3
               config={{
@@ -217,7 +292,7 @@ const PdfDocumentTemplate = async (data) => {
           </View>
           {/*Business Lines*/}
           <View style={styles.activity}>
-            <Text style={{ marginBottom: '8px' }}>line of Business</Text>
+            <Text style={{ marginBottom: '8px' }}> line of Business</Text>
 
             <View style={styles.activity}>
               {data?.lineOfBusiness.map((item, index) => {
@@ -230,27 +305,28 @@ const PdfDocumentTemplate = async (data) => {
               })}
             </View>
           </View>
-          {/* prefertial information Documents */}
+
+          {/* preferential information Documents */}
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}>
-              Prefertial Requests information
+              Eligibility for Preferential Services
             </Text>
             <ReactPdfTableGrid3
               config={{
                 columns: [
                   {
                     accessor: 'type',
-                    title: 'service Name',
+                    title: 'Preferential service',
                   },
                   { accessor: 'certiNumber', title: 'certificate Number' },
-                  {
-                    accessor: 'certificateIssuedDate',
-                    title: 'Issued Date',
-                  },
-                  {
-                    accessor: 'certificateValidityPeriod',
-                    title: 'Validity Period',
-                  },
+                  // {
+                  //   accessor: 'certificateIssuedDate',
+                  //   title: 'Issued Date',
+                  // },
+                  // {
+                  //   accessor: 'certificateValidityPeriod',
+                  //   title: 'Validity Period',
+                  // },
                 ],
                 data: data?.preferential,
               }}

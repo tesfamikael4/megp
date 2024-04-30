@@ -61,7 +61,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
 
     return bas;
   }
-  async getBusinessUppgradesOrRenewal(
+  async getBusinessUpgradesOrRenewal(
     categories: string[],
     serviceKey: string,
   ) {
@@ -71,7 +71,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
         BpService: { key: serviceKey },
         status: In([ApplicationStatus.PENDING, ApplicationStatus.ADJUSTMENT]),
       },
-      relations: { BpService: true },
+      relations: { BpService: true, servicePrice: true },
     });
   }
 
@@ -92,7 +92,20 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
 
     return true;
   }
-
+  //aproved services
+  async getPreviousApprovedServices(
+    vendorId: string,
+    category: string[],
+  ): Promise<BusinessAreaEntity[]> {
+    return this.businessAreaRepository.find({
+      relations: { BpService: true, servicePrice: true },
+      where: {
+        category: In(category),
+        status: ApplicationStatus.APPROVED,
+        vendorId: vendorId,
+      },
+    });
+  }
   async getPreviousUpgradeService(
     vendorId: string,
     category: string,

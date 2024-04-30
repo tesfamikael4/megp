@@ -208,6 +208,7 @@ export class VendorRegistrationsController {
       user,
       dto,
       ServiceKeyEnum.REGISTRATION_UPGRADE,
+      "Registration Upgrade Application"
     );
   }
 
@@ -224,6 +225,7 @@ export class VendorRegistrationsController {
       user,
       dto,
       ServiceKeyEnum.REGISTRATION_RENEWAL,
+      "Registration Renewal Application"
     );
   }
 
@@ -470,6 +472,16 @@ export class VendorRegistrationsController {
         "issueDate": "2024-04-26",
         "isPPDARegistered": false
       },
+      "upgrades": [
+        // {
+        //   "category": "Goods",
+        //   "approvedAt": "2024-04-26T15:59:53.117Z",
+        //   "expireDate": "2025-04-26T15:59:55.060Z",
+        //   "previousPriceRange": "Above MK10 million  - MK30 million",
+        //   "proposedPriceRange": "Above MK30 million  - MK80 million"
+        // }
+      ]
+      ,
       "basic": {
         "name": "MBRS BUSINESS NAME",
         "status": "Draft",
@@ -588,6 +600,17 @@ export class VendorRegistrationsController {
           "lineOfBusiness": []
         }
       ],
+      renewals: [
+        // {
+        //   "category": "Goods",
+        //   "approvedAt": "2024-04-29",
+        //   "expireDate": "2025-04-29",
+        //   "previousPriceRange": "Above 80MK",
+
+        // }
+
+      ]
+      ,
       "preferential": [
         {
           "tenantId": 0,
@@ -619,7 +642,7 @@ export class VendorRegistrationsController {
       ]
     }
     delete data2.basic.address;
-    const result = await this.regService.generatePDFForReview(data2, user);
+    const result = await this.regService.generatePDFForReview(data2, user, "Test data");
     // res.set({
     //   'Content-Type': 'application/pdf',
     //   'Content-Disposition': 'attachment; filename="document.pdf"',

@@ -121,6 +121,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   //submit new registration request
   async submitVendorInformation(data: any, userInfo: any): Promise<any> {
     try {
+      const title = "New Registration Application"
       // const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
       const tempVendor = await this.isrVendorsRepository.findOne({
         where: { userId: userInfo.id, status: Not(VendorStatusEnum.REJECTED) },
@@ -160,6 +161,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const documentId = await this.generatePDFForReview(
             formattedData,
             userInfo,
+            title
           );
           dto.data = { documentId: documentId, ...formattedData };
           dto.instanceId = instanceId;
@@ -183,7 +185,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           console.log(formattedData);
           const documentId = await this.generatePDFForReview(
             formattedData,
-            userInfo,
+            userInfo, title
           );
           wfi.data = { documentId: documentId, ...formattedData };
           workflowInstance = await this.workflowService.intiateWorkflowInstance(
@@ -256,19 +258,22 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
-  async formatData(data: any) {
+  async formatData(data: any, profile: string = null) {
     delete data.basic?.address;
     const formattedData: any = { ...data };
 
     formattedData.areasOfBusinessInterest = [];
     for (const ba of data.areasOfBusinessInterest) {
-      const priceRange = await this.pricingService.findOne(ba.priceRange);
-      const bi = {
-        category: ba.category,
-        lineOfBusiness: ba.lineOfBusiness?.map((lob: any) => lob.name),
-        priceRange: this.commonService.formatPriceRange(priceRange),
-      };
-      formattedData.areasOfBusinessInterest.push(bi);
+      if (!profile) {
+        const priceRange = await this.pricingService.findOne(ba.priceRange);
+        const bi = {
+          category: ba.category,
+          lineOfBusiness: ba.lineOfBusiness?.map((lob: any) => lob.name),
+          priceRange: this.commonService.formatPriceRange(priceRange),
+        };
+        formattedData.areasOfBusinessInterest.push(bi);
+      }
+
     }
     formattedData.bankAccountDetails = [];
     for (const bank of data.bankAccountDetails) {
@@ -295,10 +300,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return formattedData;
   }
 
-  async generatePDFForReview(data: any, user: any) {
+  async generatePDFForReview(data: any, user: any, title: string) {
     try {
       const subfolder = 'application-doc';
-      const result = await PdfDocumentTemplate(data);
+      const result = await PdfDocumentTemplate({ ...data, title: title });
       const readStream = new Readable().wrap(result);
       const fileId = await this.fileService.uploadReadable(
         readStream,
@@ -324,6 +329,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     user: any,
   ): Promise<any> {
     const subDirectory = 'paymentReceipt';
+    const title = "Service Registration Application";
     try {
       const vendorData = await this.vendorRepository.findOne({
         where: { userId: user.id },
@@ -331,10 +337,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const srvendor = await this.isrVendorsRepository.findOne({
         where: { userId: user.id },
       });
-      if (!vendorData) throw new NotFoundException('vendor not found ');
+      if (!vendorData) throw new NotFoundException('vendor_not_found ');
 
       if (!vendorData.canRequest)
-        throw new NotFoundException(`profile update in progress`);
+        throw new NotFoundException(`There_is_already_inprogress_application`);
       let uploadedFileName = null;
       if (attachment) {
         uploadedFileName = await this.fileService.uploadDocuments(
@@ -366,7 +372,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (invoice?.paymentStatus == PaymentStatus.PAID) {
         const baCatagories = invoice.paymentDetail.map((item) => item.category);
         const businessAreas =
-          await this.baService.getBusinessUppgradesOrRenewal(
+          await this.baService.getBusinessUpgradesOrRenewal(
             baCatagories,
             ServiceKeyEnum.NEW_REGISTRATION,
           );
@@ -383,6 +389,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const documentId = await this.generatePDFForReview(
             formattedData,
             user,
+            title
           );
           wfi.data = { documentId: documentId, ...formattedData };
 
@@ -407,6 +414,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const documentId = await this.generatePDFForReview(
             formattedData,
             user,
+            title
           );
           wfi.data = { documentId: documentId, ...formattedData };
           const resonse = await this.workflowService.intiateWorkflowInstance(
@@ -1706,6 +1714,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     user: any,
     paymentReceiptDto: ReceiptDto,
     serviceKey: string,
+    title: string
   ) {
     const userId = user.id;
     try {
@@ -1715,10 +1724,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!result) throw new NotFoundException('vendor not found ');
       const vendor = await this.vendorRepository.findOne({
         where: { userId: userId },
-        select: { canRequest: true },
+        select: { canRequest: true, id: true },
       });
       if (!vendor.canRequest)
-        throw new NotFoundException(`profile update in progress`);
+        throw new NotFoundException(`There_is_already_inprogress_application`);
+
       const subDirectory = 'paymentReceipt';
       const uploadedFileName = await this.fileService.uploadDocuments(
         file,
@@ -1741,7 +1751,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           attachment: uploadedFileName,
         });
       }
-
       const invoice = await this.invoiceRepository.findOne({
         where: {
           id: In(ids),
@@ -1756,24 +1765,40 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const wfi: CreateWorkflowInstanceDto = new CreateWorkflowInstanceDto();
       // const serviceBA = invoice.service.businessAreas;
       const baCatagories = invoice.paymentDetail.map((item) => item.category);
-      const businessAreas = await this.baService.getBusinessUppgradesOrRenewal(
+      const previousServices = await this.baService.getPreviousApprovedServices(vendor.id, baCatagories);
+      const businessAreas = await this.baService.getBusinessUpgradesOrRenewal(
         baCatagories,
         serviceKey,
       );
+      let formData = {};
+      if (serviceKey == ServiceKeyEnum.REGISTRATION_UPGRADE) {
+        const upgrades = await this.formatUpgradeData(previousServices, businessAreas);
+        formData = { upgrades: upgrades, ...result };
+      } else {
+        const renewals = await this.formatRenewalData(previousServices);
+        formData = { renewals: renewals, ...result };
+      }
+      const formattedData = await this.formatData(formData);
+      const documentId = await this.generatePDFForReview(
+        formattedData,
+        user, title
+      );
+      wfi.data = { documentId: documentId, ...formattedData };
       wfi.bpId = invoice.service.businessProcesses.find(
-        (item) => item.isActive == true,
+        (item) => item.isActive == true
       ).id;
       wfi.serviceId = invoice.serviceId;
       wfi.requestorId = result.id;
-      wfi.data = result;
-      const resonse = await this.workflowService.intiateWorkflowInstance(
+      const response = await this.workflowService.intiateWorkflowInstance(
         wfi,
         user,
       );
 
+
+
       for (const row of businessAreas) {
-        row.instanceId = resonse.application?.id;
-        row.applicationNumber = resonse.application?.applicationNumber;
+        row.instanceId = response.application?.id;
+        row.applicationNumber = response.application?.applicationNumber;
         await this.baService.update(row.id, row);
       }
       return paymentReceipt;
@@ -1782,6 +1807,37 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
+  async formatRenewalData(previousBusinessClasses: BusinessAreaEntity[]) {
+    const renewalData = [];
+    for (const bc of previousBusinessClasses) {
+      const formatData = {
+        category: bc.category,
+        approvedAt: bc.approvedAt,
+        expireDate: bc.expireDate,
+        previousPriceRange: this.commonService.formatPriceRange(bc.servicePrice),
+      }
+      renewalData.push(formatData);
+    }
+    return renewalData;
+  }
+  async formatUpgradeData(prevousBusinessClasses: BusinessAreaEntity[], newBusinessClasses: BusinessAreaEntity[]) {
+    const requestedUpgrades = [];
+    for (const bc of newBusinessClasses) {
+      const previousPriceRange = prevousBusinessClasses.find((item) => item.category == bc.category)
+      const formatData = {
+        category: bc.category,
+        approvedAt: previousPriceRange.approvedAt,
+        expireDate: previousPriceRange.expireDate,
+        proposedPriceRange: this.commonService.formatPriceRange(bc.servicePrice),
+        previousPriceRange: this.commonService.formatPriceRange(previousPriceRange.servicePrice),
+      }
+      requestedUpgrades.push(formatData);
+    }
+    return requestedUpgrades;
+
+  }
+
+
 
   async getApprovedVendorById(vendorId: string) {
     const vendorData = await this.vendorRepository.findOne({
@@ -2294,6 +2350,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
   async submitVendorProfileUpdate(profileData: any, userInfo: any) {
+    const title = "Profile Update Application"
     try {
       const vendor = await this.vendorRepository.findOne({
         where: { userId: userInfo.id },
@@ -2318,8 +2375,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         if (updateInfo?.status == ApplicationStatus.ADJUSTMENT) {
           updateInfo.status = ApplicationStatus.SUBMITTED;
           updateInfo.profileData = profileData;
-          const resultData = await this.profileInfoRepository.save(updateInfo);
-          const response = await this.goToworkflow(userInfo, resultData);
+          await this.profileInfoRepository.save(updateInfo);
+          const formattedData = await this.formatData(updateInfo, ServiceKeyEnum.PROFILE_UPDATE);
+          const documentId = await this.generatePDFForReview(
+            formattedData,
+            userInfo, title
+          );
+          const response = await this.goToworkflow(userInfo, { documentId: documentId, ...formattedData });
           return response;
         } else if (updateInfo?.status == ApplicationStatus.DRAFT) {
           updateInfo.status = ApplicationStatus.SUBMITTED;
@@ -2342,7 +2404,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         wfi.bpId = bp.id;
         wfi.serviceId = bp.serviceId;
         wfi.requestorId = vendor.id;
-        wfi.data = { ...profileData };
+        const formattedData = await this.formatData(profileData, ServiceKeyEnum.PROFILE_UPDATE);
+        const documentId = await this.generatePDFForReview(
+          formattedData,
+          userInfo, title
+        );
+        wfi.data = { documentId: documentId, ...formattedData };
+
         const workflowInstance =
           await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
         if (!workflowInstance)
