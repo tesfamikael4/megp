@@ -46,13 +46,11 @@ const defaultValues = {
   commodityCode: '',
   commodityName: '',
   description: '',
-  itemSubCategoryName: '',
   itemSubCategoryId: '',
   uOMId: null,
   uOMName: '',
   measurementId: null,
   itemTags: [],
-  itemCategoryName: '',
   itemCategoryId: null,
 };
 
@@ -75,14 +73,8 @@ const itemSchema: ZodType<Partial<ItemMaster>> = z.object({
   measurementId: z.string({
     required_error: 'Measurement is required',
   }),
-  itemCategoryName: z.string({
-    required_error: 'Item Category is required',
-  }),
   itemCategoryId: z.string({
     required_error: 'Item Category is required',
-  }),
-  itemSubCategoryName: z.string({
-    required_error: 'Item Sub Category is required',
   }),
   itemSubCategoryId: z.string({
     required_error: 'Item Sub Category is required',
@@ -108,6 +100,8 @@ export function FormDetail({ mode }: FormDetailProps) {
   const { id } = useParams();
   const router = useRouter();
   const [itemCode, setItemCode] = useState<string>('');
+  const itemCategoryId = watch('itemCategoryId');
+  const [itemCategoryName, setItemCategoryName] = useState<string>('');
 
   const { data: measurements, isLoading: isMeasurementLoading } =
     useGetMeasurementsQuery({} as any);
@@ -122,11 +116,8 @@ export function FormDetail({ mode }: FormDetailProps) {
       isSuccess: isUnitOfMeasurementsSuccess,
     },
   ] = useLazyGetUnitOfMeasurementsQuery();
-  const {
-    data: ItemSubCat,
-    isLoading: isItemSubCatLoading,
-    isSuccess: isItemSubCatSuccess,
-  } = useListItemSubCatQuery({});
+  const { data: ItemSubCat, isLoading: isItemSubCatLoading } =
+    useListItemSubCatQuery({});
   const [getItemTags, { data: itemTags, isSuccess: isItemTagSuccess }] =
     useLazyGetTagsByItemMasterQuery();
   const [getItemMasters, { data, isSuccess }] = useLazyReadQuery();
@@ -215,16 +206,16 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   useEffect(() => {
     if (mode == 'detail' && isSuccess) {
-      setValue('description', data?.description);
-      setValue('commodityCode', data?.commodityCode);
-      setValue('commodityName', data?.commodityName);
-      setValue('itemCategoryId', data?.itemCategoryId);
-      setValue('itemCategoryName', data?.itemCategoryName);
-      setValue('itemSubCategoryId', data?.itemSubCategoryId);
-      setValue('itemSubCategoryName', data?.itemSubCategoryName);
-      setValue('uOMId', data?.uOMId);
-      setValue('uOMName', data?.uOMName);
-      setValue('measurementId', data?.measurementId);
+      reset({
+        description: data?.description,
+        commodityCode: data?.commodityCode,
+        commodityName: data?.commodityName,
+        itemCategoryId: data?.itemCategoryId,
+        itemSubCategoryId: data?.itemSubCategoryId,
+        uOMId: data?.uOMId,
+        uOMName: data?.uOMName,
+        measurementId: data?.measurementId,
+      });
       setItemCode(data?.itemCode);
     }
   }, [data, isSuccess, mode, setValue]);
@@ -266,17 +257,16 @@ export function FormDetail({ mode }: FormDetailProps) {
     if (selectedCategories.length > 0) {
       const temp = selectedCategories[selectedCategories.length - 1];
       logger.log({ temp });
-      setValue('itemCategoryName', temp.itemCategoryName);
       setValue('itemCategoryId', temp.itemCategoryId);
     }
   }, [selectedCategories, setValue]);
 
   useEffect(() => {
-    if (isItemSubCatSuccess) {
-      setValue('itemSubCategoryName', ItemSubCat.items[0].name);
-      setValue('itemSubCategoryId', ItemSubCat.items[0].id);
+    if (categories) {
+      const temp = categories.items.filter((c) => c.id == itemCategoryId);
+      setItemCategoryName(temp?.[0]?.name ?? '');
     }
-  }, [ItemSubCat, isItemSubCatSuccess, setValue]);
+  }, [categories, itemCategoryId]);
 
   return (
     <Box pos="relative">
@@ -313,12 +303,12 @@ export function FormDetail({ mode }: FormDetailProps) {
           label="Item Category"
           withAsterisk
           readOnly
-          value={watch('itemCategoryName') ?? ''}
-          error={errors.itemCategoryName?.message as string}
+          value={itemCategoryName}
+          error={errors.itemCategoryId?.message as string}
           onClick={open}
         />
         <Controller
-          name="itemSubCategoryName"
+          name="itemSubCategoryId"
           control={control}
           render={({ field: { value, name, onChange } }) => (
             <Select

@@ -9,8 +9,6 @@ export interface ItemMaster {
   id: string;
   measurementId: string | null;
   itemTags: string[];
-  itemCategoryName: string;
   itemCategoryId: string | null;
-  itemSubCategoryName: string;
   itemSubCategoryId: string;
 }
