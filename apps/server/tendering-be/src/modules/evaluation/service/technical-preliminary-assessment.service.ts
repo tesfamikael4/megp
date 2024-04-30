@@ -404,8 +404,8 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
             submit: false,
           },
         });
-      if (teamCompleted.length > 0) {
-        response.isTeamLead.hasCompleted = false;
+      if (teamCompleted.length == 0) {
+        response.isTeamLead.hasCompleted = true;
       }
     }
 

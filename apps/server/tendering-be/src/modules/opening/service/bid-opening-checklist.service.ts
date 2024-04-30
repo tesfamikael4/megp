@@ -306,7 +306,18 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     return report;
   }
 
-  async openingMinutes(tenderId: string) {
+  async openingMinutes(tenderId: string): Promise<{
+    tender: {
+      id: any;
+      name: any;
+      procurementReferenceNumber: any;
+      submissionDeadline: any;
+      openingDate: any;
+    };
+    spdOpeningChecklists: any;
+    bidders: any[];
+    lots: any[];
+  }> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const tender = await manager.getRepository(Tender).findOne({
       where: {
@@ -318,6 +329,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
         // }
       },
       relations: {
+        bdsSubmission: true,
         lots: {
           bidOpeningCheckLists: true,
           teams: {
@@ -328,10 +340,36 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
           },
         },
         spd: {
-          spd: true,
+          spd: {
+            spdOpeningChecklists: true,
+          },
         },
       },
     });
-    return tender;
+
+    const response = {
+      tender: {
+        id: tender.id,
+        name: tender.name,
+        procurementReferenceNumber: tender.procurementReferenceNumber,
+        submissionDeadline: tender.bdsSubmission.submissionDeadline,
+        openingDate: tender.bdsSubmission.openingDate,
+      },
+      spdOpeningChecklists: tender.spd.spd.spdOpeningChecklists,
+      bidders: [],
+      lots: [],
+    };
+
+    for (const lot of tender.lots) {
+      response.lots.push({
+        id: lot.id,
+        name: lot.name,
+        tenderId: lot.tenderId,
+      });
+      for (const bidder of lot.bidRegistrationDetails) {
+        response.bidders.push(bidder.bidRegistration);
+      }
+    }
+    return response;
   }
 }
