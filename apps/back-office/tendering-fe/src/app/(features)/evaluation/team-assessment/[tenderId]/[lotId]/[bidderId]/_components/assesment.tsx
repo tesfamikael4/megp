@@ -3,7 +3,7 @@ import { useCheckBidAttributeMutation } from '@/store/api/tendering/preliminary-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Group, Select, Textarea } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 
@@ -21,14 +21,13 @@ export const ChecklistAssessment = () => {
     formState: { errors },
     control,
   } = useForm<any>({ resolver: zodResolver(checklistSchema) });
-  const { lotId, bidderId, tenderId } = useParams();
-  const searchParams = useSearchParams();
+  const { lotId, bidderId, tenderId, checklistId } = useParams();
   const [checkBidAttribute, { isLoading }] = useCheckBidAttributeMutation();
 
   const onSubmit = async (data: any) => {
     const tempData = {
       ...data,
-      spdPreliminaryEvaluationId: searchParams.get('checklistId'),
+      spdPreliminaryEvaluationId: checklistId,
       lotId,
       bidderId,
       tenderId,
