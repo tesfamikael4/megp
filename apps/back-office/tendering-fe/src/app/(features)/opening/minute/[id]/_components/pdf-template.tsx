@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 });
 
 // Create Document Component
-export const OpeningMinuteTemplate = () => (
+export const OpeningMinuteTemplate = ({ data }: any) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
@@ -46,8 +46,11 @@ export const OpeningMinuteTemplate = () => (
           data={[
             {
               key: 'Tender Title',
-              value:
-                'Consultancy Of Supervision ,Design And Contract Administration',
+              value: data?.tender?.name ?? '',
+            },
+            {
+              key: 'Tender Ref',
+              value: data?.tender?.procurementReferenceNumber ?? '',
             },
             {
               key: 'Published Date',
@@ -55,11 +58,11 @@ export const OpeningMinuteTemplate = () => (
             },
             {
               key: 'Closed Date',
-              value: 'Dec 5, 2021',
+              value: data?.tender?.submissionDeadline?.substring(0, 10) ?? '',
             },
             {
               key: 'Opened Date',
-              value: 'Dec 6,2021',
+              value: data?.tender?.openingDate?.substring(0, 10) ?? '',
             },
           ]}
         />
@@ -69,28 +72,8 @@ export const OpeningMinuteTemplate = () => (
         <Text style={styles.subTitle}>Checklists</Text>
         <ReactPdfTableGrid3
           config={{
-            columns: [{ accessor: 'title', title: 'Title' }],
-            data: [
-              {
-                title:
-                  'Internal auditor as independent party have been invited to witness the bid opening ceremony.',
-                status: 'checked',
-              },
-              {
-                title:
-                  'Other interested observers attended the bid opening ceremony.',
-                status: 'checked',
-              },
-              {
-                title:
-                  'Registered representatives from mass media attending the bid opening ceremony',
-                status: 'draft',
-              },
-              {
-                title: 'The Bid Opening Team has opened each bid',
-                status: 'draft',
-              },
-            ],
+            columns: [{ accessor: 'name', title: 'Name' }],
+            data: data?.spdOpeningChecklists ?? [],
           }}
         />
       </View>
@@ -100,8 +83,7 @@ export const OpeningMinuteTemplate = () => (
         <ReactPdfTableGrid3
           config={{
             columns: [
-              { accessor: 'name', title: 'Name' },
-              { accessor: 'email', title: 'Email' },
+              { accessor: 'bidderName', title: 'Name' },
               {
                 accessor: 'status',
                 title: 'Key Shared',
@@ -115,7 +97,7 @@ export const OpeningMinuteTemplate = () => (
                 render: (record) => '✅',
               },
             ],
-            data: bidders,
+            data: data?.bidders ?? [],
           }}
         />
       </View>
