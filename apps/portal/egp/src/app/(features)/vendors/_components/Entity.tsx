@@ -53,9 +53,9 @@ const Entity = ({ children }: { children: React.ReactNode }) => {
         },
 
         {
-          id: 'origin',
+          id: 'countryOfRegistration',
           header: 'Country',
-          accessorKey: 'origin',
+          accessorKey: 'countryOfRegistration',
           meta: {
             widget: 'expand',
           },

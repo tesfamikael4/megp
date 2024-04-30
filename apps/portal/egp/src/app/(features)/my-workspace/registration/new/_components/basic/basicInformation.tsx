@@ -127,7 +127,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
         'you_are_not_registered_on_mbrs'
       )
         NotificationService.requestErrorNotification(
-          'You are not registered on MBRS.',
+          "You don't have a valid Business Registration Number. Please Check again",
         );
       else NotificationService.requestErrorNotification('Error on Request');
     }

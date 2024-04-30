@@ -98,16 +98,15 @@ const ApplicationList = () => {
   return (
     <PageWrapper
       title="Track Application"
-      info="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
-            faucibus, enim ac dictum rutrum, velit quam pharetra mi, aliquet
-            interdum velit libero nec risus. Aliquam non libero dolor."
+      info="It provides a streamlined way for vendors to submit their information, documents, and applications, and for organizations to review, 
+      approve, and manage vendor registrations.."
       actions={
         <TextInput
           size="xs"
           maw={300}
           w="100%"
           leftSection={<IconSearch size={18} />}
-          placeholder="Search files by lorem, lorem"
+          placeholder="Search files "
           rightSectionWidth={30}
         />
       }

@@ -7,7 +7,7 @@ import {
   EntitySliceApi,
 } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
-const URL = process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/organizations/api';
+const URL = process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/api';
 
 export const noteSliceApi = createApi({
   reducerPath: 'notesApi',

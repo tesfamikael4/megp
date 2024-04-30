@@ -35,9 +35,6 @@ export const InfoCard = ({
             <Text className="font-extrabold" size="lg">
               {count}
             </Text>
-            <Text fw={600} c="primary.7">
-              +{percent}%
-            </Text>
           </Flex>
         </Box>
         <Box color="white" w={50} h={50} mb={10} p={5}>

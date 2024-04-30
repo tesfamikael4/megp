@@ -95,7 +95,7 @@ function StyledStepper() {
           <Stepper.Step
             completedIcon={5}
             label="Eligibility to Preferential Treatment"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+            description="Eligibility for preferential treatment refers to the criteria or conditions that individuals or entities must meet in order to qualify for certain benefits or advantage on different tenders of MANEPS"
           />
           <Stepper.Step
             completedIcon={4}
