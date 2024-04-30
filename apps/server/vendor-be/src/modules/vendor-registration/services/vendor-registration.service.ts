@@ -261,7 +261,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async formatData(data: any, profile: string = null) {
     delete data.basic?.address;
     const formattedData: any = { ...data };
-
     formattedData.areasOfBusinessInterest = [];
     for (const ba of data.areasOfBusinessInterest) {
       if (!profile) {
@@ -1770,15 +1769,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         baCatagories,
         serviceKey,
       );
-      let formData = {};
+
+      const formattedData = await this.formatData(result);
       if (serviceKey == ServiceKeyEnum.REGISTRATION_UPGRADE) {
         const upgrades = await this.formatUpgradeData(previousServices, businessAreas);
-        formData = { upgrades: upgrades, ...result };
+        formattedData.upgrades = [...upgrades];
       } else {
         const renewals = await this.formatRenewalData(previousServices);
-        formData = { renewals: renewals, ...result };
+        formattedData.renewals = [...renewals];
       }
-      const formattedData = await this.formatData(formData);
+
+
+      console.log(formattedData);
       const documentId = await this.generatePDFForReview(
         formattedData,
         user, title
@@ -1793,9 +1795,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         wfi,
         user,
       );
-
-
-
       for (const row of businessAreas) {
         row.instanceId = response.application?.id;
         row.applicationNumber = response.application?.applicationNumber;
@@ -1820,14 +1819,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
     return renewalData;
   }
+  formatDate(date) {
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+  }
+
   async formatUpgradeData(prevousBusinessClasses: BusinessAreaEntity[], newBusinessClasses: BusinessAreaEntity[]) {
     const requestedUpgrades = [];
     for (const bc of newBusinessClasses) {
       const previousPriceRange = prevousBusinessClasses.find((item) => item.category == bc.category)
       const formatData = {
         category: bc.category,
-        approvedAt: previousPriceRange.approvedAt,
-        expireDate: previousPriceRange.expireDate,
+        approvedAt: this.formatDate(previousPriceRange.approvedAt),
+        expireDate: this.formatDate(previousPriceRange.expireDate),
         proposedPriceRange: this.commonService.formatPriceRange(bc.servicePrice),
         previousPriceRange: this.commonService.formatPriceRange(previousPriceRange.servicePrice),
       }
