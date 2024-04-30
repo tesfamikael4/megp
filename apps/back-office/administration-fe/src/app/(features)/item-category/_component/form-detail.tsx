@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useCreateMutation,
   useDeleteMutation,
@@ -34,7 +34,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     reset,
     formState: { errors },
     register,
-    setValue,
+    control,
   } = useForm({
     defaultValues,
     resolver: zodResolver(itemCategorySchema),
@@ -138,7 +138,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
         name: selected?.name,
-        parentId: parentName,
+        parentId: selected?.parentId,
       });
     }
   }, [mode, reset, selected, selectedSuccess, parentName]);
@@ -153,12 +153,20 @@ export function FormDetail({ mode }: FormDetailProps) {
         error={errors?.name ? errors?.name?.message?.toString() : ''}
         required
       />
-      <Select
-        label="Parent"
-        data={parentOptions}
-        {...register('parentId')}
-        onChange={async (value) => value && (await setValue('parentId', value))}
-        error={errors?.parentId?.message && errors.parentId.message.toString()}
+      <Controller
+        name="parentId"
+        control={control}
+        render={({ field: { value, onChange } }) => (
+          <Select
+            label="Parent"
+            value={value}
+            onChange={onChange}
+            data={parentOptions}
+            error={
+              errors?.parentId?.message && errors.parentId.message.toString()
+            }
+          />
+        )}
       />
       <EntityButton
         mode={mode}
