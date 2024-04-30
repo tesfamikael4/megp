@@ -271,9 +271,8 @@ export const AreasOfBusinessInterestForm = ({
                     <Group grow>
                       <DatePickerInput
                         valueFormat="YYYY/MM/DD"
-                        required
-                        label="Activation Date"
-                        placeholder="Activation Date"
+                        label="PPDA Registration Issued Date"
+                        placeholder="PPDA Registration Issued Date"
                         leftSection={
                           <IconCalendar size={'1.2rem'} stroke={1.5} />
                         }

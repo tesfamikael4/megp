@@ -46,7 +46,6 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
     name: 'areasOfBusinessInterest',
   });
   const fieldState = control.getFieldState(name, control._formState);
-
   return (
     <Suspense>
       <Flex className="flex-col gap-6 w-full" justify={'flex-start'}>
@@ -69,12 +68,6 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
           />
         )}
         {fields.map((field, index) => {
-          console.log(
-            UserType[
-              register(`${name}.${index}.classification`, 'select').value
-            ],
-            register(`${name}.${index}.classification`, 'select').value,
-          );
           return (
             <Fieldset
               tt="uppercase"
@@ -194,7 +187,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                         )}
                       />
                     </Grid.Col>
-                    {register('basic.countryOfRegistration').value ===
+                    {control._getWatch('basic.countryOfRegistration') ===
                       'Malawi' &&
                       field.category === 'Works' && (
                         <>
@@ -216,8 +209,8 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                                   // name={`areasOfBusinessInterest.${index}.expiryDate`}}`}
                                   valueFormat="YYYY/MM/DD"
                                   required
-                                  label="Expiry Date"
-                                  placeholder="Expiry Date"
+                                  label="NCIC Registration Issued Date"
+                                  placeholder="NCIC Registration Issued Date"
                                   leftSection={
                                     <IconCalendar
                                       size={'1.2rem'}
