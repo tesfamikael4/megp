@@ -78,7 +78,7 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
       const spdTemplate = await manager.getRepository(SpdBidForm).findOneBy({
         type: 'bid-security',
         spd: {
-          tenders: {
+          tenderSpds: {
             tender: {
               lots: {
                 id: guarantee.lotId,

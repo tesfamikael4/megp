@@ -72,7 +72,7 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
       manager.getRepository(SpdOpeningChecklist).count({
         where: {
           spd: {
-            tenders: {
+            tenderSpds: {
               tender: {
                 lots: {
                   id: lotId,
@@ -106,7 +106,7 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
       manager.getRepository(SpdPreliminaryEvaluation).find({
         where: {
           spd: {
-            tenderSpd: {
+            tenderSpds: {
               tender: {
                 lots: {
                   id: lotId,
@@ -236,7 +236,7 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
       manager.getRepository(SpdPreliminaryEvaluation).find({
         where: {
           spd: {
-            tenderSpd: {
+            tenderSpds: {
               tender: {
                 lots: {
                   id: lotId,

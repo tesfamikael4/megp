@@ -88,7 +88,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       manager.getRepository(SpdOpeningChecklist).find({
         where: {
           spd: {
-            tenders: {
+            tenderSpds: {
               tender: {
                 lots: {
                   id: lotId,
@@ -159,7 +159,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       manager.getRepository(SpdOpeningChecklist).find({
         where: {
           spd: {
-            tenders: {
+            tenderSpds: {
               tender: {
                 lots: {
                   id: lotId,

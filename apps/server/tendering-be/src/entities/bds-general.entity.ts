@@ -29,8 +29,8 @@ export class BdsGeneral extends Audit {
   @Column()
   subContractAllowed: boolean;
 
-  @Column()
-  maximumPercentageContractingAllowed: boolean;
+  @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
+  maximumPercentageContractingAllowed: number;
 
   @Column()
   clarificationDeadline: Date;
