@@ -92,7 +92,6 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
       <Group grow>
         <TextInput
           label="Alternate Email"
-          withAsterisk
           {...register(`address.alternateEmail`)}
         />
         <TextInput

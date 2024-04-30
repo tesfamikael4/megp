@@ -167,9 +167,12 @@ export const formDataSchema = z
         })
         .optional(),
       district: z.string().optional(),
-      alternateEmail: z
-        .string()
-        .email({ message: 'Alternate Email must be a valid email address' }),
+      alternateEmail: z.union([
+        z.literal(''),
+        z
+          .string()
+          .email({ message: 'Alternate Email must be a valid email address' }),
+      ]),
       telephone: z
         .string()
         .min(10, {
