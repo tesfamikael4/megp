@@ -448,7 +448,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       where: {
         id,
         isUsed: false,
-        status: 'Approved',
+        status: ProcurementRequisitionStatusEnum.APPROVED,
       },
       relations: {
         procurementRequisitionItems: true,
