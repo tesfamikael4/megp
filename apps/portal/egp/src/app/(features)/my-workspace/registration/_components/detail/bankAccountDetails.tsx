@@ -35,6 +35,7 @@ export const BankAccountDetails: React.FC<Props> = ({
   register,
   disabled,
 }) => {
+  // console.log(control._getWatch(`bankAccountDetails`));
   const { data, isLoading, isSuccess, status } = useGetBankListQuery({});
 
   const bankList =
@@ -204,11 +205,13 @@ export const BankAccountDetails: React.FC<Props> = ({
                 </Group>
               )}
               <Group grow>
-                {control?._formValues?.bankAccountDetails.every(
+                {(control?._formValues?.bankAccountDetails.every(
                   (val: any) => !val.isDefualt,
-                ) && (
+                ) ||
+                  getInputProps('isDefualt', 'checkbox').value) && (
                   <Checkbox
                     label="Is Default"
+                    checked={getInputProps('isDefualt', 'checkbox').value}
                     {...getInputProps('isDefualt', 'checkbox')}
                     onChange={(event) => {
                       getInputProps('isDefualt', 'checkbox').onChange(
