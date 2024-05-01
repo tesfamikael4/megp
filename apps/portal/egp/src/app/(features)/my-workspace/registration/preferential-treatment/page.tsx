@@ -20,6 +20,8 @@ function Page() {
     return () => {};
   }, [requestInfo, router]);
 
+  if (requestInfo?.data?.basic.countryOfRegistration !== 'Malawi')
+    router.push(`/my-workspace/service`);
   return (
     <Suspense>
       <Box className="">

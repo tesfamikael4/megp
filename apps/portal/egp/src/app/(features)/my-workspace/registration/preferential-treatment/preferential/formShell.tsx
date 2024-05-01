@@ -26,6 +26,9 @@ import {
   useUploadPreferentialAttachmentsMutation,
 } from '@/store/api/preferential-treatment/preferential-treatment.api';
 import { ExtendedRegistrationReturnType } from '../../_components/detail/formShell';
+import { DatePickerInput } from '@mantine/dates';
+import { IconCalendar } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 
 export interface PassFormDataProps {
   register: (
@@ -183,9 +186,28 @@ export const PreferentialTreatmentForm = ({
                   label="Preferential Registration Number"
                   placeholder="Enter Preferential Registration Number"
                 />
-                <TextInput
+                {/* <Controller
+                  name={`preferentialRegistrationDate`}
+                  control={control}
+                  render={({ field }) => ( */}
+                <DatePickerInput
+                  // name={`areasOfBusinessInterest.${index}.activationDate`}
+                  valueFormat="YYYY/MM/DD"
+                  required
                   label="Preferential Registration Issued Date"
-                  placeholder="Enter Preferential Registration Number"
+                  placeholder="Preferential Registration Issued Date"
+                  leftSection={<IconCalendar size={'1.2rem'} stroke={1.5} />}
+                  maxDate={dayjs(new Date()).toDate()}
+                  // {...register(`areasOfBusinessInterest.${index}.activationDate`)}
+                  // onChange={async (value: any) =>
+                  //   value &&
+                  //   field.onChange(
+                  //     dayjs(value)
+                  //       .format('YYYY/MM/DD')
+                  //       .toString()
+                  //       .replace(/\//g, '-'),
+                  //   )
+                  // }
                 />
               </Group>
             )}

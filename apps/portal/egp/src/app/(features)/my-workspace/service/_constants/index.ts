@@ -26,7 +26,7 @@ export const services: { title; description; link }[] = [
   {
     title: 'Add Additional Services',
     description:
-      "Vendors initially register specifying a primary service category like 'Works' on Malawi's e-GP. They can later expand their services, like Goods, Services,' for a more comprehensive representation.",
+      "Vendors initially register specifying a primary service category like 'Works' on MANEPS. They can later expand their services, like Goods, Services,' for a more comprehensive representation.",
     link: '/my-workspace/registration/add-service/ppda',
   },
 ];

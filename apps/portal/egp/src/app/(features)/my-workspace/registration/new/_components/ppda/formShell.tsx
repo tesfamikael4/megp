@@ -147,7 +147,11 @@ export const AreasOfBusinessInterestForm = ({
   useEffect(() => {
     if (saveValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
-      router.push(`preferential`);
+      router.push(
+        initialValues.basic.countryOfRegistration === 'Malawian'
+          ? `preferential`
+          : 'payment',
+      );
     }
     if (saveValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');
@@ -306,7 +310,17 @@ export const AreasOfBusinessInterestForm = ({
               {checkAccess('ppda') ? (
                 <Button type="submit">Save & Continue</Button>
               ) : (
-                <Button onClick={() => router.push('payment')}>Continue</Button>
+                <Button
+                  onClick={() =>
+                    router.push(
+                      initialValues.basic.countryOfRegistration === 'Malawian'
+                        ? 'preferential'
+                        : 'payment',
+                    )
+                  }
+                >
+                  Continue
+                </Button>
               )}
             </Flex>
           )}

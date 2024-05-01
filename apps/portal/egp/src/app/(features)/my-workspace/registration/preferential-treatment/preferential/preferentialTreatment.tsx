@@ -173,8 +173,8 @@ export const PreferentialTreatment: React.FC<Props> = ({
                         <DatePickerInput
                           valueFormat="YYYY/MM/DD"
                           required
-                          label="Certificate Valid Period"
-                          placeholder="Certificate Valid Period"
+                          label="Certificate Validity Period"
+                          placeholder="Certificate Validity Period"
                           leftSection={
                             <IconCalendar size={'1.2rem'} stroke={1.5} />
                           }
@@ -206,8 +206,8 @@ export const PreferentialTreatment: React.FC<Props> = ({
                         <DatePickerInput
                           valueFormat="YYYY/MM/DD"
                           required
-                          label="Certificate Issued Period"
-                          placeholder="Certificate Issued Period"
+                          label="Certificate Issued Date"
+                          placeholder="Certificate Issued Date"
                           leftSection={
                             <IconCalendar size={'1.2rem'} stroke={1.5} />
                           }

@@ -6,6 +6,7 @@ export const formData: GetFormResponse = {
     level: '',
     status: '',
     userId: '',
+    isPPDARegistered: false,
   },
   basic: {
     name: '',

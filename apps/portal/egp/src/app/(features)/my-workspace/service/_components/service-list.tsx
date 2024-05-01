@@ -8,7 +8,11 @@ import {
 } from '@mantine/core';
 import { ServiceCard } from './service-card';
 import { useRouter } from 'next/navigation';
-import { useGetApprovedVendorInfoQuery } from '../../registration/_api/query';
+import {
+  useGetApprovedVendorInfoQuery,
+  useGetVendorInfoQuery,
+  useGetVendorQuery,
+} from '../../registration/_api/query';
 import { services } from '../_constants';
 
 export const ServiceLists = ({ isCompleted }: { isCompleted?: boolean }) => {
@@ -18,8 +22,11 @@ export const ServiceLists = ({ isCompleted }: { isCompleted?: boolean }) => {
       refetchOnMountOrArgChange: true,
     },
   );
+  const { data: ApprovedVendor, isLoading: isApprovedVendorLoading } =
+    useGetVendorQuery({});
   const router = useRouter();
-  if (isLoading) return <LoadingOverlay visible={isLoading} />;
+  if (isLoading || isApprovedVendorLoading)
+    return <LoadingOverlay visible={isLoading} />;
   else {
     const threeMonthsBeforeToday = new Date();
     threeMonthsBeforeToday.setMonth(threeMonthsBeforeToday.getMonth() - 3);
@@ -58,6 +65,11 @@ export const ServiceLists = ({ isCompleted }: { isCompleted?: boolean }) => {
               if (isCompleted && service.title === 'Add Additional Services')
                 return;
               if (!isExpired && service.title === 'Renew registration') return;
+              if (
+                ApprovedVendor?.basic.countryOfRegistration !== 'Malawi' &&
+                service.title === 'Eligibility for Preferential Treatment'
+              )
+                return;
               return <ServiceCard key={service.title} {...service} />;
             })}
           </SimpleGrid>
