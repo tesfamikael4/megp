@@ -18,6 +18,7 @@ import {
   EqcPreliminaryExamination,
   EqcDocumentaryEvidence,
   SpdDocumentaryEvidence,
+  SpdTemplate,
 } from 'src/entities';
 import { DocxService } from 'src/shared/docx/docx.service';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
@@ -110,6 +111,26 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
     return await this.tenderSpdRepository.findOneBy({ tenderId });
   }
 
+  async downloadBds(tenderId: string) {
+    const tender = await this.tenderSpdRepository.findOne({
+      where: { tenderId },
+      relations: {
+        spd: true,
+      },
+    });
+    if (!tender) {
+      throw new NotFoundException(`not_found`);
+    }
+
+    let document = tender.bds;
+
+    if (!tender.bds) {
+      document = await this.getDownloadUrl(tender.spdId, 'bds');
+    }
+
+    return await this.minIOService.generatePresignedDownloadUrl(document);
+  }
+
   async uploadBds(tenderId: string, file: Express.Multer.File) {
     const tender = await this.tenderSpdRepository.findOneBy({ tenderId });
 
@@ -129,6 +150,26 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
       ...tender,
       bds,
     };
+  }
+
+  async downloadScc(tenderId: string) {
+    const tender = await this.tenderSpdRepository.findOne({
+      where: { tenderId },
+      relations: {
+        spd: true,
+      },
+    });
+    if (!tender) {
+      throw new NotFoundException(`not_found`);
+    }
+
+    let document = tender.bds;
+
+    if (!tender.bds) {
+      document = await this.getDownloadUrl(tender.spdId, 'scc');
+    }
+
+    return await this.minIOService.generatePresignedDownloadUrl(document);
   }
 
   async uploadScc(tenderId: string, file: Express.Multer.File) {
@@ -258,5 +299,21 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
     await manager
       .getRepository(EqcDocumentaryEvidence)
       .insert(eqcDocumentaryEvidencePayload);
+  }
+
+  private async getDownloadUrl(spdId: string, type: string) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
+      spdId,
+      type,
+    });
+    if (!spdTemplate) {
+      throw new NotFoundException(`spd_not_found`);
+    } else if (!spdTemplate.documentDocx) {
+      throw new NotFoundException(`spd_document_not_found`);
+    }
+
+    return spdTemplate.documentDocx;
   }
 }
