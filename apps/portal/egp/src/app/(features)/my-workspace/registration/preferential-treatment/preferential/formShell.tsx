@@ -144,12 +144,16 @@ export const PreferentialTreatmentForm = ({
       (getValues().preferential as any).map(
         ({
           certiNumber,
+          category,
+          type,
           serviceId,
           certificateIssuedDate,
           certificateValidityPeriod,
         }) => {
           return {
             certiNumber,
+            category,
+            type,
             certificateIssuedDate,
             certificateValidityPeriod,
             serviceId,
