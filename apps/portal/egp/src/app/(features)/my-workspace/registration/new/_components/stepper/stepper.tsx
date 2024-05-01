@@ -14,7 +14,7 @@ function StyledStepper() {
   const router = useRouter();
   const path = usePathname();
   const routes =
-    !ISRVendor || ISRVendor?.basic.countryOfRegistration === 'Malawian'
+    !ISRVendor || ISRVendor?.basic.countryOfRegistration === 'Malawi'
       ? ['basic', 'detail', 'ppda', 'preferential', 'payment', 'doc', 'review']
       : ['basic', 'detail', 'ppda', 'payment', 'doc', 'review'];
 
@@ -88,7 +88,7 @@ function StyledStepper() {
             description="The registration process entails selecting categories (service, goods, and works), specifying a line of business, and establishing price ranges."
           />
           {(!ISRVendor ??
-            ISRVendor?.basic.countryOfRegistration === 'Malawian') && (
+            ISRVendor?.basic.countryOfRegistration === 'Malawi') && (
             <Stepper.Step
               completedIcon={5}
               label="Eligibility to Preferential Treatment"

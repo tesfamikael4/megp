@@ -32,6 +32,7 @@ import MultiCheckBox from '@/app/(features)/my-workspace/_components/multiCheckB
 import { preferential } from '../../_constants';
 import { useGetVendorQuery } from '../../_api/query';
 import * as z from 'zod';
+import FileUploader from '../../../_components/uploader';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 interface Props extends PassFormDataProps {
@@ -86,6 +87,7 @@ export const PreferentialTreatment: React.FC<Props> = ({
               category,
               type: category !== 'msme' ? category : '',
               certiNumber: '',
+              certificateUrl: '' as any,
               certificateIssuedDate: '',
               certificateValidityPeriod: '',
               serviceId:
@@ -224,9 +226,30 @@ export const PreferentialTreatment: React.FC<Props> = ({
                           }
                           error={
                             register(
-                              `preferential.${index}.certificateIssuedDate}`,
+                              `preferential.${index}.certificateIssuedDate`,
                             ).error
                           }
+                        />
+                      )}
+                    />
+                  </Grid.Col>
+                  <Grid.Col>
+                    <Controller
+                      name={`preferential.${index}.certificateUrl`}
+                      control={control}
+                      render={({ field: _field }) => (
+                        <FileUploader
+                          id={`preferential.${index}.certificateUrl`}
+                          label={`${field.category} Certificate`}
+                          placeholder="Choose File"
+                          error={
+                            register(`preferential.${index}.certificateUrl`)
+                              .error
+                          }
+                          onChange={(file: File) => {
+                            _field.onChange(file);
+                          }}
+                          // getImageUrl={invoiceSlipImageUrl}
                         />
                       )}
                     />

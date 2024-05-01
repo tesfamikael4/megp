@@ -128,7 +128,7 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
         <Box className="w-full mt-2">
           <PDFHighlighter
             title={data?.data?.data?.documentId as string}
-            objectId={data?.data?.data?.userId as string}
+            objectId={data?.data?.data?.fileId as string}
             pdfUrl={fileUrl}
           />
         </Box>

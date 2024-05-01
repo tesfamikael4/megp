@@ -35,7 +35,7 @@ export const tab = (countryOfRegistration) => [
     tabValue: 'lineOfBusiness',
     tabName: 'Line Of Business',
   },
-  ...(countryOfRegistration === 'Malawian'
+  ...(countryOfRegistration === 'Malawi'
     ? [
         {
           tabValue: 'preferential',
