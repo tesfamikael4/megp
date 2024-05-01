@@ -129,7 +129,7 @@ export const BankAccountDetails: React.FC<Props> = ({
               </Group>
 
               <Group grow>
-                {register('basic.countryOfRegistration', 'select').value ===
+                {control._getWatch('basic.countryOfRegistration') ===
                 'Malawi' ? (
                   <>
                     <Select
@@ -233,7 +233,7 @@ export const BankAccountDetails: React.FC<Props> = ({
                 >
                   <Stack gap={0}>
                     <CardItem
-                      label={getLabelByValue(bankList, value.bankId as string)}
+                      label={value.bankName}
                       icon={
                         <IconBuildingBank
                           size={25}

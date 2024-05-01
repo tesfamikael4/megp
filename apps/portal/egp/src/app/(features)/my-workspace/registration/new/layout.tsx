@@ -85,7 +85,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Flex className="py-2 px-3 w-full">{children}</Flex>
         </Flex>
         <Flex className={styles.nav}>
-          <StyledStepper />
+          <StyledStepper data={vendorInfo.data as any} />
         </Flex>
       </Flex>
     </PrivilegeContextProvider>

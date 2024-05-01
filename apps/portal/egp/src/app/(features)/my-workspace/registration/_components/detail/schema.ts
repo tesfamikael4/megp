@@ -19,7 +19,7 @@ export const contactPersonSchema = z.object({
 });
 export const bankAccountSchema = z.discriminatedUnion('bankType', [
   z.object({
-    bankId: z.string(),
+    bankId: z.string().nullable().optional(),
     hashValue: z.string(),
     bankType: z.literal('International'),
     bankName: z.string().min(3, { message: 'Bank name is required ' }),
@@ -53,7 +53,7 @@ export const bankAccountSchema = z.discriminatedUnion('bankType', [
     isDefualt: z.coerce.boolean().default(false).optional(),
   }),
   z.object({
-    bankId: z.string(),
+    bankId: z.string().nullable().optional(),
     hashValue: z.string(),
     bankType: z.literal('Local'),
     bankName: z.string().min(3, { message: 'Bank name is required ' }),
