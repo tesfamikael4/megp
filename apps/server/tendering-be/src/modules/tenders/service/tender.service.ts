@@ -262,10 +262,14 @@ export class TenderService extends EntityCrudService<Tender> {
       throw new BadRequestException('Tender not found');
     }
 
-    await this.tenderRepository.update(
-      { id: input.id },
-      { status: input.status },
-    );
+    if (tender.status == 'SUBMITTED' || input.status == 'PUBLISHED') {
+      await this.generateTenderInvitation({ id: tender.id });
+    }
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    await manager
+      .getRepository(Tender)
+      .update({ id: input.id }, { status: input.status });
   }
 
   async generateTenderDocument(input: GenerateTenderDocumentDto) {
@@ -360,7 +364,9 @@ export class TenderService extends EntityCrudService<Tender> {
   }
 
   async generateTenderInvitation(input: GenerateTenderDocumentDto) {
-    const tender = await this.tenderRepository.findOne({
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const tender = await manager.getRepository(Tender).findOne({
       where: {
         id: input.id,
       },
@@ -369,7 +375,6 @@ export class TenderService extends EntityCrudService<Tender> {
       },
     });
 
-    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
       spdId: tender.spd.spdId,
       type: 'invitation',
@@ -403,7 +408,7 @@ export class TenderService extends EntityCrudService<Tender> {
       BucketNameEnum.TENDERING_DOCUMENT,
     );
 
-    await this.tenderRepository.update(tender.id, {
+    await manager.getRepository(Tender).update(tender.id, {
       tenderInvitation: tenderInvitation as any,
     });
 
