@@ -92,9 +92,7 @@ const PdfDocumentTemplate = async (data) => {
               <Text style={{ marginBottom: '8px' }}>
                 Registration Request Preferential Service
               </Text>
-            ) : (
-              ''
-            )}
+            ) : null}
             {data?.preferentialRequests?.length ? (
               <ReactPdfTableGrid3
                 config={{
@@ -309,10 +307,10 @@ const PdfDocumentTemplate = async (data) => {
                   },
                   { accessor: 'priceRange', title: 'Price Range' },
 
-                  {
-                    accessor: 'lineOfBusiness',
-                    title: 'Line Of Business',
-                  },
+                  // {
+                  //   accessor: 'lineOfBusiness',
+                  //   title: 'Line Of Business',
+                  // },
                 ],
                 data: data?.areasOfBusinessInterest,
               }}
@@ -373,6 +371,13 @@ const PdfDocumentTemplate = async (data) => {
 };
 
 export default PdfDocumentTemplate;
+const formatKeyForLabel = (key) => {
+  const words = key.split(/(?=[A-Z])/);
+  const capitalizedWords = words.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1),
+  );
+  return capitalizedWords.join(' ');
+};
 
 const ReactPdfTable = ({ data }: any) => {
   return (
@@ -381,7 +386,7 @@ const ReactPdfTable = ({ data }: any) => {
         {data?.map((row: any, i: number) => (
           <View key={i} style={styles.row}>
             <Text style={styles.row1}>
-              <Text style={styles.bold}>{row.key}</Text>
+              <Text style={styles.bold}>{formatKeyForLabel(row.key)}</Text>
             </Text>
             <Text style={styles.row2}>{row.value}</Text>
           </View>

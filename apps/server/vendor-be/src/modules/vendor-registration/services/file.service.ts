@@ -127,7 +127,7 @@ export class FileService {
   uploadToRemoteServer(file: Express.Multer.File, command: CreateFileDto) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const filename =
-      uniqueSuffix + '_' + command.fileName + '.' + file.mimetype.split('/')[1];
+      uniqueSuffix + '.' + file.mimetype.split('/')[1];
     const bucket = command.bucketName;
     const metaData = {
       'Content-Type': 'application/octet-stream',
@@ -448,9 +448,9 @@ export class FileService {
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
       if (!result) throw new HttpException('Incomplete Information', 404);
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileId = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileUploadName = 'SupportingDocument';
-      const fileId = `${uniqueSuffix}_${file.originalname}`;
+      // const fileId = `${uniqueSuffix}_${file.originalname}`;
       const filename = `${userId}/${fileUploadName}/${fileId}`;
       const metaData = {
         'Content-Type': file.mimetype,

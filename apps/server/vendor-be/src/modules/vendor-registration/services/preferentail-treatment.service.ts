@@ -304,6 +304,8 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     formattedData.bankAccountDetails = [];
     for (const bank of data.bankAccountDetails) {
       const formated = this.commonService.reduceAttributes(bank);
+      const isDefault = formated.isDefault ? 'Yes' : 'No';
+      formated.isDefault = isDefault;
       formattedData.bankAccountDetails.push(formated);
     }
     //new model changes
