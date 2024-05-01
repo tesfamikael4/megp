@@ -108,8 +108,14 @@ export function FormDetail({ mode }: FormDetailProps) {
       });
       router.push('/measurement');
     } catch (err) {
+      const customMsg = err?.data?.message?.includes(
+        'update or delete on table "measurements" violates foreign key constraint',
+      )
+        ? 'Measurement has associated Unit Of Measurements. Please delete them first.'
+        : 'Unexpected response structure from the server';
+
       notifications.show({
-        message: 'Error in Deleting Measurement.',
+        message: customMsg,
         title: 'Error',
         color: 'red',
       });
