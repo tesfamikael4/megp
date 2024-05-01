@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VendorsEntity } from 'src/entities';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
@@ -19,7 +19,7 @@ export class VendorDiscoveryService {
     private readonly baService: BusinessAreaService,
     private readonly utilService: HandlingCommonService,
     private readonly ptService: PreferentailTreatmentService,
-  ) {}
+  ) { }
 
   async getvendors(
     query: CollectionQuery,
@@ -37,6 +37,30 @@ export class VendorDiscoveryService {
       VendorInitiationResponseDto.toResponse(item),
     );
     response.total = total;
+    return response;
+  }
+  async getVendorByRegistrationNumber(registrationNumber: string) {
+    const vendorData = await this.vendorRepository.findOne({
+      where:
+      {
+        registrationNumber: registrationNumber
+
+      },
+
+    });
+    if (!vendorData) throw new NotFoundException();
+    const response = {
+      vendorId: vendorData.id,
+      name: vendorData.name,
+      registrationNumber: vendorData.registrationNumber,
+      registrationIssuedDate: vendorData.registrationIssuedDate,
+      businessRegistrationNumber: vendorData.businessRegistrationNumber,
+      countryOfRegistration: vendorData.countryOfRegistration,
+      status: vendorData.status,
+      ...vendorData.metaData.address,
+
+    }
+
     return response;
   }
   async getVendorById(vendorId: string) {

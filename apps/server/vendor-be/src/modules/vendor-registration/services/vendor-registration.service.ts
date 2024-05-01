@@ -1004,6 +1004,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     vendorEntity.tinNumber = isrVendorData.basic?.tinNumber;
     vendorEntity.userId = isrVendorData.userId;
     vendorEntity.isrVendorId = isrVendorData.id;
+    vendorEntity.registrationIssuedDate = isrVendorData.basic?.registrationIssuedDate !== "" ? isrVendorData.basic?.registrationIssuedDate : null;
+    vendorEntity.businessRegistrationNumber = isrVendorData.basic?.registrationNumber !== "" ? isrVendorData.basic?.registrationNumber : null;
     vendorEntity.lineOfBusiness = isrVendorData.lineOfBusiness;
     const accounts = isrVendorData.bankAccountDetails.map((item) => {
       if (item.bankId == '') {
