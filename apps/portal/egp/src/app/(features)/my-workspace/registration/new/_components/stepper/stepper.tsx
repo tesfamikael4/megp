@@ -7,10 +7,10 @@ import { useGetVendorQuery } from '../../../_api/query';
 import { Suspense, useCallback, useEffect } from 'react';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { Section } from '@megp/core-fe';
+import { GetFormResponse } from '@/models/vendorRegistration';
 
-function StyledStepper() {
+function StyledStepper({ data: ISRVendor }: { data: GetFormResponse }) {
   const { accessLevel, updateStatus, updateAccess } = usePrivilege();
-  const { data: ISRVendor } = useGetVendorQuery({});
   const router = useRouter();
   const path = usePathname();
   const routes =
@@ -58,6 +58,8 @@ function StyledStepper() {
       router.push(routes[stepIndex]);
   };
 
+  console.log({ ISRVendor });
+
   return (
     <Suspense>
       <Section
@@ -87,7 +89,7 @@ function StyledStepper() {
             label="Purpose of Registration"
             description="The registration process entails selecting categories (service, goods, and works), specifying a line of business, and establishing price ranges."
           />
-          {(!ISRVendor ??
+          {(!ISRVendor ||
             ISRVendor?.basic.countryOfRegistration === 'Malawi') && (
             <Stepper.Step
               completedIcon={5}
