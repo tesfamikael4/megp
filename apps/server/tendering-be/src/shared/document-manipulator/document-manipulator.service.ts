@@ -10,7 +10,7 @@ import axios from 'axios';
 
 @Injectable()
 export class DocumentManipulatorService {
-  constructor(private readonly minIOService: MinIOService) {}
+  constructor(private readonly minIOService: MinIOService) { }
 
   async mergePdf(pdfBuffers: Buffer[]) {
     try {
