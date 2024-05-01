@@ -63,6 +63,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
 
     const bidderId = req.user.organization.id;
     const bidderName = req.user.organization.name;
+    const bidderRegistrationNo = req.user.organization.code;
 
     const bidBookmarkExists = await manager
       .getRepository(BidBookmark)
@@ -92,8 +93,9 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
 
     const bidRegistration = this.bidSecurityRepository.create({
       tenderId: itemData.tenderId,
-      bidderId: bidderId,
-      bidderName: bidderName,
+      bidderId,
+      bidderName,
+      bidderRegistrationNo,
       salt: salt,
       envelopType: tender.bdsSubmission.envelopType,
     });
@@ -191,6 +193,17 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
       response.items = result;
     }
     return response;
+  }
+
+  async getRegisteredBidByTenderId(tenderId: string, req?: any): Promise<any> {
+    return await this.bidSecurityRepository.findOne({
+      where: { tenderId: tenderId, bidderId: req.user.organization.id },
+      relations: {
+        tender: {
+          lots: true,
+        },
+      },
+    });
   }
 
   async submitLot(payload: CreateBidRegistrationStatusDto, user: any) {

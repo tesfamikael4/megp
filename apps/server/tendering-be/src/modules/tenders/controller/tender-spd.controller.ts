@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Param,
   Post,
   UploadedFile,
@@ -29,6 +30,12 @@ export class TenderSpdController extends ExtraCrudController<TenderSpd>(
     super(tenderSpdService);
   }
 
+  @Get('/download-bds/:tenderId')
+  @AllowAnonymous()
+  async downloadBds(@Param('tenderId') tenderId: string) {
+    return await this.tenderSpdService.downloadBds(tenderId);
+  }
+
   @Post('/upload-bds/:tenderId')
   @AllowAnonymous()
   @ApiConsumes('multipart/form-data')
@@ -38,6 +45,12 @@ export class TenderSpdController extends ExtraCrudController<TenderSpd>(
     @UploadedFile() file: Express.Multer.File,
   ) {
     return await this.tenderSpdService.uploadBds(tenderId, file);
+  }
+
+  @Get('/download-scc/:tenderId')
+  @AllowAnonymous()
+  async downloadScc(@Param('tenderId') tenderId: string) {
+    return await this.tenderSpdService.downloadScc(tenderId);
   }
 
   @Post('/upload-scc/:tenderId')

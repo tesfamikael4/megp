@@ -49,6 +49,17 @@ export class BidRegistrationController extends ExtraCrudController<BidRegistrati
     return await this.bidSecurityService.getMyRegisteredBids(query, req);
   }
 
+  @Get('registered-bid/:tenderId')
+  async getRegisteredBidByTenderId(
+    @Param('tenderId') tenderId: string,
+    @Req() req?: any,
+  ) {
+    return await this.bidSecurityService.getRegisteredBidByTenderId(
+      tenderId,
+      req,
+    );
+  }
+
   @Post('submit')
   async submitLot(
     @Body() itemData: CreateBidRegistrationStatusDto,
