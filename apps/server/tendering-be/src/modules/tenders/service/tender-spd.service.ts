@@ -136,6 +136,9 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
 
   async uploadBds(tenderId: string, file: Express.Multer.File) {
     const tender = await this.tenderSpdRepository.findOneBy({ tenderId });
+    if (!tender) {
+      throw new NotFoundException(`not_found`);
+    }
 
     const result = await this.docxService.validateDocument(file.buffer, [
       'public_body',
@@ -180,6 +183,9 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
 
   async uploadScc(tenderId: string, file: Express.Multer.File) {
     const tender = await this.tenderSpdRepository.findOneBy({ tenderId });
+    if (!tender) {
+      throw new NotFoundException(`not_found`);
+    }
 
     const result = await this.docxService.validateDocument(file.buffer, [
       'public_body',

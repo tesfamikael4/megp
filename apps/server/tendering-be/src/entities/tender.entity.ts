@@ -80,6 +80,9 @@ export class Tender extends Audit {
   @Column({ type: 'jsonb', nullable: true })
   tenderDocument: any;
 
+  @Column({ type: 'jsonb', nullable: true })
+  tenderInvitation: any;
+
   @OneToMany(
     () => ProcurementTechnicalTeam,
     (procurementTechnicalTeam) => procurementTechnicalTeam.tender,
