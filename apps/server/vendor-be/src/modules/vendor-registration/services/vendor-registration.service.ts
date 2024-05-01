@@ -123,6 +123,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async submitVendorInformation(data: any, userInfo: any): Promise<any> {
     const fileId = uuidv4();
     try {
+      data.basic.status = ApplicationStatus.SUBMITTED;
       const title = 'New Registration Application';
       // const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
       const tempVendor = await this.isrVendorsRepository.findOne({
@@ -288,6 +289,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     formattedData.bankAccountDetails = [];
     for (const bank of data.bankAccountDetails) {
       const formated = this.commonService.reduceAttributes(bank);
+      const isDefault = formated.isDefualt ? 'Yes' : 'No';
+      formated.isDefualt = isDefault;
       formattedData.bankAccountDetails.push(formated);
     }
     //new model changes
@@ -313,6 +316,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async generatePDFForReview(data: any, user: any, title: string) {
     try {
       const subfolder = 'application-doc';
+      // const d = await this.formatData(data);
       const result = await PdfDocumentTemplate({ ...data, title: title });
       const readStream = new Readable().wrap(result);
       const fileId = await this.fileService.uploadReadable(
@@ -1023,7 +1027,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     vendorEntity.userId = isrVendorData.userId;
     vendorEntity.isrVendorId = isrVendorData.id;
     vendorEntity.registrationIssuedDate = isrVendorData.basic?.registrationIssuedDate !== "" ? isrVendorData.basic?.registrationIssuedDate : null;
-    vendorEntity.businessRegistrationNumber = isrVendorData.basic?.registrationNumber !== "" ? isrVendorData.basic?.registrationNumber : null;
+    vendorEntity.businessRegistrationNumber = this.commonService.generateRandomString(10);// isrVendorData.basic?.registrationNumber !== "" ? isrVendorData.basic?.registrationNumber : null;
     vendorEntity.lineOfBusiness = isrVendorData.lineOfBusiness;
     const accounts = isrVendorData.bankAccountDetails.map((item) => {
       if (item.bankId == '') {
