@@ -21,6 +21,9 @@ import { AreasOfBusinessInterest } from './areasOfBusinessInterest';
 import { ExtendedRegistrationReturnType } from '../../../_components/detail/formShell';
 import { useGetLineOfBusinessesQuery } from '@/store/api/administrationApi';
 import { getLineOfBusinesseSelectOptions } from '../../../_utils';
+import { DatePickerInput } from '@mantine/dates';
+import { IconCalendar } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 
 export const lineOfBusinessSchema = z.object({
   id: z
@@ -232,6 +235,7 @@ export const AreasOfBusinessInterestForm = ({
                         <TextInput
                           label="PPDA Registration Number"
                           placeholder="Enter PPDA Registration Number"
+                          {...extendedRegister(`ppdaRegistrationNumber`)}
                         />
                       )}
                   </Group>
@@ -242,9 +246,25 @@ export const AreasOfBusinessInterestForm = ({
                   ) &&
                     data.basic.countryOfRegistration === 'Malawi' && (
                       <Group grow>
-                        <TextInput
+                        <DatePickerInput
+                          valueFormat="YYYY/MM/DD"
                           label="PPDA Registration Issued Date"
-                          placeholder="Enter PPDA Registration Number"
+                          placeholder="PPDA Registration Issued Date"
+                          leftSection={
+                            <IconCalendar size={'1.2rem'} stroke={1.5} />
+                          }
+                          maxDate={dayjs(new Date()).toDate()}
+                          onChange={async (value: any) =>
+                            value &&
+                            (await extendedRegister(
+                              `ppdaRegistrationDate`,
+                            ).onChange(
+                              dayjs(value)
+                                .format('YYYY/MM/DD')
+                                .toString()
+                                .replace(/\//g, '-'),
+                            ))
+                          }
                         />
                       </Group>
                     )}

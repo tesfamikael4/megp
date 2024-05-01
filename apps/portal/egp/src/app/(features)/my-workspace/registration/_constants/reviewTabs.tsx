@@ -1,4 +1,4 @@
-export const tab = [
+export const tab = (countryOfRegistration) => [
   {
     tabValue: 'basic',
     tabName: 'Basic Registration',
@@ -35,10 +35,14 @@ export const tab = [
     tabValue: 'lineOfBusiness',
     tabName: 'Line Of Business',
   },
-  {
-    tabValue: 'preferential',
-    tabName: 'Eligibility for Preferential Services',
-  },
+  ...(countryOfRegistration === 'Malawian'
+    ? [
+        {
+          tabValue: 'preferential',
+          tabName: 'Eligibility for Preferential Services',
+        },
+      ]
+    : []),
   {
     tabValue: 'paymentReceipt',
     tabName: 'Payment Receipts',
@@ -111,10 +115,14 @@ export const formatColumns = (countryOfRegistration) => ({
   ],
 
   service: [{ name: 'name', displayName: 'Service Type' }],
-  preferential: [
-    { name: 'type', displayName: 'Preferential Service' },
-    { name: 'certiNumber', displayName: 'Certificate Number' },
-    { name: 'certificateValidityPeriod', displayName: 'Validity Period' },
-    { name: 'certificateIssuedDate', displayName: 'Issued Date' },
-  ],
+  ...(countryOfRegistration === 'Malawi'
+    ? {
+        preferential: [
+          { name: 'type', displayName: 'Preferential Service' },
+          { name: 'certiNumber', displayName: 'Certificate Number' },
+          { name: 'certificateValidityPeriod', displayName: 'Validity Period' },
+          { name: 'certificateIssuedDate', displayName: 'Issued Date' },
+        ],
+      }
+    : {}),
 });

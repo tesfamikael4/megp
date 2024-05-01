@@ -38,7 +38,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
           votingRights: 0,
           authorityToAppointGov: false,
         }}
-        title="Beneficial Ownership"
+        title="Beneficial Ownership and Shareholders"
         itemSchema={itemSchema}
         disabled={disabled}
         modalBody={(getInputProps) => (

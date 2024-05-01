@@ -18,12 +18,11 @@ function FormPreview({
   data: any;
   uniqueTabs?: { tabValue: string; tabName: string }[];
 }) {
-  const tabs = [...uniqueTabs, ...tab];
-
   const [url, setUrl] = useState({ url: '', filename: '' });
   const [opened, { close, open }] = useDisclosure(false);
   const { user } = useAuth();
 
+  const tabs = [...uniqueTabs, ...tab(data.basic.countryOfRegistration)];
   const formatColumns = _formatColumns(data.basic.countryOfRegistration);
 
   return (

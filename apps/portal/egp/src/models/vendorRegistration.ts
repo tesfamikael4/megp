@@ -185,6 +185,7 @@ export interface GetFormResponse extends FormData {
     userId: string; //session
     status: string;
     level: string;
+    isPPDARegistered: boolean;
   };
   id?: string;
 }

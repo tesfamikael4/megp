@@ -195,7 +195,16 @@ export default function SupportingDocuments() {
           })}
         </Flex>
         <Flex justify="end" className="gap-2 mt-4">
-          <Button onClick={() => router.push('preferential')} variant="outline">
+          <Button
+            onClick={() =>
+              router.push(
+                requestInfo.data?.initial?.isPPDARegistered
+                  ? 'preferential'
+                  : 'payment',
+              )
+            }
+            variant="outline"
+          >
             Back
           </Button>
           <Button type="submit">Save</Button>

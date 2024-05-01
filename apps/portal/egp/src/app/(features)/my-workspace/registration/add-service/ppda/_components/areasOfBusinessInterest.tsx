@@ -56,8 +56,6 @@ export const AreasOfBusinessInterest = ({
     useGetServicePriceRangeQuery({
       key: 'new',
     });
-  const [saveAdditionalService, { isLoading: isSaving }] =
-    useAddAdditionalServiceMutation({});
 
   const fieldState = control.getFieldState(
     'areasOfBusinessInterest',
@@ -208,23 +206,55 @@ export const AreasOfBusinessInterest = ({
                         )}
                       />
                     </Grid.Col>
-                    {register('basic.countryOfRegistration').value ===
-                      'Malawi' && (
-                      <>
-                        <Grid.Col span={6}>
-                          <TextInput
-                            label="NCIC Registration Number"
-                            placeholder="Enter NCIC Registration Number"
-                          />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                          <TextInput
-                            label="NCIC Registration Issued Date"
-                            placeholder="Enter NCIC Registration Issued Date"
-                          />
-                        </Grid.Col>
-                      </>
-                    )}
+                    {data?.basic.countryOfRegistration === 'Malawi' &&
+                      field.category === 'Works' && (
+                        <>
+                          <Grid.Col span={6}>
+                            <TextInput
+                              label="NCIC Registration Number"
+                              placeholder="Enter NCIC Registration Number"
+                              {...register(
+                                `${name}.${index}.ncicRegistrationNumber`,
+                              )}
+                            />
+                          </Grid.Col>
+                          <Grid.Col span={6}>
+                            <Controller
+                              name={`areasOfBusinessInterest.${index}.ncicRegistrationDate`}
+                              control={control}
+                              render={({ field }) => (
+                                <DatePickerInput
+                                  // name={`areasOfBusinessInterest.${index}.expiryDate`}}`}
+                                  valueFormat="YYYY/MM/DD"
+                                  required
+                                  label="NCIC Registration Issued Date"
+                                  placeholder="NCIC Registration Issued Date"
+                                  leftSection={
+                                    <IconCalendar
+                                      size={'1.2rem'}
+                                      stroke={1.5}
+                                    />
+                                  }
+                                  {...register(
+                                    `areasOfBusinessInterest.${index}.ncicRegistrationDate`,
+                                  )}
+                                  value={new Date('2023/02/12')}
+                                  maxDate={dayjs(new Date()).toDate()}
+                                  onChange={async (value: any) =>
+                                    value &&
+                                    field.onChange(
+                                      dayjs(value)
+                                        .format('YYYY/MM/DD')
+                                        .toString()
+                                        .replace(/\//g, '-'),
+                                    )
+                                  }
+                                />
+                              )}
+                            />
+                          </Grid.Col>
+                        </>
+                      )}
                   </>
                 )}
               </Grid>

@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 import {
   useGetInvoiceQuery,
+  useGetVendorQuery,
   useLazyUploadPaymentSlipQuery,
 } from '../../_api/query';
 import PaymentMethod from '../_components/payment/payment-method';
@@ -32,6 +33,9 @@ const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 function Page() {
   const router = useRouter();
   const { checkAccess } = usePrivilege();
+  const { data: isrVendor, isLoading: isISRVendorLoading } = useGetVendorQuery(
+    {},
+  );
   const [invoiceSlipImageUrl, setInvoiceSlipImageUrl] = useState<string | null>(
     null,
   );
@@ -135,7 +139,7 @@ function Page() {
     uploadFileInfo.isError,
   ]);
 
-  if (invoiceInfo.isLoading) {
+  if (invoiceInfo.isLoading || isISRVendorLoading) {
     return (
       <Box pos="relative" className="w-full h-full">
         <LoadingOverlay
@@ -149,7 +153,7 @@ function Page() {
   if (invoiceInfo.isError) {
     return null;
   }
-  if (!invoiceInfo.data?.invoice) {
+  if (!invoiceInfo.data?.invoice || isrVendor?.initial.isPPDARegistered) {
     return router.push('doc');
   }
 

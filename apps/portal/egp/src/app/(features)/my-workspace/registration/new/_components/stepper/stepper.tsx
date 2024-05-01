@@ -10,18 +10,13 @@ import { Section } from '@megp/core-fe';
 
 function StyledStepper() {
   const { accessLevel, updateStatus, updateAccess } = usePrivilege();
-
+  const { data: ISRVendor } = useGetVendorQuery({});
   const router = useRouter();
   const path = usePathname();
-  const routes = [
-    'basic',
-    'detail',
-    'ppda',
-    'preferential',
-    'payment',
-    'doc',
-    'review',
-  ];
+  const routes =
+    !ISRVendor || ISRVendor?.basic.countryOfRegistration === 'Malawian'
+      ? ['basic', 'detail', 'ppda', 'preferential', 'payment', 'doc', 'review']
+      : ['basic', 'detail', 'ppda', 'payment', 'doc', 'review'];
 
   const { data, error } = useGetVendorQuery(
     {},
@@ -92,11 +87,14 @@ function StyledStepper() {
             label="Purpose of Registration"
             description="The registration process entails selecting categories (service, goods, and works), specifying a line of business, and establishing price ranges."
           />
-          <Stepper.Step
-            completedIcon={5}
-            label="Eligibility to Preferential Treatment"
-            description="Eligibility for preferential treatment refers to the criteria or conditions that individuals or entities must meet in order to qualify for certain benefits or advantage on different tenders of MANEPS"
-          />
+          {(!ISRVendor ??
+            ISRVendor?.basic.countryOfRegistration === 'Malawian') && (
+            <Stepper.Step
+              completedIcon={5}
+              label="Eligibility to Preferential Treatment"
+              description="Eligibility for preferential treatment refers to the criteria or conditions that individuals or entities must meet in order to qualify for certain benefits or advantage on different tenders of MANEPS"
+            />
+          )}
           <Stepper.Step
             completedIcon={4}
             label="Payment"
