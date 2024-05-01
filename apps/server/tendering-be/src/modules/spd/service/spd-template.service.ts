@@ -29,24 +29,12 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     file: Express.Multer.File,
   ) {
     try {
-      let result = [];
-      if (type === 'bid-security') {
-        result = await this.docxService.validateDocument(file.buffer, [
-          'public_body',
-          'bidderName',
-          'bidDate',
-          'nameOfContract',
-          'bankName',
-          'country',
-          'day',
-          'month',
-          'year',
-        ]);
-      } else {
-        result = await this.docxService.validateDocument(file.buffer, [
-          'public_body',
-        ]);
-      }
+      const validationProperties = this.getValidationProperties(type);
+
+      const result = await this.docxService.validateDocument(
+        file.buffer,
+        validationProperties,
+      );
 
       if (result.length != 0) {
         throw new BadRequestException(result);
@@ -149,5 +137,27 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
 
   async merge() {
     return await this.documentManipulatorService.merge();
+  }
+
+  private getValidationProperties(type: string) {
+    let validationProperties = [];
+    if (type == 'main-document') {
+      validationProperties = ['public_body', 'bds', 'scc'];
+    } else if (type === 'bid-security') {
+      validationProperties = [
+        'public_body',
+        'bidderName',
+        'bidDate',
+        'nameOfContract',
+        'bankName',
+        'country',
+        'day',
+        'month',
+        'year',
+      ];
+    } else {
+      validationProperties = ['public_body'];
+    }
+    return validationProperties;
   }
 }
