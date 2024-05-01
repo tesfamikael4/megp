@@ -86,6 +86,34 @@ const PdfDocumentTemplate = async (data) => {
               />
             ) : null}
           </View>
+          {/* request of PT */}
+          <View style={styles.activity}>
+            {data?.preferentialRequests?.length ? (
+              <Text style={{ marginBottom: '8px' }}>
+                Registration Request Preferential Service
+              </Text>
+            ) : (
+              ''
+            )}
+            {data?.preferentialRequests?.length ? (
+              <ReactPdfTableGrid3
+                config={{
+                  columns: [
+                    {
+                      accessor: 'type',
+                      title: 'Preferential service',
+                    },
+                    { accessor: 'certiNumber', title: 'certificate Number' },
+                    {
+                      accessor: 'status',
+                      title: 'Status',
+                    },
+                  ],
+                  data: data?.preferentialRequests,
+                }}
+              />
+            ) : null}
+          </View>
 
           {/* Basic Registration */}
           <View style={styles.activity}>
@@ -308,29 +336,31 @@ const PdfDocumentTemplate = async (data) => {
 
           {/* preferential information Documents */}
           <View style={styles.activity}>
-            <Text style={{ marginBottom: '8px' }}>
-              Eligibility for Preferential Services
-            </Text>
-            <ReactPdfTableGrid3
-              config={{
-                columns: [
-                  {
-                    accessor: 'type',
-                    title: 'Preferential service',
-                  },
-                  { accessor: 'certiNumber', title: 'certificate Number' },
-                  // {
-                  //   accessor: 'certificateIssuedDate',
-                  //   title: 'Issued Date',
-                  // },
-                  // {
-                  //   accessor: 'certificateValidityPeriod',
-                  //   title: 'Validity Period',
-                  // },
-                ],
-                data: data?.preferential,
-              }}
-            />
+            {data?.preferential?.length ? (
+              <Text style={{ marginBottom: '8px' }}>
+                Eligibility for Preferential Services
+              </Text>
+            ) : (
+              ''
+            )}
+            {data?.preferential?.length ? (
+              <ReactPdfTableGrid3
+                config={{
+                  columns: [
+                    {
+                      accessor: 'type',
+                      title: 'Preferential service',
+                    },
+                    { accessor: 'certiNumber', title: 'certificate Number' },
+                    {
+                      accessor: 'status',
+                      title: 'Status',
+                    },
+                  ],
+                  data: data?.preferential,
+                }}
+              />
+            ) : null}
           </View>
 
           {/* Supporting Documents */}

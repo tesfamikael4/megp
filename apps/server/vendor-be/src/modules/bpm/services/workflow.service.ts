@@ -119,10 +119,9 @@ export class WorkflowService {
     const task = await this.taskService.getTaskByNameAndBP(serviceBp.id, init);
     if (!task) throw new NotFoundException('Task Not found');
     taskHandler.currentState = init;
-    const fileId = uuidv4();
     taskHandler.instanceId = wfinstance.id;
     taskHandler.taskId = task.id;
-    taskHandler.data = { fileId: fileId, ...dto.data };
+    taskHandler.data = { ...dto.data };
 
     try {
       const insertedTaskHandler =
@@ -378,7 +377,7 @@ export class WorkflowService {
     switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
         if (
-          command.action.toUpperCase() == ApplicationStatus.ADJUST.toUpperCase()
+          command.action.toUpperCase() == ApplicationStatus.ADJUST.toUpperCase() || command.action.toUpperCase() == "NO"
           // ||  command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
         ) {
           const result = await this.notify(
@@ -436,6 +435,33 @@ export class WorkflowService {
         console.log(TaskTypes.PAYMENTCONFIRMATION, command);
         break;
       case TaskTypes.PAYMENT:
+        break;
+      case TaskTypes.CONFIRMATION:
+        if (
+          command.action.toUpperCase() == 'NO'
+          // ||  command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
+        ) {
+          const result = await this.notify(
+            wfi,
+            stateMetadata['apiUrl'],
+            command,
+          );
+          if (notification) {
+            this.notificationService.sendAdjustmentNotification(
+              notification.userId,
+              notification.applicationNumber,
+              notification.serviceName,
+            );
+          }
+
+          if (result) {
+            const vendor = await this.vendorRegService.findOne(wfi.requestorId);
+            if (vendor) {
+              vendor.canRequest = true;
+              await this.vendorRegService.update(vendor.id, vendor);
+            }
+          }
+        }
         break;
     }
     return true;
@@ -530,7 +556,7 @@ export class WorkflowService {
     // const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
     // url = vendor_url + '/vendor-registrations/adjust-vendor-services';
     // console.log("vendor_url", vendor_url);
-    const action = metaDate.action == 'ADJUST' ? 'Adjust' : '';
+    const action = (metaDate.action == 'ADJUST' || metaDate.action == 'NO') ? 'Adjust' : '';
     const payload = {
       isrVendorId: wfi.requestorId,
       instanceId: wfi.id,

@@ -6,14 +6,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
-
+import { v4 as uuidv4 } from 'uuid';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import {
   CreateWorkflowInstanceDto,
   GotoNextStateDto,
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
-import { BusinessAreaEntity, IsrVendorsEntity } from 'src/entities';
+import { BusinessAreaEntity, IsrVendorsEntity, VendorsEntity } from 'src/entities';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 import { FileService } from 'src/modules/vendor-registration/services/file.service';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
@@ -21,6 +21,8 @@ import { ApplicationStatus } from 'src/modules/handling/enums/application-status
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 import { BpServiceService } from 'src/modules/services/services/service.service';
 import { CreatePTDto } from '../dto/preferentail-treatment.dto';
+import PdfDocumentTemplate from 'src/modules/certificates/templates/pdf-tamplate';
+import { Readable } from 'typeorm/platform/PlatformTools';
 
 @Injectable()
 export class PreferentailTreatmentService extends EntityCrudService<PreferentialTreatmentsEntity> {
@@ -31,10 +33,13 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     private readonly bpService: BusinessProcessService,
     @InjectRepository(IsrVendorsEntity)
     private readonly srRepository: Repository<IsrVendorsEntity>,
+    @InjectRepository(VendorsEntity)
+    private readonly vendorRepository: Repository<VendorsEntity>,
     private readonly baService: BusinessAreaService,
     private readonly uploaderService: FileService,
     private readonly commonService: HandlingCommonService,
     private readonly serviceService: BpServiceService,
+    private readonly fileService: FileService,
   ) {
     super(ptRepository);
   }
@@ -93,6 +98,28 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     }
     return response;
   }
+  async generatePDFForReview(data: any, user: any, title: string) {
+    try {
+      const subfolder = 'application-doc';
+      const result = await PdfDocumentTemplate({ ...data, title: title });
+      const readStream = new Readable().wrap(result);
+      const fileId = await this.fileService.uploadReadable(
+        readStream,
+        user.id,
+        subfolder,
+      );
+
+      if (!(result instanceof Readable)) {
+        throw new Error(
+          'Certificate function did not return a Readable stream',
+        );
+      }
+      return fileId;
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Internal Server Error' + error);
+    }
+  }
   async getSubmittedPTByUserId(
     userId: any,
   ): Promise<PreferentialTreatmentsEntity[]> {
@@ -127,10 +154,44 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     instanceId: string = null,
     applicationNumber = null,
   ) {
-    const vendor = await this.srRepository.findOne({
+    let data: any = {};
+    const title = "Registration of Preferential Treatment Application";
+    let vendor: any = await this.vendorRepository.findOne({
       where: { userId: user.id },
-    });
+      relations: {
+        beneficialOwnershipShareholders: true,
+        vendorAccounts: true,
+        areasOfBusinessInterest: { price: true },
+      }
+    })
+    if (!vendor) {
+      vendor = await this.srRepository.findOne({
+        where: { userId: user.id },
+      });
+      data = vendor;
+    } else {
+      data = {
+        bankAccountDetails: vendor.vendorAccounts,
+        beneficialOwnershipShareholders: vendor.beneficialOwnershipShareholders,
+        businessSizeAndOwnership: vendor.metaData.businessSizeAndOwnership,
+        areasOfBusinessInterest: vendor.areasOfBusinessInterest,
+        basic: {
+          name: vendor.name,
+          formOfEntity: vendor.formOfEntity,
+          countryOfRegistration: vendor.countryOfRegistration,
+          tinNumber: vendor.tinNumber,
+          registrationNumber: vendor.registrationNumber,
+          status: vendor.status,
+
+        },
+        address: vendor.metaData.address,
+        contactPersons: vendor.metaData.contactPersons,
+        lineOfBusiness: [...vendor.lineOfBusiness]
+      }
+    }
+
     if (!vendor) throw new HttpException('First, Register as a vendor', 404);
+
     const serviceIds = dtos.map((item) => item.serviceId);
     const bps = await this.bpService.findBpWithServiceByServiceIds(serviceIds);
     for (const dto of dtos) {
@@ -164,10 +225,21 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           wfi.bpId = bpId;
           wfi.requestorId = vendor.id;
           wfi.serviceId = dto.serviceId;
-          const { serviceId, id, ...preferntial } = entity;
-
-
-          wfi.data = { vendor: vendor, preferential: { ...preferntial } };
+          const { serviceId, id, ...preferential } = entity;
+          const ptServices = await this.ptRepository.find({
+            where: { status: ApplicationStatus.APPROVED, userId: user.id, service: { key: In(this.commonService.getPreferencialServices()) } },
+            relations: { service: true }
+          })
+          data.preferential = [...ptServices];
+          data.preferentialRequests = [];
+          data.preferentialRequests.push(preferential);
+          const formattedData = await this.formatData(data);
+          const documentId = await this.generatePDFForReview(
+            formattedData,
+            user, title
+          );
+          const fileId = uuidv4();
+          wfi.data = { ...formattedData, documentId: documentId, fileId: fileId };
           wfi.user = user;
           const baexisted =
             await this.baService.getUserInprogressBusinessAreaByServiceId(
@@ -178,7 +250,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
             const nextCommand = new GotoNextStateDto();
             nextCommand.instanceId = baexisted.instanceId;
             nextCommand.action = 'ISR';
-            nextCommand.data = wfi.data;
+
+            nextCommand.data = { ...formattedData, documentId: documentId, fileId: fileId, preferential: { ...preferential } };
+            // nextCommand.data = wfi.data;
             return await this.workflowService.gotoNextStep(nextCommand, user);
           } else if (baexisted?.status == ApplicationStatus.ADJUSTMENT && instanceId != null) {
             baexisted.status = ApplicationStatus.PENDING;
@@ -207,6 +281,48 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     }
 
     return true;
+  }
+  //price
+  async formatData(data: any) {
+    delete data.basic?.address;
+    const formattedData: any = { ...data };
+    formattedData.areasOfBusinessInterest = [];
+    for (const ba of data.areasOfBusinessInterest) {
+      if (ba.price) {
+        const bi = {
+          category: ba.category,
+          lineOfBusiness: ba.lineOfBusiness?.map((lob: any) => lob.name),
+          priceRange: this.commonService.formatPriceRange(ba.price),
+        };
+        formattedData.areasOfBusinessInterest.push(bi);
+      }
+
+
+
+    }
+
+    formattedData.bankAccountDetails = [];
+    for (const bank of data.bankAccountDetails) {
+      const formated = this.commonService.reduceAttributes(bank);
+      formattedData.bankAccountDetails.push(formated);
+    }
+    //new model changes
+    formattedData.beneficialOwnershipShareholders = [];
+    for (const share of data?.beneficialOwnershipShareholders) {
+      const formatted = this.commonService.reduceAttributes(share);
+      formattedData.beneficialOwnershipShareholders.push(formatted);
+    }
+    //new model changes
+    formattedData.businessSizeAndOwnership =
+      this.commonService.reduceAttributes(data?.businessSizeAndOwnership);
+
+    formattedData.preferential = [];
+    for (const pt of data?.preferential ?? []) {
+      const formated = this.commonService.reduceAttributes(pt);
+      formattedData.preferential.push(formated);
+    }
+
+    return formattedData;
   }
   async uploadPreferentialAttachments(attachments: any, user: any) {
     const subdirectory = 'preferential-documents';

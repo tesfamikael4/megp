@@ -15,12 +15,12 @@ export class CreatePTDto {
   @ApiProperty()
   @IsNotEmpty()
   type: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  certificateValidityPeriod: Date;
-  @ApiProperty()
-  @IsNotEmpty()
-  certificateIssuedDate: Date;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // certificateValidityPeriod: Date;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // certificateIssuedDate: Date;
   @ApiProperty()
   @IsNotEmpty()
   status: string;
@@ -34,8 +34,8 @@ export class CreatePTDto {
     entity.certiNumber = dto.certiNumber;
     entity.category = dto.category;
     entity.type = dto.type;
-    entity.certificateIssuedDate = dto.certificateIssuedDate;
-    entity.certificateValidityPeriod = dto.certificateValidityPeriod;
+    // entity.certificateIssuedDate = dto.certificateIssuedDate;
+    //entity.certificateValidityPeriod = dto.certificateValidityPeriod;
 
     return entity;
   }
@@ -54,8 +54,8 @@ export class UpdatePTDto extends CreatePTDto {
     entity.certiNumber = dto.certiNumber;
     entity.category = dto.category;
     entity.type = dto.type;
-    entity.certificateIssuedDate = dto.certificateIssuedDate;
-    entity.certificateValidityPeriod = dto.certificateValidityPeriod;
+    // entity.certificateIssuedDate = dto.certificateIssuedDate;
+    // entity.certificateValidityPeriod = dto.certificateValidityPeriod;
     return entity;
   }
 }
@@ -76,8 +76,8 @@ export class PTResponse extends UpdatePTDto {
     response.certiNumber = entity.certiNumber;
     response.category = entity.category;
     response.type = entity.type;
-    response.certificateIssuedDate = entity.certificateIssuedDate;
-    response.certificateValidityPeriod = entity.certificateValidityPeriod;
+    // response.certificateIssuedDate = entity.certificateIssuedDate;
+    // response.certificateValidityPeriod = entity.certificateValidityPeriod;
     return response;
   }
 }
