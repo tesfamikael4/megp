@@ -128,7 +128,10 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
       document = await this.getDownloadUrl(tender.spdId, 'bds');
     }
 
-    return await this.minIOService.generatePresignedDownloadUrl(document);
+    const presignedUrl =
+      await this.minIOService.generatePresignedDownloadUrl(document);
+
+    return { presignedUrl };
   }
 
   async uploadBds(tenderId: string, file: Express.Multer.File) {
@@ -169,7 +172,10 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
       document = await this.getDownloadUrl(tender.spdId, 'scc');
     }
 
-    return await this.minIOService.generatePresignedDownloadUrl(document);
+    const presignedUrl =
+      await this.minIOService.generatePresignedDownloadUrl(document);
+
+    return { presignedUrl };
   }
 
   async uploadScc(tenderId: string, file: Express.Multer.File) {
