@@ -24,6 +24,12 @@ export class VendorDiscoveryController {
 
         return await this.vendorService.getVendorById(vendorId);
     }
+    @AllowAnonymous()
+    @Get('get-vendor-by-registration-number/:registrationNumber')
+    async getVendorByRegistrationNumber(@Param('registrationNumber') vendorId: string) {
+
+        return await this.vendorService.getVendorByRegistrationNumber(vendorId);
+    }
 
 
 

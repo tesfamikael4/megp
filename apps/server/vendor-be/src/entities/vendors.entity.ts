@@ -25,6 +25,8 @@ export class VendorsEntity extends Audit {
   tinNumber: string;
   @Column({ nullable: true, unique: true })
   registrationNumber: string;
+  @Column({ nullable: true, unique: true })
+  businessRegistrationNumber: string;
   @Column()
   userId: string;
   @Column({ name: 'isrVendorId', nullable: true })
@@ -40,6 +42,8 @@ export class VendorsEntity extends Audit {
   canRequest: boolean;
   @Column({ nullable: true })
   name: string;
+  @Column({ nullable: true })
+  registrationIssuedDate: Date;
   @Column({ nullable: true })
   level: string;
   @Column({ nullable: true })
