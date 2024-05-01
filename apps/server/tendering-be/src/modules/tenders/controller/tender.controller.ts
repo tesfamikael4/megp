@@ -55,12 +55,26 @@ export class TenderController extends EntityCrudController<Tender>(options) {
   }
 
   @Post('generate-tender-document')
+  @AllowAnonymous()
   async generateTenderDocument(@Body() itemData: GenerateTenderDocumentDto) {
     return this.tenderService.generateTenderDocument(itemData);
   }
 
   @Get('download-tender-document/:id')
-  async downloadInvitation(@Param('id') id: string) {
-    return await this.tenderService.downloadInvitation(id);
+  @AllowAnonymous()
+  async downloadTenderDocument(@Param('id') id: string) {
+    return await this.tenderService.downloadTenderDocument(id);
+  }
+
+  @Post('generate-invitation-document')
+  @AllowAnonymous()
+  async generateTenderInvitation(@Body() itemData: GenerateTenderDocumentDto) {
+    return this.tenderService.generateTenderInvitation(itemData);
+  }
+
+  @Get('download-invitation-document/:id')
+  @AllowAnonymous()
+  async downloadInvitationDocument(@Param('id') id: string) {
+    return await this.tenderService.downloadTenderInvitation(id);
   }
 }

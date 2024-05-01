@@ -295,27 +295,35 @@ export class TenderService extends EntityCrudService<Tender> {
       throw new BadRequestException('spd_document_not_found');
     }
 
-    //TODO: Convert bds to html
     const bdsHtml = await this.downloadAndConvert(tender.spd.bds);
 
-    //TODO: Convert scc to html
     const sccHtml = await this.downloadAndConvert(tender.spd.scc);
 
-    //TODO: add bds and scc to main-document
+    const fileReadable = await this.minIOService.downloadBuffer(
+      spdTemplate.documentDocx,
+    );
+    const fileBuffer =
+      await this.documentManipulatorService.streamToBuffer(fileReadable);
+
     const mainDocumentBuffer =
-      await this.documentManipulatorService.populateTemplate(bdsHtml, {
-        bds: `${bdsHtml}`,
-        scc: `${sccHtml}`,
+      await this.documentManipulatorService.populateTemplate(fileBuffer, {
+        public_body: tender.organizationName,
+        procurement_reference_no: tender.procurementReferenceNumber,
+        project_name: tender.name,
+        date_of_issue_of_bidding: new Date().toDateString(),
+        subject_of_procurement: tender.name,
+        bds: bdsHtml,
+        scc: sccHtml,
+        tor: '<p>Test Tor</p>',
       });
 
-    //TODO: convert document to pdf and upload it to minIO
     const pdfBuffer =
       await this.documentManipulatorService.convertDocxToPdf(
         mainDocumentBuffer,
       );
     const tenderDocument = await this.minIOService.uploadBuffer(
       pdfBuffer,
-      '',
+      tender.name + '-bidding-document.pdf',
       'application/pdf',
       BucketNameEnum.TENDERING_DOCUMENT,
     );
@@ -330,7 +338,7 @@ export class TenderService extends EntityCrudService<Tender> {
     };
   }
 
-  async downloadInvitation(id: string) {
+  async downloadTenderDocument(id: string) {
     try {
       const tender = await this.tenderRepository.findOne({
         where: {
@@ -351,11 +359,86 @@ export class TenderService extends EntityCrudService<Tender> {
     }
   }
 
+  async generateTenderInvitation(input: GenerateTenderDocumentDto) {
+    const tender = await this.tenderRepository.findOne({
+      where: {
+        id: input.id,
+      },
+      relations: {
+        spd: true,
+      },
+    });
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
+      spdId: tender.spd.spdId,
+      type: 'invitation',
+    });
+    if (!spdTemplate) {
+      throw new BadRequestException('spd_document_not_found');
+    }
+
+    const fileReadable = await this.minIOService.downloadBuffer(
+      spdTemplate.documentDocx,
+    );
+
+    const fileBuffer =
+      await this.documentManipulatorService.streamToBuffer(fileReadable);
+
+    const invitationDocumentBuffer =
+      await this.documentManipulatorService.populateTemplate(fileBuffer, {
+        public_body: tender.organizationName,
+        procurement_reference_no: tender.procurementReferenceNumber,
+        subject_of_procurement: tender.name,
+      });
+
+    const pdfBuffer = await this.documentManipulatorService.convertDocxToPdf(
+      invitationDocumentBuffer,
+    );
+
+    const tenderInvitation = await this.minIOService.uploadBuffer(
+      pdfBuffer,
+      tender.name + '-invitation-document.pdf',
+      'application/pdf',
+      BucketNameEnum.TENDERING_DOCUMENT,
+    );
+
+    await this.tenderRepository.update(tender.id, {
+      tenderInvitation: tenderInvitation as any,
+    });
+
+    return {
+      ...tender,
+      tenderInvitation,
+    };
+  }
+
+  async downloadTenderInvitation(id: string) {
+    try {
+      const tender = await this.tenderRepository.findOne({
+        where: {
+          id,
+        },
+      });
+      if (!tender.tenderInvitation) {
+        throw new Error('tender_document_not_found');
+      }
+
+      const presignedDownload =
+        await this.minIOService.generatePresignedDownloadUrl(
+          tender.tenderInvitation,
+        );
+      return { presignedDownload };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   private async downloadAndConvert(fileInfo: any) {
     const fileReadable = await this.minIOService.downloadBuffer(fileInfo);
     const fileBuffer =
       await this.documentManipulatorService.streamToBuffer(fileReadable);
-    const html = await this.documentManipulatorService.convertDocument(
+    const html = await this.documentManipulatorService.convertDocxToHTMLString(
       fileBuffer,
       '.html',
     );

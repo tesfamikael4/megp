@@ -13,6 +13,7 @@ import { EncryptionHelperService } from './encryption-helper.service';
 import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 import { BidResponseDocument } from 'src/entities/bid-response-document.entity';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
+import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
 
 @Injectable()
 export class BidResponseDocumentService {
@@ -96,6 +97,7 @@ export class BidResponseDocumentService {
       .findOne({
         where: {
           documentType: itemData.documentType,
+          bidFormId: itemData.bidFormId,
           bidRegistrationDetail: {
             bidRegistration: {
               tenderId: itemData.tenderId,
@@ -110,13 +112,27 @@ export class BidResponseDocumentService {
         },
       });
     if (!bidResponseDocument) {
-      throw new BadRequestException('bid_response_not_found');
+      const spdBidForm = await manager.getRepository(SpdBidForm).findOneBy({
+        id: itemData.bidFormId,
+      });
+
+      const presignedUrl = await this.minIOService.generatePresignedDownloadUrl(
+        spdBidForm.documentDocx,
+      );
+
+      return { presignedUrl };
     }
+
     const decryptedValue = this.encryptionHelperService.decryptedData(
       bidResponseDocument.value,
       itemData.password,
       bidResponseDocument.bidRegistrationDetail.bidRegistration.salt,
     );
-    return decryptedValue;
+
+    const presignedUrl = await this.minIOService.generatePresignedDownloadUrl(
+      JSON.parse(decryptedValue).value,
+    );
+
+    return { presignedUrl };
   }
 }

@@ -124,6 +124,17 @@ export class DocumentManipulatorService {
     return convertedBuffer;
   }
 
+  async convertDocxToHTMLString(inputBuffer: Buffer, fileType: string) {
+    const libreConverterAsync = promisify(libre.convert);
+    const convertedBuffer = await libreConverterAsync(
+      inputBuffer,
+      fileType,
+      undefined,
+    );
+
+    return convertedBuffer.toString();
+  }
+
   async streamToBuffer(readableStream: any): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const chunks = [];
@@ -137,6 +148,7 @@ export class DocumentManipulatorService {
     const buffer = await createReport({
       template,
       data,
+      failFast: false,
     });
     return Buffer.from(buffer);
   }
