@@ -16,7 +16,7 @@ export class CreateBidResponseDto {
   lotId: string;
 
   @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
   documentType: string;
 
@@ -82,7 +82,7 @@ export class CreateBidResponseTenderDto {
   tenderId: string;
 
   @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
   documentType: string;
 
