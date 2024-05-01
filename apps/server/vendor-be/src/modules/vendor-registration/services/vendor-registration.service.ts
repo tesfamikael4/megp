@@ -58,7 +58,7 @@ import { MBRSResponseDto, RecordDTO } from '../dto/api-mbrs.dto';
 import { StringifyOptions } from 'querystring';
 import { NCICResponseDTO } from '../dto/api-ncic.dto';
 import { Readable } from 'typeorm/platform/PlatformTools';
-
+import { NcicMockData } from '../ncic.mock';
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
   constructor(
@@ -123,8 +123,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async submitVendorInformation(data: any, userInfo: any): Promise<any> {
     const fileId = uuidv4();
     try {
-
-      const title = "New Registration Application"
+      const title = 'New Registration Application';
       // const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
       const tempVendor = await this.isrVendorsRepository.findOne({
         where: { userId: userInfo.id, status: Not(VendorStatusEnum.REJECTED) },
@@ -164,10 +163,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const documentId = await this.generatePDFForReview(
             formattedData,
             userInfo,
-            title
+            title,
           );
 
-          dto.data = { documentId: documentId, fileId: fileId, ...formattedData };
+          dto.data = {
+            documentId: documentId,
+            fileId: fileId,
+            ...formattedData,
+          };
           dto.instanceId = instanceId;
           workflowInstance = await this.workflowService.gotoNextStep(
             dto,
@@ -189,9 +192,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           console.log(formattedData);
           const documentId = await this.generatePDFForReview(
             formattedData,
-            userInfo, title
+            userInfo,
+            title,
           );
-          wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
+          wfi.data = {
+            documentId: documentId,
+            fileId: fileId,
+            ...formattedData,
+          };
           workflowInstance = await this.workflowService.intiateWorkflowInstance(
             wfi,
             userInfo,
@@ -276,7 +284,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         };
         formattedData.areasOfBusinessInterest.push(bi);
       }
-
     }
     formattedData.bankAccountDetails = [];
     for (const bank of data.bankAccountDetails) {
@@ -333,7 +340,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   ): Promise<any> {
     const fileId = uuidv4();
     const subDirectory = 'paymentReceipt';
-    const title = "Service Registration Application";
+    const title = 'Service Registration Application';
     try {
       const vendorData = await this.vendorRepository.findOne({
         where: { userId: user.id },
@@ -375,11 +382,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const wfi: CreateWorkflowInstanceDto = new CreateWorkflowInstanceDto();
       if (invoice?.paymentStatus == PaymentStatus.PAID) {
         const baCatagories = invoice.paymentDetail.map((item) => item.category);
-        const businessAreas =
-          await this.baService.getBusinessUpgradesOrRenewal(
-            baCatagories,
-            ServiceKeyEnum.NEW_REGISTRATION,
-          );
+        const businessAreas = await this.baService.getBusinessUpgradesOrRenewal(
+          baCatagories,
+          ServiceKeyEnum.NEW_REGISTRATION,
+        );
         let status: any = ApplicationStatus.PENDING;
         let instanceId = null;
         if (businessAreas.length) {
@@ -393,9 +399,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const documentId = await this.generatePDFForReview(
             formattedData,
             user,
-            title
+            title,
           );
-          wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
+          wfi.data = {
+            documentId: documentId,
+            fileId: fileId,
+            ...formattedData,
+          };
 
           dto.instanceId = instanceId;
           const workflowInstance = await this.workflowService.gotoNextStep(
@@ -418,9 +428,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const documentId = await this.generatePDFForReview(
             formattedData,
             user,
-            title
+            title,
           );
-          wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
+          wfi.data = {
+            documentId: documentId,
+            fileId: fileId,
+            ...formattedData,
+          };
           const resonse = await this.workflowService.intiateWorkflowInstance(
             wfi,
             user,
@@ -467,7 +481,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
           data.initial.status.trim() === VendorStatusEnum.SAVE
         ) {
-          let ncicData: NCICResponseDTO | '' = null;
+          let ncicData: NCICResponseDTO;
           let fppaData = null;
           const numberOfService = data.areasOfBusinessInterest.length;
           //to get all the registration fee for each service
@@ -486,13 +500,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 row.category === BusinessCategories.WORKS &&
                 ncicData == null
               ) {
-                ncicData = await this.fetchFromExternalApi(
-                  `ncic-vendors/${isrVendor.tinNumber}`,
+                ncicData = NcicMockData.find(
+                  (ncic) => ncic.tin == isrVendor.tinNumber,
                 );
+                // ncicData = await this.fetchFromExternalApi(
+                //   `ncic-vendors/${isrVendor.tinNumber}`,
+                // );
                 if (!ncicData) {
-                  isrVendor.initial.status = VendorStatusEnum.SAVE;
-                  isrVendor.initial.level = VendorStatusEnum.PPDA;
-                  await this.isrVendorsRepository.save(isrVendor);
+                  throw new BadRequestException('not_registered_on_ncic');
+                  // isrVendor.initial.status = VendorStatusEnum.SAVE;
+                  // isrVendor.initial.level = VendorStatusEnum.PPDA;
+                  // await this.isrVendorsRepository.save(isrVendor);
                 } else {
                   isrVendor.basic.district = ncicData?.district;
                   isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
@@ -1718,7 +1736,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     user: any,
     paymentReceiptDto: ReceiptDto,
     serviceKey: string,
-    title: string
+    title: string,
   ) {
     const userId = user.id;
     const fileId = uuidv4();
@@ -1770,7 +1788,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const wfi: CreateWorkflowInstanceDto = new CreateWorkflowInstanceDto();
       // const serviceBA = invoice.service.businessAreas;
       const baCatagories = invoice.paymentDetail.map((item) => item.category);
-      const previousServices = await this.baService.getPreviousApprovedServices(vendor.id, baCatagories);
+      const previousServices = await this.baService.getPreviousApprovedServices(
+        vendor.id,
+        baCatagories,
+      );
       const businessAreas = await this.baService.getBusinessUpgradesOrRenewal(
         baCatagories,
         serviceKey,
@@ -1778,22 +1799,25 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
       const formattedData = await this.formatData(result);
       if (serviceKey == ServiceKeyEnum.REGISTRATION_UPGRADE) {
-        const upgrades = await this.formatUpgradeData(previousServices, businessAreas);
+        const upgrades = await this.formatUpgradeData(
+          previousServices,
+          businessAreas,
+        );
         formattedData.upgrades = [...upgrades];
       } else {
         const renewals = await this.formatRenewalData(previousServices);
         formattedData.renewals = [...renewals];
       }
 
-
       console.log(formattedData);
       const documentId = await this.generatePDFForReview(
         formattedData,
-        user, title
+        user,
+        title,
       );
       wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
       wfi.bpId = invoice.service.businessProcesses.find(
-        (item) => item.isActive == true
+        (item) => item.isActive == true,
       ).id;
       wfi.serviceId = invoice.serviceId;
       wfi.requestorId = result.id;
@@ -1819,8 +1843,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         category: bc.category,
         approvedAt: this.formatDate(bc.approvedAt),
         expireDate: this.formatDate(bc.expireDate),
-        previousPriceRange: this.commonService.formatPriceRange(bc.servicePrice),
-      }
+        previousPriceRange: this.commonService.formatPriceRange(
+          bc.servicePrice,
+        ),
+      };
       renewalData.push(formatData);
     }
     return renewalData;
@@ -1829,24 +1855,30 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
   }
 
-  async formatUpgradeData(prevousBusinessClasses: BusinessAreaEntity[], newBusinessClasses: BusinessAreaEntity[]) {
+  async formatUpgradeData(
+    prevousBusinessClasses: BusinessAreaEntity[],
+    newBusinessClasses: BusinessAreaEntity[],
+  ) {
     const requestedUpgrades = [];
     for (const bc of newBusinessClasses) {
-      const previousPriceRange = prevousBusinessClasses.find((item) => item.category == bc.category)
+      const previousPriceRange = prevousBusinessClasses.find(
+        (item) => item.category == bc.category,
+      );
       const formatData = {
         category: bc.category,
         approvedAt: this.formatDate(previousPriceRange.approvedAt),
         expireDate: this.formatDate(previousPriceRange.expireDate),
-        proposedPriceRange: this.commonService.formatPriceRange(bc.servicePrice),
-        previousPriceRange: this.commonService.formatPriceRange(previousPriceRange.servicePrice),
-      }
+        proposedPriceRange: this.commonService.formatPriceRange(
+          bc.servicePrice,
+        ),
+        previousPriceRange: this.commonService.formatPriceRange(
+          previousPriceRange.servicePrice,
+        ),
+      };
       requestedUpgrades.push(formatData);
     }
     return requestedUpgrades;
-
   }
-
-
 
   async getApprovedVendorById(vendorId: string) {
     const vendorData = await this.vendorRepository.findOne({
@@ -2359,7 +2391,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
   async submitVendorProfileUpdate(profileData: any, userInfo: any) {
-    const title = "Profile Update Application";
+    const title = 'Profile Update Application';
     const fileId = uuidv4();
     try {
       const vendor = await this.vendorRepository.findOne({
@@ -2385,12 +2417,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         if (updateInfo?.status == ApplicationStatus.ADJUSTMENT) {
           updateInfo.status = ApplicationStatus.SUBMITTED;
           updateInfo.profileData = profileData;
-          const formattedData = await this.formatData(updateInfo.profileData, ServiceKeyEnum.PROFILE_UPDATE);
+          const formattedData = await this.formatData(
+            updateInfo.profileData,
+            ServiceKeyEnum.PROFILE_UPDATE,
+          );
           const documentId = await this.generatePDFForReview(
             formattedData,
-            userInfo, title
+            userInfo,
+            title,
           );
-          const response = await this.goToworkflow(userInfo, { documentId: documentId, fileId: fileId, ...formattedData });
+          const response = await this.goToworkflow(userInfo, {
+            documentId: documentId,
+            fileId: fileId,
+            ...formattedData,
+          });
           await this.profileInfoRepository.save(updateInfo);
           return response;
         } else if (updateInfo?.status == ApplicationStatus.DRAFT) {
@@ -2414,10 +2454,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         wfi.bpId = bp.id;
         wfi.serviceId = bp.serviceId;
         wfi.requestorId = vendor.id;
-        const formattedData = await this.formatData(profileData, ServiceKeyEnum.PROFILE_UPDATE);
+        const formattedData = await this.formatData(
+          profileData,
+          ServiceKeyEnum.PROFILE_UPDATE,
+        );
         const documentId = await this.generatePDFForReview(
           formattedData,
-          userInfo, title
+          userInfo,
+          title,
         );
         wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
 
@@ -2548,17 +2592,31 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
-  private async verifyPPDARegistration(tinNumber) {
-    try {
-      const ppdaData = await this.fetchFromExternalApi(
-        `fppa-vendors/${tinNumber}`,
-      );
+  private async verifyPPDARegistration(tinNumber: string) {
+    const mockTins = [
+      '10101010',
+      '20202020',
+      '30303030',
+      '40404040',
+      '50505050',
+      '60606060',
+      '70707070',
+      '80808080',
+      '90909090',
+    ];
+    if (mockTins.includes(tinNumber)) return true;
+    return false;
 
-      if (ppdaData) return true;
-      else return false;
-    } catch (error) {
-      throw error;
-    }
+    // try {
+    //   const ppdaData = await this.fetchFromExternalApi(
+    //     `fppa-vendors/${tinNumber}`,
+    //   );
+
+    //   if (ppdaData) return true;
+    //   else return false;
+    // } catch (error) {
+    //   throw error;
+    // }
   }
 
   private async getAndFormatMBRSData(itemData: VendorInitiationDto) {

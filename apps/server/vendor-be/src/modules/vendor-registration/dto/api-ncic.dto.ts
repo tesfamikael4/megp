@@ -1,17 +1,14 @@
-import { IsNotEmpty, IsOptional, IsUUID, IsDateString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+  IsDateString,
+  IsString,
+} from 'class-validator';
 
 export class NCICResponseDTO {
   @IsNotEmpty()
   tenantId: number;
-
-  @IsDateString()
-  createdAt: Date;
-
-  @IsDateString()
-  updatedAt: Date;
-
-  @IsOptional()
-  deletedAt: Date;
 
   @IsUUID()
   id: string;
