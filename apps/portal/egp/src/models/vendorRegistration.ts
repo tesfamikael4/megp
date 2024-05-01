@@ -158,7 +158,7 @@ export interface ApplicationInfo {
   remark: string | null;
   key: string;
   BpService: BpService;
-  data?: { data: { documentId: string; userId: string } };
+  data?: { data: { documentId: string; userId: string; fileId: string } };
 }
 export interface BpService {
   name: string;

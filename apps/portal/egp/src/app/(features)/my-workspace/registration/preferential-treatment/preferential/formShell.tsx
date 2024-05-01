@@ -46,6 +46,7 @@ export const preferentialSchema = z.discriminatedUnion('category', [
     certiNumber: z.string(),
     certificateValidityPeriod: z.string(), // Certificate validity period
     certificateIssuedDate: z.string(), // Certificate issuance date
+    certificateUrl: z.instanceof(File).optional(),
   }),
   z.object({
     category: z.literal('msme'),
@@ -58,6 +59,7 @@ export const preferentialSchema = z.discriminatedUnion('category', [
     certiNumber: z.string(),
     certificateValidityPeriod: z.string(), // Certificate validity period
     certificateIssuedDate: z.string(), // Certificate issuance date
+    certificateUrl: z.instanceof(File).optional(),
   }),
 ]);
 
@@ -87,6 +89,7 @@ export const PreferentialTreatmentForm = ({
     resolver: zodResolver(formDataSchema),
     defaultValues: initialValues as z.infer<typeof formDataSchema>,
   });
+  console.log(formState.errors, watch());
 
   const router = useRouter();
   const [save, saveValues] = useSubmitRequestMutation();
