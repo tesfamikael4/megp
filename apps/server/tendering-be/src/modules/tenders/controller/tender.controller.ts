@@ -70,6 +70,7 @@ export class TenderController extends EntityCrudController<Tender>(options) {
   }
 
   @Get('download-invitation-document/:id')
+  @AllowAnonymous()
   async downloadInvitationDocument(@Param('id') id: string) {
     return await this.tenderService.downloadTenderInvitation(id);
   }
