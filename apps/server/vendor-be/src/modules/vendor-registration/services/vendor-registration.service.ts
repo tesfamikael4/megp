@@ -7,6 +7,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { In, Not, Repository } from 'typeorm';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import {
@@ -120,7 +121,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   //submit new registration request
   async submitVendorInformation(data: any, userInfo: any): Promise<any> {
+    const fileId = uuidv4();
     try {
+
       const title = "New Registration Application"
       // const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
       const tempVendor = await this.isrVendorsRepository.findOne({
@@ -163,7 +166,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             userInfo,
             title
           );
-          dto.data = { documentId: documentId, ...formattedData };
+
+          dto.data = { documentId: documentId, fileId: fileId, ...formattedData };
           dto.instanceId = instanceId;
           workflowInstance = await this.workflowService.gotoNextStep(
             dto,
@@ -187,7 +191,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             formattedData,
             userInfo, title
           );
-          wfi.data = { documentId: documentId, ...formattedData };
+          wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
           workflowInstance = await this.workflowService.intiateWorkflowInstance(
             wfi,
             userInfo,
@@ -327,6 +331,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     attachment: Express.Multer.File,
     user: any,
   ): Promise<any> {
+    const fileId = uuidv4();
     const subDirectory = 'paymentReceipt';
     const title = "Service Registration Application";
     try {
@@ -390,7 +395,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             user,
             title
           );
-          wfi.data = { documentId: documentId, ...formattedData };
+          wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
 
           dto.instanceId = instanceId;
           const workflowInstance = await this.workflowService.gotoNextStep(
@@ -415,7 +420,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             user,
             title
           );
-          wfi.data = { documentId: documentId, ...formattedData };
+          wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
           const resonse = await this.workflowService.intiateWorkflowInstance(
             wfi,
             user,
@@ -1716,6 +1721,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     title: string
   ) {
     const userId = user.id;
+    const fileId = uuidv4();
     try {
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
@@ -1785,7 +1791,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         formattedData,
         user, title
       );
-      wfi.data = { documentId: documentId, ...formattedData };
+      wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
       wfi.bpId = invoice.service.businessProcesses.find(
         (item) => item.isActive == true
       ).id;
@@ -2353,7 +2359,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
   async submitVendorProfileUpdate(profileData: any, userInfo: any) {
-    const title = "Profile Update Application"
+    const title = "Profile Update Application";
+    const fileId = uuidv4();
     try {
       const vendor = await this.vendorRepository.findOne({
         where: { userId: userInfo.id },
@@ -2378,13 +2385,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         if (updateInfo?.status == ApplicationStatus.ADJUSTMENT) {
           updateInfo.status = ApplicationStatus.SUBMITTED;
           updateInfo.profileData = profileData;
-          await this.profileInfoRepository.save(updateInfo);
-          const formattedData = await this.formatData(updateInfo, ServiceKeyEnum.PROFILE_UPDATE);
+          const formattedData = await this.formatData(updateInfo.profileData, ServiceKeyEnum.PROFILE_UPDATE);
           const documentId = await this.generatePDFForReview(
             formattedData,
             userInfo, title
           );
-          const response = await this.goToworkflow(userInfo, { documentId: documentId, ...formattedData });
+          const response = await this.goToworkflow(userInfo, { documentId: documentId, fileId: fileId, ...formattedData });
+          await this.profileInfoRepository.save(updateInfo);
           return response;
         } else if (updateInfo?.status == ApplicationStatus.DRAFT) {
           updateInfo.status = ApplicationStatus.SUBMITTED;
@@ -2412,7 +2419,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           formattedData,
           userInfo, title
         );
-        wfi.data = { documentId: documentId, ...formattedData };
+        wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
 
         const workflowInstance =
           await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
