@@ -116,5 +116,6 @@ export const formatColumns = (countryOfRegistration) => ({
     { name: 'certiNumber', displayName: 'Certificate Number' },
     { name: 'certificateValidityPeriod', displayName: 'Validity Period' },
     { name: 'certificateIssuedDate', displayName: 'Issued Date' },
+    { name: 'certificateUrl', displayName: 'Certificate' },
   ],
 });

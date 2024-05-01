@@ -28,8 +28,10 @@ import {
 function FormPreview({
   data,
   uniqueTabs = [],
+  userId,
 }: {
   data: any;
+  userId?: string;
   uniqueTabs?: { tabValue: string; tabName: string }[];
 }) {
   const tabs = [...uniqueTabs, ...accordionTabs];
@@ -78,7 +80,7 @@ function FormPreview({
                       tabValue,
                       open,
                       setUrl,
-                      data?.userId,
+                      userId,
                     )}
                   </Accordion.Panel>
                 ) : formatColumns(data?.basic?.countryOfRegistration)[
@@ -198,7 +200,10 @@ const FormattedPanel = ({ data, tabValue }: RequiredFieldsOnly<PanelProps>) => {
                         [field.name]: 'amount+currency',
                       })
                     ) : field.name === 'website' ? (
-                      <Link target="_blank" href={data[tabValue][field.name]}>
+                      <Link
+                        target="_blank"
+                        href={data[tabValue][field.name] ?? '#'}
+                      >
                         {data[tabValue][field.name]}
                       </Link>
                     ) : (

@@ -221,6 +221,7 @@ export default function RequestDetail({
                   <TaskDetails
                     tracker={tracker}
                     setContent={setContent}
+                    userId={vendorInfo.userId}
                     data={vendorDetails}
                     isPicked={isPicked}
                     uniqueTabs={
