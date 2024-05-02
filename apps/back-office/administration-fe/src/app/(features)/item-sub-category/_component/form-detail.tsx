@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useCreateMutation,
   useDeleteMutation,
@@ -36,7 +36,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     reset,
     formState: { errors },
     register,
-    setValue,
+    control,
   } = useForm({
     defaultValues,
     resolver: zodResolver(itemSubCategorySchema),
@@ -102,6 +102,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     reset({ ...defaultValues });
   };
 
+  // logger.table('selected', selected);
   useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
@@ -122,24 +123,26 @@ export function FormDetail({ mode }: FormDetailProps) {
         error={errors?.name ? errors?.name?.message?.toString() : ''}
       />
       <TextInput label="Description" {...register('description')} />
-      <Select
-        withAsterisk
-        label="Category"
-        data={[
-          { value: 'Goods', label: 'Goods' },
-          { value: 'Service', label: 'Service' },
-          { value: 'Work', label: 'Work' },
-        ]}
-        {...register('parentCategories')}
-        onChange={(value) => {
-          if (value) {
-            setValue('parentCategories', value);
-          }
-        }}
-        error={
-          errors?.parentCategories?.message &&
-          errors.parentCategories.message.toString()
-        }
+      <Controller
+        name="parentCategories"
+        control={control}
+        render={({ field: { value, onChange } }) => (
+          <Select
+            label="Category"
+            value={value}
+            withAsterisk
+            data={[
+              { value: 'Goods', label: 'Goods' },
+              { value: 'Service', label: 'Service' },
+              { value: 'Work', label: 'Work' },
+            ]}
+            onChange={onChange}
+            error={
+              errors?.parentCategories?.message &&
+              errors.parentCategories.message.toString()
+            }
+          />
+        )}
       />
       <EntityButton
         mode={mode}

@@ -187,7 +187,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onDelete = async (data) => {
     try {
-      await remove(id as string);
+      await remove(id?.toString()).unwrap();
       notify('Success', 'Item Master deleted successfully');
       router.push(`/item-master`);
     } catch (e) {
