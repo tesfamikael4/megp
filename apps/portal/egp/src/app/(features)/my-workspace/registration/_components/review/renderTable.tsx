@@ -94,7 +94,6 @@ const renderCell = (header, item, open, setUrl, userId) => {
     );
   }
 
-  console.log(cellValue, isDate(cellValue));
   return (
     <Table.Td>
       {typeof cellValue === 'string' && isDate(cellValue)

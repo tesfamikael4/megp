@@ -131,7 +131,8 @@ export const BankAccountDetails: React.FC<Props> = ({
 
               <Group grow>
                 {control._getWatch('basic.countryOfRegistration') ===
-                'Malawi' ? (
+                  'Malawi' &&
+                control._getWatch('bankAccountDetails.bankType') === 'Local' ? (
                   <>
                     <Select
                       label="Bank Name"

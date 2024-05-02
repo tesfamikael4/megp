@@ -29,7 +29,7 @@ export const tab = (countryOfRegistration) => [
   },
   {
     tabValue: 'areasOfBusinessInterestView',
-    tabName: 'Areas of Business Interest',
+    tabName: 'Purpose of Registration',
   },
   {
     tabValue: 'lineOfBusiness',
