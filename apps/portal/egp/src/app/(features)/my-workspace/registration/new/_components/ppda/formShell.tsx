@@ -148,7 +148,7 @@ export const AreasOfBusinessInterestForm = ({
     if (saveValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
       router.push(
-        initialValues.basic.countryOfRegistration === 'Malawian'
+        initialValues.basic.countryOfRegistration === 'Malawi'
           ? `preferential`
           : 'payment',
       );
@@ -313,7 +313,7 @@ export const AreasOfBusinessInterestForm = ({
                 <Button
                   onClick={() =>
                     router.push(
-                      initialValues.basic.countryOfRegistration === 'Malawian'
+                      initialValues.basic.countryOfRegistration === 'Malawi'
                         ? 'preferential'
                         : 'payment',
                     )

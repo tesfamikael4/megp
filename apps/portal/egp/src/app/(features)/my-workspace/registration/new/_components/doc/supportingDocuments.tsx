@@ -199,7 +199,9 @@ export default function SupportingDocuments() {
             onClick={() =>
               router.push(
                 requestInfo.data?.initial?.isPPDARegistered
-                  ? 'preferential'
+                  ? docInfo.data?.basic.countryOfRegistration === 'Malawi'
+                    ? 'preferential'
+                    : 'ppda'
                   : 'payment',
               )
             }
