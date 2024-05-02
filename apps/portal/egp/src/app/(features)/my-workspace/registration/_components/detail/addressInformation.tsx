@@ -27,20 +27,22 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
       NotificationService.requestErrorNotification('Can not fetch districts');
   }, [districts, regions, register(`address.region`, 'select').value]);
 
+  useEffect(() => {
+    if (control._getWatch(`basic.countryOfRegistration`) === 'Malawi') {
+      const value = control._getWatch(`address.region`);
+      const region = regions.items.find((_region) => _region.name === value);
+      fetchDistricts({ regionId: region.id });
+    }
+  }, [
+    control._getWatch(`address.region`),
+    control._getWatch(`basic.countryOfRegistration`),
+  ]);
+
   return (
     <Stack>
-      {/* <Group grow>
-        <TextInput
-          label="Physical Address"
-          withAsterisk
-          {...register(`address.countryOfRegistration`)}
-          value={register(`basic.countryOfRegistration`).value}
-          hidden
-        />
-      </Group> */}
       <Group grow>
         <TextInput
-          label="Physical Address"
+          label={`Physical Address ${register(`basic.countryOfRegistration`, 'select').value === 'Malawi' ? '(from MBRS)' : ''}`}
           withAsterisk
           {...register(`address.physicalAddress`)}
           disabled={
@@ -102,7 +104,7 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
       </Group>
       <Group grow>
         <TextInput
-          label="Postal Address/Zip code"
+          label={`Postal Address/Zip code ${register(`basic.countryOfRegistration`, 'select').value === 'Malawi' ? '(from MBRS)' : ''}`}
           withAsterisk
           {...register(`address.postalAddress`)}
           disabled={

@@ -22,7 +22,7 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
       </Group>
       <Group grow>
         <TextInput
-          label="Name of Business/Company"
+          label={`Name of Business/Company ${register(`basic.countryOfRegistration`, 'select').value === 'Malawi' ? '(from MBRS)' : ''}`}
           withAsterisk
           id="name"
           {...register(`basic.name`)}

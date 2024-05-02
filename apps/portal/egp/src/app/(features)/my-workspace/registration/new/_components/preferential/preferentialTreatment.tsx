@@ -188,12 +188,12 @@ export const PreferentialTreatment: React.FC<Props> = ({
                           // name={`preferential.${index}.certificateValidityPeriod`}
                           valueFormat="YYYY/MM/DD"
                           required
-                          label="Certificate Valid Period"
-                          placeholder="Certificate Valid Period"
+                          label="Certificate Validity Period"
+                          placeholder="Certificate Validity Period"
                           leftSection={
                             <IconCalendar size={'1.2rem'} stroke={1.5} />
                           }
-                          maxDate={dayjs(new Date()).toDate()}
+                          minDate={dayjs(new Date()).toDate()}
                           // {...register(`${name}.${index}.activationDate`)}
                           onChange={async (value: any) =>
                             value &&
