@@ -24,7 +24,7 @@ function Page() {
   if (!data) {
     router.push(`basic`);
   }
-  if (data?.basic.countryOfRegistration === 'Malawi') router.push(`payment`);
+  if (data?.basic.countryOfRegistration !== 'Malawi') router.push(`payment`);
   if (data) {
     return (
       <PreferentialTreatmentForm
