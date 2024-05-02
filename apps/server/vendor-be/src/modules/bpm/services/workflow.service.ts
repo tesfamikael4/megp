@@ -378,7 +378,7 @@ export class WorkflowService {
       case TaskTypes.APPROVAL:
         if (
           command.action.toUpperCase() == ApplicationStatus.ADJUST.toUpperCase() || command.action.toUpperCase() == "NO"
-          // ||  command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
+
         ) {
           const result = await this.notify(
             wfi,

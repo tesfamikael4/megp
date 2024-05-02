@@ -102,10 +102,10 @@ const PdfDocumentTemplate = async (data) => {
                       title: 'Preferential service',
                     },
                     { accessor: 'certiNumber', title: 'certificate Number' },
-                    {
-                      accessor: 'status',
-                      title: 'Status',
-                    },
+                    // {
+                    //   accessor: 'status',
+                    //   title: 'Status',
+                    // },
                   ],
                   data: data?.preferentialRequests,
                 }}
@@ -450,7 +450,8 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: '#ffffff',
     maxWidth: '100%',
-    height: '100vh',
+    paddingTop: 50,
+    paddingBottom: 50,
   },
   title: {
     fontSize: 16,

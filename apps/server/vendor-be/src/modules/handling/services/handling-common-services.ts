@@ -252,6 +252,31 @@ export class HandlingCommonService {
     }
     return formattedAreaOfBi;
   }
-
+  orderAddress(address: any) {
+    const orderedAddress = {
+      physicalAddress: address.physicalAddress,
+      postalAddress: address.postalAddress,
+      primaryEmail: address.primaryEmail,
+      alternateEmail: address.alternateEmail,
+      region: address.region,
+      district: address.district,
+      telephone: address.telephone,
+      fax: address.fax,
+      website: address.website,
+    }
+    return orderedAddress;
+  }
+  orderVendorBasicInformation(basicInfo: any) {
+    const formattedBasic = {
+      name: basicInfo.name,
+      countryOfRegistration: basicInfo.countryOfRegistration,
+      tinNumber: basicInfo.tinNumber,
+      tinIssuedDate: basicInfo?.tinIssuedDate,
+      registrationNumber: basicInfo?.registrationNumber,
+      registrationIssuedDate: basicInfo?.registrationIssuedDate,
+      businessType: basicInfo?.businessType
+    }
+    return formattedBasic;
+  }
 
 }
