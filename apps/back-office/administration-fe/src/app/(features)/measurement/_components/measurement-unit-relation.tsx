@@ -61,7 +61,7 @@ const AddUnit = () => {
       title: `Delete `,
       centered: true,
       children: (
-        <Text size="sm">{`Are You Sure You Want To Delete This Unit of Measurement `}</Text>
+        <Text size="sm">{`Are you sure you want to delete this unit of measurement `}</Text>
       ),
       labels: { confirm: 'Yes', cancel: 'No' },
       confirmProps: { color: 'red' },

@@ -70,16 +70,6 @@ export function Entity({ children }: { children: React.ReactElement }) {
             </>
           ),
         },
-
-        {
-          id: 'itemSubcategoryName',
-          header: 'Item Catagory',
-          accessorKey: 'itemSubcategoryName',
-          meta: {
-            widget: 'expand',
-          },
-          cell: (info) => info.getValue(),
-        },
       ],
     };
   }, [route]);
