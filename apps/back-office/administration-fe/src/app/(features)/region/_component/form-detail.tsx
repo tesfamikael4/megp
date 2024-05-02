@@ -14,6 +14,7 @@ import {
   useUpdateMutation,
 } from '../_api/region.api';
 import { Region } from '@/models/region';
+import { logger } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -94,8 +95,14 @@ export function FormDetail({ mode }: FormDetailProps) {
       });
       router.push('/region');
     } catch (err) {
+      const customMsg = err?.data?.message?.includes(
+        'update or delete on table "regions" violates foreign key constraint',
+      )
+        ? 'Region has associated Districts. Please delete them first.'
+        : 'Unexpected response structure from the server';
+      logger.log(customMsg);
       notifications.show({
-        message: 'errors in deleting region.',
+        message: customMsg,
         title: 'Error',
         color: 'red',
       });
