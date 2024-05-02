@@ -243,35 +243,72 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     };
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const openerId = req.user.userId;
-    const [isTeamLead, openingChecklist, canTeam] = await Promise.all([
-      manager.getRepository(TeamMember).exists({
-        where: {
-          team: {
-            tender: {
-              id: tenderId,
+    const [isTeamLead, openingChecklist, checklist, teamMembers] =
+      await Promise.all([
+        manager.getRepository(TeamMember).exists({
+          where: {
+            team: {
+              tender: {
+                id: tenderId,
+              },
+            },
+            personnelId: openerId,
+            isTeamLead: true,
+          },
+        }),
+        manager.getRepository(BidOpeningChecklist).exists({
+          where: {
+            tenderId,
+            openerId,
+            isTeamLead: false,
+            submit: false,
+          },
+        }),
+        manager.getRepository(BidOpeningChecklist).find({
+          where: {
+            tenderId,
+          },
+        }),
+        manager.getRepository(TeamMember).find({
+          where: {
+            team: {
+              tender: {
+                id: tenderId,
+              },
+              teamType: TeamRoleEnum.FINANCIAL_OPENER,
             },
           },
-          personnelId: openerId,
-          isTeamLead: true,
-        },
-      }),
-      manager.getRepository(BidOpeningChecklist).exists({
-        where: {
-          tenderId,
-          openerId,
-          submit: false,
-        },
-      }),
-      manager.getRepository(BidOpeningChecklist).exists({
-        where: {
-          tenderId,
-          submit: false,
-        },
-      }),
-    ]);
+        }),
+      ]);
     response.isTeamLead.isTeam = isTeamLead;
     response.hasCompleted = !openingChecklist;
-    response.canTeamAssess = !canTeam;
+    response.canTeamAssess = true;
+
+    const openersSet = new Set(
+      checklist.reduce((acc, item) => {
+        return item.openerId ? acc.concat(item.openerId) : acc;
+      }, []),
+    );
+
+    for (const teamMember of teamMembers) {
+      if (openersSet.has(teamMember.personnelId)) {
+        // If team member is an opener
+        if (
+          checklist.some(
+            (x) =>
+              x.openerId === teamMember.personnelId &&
+              !x.submit &&
+              x.isTeamLead == false,
+          )
+        ) {
+          response.canTeamAssess = false; // If any item is not submitted, team can't assess
+          break; // Exit the loop since the assessment decision is made
+        }
+      } else {
+        response.canTeamAssess = false; // If team member is not an opener, team can't assess
+        break; // Exit the loop since the assessment decision is made
+      }
+    }
 
     if (isTeamLead) {
       const teamCompleted = await this.bidOpeningChecklistsRepository.find({
@@ -282,8 +319,8 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
           submit: false,
         },
       });
-      if (teamCompleted.length > 0) {
-        response.isTeamLead.hasCompleted = false;
+      if (teamCompleted.length == 0) {
+        response.isTeamLead.hasCompleted = true;
       }
     }
 
