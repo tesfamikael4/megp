@@ -296,17 +296,14 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
         };
         formattedData.areasOfBusinessInterest.push(bi);
       }
-
-
-
     }
 
     formattedData.bankAccountDetails = [];
     for (const bank of data.bankAccountDetails) {
-      const formated = this.commonService.reduceAttributes(bank);
-      const isDefault = formated.isDefault ? 'Yes' : 'No';
-      formated.isDefault = isDefault;
-      formattedData.bankAccountDetails.push(formated);
+      const formatted = this.commonService.reduceAttributes(bank);
+      const isDefault = formatted.isDefault ? 'Yes' : 'No';
+      formatted.isDefault = isDefault;
+      formattedData.bankAccountDetails.push(formatted);
     }
     //new model changes
     formattedData.beneficialOwnershipShareholders = [];
@@ -320,12 +317,15 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
 
     formattedData.preferential = [];
     for (const pt of data?.preferential ?? []) {
-      const formated = this.commonService.reduceAttributes(pt);
-      formattedData.preferential.push(formated);
+      const formatted = this.commonService.reduceAttributes(pt);
+      formattedData.preferential.push(formatted);
     }
+    formattedData.address = this.commonService.orderAddress(data.address);
+    formattedData.basic = this.commonService.orderVendorBasicInformation(data.basic);
 
     return formattedData;
   }
+
   async uploadPreferentialAttachments(attachments: any, user: any) {
     const subdirectory = 'preferential-documents';
     const response = {};

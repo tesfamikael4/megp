@@ -296,8 +296,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     //new model changes
     formattedData.beneficialOwnershipShareholders = [];
     for (const share of data?.beneficialOwnershipShareholders) {
-      const formated = this.commonService.reduceAttributes(share);
-      formattedData.beneficialOwnershipShareholders.push(formated);
+      const formatted = this.commonService.reduceAttributes(share);
+      formatted.authorityToAppointGov = share.authorityToAppointGov ? 'Yes' : 'No';
+      formattedData.beneficialOwnershipShareholders.push(formatted);
     }
     //new model changes
 
@@ -309,14 +310,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const formated = this.commonService.reduceAttributes(pt);
       formattedData.preferential.push(formated);
     }
-
+    formattedData.address = this.commonService.orderAddress(data.address)
+    formattedData.basic = this.commonService.orderVendorBasicInformation(data.basic);
     return formattedData;
   }
+
 
   async generatePDFForReview(data: any, user: any, title: string) {
     try {
       const subfolder = 'application-doc';
       // const d = await this.formatData(data);
+      data.address = this.commonService.orderAddress(data.address);
+      data.basic = this.commonService.orderVendorBasicInformation(data.basic);
       const result = await PdfDocumentTemplate({ ...data, title: title });
       const readStream = new Readable().wrap(result);
       const fileId = await this.fileService.uploadReadable(
@@ -1170,7 +1175,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             ]),
           },
         });
-        if (!profileData) throw new NotFoundException(` profile not found`);
+        if (!profileData) throw new NotFoundException(`profile not found`);
         profileData.status = VendorStatusEnum.ADJUSTMENT;
         await this.profileInfoRepository.save(profileData);
         return businessArea;
