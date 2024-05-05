@@ -6,6 +6,7 @@ export interface Password {
 export interface Login {
   username: string;
   password: string;
+  gReCaptchaToken?: string;
 }
 
 export class SignUp {
