@@ -1,6 +1,10 @@
 import { Controller, Get, Param, Query, Req } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
-import { EntityCrudOptions, ExtraCrudOptions } from 'megp-shared-be';
+import {
+  CollectionQuery,
+  EntityCrudOptions,
+  ExtraCrudOptions,
+} from 'megp-shared-be';
 import { EntityCrudController, ExtraCrudController } from 'megp-shared-be';
 import { Step } from 'src/entities/step.entity';
 import { StepService } from '../services/step.service';
@@ -9,13 +13,13 @@ import { ActivityService } from '../services/activity.service';
 import { decodeCollectionQuery } from 'megp-shared-be';
 import { IgnoreTenantInterceptor } from 'megp-shared-be';
 
-const options: EntityCrudOptions = {};
+const options: ExtraCrudOptions = {
+  entityIdName: 'workflowId',
+};
 
 @Controller('activities')
 @ApiTags('activities')
-export class ActivityController extends EntityCrudController<Activity>(
-  options,
-) {
+export class ActivityController extends ExtraCrudController<Activity>(options) {
   constructor(private readonly activityService: ActivityService) {
     super(activityService);
   }
@@ -27,9 +31,13 @@ export class ActivityController extends EntityCrudController<Activity>(
     required: false,
   })
   @IgnoreTenantInterceptor()
-  async findAll(@Query('q') q?: string, @Req() req?: any) {
+  async findAll(
+    @Param('id') id: string,
+    @Query('q') q: string,
+    @Req() req?: any,
+  ) {
     const query = decodeCollectionQuery(q);
-    return this.activityService.findAll(query);
+    return this.activityService.findAll(id, query, options, req);
   }
 
   @Get(':id')

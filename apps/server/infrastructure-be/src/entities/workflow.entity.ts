@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Activity } from './activity.entity';
 import { OrgAudit } from 'megp-shared-be';
 
@@ -9,4 +9,7 @@ export class Workflow extends OrgAudit {
 
   @Column()
   name: string;
+
+  @OneToMany(() => Activity, (activity) => activity.workflow)
+  activity: Activity[];
 }

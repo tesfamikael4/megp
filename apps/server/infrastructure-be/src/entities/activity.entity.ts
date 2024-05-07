@@ -26,6 +26,13 @@ export class Activity extends OrgAudit {
   @Column()
   title: string;
 
+  @Column()
+  workflowId: string;
+
+  @ManyToOne(() => Workflow, (workflow) => workflow.activity)
+  @JoinColumn({ name: 'workflowId' })
+  public workflow: Workflow;
+
   @OneToMany(() => Step, (step) => step.activity)
   steps: Step[];
 
