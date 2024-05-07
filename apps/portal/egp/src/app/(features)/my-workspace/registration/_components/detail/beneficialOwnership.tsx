@@ -41,107 +41,103 @@ export const BeneficialOwnership: React.FC<Props> = ({
         title="Beneficial Ownership and Shareholders"
         itemSchema={itemSchema}
         disabled={disabled}
-        modalBody={(getInputProps) => (
-          <Stack>
-            <Group grow>
-              <TextInput
-                label="First Name"
-                placeholder="Enter first name"
-                withAsterisk
-                {...getInputProps('firstName')}
-              />
+        modalBody={(getInputProps) => {
+          return (
+            <Stack>
+              <Group grow>
+                <TextInput
+                  label="First Name"
+                  placeholder="Enter first name"
+                  withAsterisk
+                  {...getInputProps('firstName')}
+                />
 
-              <TextInput
-                label="Middle Name"
-                placeholder="Enter Middle name"
-                withAsterisk
-                {...getInputProps('middleName')}
-              />
-            </Group>
-            <Group grow>
-              <TextInput
-                label="Last Name"
-                placeholder="Enter last name"
-                withAsterisk
-                {...getInputProps('lastName')}
-              />
-              <Select
-                label="Nationality"
-                placeholder="Enter Nationality"
-                withAsterisk
-                searchable
-                data={getNationalityValues()}
-                {...getInputProps('nationality', 'select')}
-              />
-            </Group>
-            <Group grow>
-              <Select
-                label="Country of Residence"
-                placeholder="Enter Country of Residence"
-                data={getNationalityValues()}
-                withAsterisk
-                {...getInputProps('countryOfResidence', 'select')}
-              />
-              <NumberInput
-                label="Share"
-                withAsterisk
-                hideControls
-                placeholder="Enter Share"
-                {...getInputProps('share', 'number')}
-                onChange={(value) => {
-                  getInputProps('share', 'number').onChange(Number(value));
-                  const previousShareholderShare =
-                    control?._formValues?.shareHolders.reduce(
-                      (acc, shareholder) => (acc += shareholder.share),
-                      0,
+                <TextInput
+                  label="Middle Name"
+                  placeholder="Enter Middle name"
+                  withAsterisk
+                  {...getInputProps('middleName')}
+                />
+              </Group>
+              <Group grow>
+                <TextInput
+                  label="Last Name"
+                  placeholder="Enter last name"
+                  withAsterisk
+                  {...getInputProps('lastName')}
+                />
+                <Select
+                  label="Nationality"
+                  placeholder="Enter Nationality"
+                  withAsterisk
+                  searchable
+                  data={getNationalityValues()}
+                  {...getInputProps('nationality', 'select')}
+                />
+              </Group>
+              <Group grow>
+                <Select
+                  label="Country of Residence"
+                  placeholder="Enter Country of Residence"
+                  data={getNationalityValues()}
+                  withAsterisk
+                  {...getInputProps('countryOfResidence', 'select')}
+                />
+                <NumberInput
+                  label="Share"
+                  withAsterisk
+                  hideControls
+                  placeholder="Enter Share"
+                  {...getInputProps('share', 'number')}
+                  onChange={(value) => {
+                    getInputProps('share', 'number').onChange(Number(value));
+                  }}
+                  min={1}
+                  max={100}
+                  suffix="%"
+                />
+              </Group>
+              <Group grow>
+                <NumberInput
+                  label="Voting Rights"
+                  withAsterisk
+                  hideControls
+                  placeholder="Enter Voting Rights"
+                  {...getInputProps('votingRights', 'number')}
+                  onChange={(value) => {
+                    getInputProps('votingRights', 'number').onChange(
+                      Number(value),
                     );
-                  // if (previousShareholderShare > 100) {
+                    const previousShareholderShare =
+                      control?._formValues?.shareHolders.reduce(
+                        (acc, shareholder) => (acc += shareholder.share),
+                        0,
+                      );
+                    // if (previousShareholderShare > 100) {
 
-                  // }
-                }}
-                min={1}
-                max={100}
-                suffix="%"
-              />
-            </Group>
-            <Group grow>
-              <NumberInput
-                label="Voting Rights"
-                withAsterisk
-                hideControls
-                placeholder="Enter Voting Rights"
-                {...getInputProps('votingRights', 'number')}
-                onChange={(value) => {
-                  getInputProps('votingRights', 'number').onChange(
-                    Number(value),
-                  );
-                  const previousShareholderShare =
-                    control?._formValues?.shareHolders.reduce(
-                      (acc, shareholder) => (acc += shareholder.share),
-                      0,
+                    // }
+                  }}
+                  min={1}
+                  max={100}
+                  suffix="%"
+                />
+                <Checkbox
+                  label="Authority to Appoint Government Body"
+                  placeholder="Enter Authority to Appoint Government Body"
+                  {...getInputProps('authorityToAppointGov', 'checkbox')}
+                  checked={
+                    getInputProps('authorityToAppointGov', 'checkbox').value
+                  }
+                  onChange={(event) => {
+                    getInputProps('authorityToAppointGov', 'checkbox').onChange(
+                      event.currentTarget.checked,
                     );
-                  // if (previousShareholderShare > 100) {
-
-                  // }
-                }}
-                min={1}
-                max={100}
-                suffix="%"
-              />
-              <Checkbox
-                label="Authority to Appoint Government Body"
-                placeholder="Enter Authority to Appoint Government Body"
-                // withAsterisk
-                {...getInputProps('authorityToAppointGov', 'checkbox')}
-                onChange={(value) => {
-                  getInputProps('authorityToAppointGov', 'checkbox').onChange(
-                    value.target.checked,
-                  );
-                }}
-              />
-            </Group>
-          </Stack>
-        )}
+                  }}
+                />
+              </Group>
+            </Stack>
+          );
+        }}
         card={(edit, remove) => (
           <>
             {control?._formValues?.beneficialOwnershipShareholders.map(
