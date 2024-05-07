@@ -1,42 +1,35 @@
 'use client';
 
 import { ActionIcon, Badge } from '@mantine/core';
-import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
+import { ExpandableTable, Section, logger } from '@megp/core-fe';
+import { CollectionQuery } from '@megp/entity';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { CollectionQuery } from '@megp/entity';
-import { useLazyListQuery } from '../../_api/guarantee-request.api';
+import { useLazyListByIdQuery } from '../_api/guarantee-request.api';
 
 export default function Extension() {
   const router = useRouter();
   const { tenderId, lotId, guaranteeId } = useParams();
-  const [trigger, { data }] = useLazyListQuery();
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
-  const config: ExpandableTableConfig = {
+  const config = {
     isSearchable: true,
     isExpandable: true,
-
+    isFetching: isFetching,
     columns: [
       {
-        accessor: 'vendorName',
-        sortable: true,
-      },
-      {
-        accessor: 'organizationName',
-        sortable: true,
+        accessor: 'bidderName',
+        title: 'Vendor Name',
       },
 
-      { accessor: 'title', title: 'Lot Name', sortable: true },
+      { accessor: 'guarantorName', title: 'Guarantor Name' },
       {
-        accessor: 'name',
-        title: 'Procuring Entity ',
-
-        sortable: true,
+        accessor: 'guarantorBranchName',
+        title: ' Guarantor Branch Name',
       },
       {
         accessor: 'type',
-
-        sortable: true,
+        title: 'Type',
       },
 
       {
@@ -69,7 +62,7 @@ export default function Extension() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/solicitation/${tenderId}/${lotId}/${guaranteeId}/guarantee-extension/${record?.id}`,
+                `/solicitation/${tenderId}/${lotId}/guarantee-extension/${guaranteeId}/${record?.id}`,
               );
             }}
           >
@@ -80,7 +73,7 @@ export default function Extension() {
     ],
   };
   const onRequestChange = (request: CollectionQuery) => {
-    trigger(request);
+    trigger({ id: lotId.toString(), collectionQuery: request });
   };
 
   return (

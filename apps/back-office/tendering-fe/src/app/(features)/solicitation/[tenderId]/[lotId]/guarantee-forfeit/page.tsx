@@ -1,44 +1,35 @@
 'use client';
 
 import { ActionIcon, Badge } from '@mantine/core';
-import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
+import { ExpandableTable, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
-import { ListData } from '../../_components/data';
-import { useLazyListQuery } from '../../_api/guarantee-request.api';
+import { useRouter, useParams } from 'next/navigation';
+import { useLazyListByIdQuery } from '../_api/guarantee-request.api';
 import { CollectionQuery } from '@megp/entity';
 
-export default function GuaranteeRelease() {
+export default function GuaranteeForfeit() {
   const router = useRouter();
   const { tenderId, lotId, guaranteeId } = useParams();
-  const [trigger, { data }] = useLazyListQuery();
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
-  const config: ExpandableTableConfig = {
+  const config = {
     isSearchable: true,
     isExpandable: true,
-
+    isFetching: isFetching,
     columns: [
       {
-        accessor: 'vendorName',
-        sortable: true,
-      },
-      {
-        accessor: 'organizationName',
-
-        sortable: true,
+        accessor: 'bidderName',
+        title: 'Vendor Name',
       },
 
-      { accessor: 'title', title: 'Lot Name', sortable: true },
+      { accessor: 'guarantorName', title: 'Guarantor Name' },
       {
-        accessor: 'name',
-        title: 'Procuring Entity ',
-
-        sortable: true,
+        accessor: 'guarantorBranchName',
+        title: ' Guarantor Branch Name',
       },
       {
         accessor: 'type',
-
-        sortable: true,
+        title: 'Type',
       },
 
       {
@@ -71,7 +62,7 @@ export default function GuaranteeRelease() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/solicitation/${tenderId}/${lotId}/${guaranteeId}/guarantee-release/${record?.id}`,
+                `/solicitation/${tenderId}/${lotId}/guarantee-forfeit/${guaranteeId}/${record?.id}`,
               );
             }}
           >
@@ -82,10 +73,11 @@ export default function GuaranteeRelease() {
     ],
   };
   const onRequestChange = (request: CollectionQuery) => {
-    trigger(request);
+    trigger({ id: lotId.toString(), collectionQuery: request });
   };
+
   return (
-    <Section collapsible={false} title="Guarantee Release">
+    <Section collapsible={false} title="Guarantee Forfeit">
       <ExpandableTable
         config={config}
         data={data?.items ?? []}
