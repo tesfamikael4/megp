@@ -7,12 +7,13 @@ import {
   useLazyGetDistrictsByRegionQuery,
 } from '@/store/api/administrationApi';
 import { NotificationService } from '../../../_components/notification';
+import { Controller } from 'react-hook-form';
 
 export const AddressInformation: React.FC<PassFormDataProps> = ({
   register,
   control,
 }) => {
-  const { data: regions, isError } = useGetRegionsQuery({});
+  const { data: regions, isError, isFetching } = useGetRegionsQuery({});
   const [fetchDistricts, { data: districts, isError: isDistrictError }] =
     useLazyGetDistrictsByRegionQuery();
 
@@ -27,16 +28,18 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
       NotificationService.requestErrorNotification('Can not fetch districts');
   }, [districts, regions, register(`address.region`, 'select').value]);
 
+  const value = control._getWatch(`address.region`);
   useEffect(() => {
-    if (control._getWatch(`basic.countryOfRegistration`) === 'Malawi') {
-      const value = control._getWatch(`address.region`);
-      const region = regions.items.find((_region) => _region.name === value);
-      fetchDistricts({ regionId: region.id });
+    if (
+      register(`basic.countryOfRegistration`, 'select').value === 'Malawi' &&
+      !isFetching
+    ) {
+      const region = (regions ? regions.items : []).find(
+        (_region) => _region.name === value,
+      );
+      if (region?.id) fetchDistricts({ regionId: region.id });
     }
-  }, [
-    control._getWatch(`address.region`),
-    control._getWatch(`basic.countryOfRegistration`),
-  ]);
+  }, [value, isFetching]);
 
   return (
     <Stack>
@@ -77,17 +80,26 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
               }
             }}
           />
-          <Select
-            withAsterisk
-            label="Districts"
-            data={
-              districts && districts.items
-                ? districts.items.map((district) => district.name)
-                : []
-            }
-            placeholder="Select district"
-            {...register(`address.district`, 'select')}
-            disabled={!register(`address.region`, 'select').value}
+          <Controller
+            name="address.district"
+            control={control}
+            render={({ field }) => {
+              return (
+                <Select
+                  withAsterisk
+                  label="Districts"
+                  data={
+                    districts && districts.items
+                      ? districts.items.map((district) => district.name)
+                      : []
+                  }
+                  placeholder="Select district"
+                  {...register(`address.district`, 'select')}
+                  onChange={field.onChange}
+                  disabled={!register(`address.region`, 'select').value}
+                />
+              );
+            }}
           />
         </Group>
       )}
