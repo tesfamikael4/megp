@@ -3,7 +3,7 @@ import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { ItemSubCategory } from '@/models/item-sub-category';
-import { logger } from '@megp/core-fe';
+import { TreeConfig, logger } from '@megp/core-fe';
 import { useLazyListQuery } from './_api/item-sub-category';
 
 export function Entity({
@@ -81,7 +81,21 @@ export function Entity({
     };
   });
 
+  const treeConfig: TreeConfig<any> = {
+    id: 'id',
+    label: 'name',
+    load: async (data) => {
+      const temp = mergedAndParentData.filter((d) => d.parentId === data.id);
+      logger.log({ temp });
+      return { result: temp, loading: false };
+    },
+    onClick: (item: any) => {
+      route.push(`/item-sub-category/${item.id}`);
+    },
+  };
+
   const mergedAndParentData = [...merge, ...parent];
+  logger.log({ mergedAndParentData });
 
   return (
     <>
@@ -89,6 +103,7 @@ export function Entity({
         hasTree={true}
         mode={mode}
         config={config}
+        treeConfig={treeConfig}
         data={mergedAndParentData}
         total={AllData?.total ?? 0}
         onRequestChange={onRequestChange}
