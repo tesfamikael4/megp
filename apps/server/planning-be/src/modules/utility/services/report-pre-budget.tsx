@@ -102,7 +102,7 @@ export const preReportPdf = async ({ activities }: any) => {
                         }}
                       >
                         <Text style={{ color: 'red' }}>
-                          🛈 Justification for{' '}
+                          ⚠️ Justification for{' '}
                           {reason.type === 'procurementMethod'
                             ? 'Procurement Method'
                             : 'Target Group'}
@@ -276,10 +276,9 @@ const styles = StyleSheet.create({
   },
   // title
   activity: {
-    marginTop: 10,
-    marginBottom: 10,
+    marginVertical: 10,
     fontSize: 12,
-    marginLeft: 20,
+    marginHorizontal: 20,
   },
   activityDetail: {
     paddingHorizontal: 20,
