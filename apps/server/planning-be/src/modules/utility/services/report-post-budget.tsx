@@ -101,25 +101,33 @@ export const postReportPdf = async ({ activities }: any) => {
                           marginHorizontal: '20px',
                         }}
                       >
-                        <Text style={{ color: 'red' }}>
+                        <Text style={{ color: 'red', fontSize: 11 }}>
                           ⚠️ Justification for{' '}
                           {reason.type === 'procurementMethod'
                             ? 'Procurement Method'
                             : 'Target Group'}
                         </Text>
-                        <Text style={{ fontWeight: 'bold', marginTop: '6px' }}>
+                        <Text
+                          style={{
+                            fontWeight: 'bold',
+                            marginTop: '6px',
+                            fontSize: 11,
+                          }}
+                        >
                           Possible Reason :
                         </Text>
-                        <Text style={{ fontSize: 10, marginLeft: 10 }}>
-                          {reason.reason}
-                        </Text>
+                        <Text style={{ fontSize: 10 }}>{reason.reason}</Text>
 
-                        <Text style={{ fontWeight: 'bold', marginTop: '5px' }}>
+                        <Text
+                          style={{
+                            fontWeight: 'bold',
+                            marginTop: '5px',
+                            fontSize: 11,
+                          }}
+                        >
                           Remark :
                         </Text>
-                        <Text style={{ fontSize: 10, marginLeft: 10 }}>
-                          {reason.remark}
-                        </Text>
+                        <Text style={{ fontSize: 10 }}>{reason.remark}</Text>
                       </View>
                     );
                   })}
