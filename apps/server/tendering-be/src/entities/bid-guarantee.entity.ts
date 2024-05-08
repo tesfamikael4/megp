@@ -4,10 +4,15 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Audit } from 'src/shared/entities';
-import { BidGuaranteeStatusEnum } from 'src/shared/enums/bid-guarantee-status.enum';
+import { BidGuaranteeStatusEnum } from 'src/shared/enums';
 import { Lot } from './lot.entity';
+import { BidGuaranteeExtension } from './bid-guarantee-extension.entity';
+import { BidGuaranteeForfeit } from './bid-guarantee-forfeit.entity';
+import { BidGuaranteeRelease } from './bid-guarantee-release.entity';
+import { BidGuaranteeCancellation } from './bid-guarantee-cancellation.entity';
 
 @Entity({ name: 'bid_guarantees' })
 export class BidGuarantee extends Audit {
@@ -75,9 +80,24 @@ export class BidGuarantee extends Audit {
     type: 'enum',
     enum: BidGuaranteeStatusEnum,
   })
-  status: string;
+  status: BidGuaranteeStatusEnum;
 
   @ManyToOne(() => Lot, (lot) => lot.bidGuarantee)
   @JoinColumn({ name: 'lotId' })
   lot: Lot[];
+
+  @OneToMany(() => BidGuaranteeExtension, (extension) => extension.guarantee)
+  guaranteeExtensions: BidGuaranteeExtension[];
+
+  @OneToMany(() => BidGuaranteeForfeit, (forfeit) => forfeit.guarantee)
+  forfeits: BidGuaranteeForfeit[];
+
+  @OneToMany(() => BidGuaranteeRelease, (release) => release.guarantee)
+  releases: BidGuaranteeRelease[];
+
+  @OneToMany(
+    () => BidGuaranteeCancellation,
+    (cancellation) => cancellation.guarantee,
+  )
+  cancellations: BidGuaranteeCancellation[];
 }
