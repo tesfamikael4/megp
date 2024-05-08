@@ -5,9 +5,8 @@ import {
   IsEnum,
   IsNumber,
   IsOptional,
-  IsDate,
 } from 'class-validator';
-import { BidGuaranteeStatusEnum } from 'src/shared/enums/bid-guarantee-status.enum';
+import { BidGuaranteeStatusEnum } from 'src/shared/enums';
 
 export class UpdateGuaranteeStatusDto {
   @ApiProperty({
@@ -20,18 +19,11 @@ export class UpdateGuaranteeStatusDto {
 
   @ApiProperty()
   @IsOptional()
-  remark?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  attachment: any;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsDate()
-  minValidityDate?: Date;
-
   document: any;
+
+  @ApiProperty()
+  @IsOptional()
+  minValidityDate?: number;
 }
 
 export class CreateBidGuaranteeDto {

@@ -1,5 +1,15 @@
-import { Body, Controller, Get, Param, Put } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { BidGuarantee } from 'src/entities/bid-guarantee.entity';
@@ -9,6 +19,7 @@ import {
   UpdateBidGuaranteeDto,
   UpdateGuaranteeStatusDto,
 } from '../dto/bid-guarantee.dto';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',
@@ -31,6 +42,31 @@ export class BidGuaranteeController extends ExtraCrudController<BidGuarantee>(
     @Body() status: UpdateGuaranteeStatusDto,
   ): Promise<BidGuarantee> {
     return await this.bidGuaranteeService.updateStatus(id, status);
+  }
+
+  @Get('fetch-bid-guarantees')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getBidGuarantees(@Query('q') q: string, @Req() req?: any) {
+    const query = decodeCollectionQuery(q);
+    return await this.bidGuaranteeService.getBidGuaranteesByGuarantorId(
+      query,
+      req,
+    );
+  }
+
+  @Get('can-create/:lotId')
+  async canCreate(@Param('lotId') lotId: string): Promise<boolean> {
+    try {
+      const canCreateRequest = await this.bidGuaranteeService.canCreate(lotId);
+      return canCreateRequest;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get('download-document/:id')
