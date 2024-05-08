@@ -176,7 +176,11 @@ export const Requisitioner = ({
   logger.log(usersPr);
 
   useEffect(() => {
-    setSelectedItems(requisitioners);
+    const castedData = requisitioners?.map((r: any) => ({
+      name: r.name,
+      userId: r.userId,
+    }));
+    setSelectedItems(castedData ?? []);
   }, [requisitioners]);
   return (
     <Section
@@ -224,12 +228,12 @@ export const Requisitioner = ({
               users && page !== 'pr'
                 ? users.items.map((user) => ({
                     name: user.firstName + ' ' + user.lastName,
-                    id: user.id,
+                    userId: user.id,
                   }))
                 : page === 'pr' && usersPr
                   ? usersPr.items.map((user) => ({
                       name: user.firstName + ' ' + user.lastName,
-                      id: user.id,
+                      userId: user.id,
                     }))
                   : []
             }
@@ -255,11 +259,7 @@ export const Requisitioner = ({
           <Group justify="end">
             <Button
               onClick={() => {
-                const castedData = selectedItems.map((r: any) => ({
-                  name: r.name,
-                  userId: r.id,
-                }));
-                setRequisitioners(castedData);
+                setRequisitioners(selectedItems);
                 close();
               }}
             >

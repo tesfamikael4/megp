@@ -42,7 +42,7 @@ export const DetailItem = ({ data }: any) => {
 
   useEffect(() => {
     logger.log(data);
-    getPath(data.classification);
+    getPath(data.commodityCode);
   }, [data, getPath]);
   return (
     <Box className="bg-white p-4" pos="relative">
