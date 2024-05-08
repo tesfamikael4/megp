@@ -1,27 +1,25 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Modal } from '@mantine/core';
+import { Button, Group, Modal } from '@mantine/core';
 import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
+import { useEffect, useState } from 'react';
 
-import { useParams } from 'next/navigation';
-import { TableConfig, logger, notify } from '@megp/core-fe';
-import { useAuth } from '@megp/auth';
 import { BudgetCategory } from '@/models/budget-category';
 import {
   useAssignBudgetToOrganizationMutation,
   useLazyGetBudgetCategoriesQuery,
 } from '@/store/api/budget-category/budge-category.api';
+import { useDisclosure } from '@mantine/hooks';
+import { ExpandableTable, ExpandableTableConfig, notify } from '@megp/core-fe';
+import { useParams } from 'next/navigation';
 import { useLazyListQuery } from '../../lookup/budget-category/_api/budget-category.api';
-import { CollectionSelector } from '../../_components/collection-selector';
 
 const AddEntityModal = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [opened, { close, open }] = useDisclosure(false);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [currentAssigned, setCurrentAssigned] = useState<any[]>([]);
-  const { id } = useParams();
 
-  const { user } = useAuth();
+  const { id } = useParams();
 
   const [assignBudgetCategory, { isLoading: isSaving }] =
     useAssignBudgetToOrganizationMutation({});
@@ -64,18 +62,13 @@ const AddEntityModal = () => {
         );
       }
     },
-    searchable: true,
+
     disableMultiSelect: true,
     selectable: true,
     pagination: true,
     onAdd: () => {
-      setIsModalOpen(true);
+      open();
     },
-  };
-  logger.log(organizationBugetCategories);
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -85,7 +78,6 @@ const AddEntityModal = () => {
   }, [id, isCollapsed, trigger]);
 
   useEffect(() => {
-    logger.log(organizationBugetCategories);
     if (isSuccess) {
       const cat = organizationBugetCategories
         ? organizationBugetCategories.map(
@@ -96,26 +88,27 @@ const AddEntityModal = () => {
     }
   }, [isSuccess, organizationBugetCategories]);
 
-  useEffect(() => {
-    triggerBudgetCategory(undefined);
-  }, [isCollapsed, triggerBudgetCategory, user?.organization?.id]);
-
-  logger.log(currentAssigned);
-
   const onRequestChange = (request: CollectionQuery) => {
-    isModalOpen && id;
+    triggerBudgetCategory(request);
   };
 
-  const config: TableConfig<any> = {
+  const config: ExpandableTableConfig = {
+    isSearchable: true,
+    primaryColumn: 'name',
+    disableMultiSelect: true,
+    selectedItems: currentAssigned,
+    setSelectedItems: (data) => {
+      const temp = data.filter((d) => !currentAssigned.includes(d));
+      setCurrentAssigned(temp);
+    },
+
     columns: [
       {
-        id: 'name',
-        header: 'Name',
-        accessorKey: 'name',
+        title: 'Name',
+        accessor: 'name',
       },
     ],
   };
-  logger.log(currentAssigned);
 
   return (
     <>
@@ -127,30 +120,37 @@ const AddEntityModal = () => {
       />
       <Modal
         title="Budget Category"
-        opened={isModalOpen}
-        onClose={handleCloseModal}
+        opened={opened}
+        onClose={close}
         size={'lg'}
       >
-        <CollectionSelector
+        <ExpandableTable
           data={data?.items ?? []}
           config={config}
           total={data?.total ?? 0}
-          onDone={(data) => {
-            if (Array.isArray(data)) {
-              if (data.length > 0) {
-                setCurrentAssigned(data);
-                handleCloseModal();
-              } else {
-                notify('Error', 'Please select at least one budget category.');
-              }
-            } else {
-              // If data is not an array, convert it to an array with a single item
-              setCurrentAssigned([data]);
-              handleCloseModal();
-            }
-          }}
           onRequestChange={onRequestChange}
         />
+        <Group justify="end">
+          <Button
+            onClick={() => {
+              if (Array.isArray(data)) {
+                if (data.length > 0) {
+                  setCurrentAssigned(data);
+                  close();
+                } else {
+                  notify(
+                    'Error',
+                    'Please select at least one budget category.',
+                  );
+                }
+              } else {
+                close();
+              }
+            }}
+          >
+            Done
+          </Button>
+        </Group>
       </Modal>
     </>
   );
