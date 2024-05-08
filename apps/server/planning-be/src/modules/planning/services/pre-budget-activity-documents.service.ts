@@ -33,9 +33,9 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
       bucketName,
       name,
       file.buffer,
-      {
-        test: 'test',
-      },
+      // {
+      //   test: 'test',
+      // },
     );
     return {
       filepath: name,

@@ -28,14 +28,14 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
   async upload(file): Promise<any> {
     const bucketName = 'megp';
     const name = String(Date.now());
-    await this.minioClientService.client.putObject(
-      bucketName,
-      name,
-      file.buffer,
-      {
-        test: 'test',
-      },
-    );
+    // await this.minioClientService.client.putObject(
+    //   bucketName,
+    //   name,
+    //   file.buffer,
+    //   {
+    //     test: 'test',
+    //   },
+    // );
     return {
       filepath: name,
       bucketName,

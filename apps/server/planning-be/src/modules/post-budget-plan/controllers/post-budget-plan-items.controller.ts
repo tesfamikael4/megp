@@ -7,6 +7,7 @@ import { ExtraCrudController } from 'src/shared/controller';
 import { BulkItemsDto } from 'src/modules/planning/dtos/pre-budget-plan-items.dto';
 import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
+import { OnEvent } from '@nestjs/event-emitter';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'postBudgetPlanActivityId',
@@ -45,5 +46,12 @@ export class PostBudgetPlanItemController extends ExtraCrudController<PostBudget
   @Get('get-by-item-code/:id')
   async getByItemCode(@Param('id') id: string) {
     return await this.postBudgetPlanItemService.getByItemCode(id);
+  }
+
+  @OnEvent('post.recalculateCalculatedAmountActivity')
+  async recalculate(payload) {
+    return await this.postBudgetPlanItemService.recalculateCalculatedAmount(
+      payload.preBudgetPlanActivityId,
+    );
   }
 }

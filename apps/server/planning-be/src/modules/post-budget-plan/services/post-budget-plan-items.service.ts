@@ -44,9 +44,12 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
       itemData.unitPrice * itemData.quantity;
 
     if (Number(activity.estimatedAmount) < Number(psedoCalculated)) {
-      this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
-        postBudgetPlanActivityId: itemData.postBudgetPlanActivityId,
-      });
+      // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+      //   postBudgetPlanActivityId: itemData.postBudgetPlanActivityId,
+      //   type: 'post',
+      // });
+      await this.recalculateCalculatedAmount(itemData.postBudgetPlanActivityId);
+
       throw new HttpException(
         'calculated amount is greater than estimated amount',
         430,
@@ -55,9 +58,11 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     const item = this.repositoryPostBudgetPlanItems.create(itemData);
     await this.repositoryPostBudgetPlanItems.save(item);
 
-    this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
-      postBudgetPlanActivityId: itemData.postBudgetPlanActivityId,
-    });
+    // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+    //   postBudgetPlanActivityId: itemData.postBudgetPlanActivityId,
+    //   type: 'post',
+    // });
+    await this.recalculateCalculatedAmount(itemData.postBudgetPlanActivityId);
 
     return item;
   }
@@ -74,6 +79,10 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
       },
     });
 
+    if (!activity) {
+      throw new NotFoundException(`PostBudgetPlanActivity not found`);
+    }
+
     const bulkCalculated = itemData.items.reduce(
       (acc, curr) => acc + curr.quantity * curr.unitPrice,
       0,
@@ -83,9 +92,14 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
       Number(bulkCalculated) + Number(activity.calculatedAmount);
 
     if (Number(activity.estimatedAmount) < psedoCalculated) {
-      this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
-        postBudgetPlanActivityId: itemData.items[0].postBudgetPlanActivityId,
-      });
+      // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+      //   postBudgetPlanActivityId: itemData.items[0].postBudgetPlanActivityId,
+      //   type: 'post',
+      // });
+      await this.recalculateCalculatedAmount(
+        itemData.items[0].postBudgetPlanActivityId,
+      );
+
       throw new HttpException(
         'calculated amount is greater than estimated amount',
         430,
@@ -97,9 +111,14 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     );
     await this.repositoryPostBudgetPlanItems.save(items);
 
-    this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
-      postBudgetPlanActivityId: itemData.items[0].postBudgetPlanActivityId,
-    });
+    // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+    //   postBudgetPlanActivityId: itemData.items[0].postBudgetPlanActivityId,
+    //   type: 'post',
+    // });
+    await this.recalculateCalculatedAmount(
+      itemData.items[0].postBudgetPlanActivityId,
+    );
+
     return itemData;
   }
 
@@ -121,9 +140,12 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
       Number(activity.calculatedAmount) + itemNewCalculated - itemOldCalculated;
 
     if (Number(activity.estimatedAmount) < Number(psedoCalculated)) {
-      this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
-        postBudgetPlanActivityId: itemData.postBudgetPlanActivityId,
-      });
+      // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+      //   postBudgetPlanActivityId: itemData.postBudgetPlanActivityId,
+      //   type: 'post',
+      // });
+      await this.recalculateCalculatedAmount(itemData.postBudgetPlanActivityId);
+
       throw new HttpException(
         'calculated amount is greater than estimated amount',
         430,
@@ -132,9 +154,11 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
 
     await this.repositoryPostBudgetPlanItems.update(id, itemData);
 
-    this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
-      postBudgetPlanActivityId: item.postBudgetPlanActivityId,
-    });
+    // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+    //   postBudgetPlanActivityId: item.postBudgetPlanActivityId,
+    //   type: 'post',
+    // });
+    await this.recalculateCalculatedAmount(item.postBudgetPlanActivityId);
 
     return this.repositoryPostBudgetPlanItems.findOne({ where: { id: id } });
   }
@@ -145,9 +169,11 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     });
     await this.repositoryPostBudgetPlanItems.softRemove(item);
 
-    this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
-      postBudgetPlanActivityId: item.postBudgetPlanActivityId,
-    });
+    // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+    //   postBudgetPlanActivityId: item.postBudgetPlanActivityId,
+    //   type: 'post',
+    // });
+    await this.recalculateCalculatedAmount(item.postBudgetPlanActivityId);
   }
 
   async recalculateCalculatedAmount(postBudgetPlanActivityId) {

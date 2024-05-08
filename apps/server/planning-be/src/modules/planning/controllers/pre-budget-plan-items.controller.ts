@@ -39,6 +39,7 @@ export class PreBudgetPlanItemsController extends ExtraCrudController<PreBudgetP
   async recalculate(payload) {
     return await this.preBudgetPlanItemsService.recalculateCalculatedAmount(
       payload.preBudgetPlanActivityId,
+      payload.type,
     );
   }
 }
