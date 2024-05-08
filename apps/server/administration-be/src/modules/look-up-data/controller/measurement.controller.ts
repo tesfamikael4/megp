@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { MeasurementService } from '../service/measurement.service';
 import {
@@ -25,5 +25,10 @@ export class MeasurementController extends EntityCrudController<Measurement>(
     return await this.measurementService.createUniqueMeasurement(
       measurementDto,
     );
+  }
+
+  @Get(':id/with-uoms')
+  async getMeasurementWithUoms(@Param('id') id: string): Promise<Measurement> {
+    return await this.measurementService.getMeasurementWithUoms(id);
   }
 }

@@ -1,8 +1,12 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Measurement } from 'src/entities/measurement.entity';
 import { EntityCrudService } from 'src/shared/service';
-import { Repository } from 'typeorm';
+import { EntityNotFoundError, Repository } from 'typeorm';
 import { CreateMeasurementDto } from '../dto/measurement.dto';
 @Injectable()
 export class MeasurementService extends EntityCrudService<Measurement> {
@@ -29,6 +33,22 @@ export class MeasurementService extends EntityCrudService<Measurement> {
     } else {
       const newMeasurement = await super.create(measurementDto);
       return newMeasurement;
+    }
+  }
+
+  async getMeasurementWithUoms(id: string): Promise<Measurement> {
+    try {
+      return await this.measurementRepository.findOneOrFail({
+        where: { id },
+        relations: {
+          uoms: true,
+        },
+      });
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        throw new NotFoundException('Measurement not found');
+      }
+      throw error;
     }
   }
 }

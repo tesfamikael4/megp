@@ -7,12 +7,6 @@ import { Classification } from 'src/entities/classification.entity';
 import { EntityCrudService } from 'src/shared/service';
 import { ClassificationService } from 'src/modules/classification/services/classification.service';
 import { ItemMetaData } from 'src/entities';
-import { DataResponseFormat } from 'src/shared/api-data';
-import {
-  CollectionQuery,
-  FilterOperators,
-  QueryConstructor,
-} from 'src/shared/collection-query';
 export class ItemMasterService extends EntityCrudService<ItemMaster> {
   constructor(
     @InjectRepository(Classification)
