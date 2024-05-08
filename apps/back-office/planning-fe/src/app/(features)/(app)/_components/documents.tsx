@@ -25,7 +25,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   useDeleteDocumentMutation,
-  useGetFilesQuery,
+  useLazyGetFilesQuery as useLazyGetPreFilesQuery,
   useLazyDownloadFilesQuery,
   usePreSignedUrlMutation,
 } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
@@ -33,10 +33,11 @@ import {
   usePreSignedUrlMutation as usePostPreSignedUrlMutation,
   useDeleteDocumentMutation as usePostDeleteDocumentMutation,
   useLazyDownloadFilesQuery as useLazyDownloadPostFilesQuery,
+  useLazyGetFilesQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 import {
-  useGetFilesQuery as useGetPrFilesQuery,
+  useLazyGetFilesQuery as useLazyGetPrFilesQuery,
   useLazyDownloadFilesQuery as useLazyDownloadPrFilesQuery,
   useUploadMutation as usePrUploadMutation,
   useDeleteFileMutation as useDeletePrFileMutation,
@@ -65,8 +66,9 @@ export const Documents = ({
     usePostDeleteDocumentMutation();
   const [deletePrFile, { isLoading: isPrDeleting }] = useDeletePrFileMutation();
 
-  const { data: documents } = useGetFilesQuery(id);
-  const { data: PrDocuments } = useGetPrFilesQuery(id);
+  const [getPreFiles, { data: documents }] = useLazyGetPreFilesQuery();
+  const [getPrFiles, { data: PrDocuments }] = useLazyGetPrFilesQuery();
+  const [getPostFiles, { data: postDocuments }] = useLazyGetFilesQuery();
 
   const [dowloadFile, { isLoading: isDownloading }] =
     useLazyDownloadFilesQuery();
@@ -246,9 +248,7 @@ export const Documents = ({
                   title: name,
                 }).unwrap();
 
-        page == 'pr'
-          ? await uploadFile(file, url.presignedUrl)
-          : await uploadFile(file, url.presignedUrl.presignedUrl);
+        await uploadFile(file, url.presignedUrl);
       } catch (error) {
         setIsLoading(false);
         notify('Error', 'Something went wrong while uploading document');
@@ -272,6 +272,18 @@ export const Documents = ({
     }
   };
 
+  useEffect(() => {
+    if (page == 'post') {
+      getPostFiles(id as string);
+    }
+    if (page == 'pre') {
+      getPreFiles(id as string);
+    }
+    if (page == 'pr') {
+      getPrFiles(id as string);
+    }
+  }, []);
+
   return (
     <Section
       title="Documents"
@@ -291,7 +303,11 @@ export const Documents = ({
       <Box className="pt-2">
         <ExpandableTable
           data={
-            page == 'pr' ? PrDocuments?.items ?? [] : documents?.items ?? []
+            page == 'pr'
+              ? PrDocuments?.items ?? []
+              : page == 'pre'
+                ? documents?.items
+                : postDocuments?.items ?? []
           }
           config={config}
           total={page == 'pr' ? PrDocuments?.total ?? 0 : documents?.total ?? 0}

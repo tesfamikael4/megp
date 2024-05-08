@@ -145,7 +145,7 @@ export const {
   useLazyGetPreBudgetPlanAnalyticsQuery,
   usePreSignedUrlMutation,
   useDeleteDocumentMutation,
-  useGetFilesQuery,
+  useLazyGetFilesQuery,
   useLazyDownloadFilesQuery,
   useLazyGetApprovalDocumentsQuery,
   useLazyGetApprovalDocumentDetailByIdQuery,
