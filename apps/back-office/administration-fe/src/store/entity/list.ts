@@ -128,4 +128,10 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl:
       process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
+
+  {
+    entity: 'contract-catalogs',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
+  },
 ];

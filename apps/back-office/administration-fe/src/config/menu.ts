@@ -1,5 +1,6 @@
 import { MenuItem } from '@megp/core-fe';
 import {
+  IconFile,
   IconAdjustmentsHorizontal,
   IconBookmark,
   IconBrandFlightradar24,
@@ -24,6 +25,11 @@ export const Menu: MenuItem[] = [
       { label: 'Item Category', link: '/item-category' },
       { label: 'Item Sub Category', link: '/item-sub-category' },
     ],
+  },
+  {
+    label: 'contract-catalogs',
+    icon: IconFile,
+    link: '/contract-catalogs',
   },
   { label: 'Measurements', icon: IconTools, link: '/measurement' },
   { label: 'Item Tags', icon: IconBookmark, link: '/tag' },

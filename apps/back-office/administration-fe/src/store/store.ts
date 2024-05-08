@@ -13,6 +13,7 @@ import { iamApi } from './api/iam/iam.api';
 import { specApi } from '@/app/(features)/item-master/_api/template.api';
 import { itemSubCategorySliceApi } from '@/app/(features)/item-sub-category/_api/item-sub-category';
 import { administrationApi } from './api/administration/administration.api';
+import { contractCatalogApi } from './api/contract-catalog/budge-category.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -32,6 +33,7 @@ export const store = configureStore({
     [itemSubCategorySliceApi.reducerPath]: itemSubCategorySliceApi.reducer,
     [specApi.reducerPath]: specApi.reducer,
     [administrationApi.reducerPath]: administrationApi.reducer,
+    [contractCatalogApi.reducerPath]: contractCatalogApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -50,6 +52,7 @@ export const store = configureStore({
       itemSubCategorySliceApi.middleware,
       specApi.middleware,
       administrationApi.middleware,
+      contractCatalogApi.middleware,
     ]),
 });
 
