@@ -285,13 +285,13 @@ function CustomTip({
       )}
 
       {displayForm ? (
-        <Box className="bg-white p-5 border">
+        <Box className="bg-white py-2 px-5 border w-96">
           <Textarea
             label="Comment"
             onChange={(e) => {
               setValue(e.target.value);
             }}
-            placeholder="Your comment..."
+            placeholder="Add comment"
             value={value}
           />
           <Group className="mt-2" justify="end">
