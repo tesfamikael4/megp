@@ -16,4 +16,5 @@ export class UpdateItemCategoryDto extends CreateItemCategoryDto {
   @IsUUID()
   id: string;
 }
+
 export class ItemCategoryResponseDto extends UpdateItemCategoryDto {}

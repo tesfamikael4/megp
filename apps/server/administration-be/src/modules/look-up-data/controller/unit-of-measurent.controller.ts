@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Post } from '@nestjs/common';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { UnitOfMeasurement } from 'src/entities/uom.entity';
@@ -27,5 +27,10 @@ export class UnitOfMeasurementController extends ExtraCrudController<UnitOfMeasu
   @Post()
   async createUniqueData(@Body() UoMDto: CreateUnitOfMeasurementDto) {
     return await this.uomService.createUniqueUoM(UoMDto);
+  }
+
+  @Delete(':id')
+  async deleteData(id: string) {
+    return await this.uomService.deleteUoM(id);
   }
 }

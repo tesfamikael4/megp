@@ -31,16 +31,8 @@ export class CreateItemMasterDto {
   itemCategoryId: string;
 
   @ApiProperty()
-  @IsString()
-  itemCategoryName: string;
-
-  @ApiProperty()
   @IsUUID()
   itemSubCategoryId: string;
-
-  @ApiProperty()
-  @IsString()
-  itemSubCategoryName: string;
 
   @ApiProperty()
   @IsUUID()
