@@ -164,7 +164,7 @@ export function EntityList<T>({
       w={mode === 'list' ? '100%' : '35%'}
     >
       {/* {logger.log('mode', mode, treeView)} */}
-      {treeView ? (
+      {treeView && !config.isUnit ? (
         <Box className="max-h-[30rem] overflow-auto">
           <MantineTree config={treeConfig ?? ([] as any)} data={data} />
         </Box>

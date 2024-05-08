@@ -8,7 +8,6 @@ import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
-  const [onRequest, setOnRequest] = useState<any>();
 
   const pathname = usePathname();
   const { organizationId } = useAuth();
@@ -28,10 +27,10 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onDetail: (selected: User) => {
         route.push(`/super-user/${selected?.id}`);
       },
-
-      pagination: true,
       searchable: true,
+      pagination: true,
       sortable: true,
+      primaryContent: 'account.firstName',
       columns: [
         {
           id: 'account.firstName',
@@ -46,9 +45,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
           header: 'Username',
           accessorKey: 'username',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'primary',
-          },
         },
         {
           id: 'status',
@@ -69,14 +65,15 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const onRequestChange = useCallback(
     (request: CollectionQuery) => {
-      trigger({ id: organizationId, collectionQuery: request });
+      organizationId !== undefined &&
+        trigger({ id: organizationId, collectionQuery: request });
     },
     [trigger, organizationId],
   );
 
   useEffect(() => {
-    setOnRequest(onRequestChange);
-  }, [onRequestChange, onRequest]);
+    onRequestChange({ skip: 0, take: 15 });
+  }, []);
 
   return (
     <EntityLayout

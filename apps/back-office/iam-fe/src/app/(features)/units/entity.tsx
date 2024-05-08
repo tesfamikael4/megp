@@ -1,7 +1,7 @@
 'use client';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLazyListByIdQuery } from './_api/unit.api';
 import { Unit } from '@/models/unit';
 import { useAuth } from '@megp/auth';
@@ -31,6 +31,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       pagination: true,
       searchable: true,
       sortable: true,
+      isUnit: true,
 
       columns: [
         {
@@ -53,13 +54,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'status',
-          header: () => <p className="ml-auto">Status</p>,
+          header: () => <p>Status</p>,
           accessorKey: 'status',
-          cell: (info) => (
-            <div className="flex justify-end">
-              {info.getValue() as ReactNode}
-            </div>
-          ),
+          cell: (info) => info.getValue(),
           meta: {
             widget: 'expand',
           },
@@ -89,6 +86,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setOnRequest(onRequestChange);
   }, [onRequestChange, onRequest]);
+
   return (
     <EntityLayout
       mode={mode}

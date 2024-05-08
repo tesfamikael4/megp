@@ -30,6 +30,8 @@ export function FormDetail() {
         shortName: selected?.shortName,
         description: selected?.description,
         typeId: selected?.typeId,
+        voteCode: selected?.voteCode,
+        budgetCheckNeeded: selected?.budgetCheckNeeded,
       });
     }
   }, [reset, selected, selectedSuccess]);
@@ -37,13 +39,26 @@ export function FormDetail() {
     <Stack pos={'relative'}>
       <LoadingOverlay visible={isLoading} />
       <TextInput label="Name" disabled {...register('name')} />
-
+      <TextInput
+        withAsterisk
+        label="Short Name"
+        required
+        disabled
+        {...register('shortName')}
+      />
       <Textarea
         label="Description"
         autosize
         disabled
         minRows={2}
         {...register('description')}
+      />
+      <TextInput
+        label="Vote Code"
+        withAsterisk
+        {...register('shortName')}
+        type="number"
+        disabled
       />
       <Controller
         name="typeId"
@@ -54,6 +69,7 @@ export function FormDetail() {
             name="name"
             label="Organization Type"
             value={value}
+            withAsterisk
             onChange={onChange}
             data={
               orgType?.items?.map((type) => ({
