@@ -28,9 +28,9 @@ import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha';
         process.env.GOOGLE_RECAPTCHA_SECRET_KEY ??
         '6LcizbgpAAAAAIzyLr6PyflbnOYWz5GfxgJZ6onD',
       response: (req) => req.headers.recaptcha,
-      skipIf: process.env.NODE_ENV !== 'development',
+      skipIf: process.env.NODE_ENV == 'production',
       score: 0.8,
-      debug: process.env.NODE_ENV === 'development',
+      debug: process.env.NODE_ENV == 'development',
     }),
     AuthorizationModule,
     AccountModule,
