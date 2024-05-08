@@ -53,7 +53,7 @@ export function Sidebar({
   };
   return (
     <div className="p-5 border-r" style={{ width: '25vw' }}>
-      <Tabs defaultValue={'comments'}>
+      <Tabs defaultValue={'comments'} className="overflow-y-scroll h-[100vh]">
         <Tabs.List>
           <Tabs.Tab value="comments">Comments</Tabs.Tab>
           {workflow && <Tabs.Tab value="workflow">Workflow</Tabs.Tab>}

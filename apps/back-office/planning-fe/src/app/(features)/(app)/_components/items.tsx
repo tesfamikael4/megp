@@ -273,9 +273,9 @@ export function Items({
     logger.log('items:', items);
     const castedData = items.map((item, index) => ({
       id: index,
-      unitPrice: item.unitPrice ?? 0,
+      unitPrice: `${item.unitPrice ?? 0}`,
       currency: page == 'pre' ? preActivity?.currency : postActivity?.currency,
-      quantity: item.quantity ?? 0,
+      quantity: `${item.quantity ?? 0}`,
       uom: item.uOMId,
       uomName: item.uOMName,
       [page == 'pre' ? 'preBudgetPlanActivityId' : 'postBudgetPlanActivityId']:
@@ -284,7 +284,7 @@ export function Items({
       metaData: item,
       itemCode: item.itemCode,
       measurement: item.measurementId,
-      classification: item.commodityCode,
+      classification: `${item.commodityCode}`,
     }));
 
     setNewItems([...castedData, ...newItems]);
