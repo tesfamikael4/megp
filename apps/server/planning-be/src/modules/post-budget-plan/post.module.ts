@@ -7,6 +7,7 @@ import {
   PostBudgetPlanItem,
   PostBudgetPlanTimeline,
   Budget,
+  PostBudgetActivityDocument,
 } from 'src/entities';
 import { PostBudgetPlanDisbursementService } from './services/post-budget-plan-disbursement.service';
 import { PostBudgetPlanActivityService } from './services/post-budget-plan-activity.service';
@@ -29,6 +30,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UtilityModule } from '../utility/utility.module';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { PostBudgetActivityDocumentController } from './controllers/post-budget-activity-documents.controller';
+import { PostBudgetActivityDocumentService } from './services/post-budget-activity-documents.service';
 
 @Module({
   imports: [
@@ -41,6 +44,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       PostBudgetPlan,
       PostProcurementMechanism,
       PostBudgetRequisitioner,
+      PostBudgetActivityDocument,
     ]),
     ClientsModule.register([
       {
@@ -91,6 +95,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     PostBudgetPlanService,
     PostProcurementMechanismService,
     PostBudgetRequisitionerService,
+    PostBudgetActivityDocumentService,
   ],
   controllers: [
     PostBudgePlantDisbursementController,
@@ -100,6 +105,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     PostBudgetPlanController,
     PostProcurementMechanismController,
     PostBudgetRequisitionerController,
+    PostBudgetActivityDocumentController,
   ],
   exports: [
     PostBudgetPlanService,

@@ -20,7 +20,7 @@ export class PostBudgetRequisitionerService extends ExtraCrudService<PostBudgetR
     });
     await this.repositoryPostBudgetRequisitioner.delete({
       postBudgetPlanActivityId:
-        requisitioner?.requisitioner[0].preBudgetPlanActivityId,
+        requisitioner?.requisitioner[0].postBudgetPlanActivityId,
     });
 
     const requisitioners = await this.repositoryPostBudgetRequisitioner.create(
