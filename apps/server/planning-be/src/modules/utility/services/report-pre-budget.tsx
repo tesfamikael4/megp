@@ -44,6 +44,10 @@ export const preReportPdf = async ({ activities }: any) => {
                     value: item.procurementReference,
                   },
                   {
+                    key: 'Optional Reference',
+                    value: item.userReference ?? '',
+                  },
+                  {
                     key: 'Name',
                     value: item.name,
                   },
