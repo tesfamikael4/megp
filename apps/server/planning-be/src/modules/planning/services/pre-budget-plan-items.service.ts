@@ -1,10 +1,17 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { PreBudgetPlanActivity, PreBudgetPlanItems } from 'src/entities';
+import {
+  PostBudgetPlanActivity,
+  PostBudgetPlanItem,
+  PreBudgetPlanActivity,
+  PreBudgetPlanItems,
+} from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
 import { BulkItemsDto } from '../dtos/pre-budget-plan-items.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { PostBudgetPlanActivityService } from 'src/modules/post-budget-plan/services/post-budget-plan-activity.service';
+import { PostBudgetPlanItemService } from 'src/modules/post-budget-plan/services/post-budget-plan-items.service';
 
 @Injectable()
 export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanItems> {
@@ -13,6 +20,9 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     private readonly repositoryPreBudgetPlanItems: Repository<PreBudgetPlanItems>,
     @InjectRepository(PreBudgetPlanActivity)
     private readonly repositoryPreBudgetPlanActivity: Repository<PreBudgetPlanActivity>,
+
+    private postBudgetActivityService: PostBudgetPlanActivityService,
+    private postBudgetItemService: PostBudgetPlanItemService,
     private eventEmitter: EventEmitter2,
   ) {
     super(repositoryPreBudgetPlanItems);
@@ -34,9 +44,15 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
       itemData.unitPrice * itemData.quantity;
 
     if (Number(activity.estimatedAmount) < Number(psedoCalculated)) {
-      this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
-        preBudgetPlanActivityId: itemData.preBudgetPlanActivityId,
-      });
+      // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+      //   preBudgetPlanActivityId: itemData.preBudgetPlanActivityId,
+      //   type: 'pre',
+      // });
+      await this.recalculateCalculatedAmount(
+        itemData.preBudgetPlanActivityId,
+        'pre',
+      );
+
       throw new HttpException(
         'calculated amount is greater than estimated amount',
         430,
@@ -45,9 +61,14 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     const item = this.repositoryPreBudgetPlanItems.create(itemData);
     await this.repositoryPreBudgetPlanItems.save(item);
 
-    this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
-      preBudgetPlanActivityId: itemData.preBudgetPlanActivityId,
-    });
+    // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+    //   preBudgetPlanActivityId: itemData.preBudgetPlanActivityId,
+    //   type: 'pre',
+    // });
+    await this.recalculateCalculatedAmount(
+      itemData.preBudgetPlanActivityId,
+      'pre',
+    );
 
     return item;
   }
@@ -74,9 +95,15 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
       Number(bulkCalculated) + Number(activity.calculatedAmount);
 
     if (Number(activity.estimatedAmount) < psedoCalculated) {
-      this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
-        preBudgetPlanActivityId: itemData.items[0].preBudgetPlanActivityId,
-      });
+      // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+      //   preBudgetPlanActivityId: itemData.items[0].preBudgetPlanActivityId,
+      //   type: 'pre',
+      // });
+      await this.recalculateCalculatedAmount(
+        itemData.items[0].preBudgetPlanActivityId,
+        'pre',
+      );
+
       throw new HttpException(
         'calculated amount is greater than estimated amount',
         430,
@@ -88,9 +115,14 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     );
     await this.repositoryPreBudgetPlanItems.save(items);
 
-    this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
-      preBudgetPlanActivityId: itemData.items[0].preBudgetPlanActivityId,
-    });
+    // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+    //   preBudgetPlanActivityId: itemData.items[0].preBudgetPlanActivityId,
+    //   type: 'pre',
+    // });
+    await this.recalculateCalculatedAmount(
+      itemData.items[0].preBudgetPlanActivityId,
+      'pre',
+    );
     return itemData;
   }
 
@@ -112,9 +144,15 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
       Number(activity.calculatedAmount) + itemNewCalculated - itemOldCalculated;
 
     if (Number(activity.estimatedAmount) < Number(psedoCalculated)) {
-      this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
-        preBudgetPlanActivityId: itemData.preBudgetPlanActivityId,
-      });
+      // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+      //   preBudgetPlanActivityId: itemData.preBudgetPlanActivityId,
+      //   type: 'pre',
+      // });
+      await this.recalculateCalculatedAmount(
+        itemData.preBudgetPlanActivityId,
+        'pre',
+      );
+
       throw new HttpException(
         'calculated amount is greater than estimated amount',
         430,
@@ -123,9 +161,11 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
 
     await this.repositoryPreBudgetPlanItems.update(id, itemData);
 
-    this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
-      preBudgetPlanActivityId: item.preBudgetPlanActivityId,
-    });
+    // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+    //   preBudgetPlanActivityId: item.preBudgetPlanActivityId,
+    //   type: 'pre',
+    // });
+    await this.recalculateCalculatedAmount(item.preBudgetPlanActivityId, 'pre');
 
     return this.repositoryPreBudgetPlanItems.findOne({ where: { id: id } });
   }
@@ -136,28 +176,48 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     });
     await this.repositoryPreBudgetPlanItems.softRemove(item);
 
-    this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
-      preBudgetPlanActivityId: item.preBudgetPlanActivityId,
-    });
+    // this.eventEmitter.emit('pre.recalculateCalculatedAmountActivity', {
+    //   preBudgetPlanActivityId: item.preBudgetPlanActivityId,
+    //   type: 'pre',
+    // });
+    await this.recalculateCalculatedAmount(item.preBudgetPlanActivityId, 'pre');
   }
 
-  async recalculateCalculatedAmount(preBudgetPlanActivityId) {
-    const activity = await this.repositoryPreBudgetPlanActivity.findOne({
-      where: {
-        id: preBudgetPlanActivityId,
-      },
-      relations: ['preBudgetPlanItems'],
-    });
+  async recalculateCalculatedAmount(activityId, type) {
+    let activity: any = {};
+    if (type == 'pre') {
+      const act = await this.repositoryPreBudgetPlanActivity.findOne({
+        where: {
+          id: activityId,
+        },
+        relations: {
+          preBudgetPlanItems: true,
+        },
+      });
+      activity = { ...act };
+    } else {
+      const act =
+        await this.postBudgetActivityService.findByActivityId(activityId);
+      activity = { ...act };
+    }
+    const activityRepo =
+      type == 'pre'
+        ? this.repositoryPreBudgetPlanActivity
+        : this.postBudgetActivityService;
 
     if (!activity)
-      throw new NotFoundException(`PreBudgetPlanActivity not found`);
+      throw new NotFoundException(`${type}BudgetPlanActivity not found`);
 
-    const totalCalculatedAmount = activity.preBudgetPlanItems.reduce(
+    const items =
+      type == 'pre'
+        ? activity.preBudgetPlanItems
+        : activity.postBudgetPlanItems;
+    const totalCalculatedAmount = items.reduce(
       (acc, cur) => acc + cur.quantity * cur.unitPrice,
       0,
     );
 
-    await this.repositoryPreBudgetPlanActivity.update(activity.id, {
+    await activityRepo.update(activity.id, {
       calculatedAmount: totalCalculatedAmount,
     });
   }

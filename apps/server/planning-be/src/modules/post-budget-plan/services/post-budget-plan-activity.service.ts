@@ -31,6 +31,16 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
   ) {
     super(repositoryPostBudgetPlanActivity);
   }
+
+  async findByActivityId(activityId) {
+    return this.repositoryPostBudgetPlanActivity.findOne({
+      where: { id: activityId },
+      relations: {
+        postBudgetPlanItems: true,
+      },
+    });
+  }
+
   async create(itemData: any): Promise<any> {
     const activity =
       await this.repositoryPostBudgetPlanActivity.create(itemData);

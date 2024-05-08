@@ -20,7 +20,7 @@ export class MinIOService {
         BucketNameEnum.MEGP,
         bucketName + filepath,
         file.buffer,
-        { ...metaData, 'Content-Type': file.mimetype },
+        // { ...metaData, 'Content-Type': file.mimetype },
       );
       return {
         filepath,
@@ -75,7 +75,7 @@ export class MinIOService {
         BucketNameEnum.MEGP,
         bucketName + filepath,
         buffer,
-        { ...metaData, 'Content-Type': mimetype },
+        // { ...metaData, 'Content-Type': mimetype },
       );
       return {
         filepath,
