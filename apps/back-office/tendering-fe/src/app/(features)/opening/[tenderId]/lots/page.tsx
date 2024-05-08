@@ -22,8 +22,6 @@ export default function BidOpening() {
   const { tenderId } = useParams();
   const config: ExpandableTableConfig = {
     isSearchable: true,
-    isExpandable: true,
-    expandedRowContent: (record) => <DetailTender tender={record} />,
     columns: [
       {
         accessor: 'name',
@@ -80,7 +78,7 @@ export default function BidOpening() {
     try {
       await submit({
         tenderId: tenderId as string,
-        isTeamLead: true,
+        isTeamLead: false,
       }).unwrap();
       notify('Success', 'All tenders opened successfully');
     } catch (err) {
@@ -112,7 +110,7 @@ export default function BidOpening() {
               loading={isLoading}
               disabled={tenderStatus?.hasCompleted}
             >
-              Submit
+              Complete
             </Button>
           </Group>
         }
@@ -132,26 +130,3 @@ export default function BidOpening() {
     </>
   );
 }
-
-const DetailTender = ({ tender }: any) => {
-  const config: ExpandableTableConfig = {
-    columns: [
-      {
-        accessor: 'name',
-      },
-      {
-        accessor: 'email',
-      },
-      {
-        accessor: 'phone',
-      },
-    ],
-  };
-
-  return (
-    <Box className="bg-white p-5">
-      <Text fw={500}>Bidders List</Text>
-      <ExpandableTable config={config} data={[]} />
-    </Box>
-  );
-};

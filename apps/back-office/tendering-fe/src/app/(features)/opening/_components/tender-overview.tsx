@@ -53,13 +53,17 @@ export const TenderOverView = () => {
               </Text>
             </Box>
             <Box>
-              <Badge variant="outline" size="xs" color="gray">
-                {data?.bdsSubmission?.envelopType ?? ''}
-              </Badge>
-              <Text>
+              {data?.bdsSubmission?.envelopType && (
                 <Badge variant="outline" size="xs" color="gray">
-                  {data?.bdsEvaluation?.awardType ?? ''}
+                  {data?.bdsSubmission?.envelopType}
                 </Badge>
+              )}
+              <Text>
+                {data?.bdsEvaluation?.awardType && (
+                  <Badge variant="outline" size="xs" color="gray">
+                    {data?.bdsEvaluation?.awardType}
+                  </Badge>
+                )}
               </Text>
             </Box>
           </Flex>
@@ -76,14 +80,18 @@ export const TenderOverView = () => {
             </Box>
             <Box>
               <Text size="sm">
-                <Badge variant="outline" size="xs" color="gray">
-                  {data?.bdsEvaluation?.evaluationMethod ?? ''}
-                </Badge>
+                {data?.bdsEvaluation?.evaluationMethod && (
+                  <Badge variant="outline" size="xs" color="gray">
+                    {data?.bdsEvaluation?.evaluationMethod}
+                  </Badge>
+                )}
               </Text>
               <Text size="sm">
-                <Badge variant="outline" size="xs" color="gray">
-                  {data?.status ?? ''}
-                </Badge>
+                {data?.status && (
+                  <Badge variant="outline" size="xs" color="gray">
+                    {data?.status}
+                  </Badge>
+                )}
               </Text>
             </Box>
           </Flex>
