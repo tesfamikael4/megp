@@ -38,9 +38,6 @@ const AddUserModal = () => {
             {info.row.original.firstName + ' ' + info.row.original.lastName}
           </div>
         ),
-        meta: {
-          widget: 'primary',
-        },
       },
     ],
     onSave: async (selected) => {

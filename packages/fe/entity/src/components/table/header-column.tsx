@@ -1,8 +1,10 @@
 import type { ReactElement } from 'react';
 import React, { useEffect, useRef } from 'react';
-import { ActionIcon, Checkbox, Menu, Radio, Text } from '@mantine/core';
+import { ActionIcon, Box, Checkbox, Menu, Radio, Text } from '@mantine/core';
 import {
   IconArrowRight,
+  IconChevronDown,
+  IconChevronRight,
   IconCircleMinus,
   IconDotsVertical,
   IconMinus,
@@ -220,7 +222,9 @@ export const actionColumn = (options) => {
     accessorKey: options.primaryKey,
     header: '',
     size: 40,
-    cell: (info: any) => detailBtn(info, options.onDetail),
+    cell: (info: any) => (
+      <Box className="ml-auto">{detailBtn(info, options.onDetail)}</Box>
+    ),
   };
 };
 
@@ -286,18 +290,18 @@ export const newExpand = {
           marginLeft: `${props.row.depth * 2}rem`,
         }}
       >
-        <div className="pr-2">
+        <div className="pr-2 mt-1">
           <ActionIcon
             className={styles.button}
             color="primary"
             onClick={props.row.getToggleExpandedHandler()}
-            size={15}
-            variant="outline"
+            size={20}
+            variant="subtle"
           >
             {props.row.getIsExpanded() ? (
-              <IconMinus size={10} stroke={1} />
+              <IconChevronDown size={20} />
             ) : (
-              <IconPlus size={10} stroke={1} />
+              <IconChevronRight size={20} />
             )}
           </ActionIcon>
         </div>

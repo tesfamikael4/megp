@@ -44,14 +44,15 @@ export function FormDetail({ mode }: FormDetailProps) {
     name: z.string().min(1, { message: 'This field is required' }),
     typeId: z.string({
       required_error: 'This field is required',
-      invalid_type_error: 'This field is required to be a string',
+      invalid_type_error: 'This field is required ',
     }),
     code: z.string().optional(),
     shortName: z.string().min(1, { message: 'This field is required' }),
     description: z.string().optional(),
     budgetCheckNeeded: z.boolean(),
-    voteCode: z.coerce.string().min(1, {
-      message: 'Vote code is required',
+    voteCode: z.string({
+      required_error: 'This field is required',
+      invalid_type_error: 'This field is required ',
     }),
   });
 

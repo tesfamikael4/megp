@@ -6,6 +6,7 @@ export interface EntityConfig<T> extends List<T> {
   mode: 'list' | 'new' | 'detail';
 
   hasAdd?: boolean;
+  isUnit?: boolean;
   hasDetail?: boolean;
   onDetail?: (selected: T) => void;
   onAdd?: () => void;
