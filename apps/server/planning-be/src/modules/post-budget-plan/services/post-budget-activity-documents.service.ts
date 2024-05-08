@@ -62,7 +62,10 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
   }
 
   // ! deprecated method, do not use
-  async generatePresignedPutUrl(fileInfo): Promise<{ presignedUrl: string }> {
+  async generatePresignedPutUrl(
+    fileInfo,
+    req,
+  ): Promise<{ presignedUrl: string }> {
     const presignedUrl = await this.minioService.generatePresignedUploadUrl({
       bucketName: fileInfo.bucketName,
       contentType: fileInfo.contentType,
@@ -72,7 +75,8 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
     const doc = await this.repositoryPostBudgetActivityDocument.create({
       title: fileInfo.name,
       postBudgetPlanActivityId: fileInfo.postBudgetPlanActivityId,
-      organizationId: fileInfo.organizationId,
+      organizationId: req.user.organization.id,
+      organizationName: req.user.organization.name,
       fileInfo: presignedUrl.file,
     });
 
