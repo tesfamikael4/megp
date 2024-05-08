@@ -64,6 +64,10 @@ const AddEntityModal = () => {
         );
       }
     },
+    searchable: true,
+    disableMultiSelect: true,
+    selectable: true,
+    pagination: true,
     onAdd: () => {
       setIsModalOpen(true);
     },
@@ -132,9 +136,18 @@ const AddEntityModal = () => {
           config={config}
           total={data?.total ?? 0}
           onDone={(data) => {
-            setCurrentAssigned([data]);
-            logger.log({ data });
-            handleCloseModal();
+            if (Array.isArray(data)) {
+              if (data.length > 0) {
+                setCurrentAssigned(data);
+                handleCloseModal();
+              } else {
+                notify('Error', 'Please select at least one budget category.');
+              }
+            } else {
+              // If data is not an array, convert it to an array with a single item
+              setCurrentAssigned([data]);
+              handleCloseModal();
+            }
           }}
           onRequestChange={onRequestChange}
         />
