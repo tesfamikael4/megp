@@ -297,6 +297,7 @@ export function WorkflowHandling({
                                   <Textarea
                                     withAsterisk
                                     minRows={3}
+                                    maxRows={5}
                                     autosize
                                     label="Remark"
                                     placeholder="Please enter your remarks"
