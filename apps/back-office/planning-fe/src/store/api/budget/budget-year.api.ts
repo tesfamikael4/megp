@@ -86,7 +86,7 @@ export const {
   useLazyGetActivitiesQuery,
   useGetActivitiesQuery,
   useUploadMutation,
-  useGetFilesQuery,
+  useLazyGetFilesQuery,
   useLazyDownloadFilesQuery,
   usePreSignedUrlMutation,
   useDeleteFileMutation,

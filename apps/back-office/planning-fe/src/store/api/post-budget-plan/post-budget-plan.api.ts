@@ -122,6 +122,12 @@ export const postBudgetPlanApi = createApi({
       }),
       providesTags: ['post-budget-activity-files'],
     }),
+    getFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `post-budget-activity-documents/list/${id}`,
+      }),
+      providesTags: ['post-budget-activity-files'],
+    }),
     isValidPostPlan: builder.query<any, any>({
       query: (id) => `post-budget-plans/check-ncb/${id}`,
     }),
@@ -174,6 +180,7 @@ export const {
   useCreatePostBudgetRequisitionerMutation,
   useCreatePostBudgetDisbursementMutation,
   useLazyGetPostBudgetDisbursementQuery,
+  useLazyGetFilesQuery,
 
   useLazyGetPostBudgetPlansQuery,
   useGetPostBudgetPlansQuery,
