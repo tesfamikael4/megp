@@ -46,7 +46,7 @@ const defaultValues = {
   commodityCode: '',
   commodityName: '',
   description: '',
-  itemSubCategoryId: '',
+  itemSubCategoryId: null,
   uOMId: null,
   uOMName: '',
   measurementId: null,

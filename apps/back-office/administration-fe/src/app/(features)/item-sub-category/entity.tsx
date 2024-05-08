@@ -22,7 +22,7 @@ export function Entity({
       mode: 'list',
       entity: 'item-sub-category',
       primaryKey: 'id',
-      title: 'Item Sub Category',
+      title: 'Item Sub-Categories',
 
       onDetail: (selected: ItemSubCategory) => {
         route.push(`/item-sub-category/${selected.id}`);

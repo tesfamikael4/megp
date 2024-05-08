@@ -1,18 +1,22 @@
 'use client';
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useLazyListQuery } from './_api/item-master.api';
 import { ItemMaster } from '@/models/item-master';
 import { logger } from '@megp/core-fe';
-import { Box } from '@mantine/core';
+import { Box, Text } from '@mantine/core';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
-  const [getItems, { data: list, isLoading, isError }] = useLazyListQuery({});
+  const [getItems, { data: list }] = useLazyListQuery({});
 
-  logger.log('list', list, isLoading, isError);
+  const [showMore, setShowMore] = useState(false);
+
+  const toggleShowMore = () => {
+    setShowMore(!showMore);
+  };
 
   const config: EntityConfig<Partial<ItemMaster>> = useMemo(() => {
     return {
@@ -21,7 +25,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
       entity: 'Items',
       primaryKey: 'id',
       primaryContent: 'description',
-      title: `Item Masters`,
+      title: `Item Master`,
       searchable: true,
       sortable: true,
       pagination: true,
@@ -61,14 +65,34 @@ export function Entity({ children }: { children: React.ReactElement }) {
           id: 'commodityName',
           header: 'Classification ',
           accessorKey: 'commodityName',
-          meta: {
-            widget: 'expand',
+          cell: ({ row: { original } }: any) => {
+            return (
+              <>
+                <Text
+                  size="sm"
+                  onClick={toggleShowMore}
+                  className="cursor-pointer"
+                >
+                  {original.commodityName && (
+                    <>
+                      {original.commodityName.length <= 95 ? (
+                        original.commodityName
+                      ) : (
+                        <>
+                          {showMore
+                            ? original.commodityName
+                            : original.commodityName.slice(0, 95) + '...'}
+                          <span className="text-xs ml-3 text-blue-500">
+                            {showMore ? 'See Less' : 'See More'}
+                          </span>
+                        </>
+                      )}
+                    </>
+                  )}
+                </Text>
+              </>
+            );
           },
-          cell: ({ row: { original } }: any) => (
-            <>
-              {original.commodityName} ({original.commodityCode})
-            </>
-          ),
         },
       ],
     };

@@ -21,7 +21,7 @@ interface FormDetailProps {
 
 const defaultValues = {
   name: '',
-  parentId: '',
+  parentId: null,
 };
 export function FormDetail({ mode }: FormDetailProps) {
   const itemCategorySchema: ZodType<Partial<ItemCategory>> = z.object({

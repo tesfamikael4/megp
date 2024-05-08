@@ -79,9 +79,13 @@ const AddUnit = () => {
         title: 'Success',
         color: 'Green',
       });
-    } catch (err) {
+    } catch (error) {
+      let errorMessage = 'Error occurred while creating Unit of Measurement';
+      if (error?.data?.message) {
+        errorMessage = error.data.message;
+      }
       notifications.show({
-        message: 'Error in Deleting Unit of Measurement.',
+        message: errorMessage,
         title: 'Error',
         color: 'red',
       });

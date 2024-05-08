@@ -23,7 +23,7 @@ export const Menu: MenuItem[] = [
     icon: IconTableShortcut,
     links: [
       { label: 'Item Category', link: '/item-category' },
-      { label: 'Item Sub Category', link: '/item-sub-category' },
+      { label: 'Item Sub-Category', link: '/item-sub-category' },
     ],
   },
   {
