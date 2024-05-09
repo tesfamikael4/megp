@@ -63,7 +63,7 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
       throw new NotFoundException();
     }
     const presignedUrl = await this.minioService.generatePresignedDownloadUrl({
-      bucketName: fileInfo.fileInfo.bucketName,
+      bucketName: 'megp',
       filepath: fileInfo.fileInfo.filepath,
       contentType: fileInfo.fileInfo.contentType,
     });
@@ -73,6 +73,7 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
   // ! deprecated method, do not use
   async generatePresignedPutUrl(
     fileInfo,
+    req,
   ): Promise<{ presignedUrl: string; id: string }> {
     const presignedUrl = await this.minioService.generatePresignedUploadUrl({
       bucketName: fileInfo.bucketName,
@@ -83,7 +84,8 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
     const doc = await this.repositoryPreBudgetActivityDocument.create({
       title: fileInfo.name,
       preBudgetPlanActivityId: fileInfo.preBudgetPlanActivityId,
-      organizationId: fileInfo.organizationId,
+      organizationId: req.user.organization.id,
+      organizationName: req.user.organization.name,
       fileInfo: presignedUrl.file,
     });
 
