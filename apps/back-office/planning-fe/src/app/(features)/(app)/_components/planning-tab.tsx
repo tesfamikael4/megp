@@ -34,7 +34,6 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconCoins,
-  IconHistory,
   IconInfoCircle,
   IconPlus,
 } from '@tabler/icons-react';
@@ -157,7 +156,11 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
           itemName: (selectedYear as any)?.app?.planName,
         }).unwrap();
       }
-      notify('Success', 'Pre budget plan submitted successfully');
+      notify(
+        'Success',
+        (page == 'pre' ? 'Pre' : 'Post') +
+          ' budget plan submitted successfully',
+      );
     } catch (err) {
       logger.log(err);
       if (err.status === 430) {
