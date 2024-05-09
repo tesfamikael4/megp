@@ -59,7 +59,7 @@ export class Organization extends Audit {
   @Column({ default: true, nullable: true })
   budgetCheckNeeded: boolean;
 
-  @Column({ unique: true })
+  @Column({ nullable: true })
   voteCode: string;
 
   @OneToMany(() => Unit, (unit) => unit.organization, {
