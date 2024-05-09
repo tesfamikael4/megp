@@ -1,30 +1,34 @@
 'use client';
-import { DetailTable } from '@/app/(features)/_components/detail-table';
 import {
   Box,
   Button,
   Container,
   Flex,
   LoadingOverlay,
+  NumberInput,
   Text,
   Textarea,
 } from '@mantine/core';
-import { Section, notify } from '@megp/core-fe';
+
+import { GuaranteeExtension } from '@/models/guarantee-extension/guarantee-extension';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Section, logger, notify } from '@megp/core-fe';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { GuaranteeRelease } from '@/models/guarantee-release/guarantee-release';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useReadQuery as useGuaranteeQuery } from '../../_api/guarantee-request.api';
 import {
   useCreateMutation,
-  useLazyListByIdQuery,
-} from '../_api/guarantee-release.api';
-import { useEffect } from 'react';
-import { useReadQuery } from '../../_api/guarantee-request.api';
-
-export default function ReleaseDetail() {
-  const releaseSchema: ZodType<Partial<GuaranteeRelease>> = z.object({
+  useReadQuery,
+} from '../_api/guarantee-extension.api';
+interface FormDetailProps {
+  mode: 'new' | 'detail';
+}
+export default function FormDetail({ mode }: FormDetailProps) {
+  const extensionSchema: ZodType<Partial<GuaranteeExtension>> = z.object({
+    noOfDays: z.number().min(1, { message: 'This field is required' }),
     remark: z.string().optional(),
     reason: z.string().optional(),
   });
@@ -33,38 +37,48 @@ export default function ReleaseDetail() {
     reset,
     formState: { errors },
     register,
+
+    control,
   } = useForm({
-    resolver: zodResolver(releaseSchema),
+    resolver: zodResolver(extensionSchema),
   });
 
   const router = useRouter();
-  const { id, tenderId, lotId } = useParams();
+  const { id, tenderId, lotId, guaranteeId } = useParams();
   const [create, { isLoading }] = useCreateMutation();
-  const [trigger, { data: selected, isSuccess: selectedSuccess }] =
-    useLazyListByIdQuery();
-  const { data: selectedGuarantee } = useReadQuery(id?.toString());
+
+  const { data: selected, isSuccess: selectedSuccess } = useReadQuery(
+    id?.toString(),
+  );
+  const { data: selectedGuarantee } = useGuaranteeQuery(
+    guaranteeId?.toString(),
+  );
+
   const onCreate = async (data) => {
     try {
       await create({
         ...data,
-        guaranteeId: id,
+        guaranteeId: guaranteeId,
         status: 'REQUESTED',
       }).unwrap();
-      notify('Success', 'Guarantee Release created successfully');
+      notify('Success', 'Guarantee Extension created successfully');
     } catch (e) {
       notify('Error', 'Something went wrong');
     }
   };
-  useEffect(() => {
-    trigger({ id: id?.toString(), collectionQuery: undefined });
 
-    if (selectedSuccess && selected !== undefined) {
+  useEffect(() => {
+    if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
-        remark: selected?.items.map((r) => r.remark),
-        reason: selected?.items.map((r) => r.reason),
+        noOfDays: selected?.noOfDays,
+        remark: selected?.remark,
+        reason: selected?.reason,
       });
     }
-  }, [id, reset, selected, selectedSuccess, trigger]);
+  }, [mode, reset, selected, selectedSuccess]);
+  const onError = (err) => {
+    logger.log(err);
+  };
 
   return (
     <>
@@ -77,13 +91,23 @@ export default function ReleaseDetail() {
                 align="center"
                 className="cursor-pointer "
                 onClick={() =>
-                  router.push(`/solicitation/${tenderId}/${lotId}?tab=release`)
+                  router.push(
+                    `/solicitation/${tenderId}/${lotId}/${guaranteeId}?tab=extension`,
+                  )
                 }
               >
-                <IconChevronLeft />
+                <IconChevronLeft
+                  onClick={() =>
+                    router.push(
+                      `/solicitation/${tenderId}/${lotId}/${guaranteeId}?tab=extension`,
+                    )
+                  }
+                />
 
                 <Text className="text-xl font-bold">
-                  {selectedGuarantee?.bidderName}
+                  {mode == 'detail' && selectedSuccess && selected !== undefined
+                    ? selected?.reason
+                    : selectedGuarantee?.bidderName}
                 </Text>
               </Flex>
             </div>
@@ -129,12 +153,52 @@ export default function ReleaseDetail() {
               </Section>
 
               <Box className="  w-3/4">
-                <Section title=" New Guarantee Release " collapsible={false}>
+                <Section
+                  title={
+                    mode == 'detail' &&
+                    selectedSuccess &&
+                    selected !== undefined
+                      ? ' Guarantee Extension Detail '
+                      : ' New Guarantee Extension '
+                  }
+                  collapsible={false}
+                >
+                  <Controller
+                    name="noOfDays"
+                    control={control}
+                    render={({ field: { name, value, onChange } }) => (
+                      <NumberInput
+                        w={'50%'}
+                        className="mt-5"
+                        label="Extension Days"
+                        name={name}
+                        value={value}
+                        max={31}
+                        onChange={(d) => onChange(parseInt(d as string))}
+                        disabled={
+                          mode == 'detail' &&
+                          selectedSuccess &&
+                          selected !== undefined
+                        }
+                        error={
+                          errors?.noOfDays
+                            ? errors?.noOfDays?.message?.toString()
+                            : ''
+                        }
+                      />
+                    )}
+                  />
+
                   <Flex justify="space-between" gap={10}>
                     <Textarea
                       className="mt-5 w-full"
                       label="Remark"
                       {...register('remark')}
+                      disabled={
+                        mode == 'detail' &&
+                        selectedSuccess &&
+                        selected !== undefined
+                      }
                       error={
                         errors?.remark
                           ? errors?.remark?.message?.toString()
@@ -144,6 +208,11 @@ export default function ReleaseDetail() {
                     <Textarea
                       className="mt-5 w-full"
                       label="Reason"
+                      disabled={
+                        mode == 'detail' &&
+                        selectedSuccess &&
+                        selected !== undefined
+                      }
                       {...register('reason')}
                       error={
                         errors?.reason
@@ -154,8 +223,16 @@ export default function ReleaseDetail() {
                   </Flex>
 
                   <Flex justify="flex-end" gap={10}>
-                    <Button onClick={handleSubmit(onCreate)} className="mt-5">
-                      Release
+                    <Button
+                      onClick={handleSubmit(onCreate, onError)}
+                      className="mt-5"
+                      disabled={
+                        mode == 'detail' &&
+                        selectedSuccess &&
+                        selected !== undefined
+                      }
+                    >
+                      Extened
                     </Button>
                   </Flex>
                 </Section>

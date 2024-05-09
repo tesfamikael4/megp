@@ -26,9 +26,7 @@ export default function Lots() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(
-                `/solicitation/${tenderId}/${record.id}?tab=extension`,
-              );
+              router.push(`/solicitation/${tenderId}/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />
