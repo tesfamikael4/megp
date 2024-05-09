@@ -20,16 +20,16 @@ import { displayFormattedObject } from '../../util/displayFormattedObject';
 import Link from 'next/link';
 import { accordionTabs, formatColumns } from '../../_constants/reviewTabs';
 
-const tabs = [
+const tabs = (countryOfRegistration) => [
   {
     tabValue: 'certificate',
     tabName: 'Certificate',
   },
-  ...accordionTabs,
+  ...accordionTabs(countryOfRegistration),
 ];
 
-const findATabNameByValue = (value) =>
-  tabs.find((tab) => tab.tabValue === value);
+const findATabNameByValue = (value, originalTabs) =>
+  originalTabs.find((tab) => tab.tabValue === value);
 
 function FormPreview({ data }: { data: any }) {
   const [selected, setSelected] = useState<any>();
@@ -54,7 +54,7 @@ function FormPreview({ data }: { data: any }) {
             chevronSize={20}
             disableChevronRotation
           >
-            {tabs.map((tab) => {
+            {tabs(data?.basic?.countryOfRegistration).map((tab) => {
               const { tabValue, tabName } = tab;
               if (data[tabValue]) {
                 return (
@@ -114,7 +114,10 @@ export const TabsRightSide = ({
   return (
     <Section
       collapsible={false}
-      title={findATabNameByValue(selected)?.tabName || 'Company Details'}
+      title={
+        findATabNameByValue(selected, tabs(data?.basic?.countryOfRegistration))
+          ?.tabName || 'Company Details'
+      }
       className="w-2/3 min-h-[700px]"
       w="66.666667%"
     >

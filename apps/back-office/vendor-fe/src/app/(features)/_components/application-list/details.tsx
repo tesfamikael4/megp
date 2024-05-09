@@ -160,7 +160,7 @@ export default function RequestDetail({
               <Box className="text-primary-800 font-bold" size="xl">
                 {currentVendor?.basic.name}
               </Box>
-              <Box>Country: {currentVendor?.basic.origin}</Box>
+              <Box>Country: {currentVendor?.basic.countryOfRegistration}</Box>
             </Flex>
           </Flex>
           <Flex direction="column" className="border-l-gray-50 w-4/12 ml-3">

@@ -1,9 +1,9 @@
 'use client';
 
-import VendorsDetail from '../../(common)/details';
+import VendorsDetail from '../../VendorDetail';
 
 const DebarredVendorDetail = () => {
-  return <VendorsDetail />;
+  return <VendorsDetail path="debarred" />;
 };
 
 export default DebarredVendorDetail;

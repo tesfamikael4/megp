@@ -1,4 +1,4 @@
-export const accordionTabs = [
+export const accordionTabs = (countryOfRegistration: string) => [
   {
     tabValue: 'basic',
     tabName: 'Basic Registration',
@@ -29,7 +29,7 @@ export const accordionTabs = [
   },
   {
     tabValue: 'areasOfBusinessInterestView',
-    tabName: 'Areas of Business Interest',
+    tabName: 'Purpose of Registration',
   },
   {
     tabValue: 'lineOfBusiness',
@@ -43,10 +43,14 @@ export const accordionTabs = [
     tabValue: 'paymentReceipt',
     tabName: 'Payment Receipts',
   },
-  {
-    tabValue: 'preferential',
-    tabName: 'Eligibility for Preferential Services',
-  },
+  ...(countryOfRegistration === 'Malawi'
+    ? [
+        {
+          tabValue: 'preferential',
+          tabName: 'Eligibility for Preferential Services',
+        },
+      ]
+    : []),
 ];
 
 export const formatColumns = (countryOfRegistration) => ({
@@ -111,11 +115,15 @@ export const formatColumns = (countryOfRegistration) => ({
   ],
 
   service: [{ name: 'name', displayName: 'Service Type' }],
-  preferential: [
-    { name: 'type', displayName: 'Preferential Service' },
-    { name: 'certiNumber', displayName: 'Certificate Number' },
-    { name: 'certificateValidityPeriod', displayName: 'Validity Period' },
-    { name: 'certificateIssuedDate', displayName: 'Issued Date' },
-    { name: 'certificateUrl', displayName: 'Certificate' },
-  ],
+  ...(countryOfRegistration
+    ? {
+        preferential: [
+          { name: 'type', displayName: 'Preferential Service' },
+          { name: 'certiNumber', displayName: 'Certificate Number' },
+          { name: 'certificateValidityPeriod', displayName: 'Validity Period' },
+          { name: 'certificateIssuedDate', displayName: 'Issued Date' },
+          { name: 'certificateUrl', displayName: 'Certificate' },
+        ],
+      }
+    : {}),
 });
