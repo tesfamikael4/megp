@@ -1,6 +1,18 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Notes } from 'src/entities/note.entity';
-import { EntityCrudController } from 'megp-shared-be';
+import {
+  AllowAnonymous,
+  ApiKeyGuard,
+  EntityCrudController,
+} from 'megp-shared-be';
 import { NotesService } from '../service/notes.service';
 import { EntityCrudOptions } from 'megp-shared-be';
 import { CreateNotesDto, UpdateNotesDto } from '../dto/notes.dto';
@@ -35,5 +47,15 @@ export class NotesController extends EntityCrudController<Notes>(options) {
   @Get('/:objectId')
   async getNote(@Param('objectId') objectId: string) {
     return await this.notesService.getNote(objectId);
+  }
+
+  @Get('/:objectId/:version')
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  async getNotes(
+    @Param('objectId') objectId: string,
+    @Param('version') version: string,
+  ) {
+    return await this.notesService.getNotesWithVersion(objectId, version);
   }
 }

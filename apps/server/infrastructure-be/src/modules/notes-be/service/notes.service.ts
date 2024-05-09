@@ -21,7 +21,26 @@ export class NotesService extends EntityCrudService<Notes> {
       order: {
         createdAt: 'DESC',
       },
-      relations: ['parent'],
+      relations: {
+        parent: true,
+      },
+    });
+  }
+
+  async getNotesWithVersion(objectId: string, version: string) {
+    return await this.repositoryNotes.find({
+      where: {
+        objectId,
+        metaData: {
+          version,
+        },
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: {
+        parent: true,
+      },
     });
   }
 }
