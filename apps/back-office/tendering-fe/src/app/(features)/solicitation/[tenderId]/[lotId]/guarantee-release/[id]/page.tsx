@@ -18,10 +18,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   useCreateMutation,
-  useReadQuery as useReadExtensionQuery,
-} from '../../_api/guarantee-release.api';
+  useLazyListByIdQuery,
+} from '../_api/guarantee-release.api';
 import { useEffect } from 'react';
-import { useReadQuery } from '../../../_api/guarantee-request.api';
+import { useReadQuery } from '../../_api/guarantee-request.api';
 
 export default function ReleaseDetail() {
   const releaseSchema: ZodType<Partial<GuaranteeRelease>> = z.object({
@@ -38,17 +38,16 @@ export default function ReleaseDetail() {
   });
 
   const router = useRouter();
-  const { id, tenderId, lotId, guaranteeId } = useParams();
+  const { id, tenderId, lotId } = useParams();
   const [create, { isLoading }] = useCreateMutation();
-  const { data: selected, isSuccess: selectedSuccess } = useReadExtensionQuery(
-    id?.toString(),
-  );
+  const [trigger, { data: selected, isSuccess: selectedSuccess }] =
+    useLazyListByIdQuery();
   const { data: selectedGuarantee } = useReadQuery(id?.toString());
   const onCreate = async (data) => {
     try {
       await create({
         ...data,
-        guaranteeId: guaranteeId,
+        guaranteeId: id,
         status: 'REQUESTED',
       }).unwrap();
       notify('Success', 'Guarantee Release created successfully');
@@ -57,13 +56,15 @@ export default function ReleaseDetail() {
     }
   };
   useEffect(() => {
+    trigger({ id: id?.toString(), collectionQuery: undefined });
+
     if (selectedSuccess && selected !== undefined) {
       reset({
-        reason: selected?.reason,
-        remark: selected?.remark,
+        remark: selected?.items.map((r) => r.remark),
+        reason: selected?.items.map((r) => r.reason),
       });
     }
-  }, [reset, selected, selectedSuccess]);
+  }, [id, reset, selected, selectedSuccess, trigger]);
 
   return (
     <>

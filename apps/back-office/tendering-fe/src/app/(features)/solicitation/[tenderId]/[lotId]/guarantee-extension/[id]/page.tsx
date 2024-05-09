@@ -1,5 +1,4 @@
 'use client';
-import { DetailTable } from '@/app/(features)/_components/detail-table';
 import {
   Box,
   Button,
@@ -11,19 +10,19 @@ import {
   Textarea,
 } from '@mantine/core';
 
+import { GuaranteeExtension } from '@/models/guarantee-extension/guarantee-extension';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Section, logger, notify } from '@megp/core-fe';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { GuaranteeExtension } from '@/models/guarantee-extension/guarantee-extension';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import {
   useCreateMutation,
-  useReadQuery as useReadExtensionQuery,
-} from '../../_api/guarantee-extension.api';
-import { useEffect } from 'react';
-import { useReadQuery } from '../../../_api/guarantee-request.api';
+  useLazyListByIdQuery,
+} from '../_api/guarantee-extension.api';
+import { useReadQuery } from '../../_api/guarantee-request.api';
 
 export default function ExtensionDetail() {
   const extensionSchema: ZodType<Partial<GuaranteeExtension>> = z.object({
@@ -36,23 +35,23 @@ export default function ExtensionDetail() {
     reset,
     formState: { errors },
     register,
+    // control,
   } = useForm({
     resolver: zodResolver(extensionSchema),
   });
 
   const router = useRouter();
-  const { id, tenderId, lotId, guaranteeId } = useParams();
+  const { id, tenderId, lotId } = useParams();
   const [create, { isLoading }] = useCreateMutation();
-  const { data: selected, isSuccess: selectedSuccess } = useReadExtensionQuery(
-    id?.toString(),
-  );
+  const [trigger, { data: selected, isSuccess: selectedSuccess }] =
+    useLazyListByIdQuery();
   const { data: selectedGuarantee } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
     try {
       await create({
         ...data,
-        guaranteeId: guaranteeId,
+        guaranteeId: id,
         status: 'REQUESTED',
       }).unwrap();
       notify('Success', 'Guarantee Extension created successfully');
@@ -60,15 +59,21 @@ export default function ExtensionDetail() {
       notify('Error', 'Something went wrong');
     }
   };
+
   useEffect(() => {
+    trigger({ id: id?.toString(), collectionQuery: undefined });
+
     if (selectedSuccess && selected !== undefined) {
       reset({
-        reason: selected?.reason,
-        remark: selected?.remark,
+        noOfDays: selected?.items.map((r) => r.noOfDays),
+        remark: selected?.items.map((r) => r.remark),
+        reason: selected?.items.map((r) => r.reason),
       });
     }
-  }, [reset, selected, selectedSuccess]);
-
+  }, [id, reset, selected, selectedSuccess, trigger]);
+  const onError = (err) => {
+    logger.log(err);
+  };
   return (
     <>
       <>
@@ -135,11 +140,37 @@ export default function ExtensionDetail() {
 
               <Box className="  w-3/4">
                 <Section title=" New Guarantee Extension " collapsible={false}>
+                  {/* <Controller
+                    name="noOfDays"
+                    control={control}
+                    render={({ field: { name, value, onChange } }) => (
+                      <NumberInput
+                        name={name}
+                        value={value}
+                        w={'50%'}
+                        className="mt-5 "
+                        label="Extension Days"
+                        onChange={(d) => onChange(parseInt(d as string))}
+                        
+                        error={
+                          errors?.noOfDays
+                            ? errors?.noOfDays?.message?.toString()
+                            : ''
+                        }
+                      />
+                    )}
+                  /> */}
                   <NumberInput
                     w={'50%'}
                     className="mt-5 "
                     label="Extension Days"
+                    error={
+                      errors?.noOfDays
+                        ? errors?.noOfDays?.message?.toString()
+                        : ''
+                    }
                   />
+
                   <Flex justify="space-between" gap={10}>
                     <Textarea
                       className="mt-5 w-full"
@@ -164,7 +195,10 @@ export default function ExtensionDetail() {
                   </Flex>
 
                   <Flex justify="flex-end" gap={10}>
-                    <Button onClick={handleSubmit(onCreate)} className="mt-5">
+                    <Button
+                      onClick={handleSubmit(onCreate, onError)}
+                      className="mt-5"
+                    >
                       Extened
                     </Button>
                   </Flex>
