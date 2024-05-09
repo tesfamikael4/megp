@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Res,
+  Req,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -15,7 +16,7 @@ import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { PreBudgetActivityDocumentService } from '../services/pre-budget-activity-documents.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CurrentUser } from 'src/shared/authorization';
+import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'preBudgetPlanActivityId',
@@ -46,12 +47,12 @@ export class PreBudgetActivityDocumentController extends ExtraCrudController<Pre
   @Post('pre-signed-put-url')
   async preSignedPutUrl(
     @Body() fileInfo,
-    @Res() res?: any,
+    @Req() req?: any,
     @CurrentUser() user?: any,
   ) {
-    fileInfo.organizationId = user.organization.id;
     return await this.preBudgetActivityDocumentService.generatePresignedPutUrl(
       fileInfo,
+      req,
     );
   }
 
