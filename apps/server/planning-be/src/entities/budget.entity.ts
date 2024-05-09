@@ -85,15 +85,15 @@ export class Budget extends OrgAudit {
   @Column()
   fundingSource: string;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'decimal', precision: 14, scale: 2 })
   allocatedBudget: number;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'decimal', precision: 14, scale: 2 })
   revisedBudget: number;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   obligatedBudget: number;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   availableBudget: number;
 }
