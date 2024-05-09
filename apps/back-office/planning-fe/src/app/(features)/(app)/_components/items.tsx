@@ -336,7 +336,7 @@ export function Items({
         } else {
           await addPostItems({ items: castedData }).unwrap();
         }
-        notify('Success', 'Items Created Success-fully');
+        notify('Success', 'Item Added successfully');
         onRequestChange({});
         setNewItems([]);
       } catch (err) {

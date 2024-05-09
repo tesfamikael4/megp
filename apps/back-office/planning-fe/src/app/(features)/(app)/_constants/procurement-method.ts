@@ -3,7 +3,7 @@ export const procurementType = [
   'Works',
   'Non Consulting Services',
   'Consultancy Services',
-  'Motor Vehicle Repair',
+  // 'Motor Vehicle Repair',
 ];
 
 export const procurementMethods = [

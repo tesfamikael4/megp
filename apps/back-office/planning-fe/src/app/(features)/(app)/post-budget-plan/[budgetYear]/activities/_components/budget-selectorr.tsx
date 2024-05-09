@@ -170,7 +170,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
           postBudgetPlanActivityId: id,
           budgetId: selectedContract[0].id,
         }).unwrap();
-        notify('Success', 'Saved Successfully');
+        notify('Success', 'Budget tagged successfully');
       } catch (err) {
         logger.log({ err });
         if (err.status === 430) {

@@ -94,6 +94,7 @@ export const DetailActivity = ({
         currencyDisplay: 'code',
       }),
     },
+    { key: 'Multi Year', value: activity.isMultiYear ? 'Yes' : 'No' },
     { key: 'Remark', value: activity.remark },
   ];
 
