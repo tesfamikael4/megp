@@ -1,4 +1,4 @@
-import { Body, Controller, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ProductCatalogsService } from '../services/product-catalog.service';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
@@ -20,7 +20,7 @@ export class ProductCatalogsController extends EntityCrudController<ProductCatal
     super(productCatalogService);
   }
 
-  @Get('details')
+  @Post('details')
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
   async getDetails(@Body() payload: FetchMarketplaceProductsDto) {
