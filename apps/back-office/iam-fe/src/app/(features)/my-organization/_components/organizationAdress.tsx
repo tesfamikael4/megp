@@ -201,7 +201,10 @@ const OrganizationAdressForm = () => {
               label={'Region'}
               value={selectedRegion}
               onChange={(value) => setSelectedRegion(value)}
-              error={selectedRegion === null && 'Please select region'}
+              error={
+                (selectedRegion === null || selectedRegion === '') &&
+                'This field is required'
+              }
               data={
                 regions?.items?.map((item) => ({
                   label: item.name,
