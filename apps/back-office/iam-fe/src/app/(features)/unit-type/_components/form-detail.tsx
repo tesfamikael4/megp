@@ -57,13 +57,17 @@ export function FormDetail({ mode }: FormDetailProps) {
       const result = await create({
         ...data,
         organizationId: organizationId,
-      });
+      }).unwrap();
       if ('data' in result) {
         router.push(`/unit-type/${result?.data?.id}`);
       }
       notify('Success', 'Unit Type created successfully');
     } catch (err) {
-      notify('Error', 'Errors in creating unit Type.');
+      if (err?.data?.message?.startsWith('duplicate key')) {
+        notify('Error', 'Unit type already exists');
+      } else {
+        notify('Error', 'Errors in creating unit Type.');
+      }
     }
   };
   const onUpdate = async (data) => {
@@ -74,8 +78,12 @@ export function FormDetail({ mode }: FormDetailProps) {
         organizationId: organizationId,
       }).unwrap();
       notify('Success', 'Unit Type updated successfully');
-    } catch {
-      notify('Error', 'Errors in updating unit Type.');
+    } catch (err) {
+      if (err?.data?.message?.startsWith('duplicate key')) {
+        notify('Error', 'Unit Type already exists');
+      } else {
+        notify('Error', 'Errors in updating unit Type.');
+      }
     }
   };
   const onDelete = async () => {

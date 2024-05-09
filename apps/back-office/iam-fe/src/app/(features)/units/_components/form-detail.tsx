@@ -128,7 +128,11 @@ export function FormDetail({ mode }: FormDetailProps) {
 
         notify('Success', 'Unit created successfully');
       } catch (err) {
-        notify('Error', 'Error in creating unit');
+        if (err?.data?.message?.startsWith('duplicate key')) {
+          notify('Error', 'Unit already exists');
+        } else {
+          notify('Error', 'Error in creating unit');
+        }
       }
     }
   };
@@ -144,8 +148,12 @@ export function FormDetail({ mode }: FormDetailProps) {
           typeId: unitTypeId,
         }).unwrap();
         notify('Success', 'Unit updated successfully');
-      } catch {
-        notify('Error', 'Error in updating unit');
+      } catch (err) {
+        if (err?.data?.message?.startsWith('duplicate key')) {
+          notify('Error', 'Unit already exists');
+        } else {
+          notify('Error', 'Error in updating unit');
+        }
       }
     }
   };
