@@ -110,6 +110,9 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
+      const validateBudget = true;
+      if (!validateBudget) {
+      }
       const budget = await this.repositoryBudget.findOne({
         where: { id: payload.budgetId },
       });
@@ -120,12 +123,16 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
         id: payload.postBudgetPlanActivityId,
       });
       if (activity.budgetId == null) {
-        if (+budget.availableBudget < +activity.estimatedAmount) {
+        if (
+          validateBudget &&
+          +budget.availableBudget < +activity.estimatedAmount
+        ) {
           throw new HttpException(
             `Available budget is less than estimated Amount`,
             430,
           );
         }
+
         await this.repositoryPostBudgetPlanActivity.update(
           payload.postBudgetPlanActivityId,
           {
@@ -139,7 +146,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
           availableBudget: +budget.revisedBudget - +activity.estimatedAmount,
         });
       } else {
-        await this.changeBudget(payload);
+        await this.changeBudget(payload, validateBudget);
       }
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -149,7 +156,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
     }
   }
 
-  async changeBudget(payload): Promise<void> {
+  async changeBudget(payload, validateBudget): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -170,7 +177,10 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
           id: activity.budgetId,
         },
       });
-      if (+budget.availableBudget < +activity.estimatedAmount) {
+      if (
+        validateBudget &&
+        +budget.availableBudget < +activity.estimatedAmount
+      ) {
         throw new HttpException(
           `Available budget is less than estimated Amount`,
           430,

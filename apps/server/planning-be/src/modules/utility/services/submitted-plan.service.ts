@@ -41,9 +41,10 @@ export class SubmittedPlanService extends EntityCrudService<SubmittedPlan> {
       select: {
         id: true,
         version: true,
+        objectId: true,
       },
     });
-    return await this.repositorySubmittedPlan.find({
+    const result = await this.repositorySubmittedPlan.find({
       where: {
         objectId: plan.objectId,
         version: LessThan(plan.version),
@@ -53,6 +54,7 @@ export class SubmittedPlanService extends EntityCrudService<SubmittedPlan> {
         version: true,
       },
     });
+    return result;
   }
   // async deepEqual(obj1, obj2) {
   //   if (typeof obj1 === 'object' && typeof obj2 === 'object') {
