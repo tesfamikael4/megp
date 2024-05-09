@@ -27,7 +27,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const itemCategorySchema: ZodType<Partial<ItemCategory>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
     // .transform((str) => str.toLowerCase()),
-    parentId: z.string().optional(),
+    parentId: z.string().nullable().default(null),
   });
   const {
     handleSubmit,
