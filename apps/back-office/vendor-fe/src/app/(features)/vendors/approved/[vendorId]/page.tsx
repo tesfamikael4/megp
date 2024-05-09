@@ -1,9 +1,9 @@
 'use client';
 
-import VendorsDetail from '../../(common)/details';
+import VendorsDetail from '../../VendorDetail';
 
 const ApprovedVendorDetail = () => {
-  return <VendorsDetail />;
+  return <VendorsDetail path="approved" />;
 };
 
 export default ApprovedVendorDetail;

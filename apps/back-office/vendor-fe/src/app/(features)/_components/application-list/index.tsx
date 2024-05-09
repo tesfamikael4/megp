@@ -164,7 +164,10 @@ export default function ApplicationList({
 
   return (
     <Flex direction="row" gap="sm">
-      <Section collapsible={false} title={`Vendor ${title} Applications`}>
+      <Section
+        collapsible={false}
+        title={`${title !== 'Preferential' ? 'Vendor' : ''} ${title} Applications`}
+      >
         {data?.total === 0 && (
           <Box
             h={500}
@@ -213,7 +216,7 @@ export default function ApplicationList({
                     </Box>
                     <Box>
                       <span className="font-semibold">Country:</span>{' '}
-                      {item.isrvendor?.basic.origin}
+                      {item.isrvendor?.basic.countryOfRegistration}
                     </Box>
                     <Box>
                       <span className="font-semibold">Current Task:</span>{' '}

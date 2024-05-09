@@ -52,7 +52,7 @@ export const approvedRejectedApi = createApi({
     }),
     getRejectedApplicationDetail: builder.query<any, { vendorId: string }>({
       query: ({ vendorId }) =>
-        `application-execution/get-vendor-detail/${vendorId}`,
+        `application-execution/get-rejected-vendor-detail/${vendorId}`,
     }),
     getBPServices: builder.query<any, any>({
       query: () => ({

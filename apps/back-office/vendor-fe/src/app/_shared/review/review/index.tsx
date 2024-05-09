@@ -34,7 +34,10 @@ function FormPreview({
   userId?: string;
   uniqueTabs?: { tabValue: string; tabName: string }[];
 }) {
-  const tabs = [...uniqueTabs, ...accordionTabs];
+  const tabs = [
+    ...uniqueTabs,
+    ...accordionTabs(data?.basic?.countryOfRegistration),
+  ];
 
   const [url, setUrl] = useState('');
   const [opened, { close, open }] = useDisclosure(false);

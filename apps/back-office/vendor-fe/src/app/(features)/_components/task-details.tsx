@@ -2,6 +2,7 @@ import FormPreview from '@/shared/review/review';
 import { Box, Button, Flex, Grid, Text } from '@mantine/core';
 import { GeneratePdf, Section } from '@megp/core-fe';
 import React from 'react';
+import { formatDateTimeFromString } from '../util';
 
 export default function TaskDetails({
   tracker,
@@ -95,7 +96,9 @@ export default function TaskDetails({
           </Grid>
           <Grid className="mb-4">
             <Grid.Col span={6}>Executed time</Grid.Col>
-            <Grid.Col span={6}>{tracker.executedAt?.split('T')[0]}</Grid.Col>
+            <Grid.Col span={6}>
+              {formatDateTimeFromString(tracker.executedAt) ?? 'N/A'}
+            </Grid.Col>
           </Grid>
         </Flex>
       </Box>

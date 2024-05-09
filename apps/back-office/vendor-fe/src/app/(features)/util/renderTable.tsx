@@ -120,12 +120,15 @@ export function renderTable(
                       );
                     }
 
-                    if ((header?.name ?? header) === 'isDefualt')
+                    if ((header?.name ?? header) === 'isDefualt') {
                       return (
                         <Table.Td key={header?.name ?? header}>
-                          {cellValue ? 'Yes' : 'No'}
+                          {cellValue === 'Yes' || cellValue === true
+                            ? 'Yes'
+                            : 'No'}
                         </Table.Td>
                       );
+                    }
                     if ((header?.name ?? header) !== 'id') {
                       return (
                         <Table.Td key={header?.name ?? header}>
@@ -151,8 +154,9 @@ export function renderTable(
                                       View
                                     </Button>
                                   )
-                                : (header?.name ?? header) === 'share'
-                                  ? `${cellValue} %`
+                                : (header?.name ?? header) === 'share' ||
+                                    (header?.name ?? header) === 'votingRights'
+                                  ? `${cellValue}%`
                                   : cellValue}
                         </Table.Td>
                       );

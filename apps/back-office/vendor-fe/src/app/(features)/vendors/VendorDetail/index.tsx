@@ -1,30 +1,30 @@
 'use client';
 import {
-  useLazyGetRejectedApplicationDetailQuery,
-  useLazyGetVendorDetailQuery,
-} from '@/store/api/vendor_request_handler/approved-rejected-api';
-import {
   Avatar,
   Box,
   Flex,
   LoadingOverlay,
   Paper,
+  ScrollArea,
   Skeleton,
+  Text,
 } from '@mantine/core';
-import { IconBriefcase, IconProgress, IconTicket } from '@tabler/icons-react';
+import { IconClockHour2, IconTicket, IconProgress } from '@tabler/icons-react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import {
+  useLazyGetRejectedApplicationDetailQuery,
+  useLazyGetVendorDetailQuery,
+} from '@/store/api/vendor_request_handler/approved-rejected-api';
 import VendorDetail from '../../_components/vendor-details';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { notify } from '@megp/core-fe';
-import { notifications } from '@mantine/notifications';
 
-const VendorsDetail = ({ path }: { path?: string | null }) => {
+const VendorsDetail = ({ path }: { path?: string }) => {
   const router = useRouter();
   const { vendorId } = useParams();
   const [response, setResponse] = useState<any>({});
   const [getVendorDetail] = useLazyGetVendorDetailQuery();
-  const [getRejecteVendorDetail, { isError, isFetching }] =
+  const [getRejecteVendorDetail, { isFetching, isError }] =
     useLazyGetRejectedApplicationDetailQuery();
   const searchParams = useSearchParams();
 
@@ -42,7 +42,8 @@ const VendorsDetail = ({ path }: { path?: string | null }) => {
           setResponse(res);
         });
   }, [vendorId, searchParams.get('type')]);
-  if (isFetching) return <LoadingOverlay visible={isFetching} />;
+
+  if (isFetching) <LoadingOverlay visible={isFetching} />;
   else if (!response) {
     return (
       <Paper className="p-5">
@@ -52,14 +53,8 @@ const VendorsDetail = ({ path }: { path?: string | null }) => {
         <Skeleton height={8} mt={10} width="70%" radius="xl" />
       </Paper>
     );
-  } else if (isError && path) {
-    router.push('/vendors/' + path);
-    notifications.clean();
-    return notify(
-      'error',
-      'Something went Wrong while fetching vendor information',
-    );
-  } else
+  } else if (isError) router.push('/vendors/' + path);
+  else
     return (
       <Suspense>
         <Paper className="p-3 w-full">
@@ -77,16 +72,16 @@ const VendorsDetail = ({ path }: { path?: string | null }) => {
                 <Box className="text-primary-800 font-bold" size="xl">
                   {response?.name}
                 </Box>
-                <Box>Country: {response?.countryOfRegistration}</Box>
+                <Box>Country: {response?.origin}</Box>
               </Flex>
             </Flex>
             <Flex direction="column" className="border-l-gray-50 w-4/12 ml-3">
               <Flex direction="row" className="items-center gap-1 text-sm">
                 <IconTicket size={18} />
-                <Box>{response?.tinNumber}</Box>
+                <Box>{response?.tin}</Box>
               </Flex>
               <Flex direction="row" className="items-center gap-1 text-sm">
-                <IconBriefcase size={18} />
+                <IconClockHour2 size={18} />
                 <Box>{response?.formOfEntity}</Box>
               </Flex>
               <Flex direction="row" className="items-center gap-1 text-sm">
@@ -109,4 +104,4 @@ const VendorsDetail = ({ path }: { path?: string | null }) => {
     );
 };
 
-export default VendorDetail;
+export default VendorsDetail;
