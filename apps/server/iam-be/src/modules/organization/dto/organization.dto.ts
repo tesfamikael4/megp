@@ -48,11 +48,6 @@ export class CreateOrganizationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  typeId: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
   status: string;
 
   @ApiProperty()
@@ -67,10 +62,11 @@ export class CreateOrganizationDto {
 
   @ApiProperty()
   @IsString()
-  @Matches(/^\d{3}$/, {
-    message: 'Vote code must contain exactly three digits.',
+  @IsOptional()
+  @Matches(/^\d{3}.+$/, {
+    message:
+      'Vote code must start with exactly three digits followed by any string.',
   })
-
   voteCode: string;
 
   static fromDto(organizationDto: CreateOrganizationDto): Organization {
@@ -86,8 +82,6 @@ export class CreateOrganizationDto {
     organization.description = organizationDto.description;
 
     organization.type = organizationDto.type;
-
-    organization.typeId = organizationDto.typeId;
 
     organization.budgetCheckNeeded = organizationDto.budgetCheckNeeded;
 
@@ -127,8 +121,6 @@ export class UpdateOrganizationDto extends CreateOrganizationDto {
     organization.description = organizationDto.description;
 
     organization.type = organizationDto.type;
-
-    organization.typeId = organizationDto.typeId;
 
     organization.budgetCheckNeeded = organizationDto.budgetCheckNeeded;
 
@@ -211,8 +203,6 @@ export class OrganizationResponseDto extends UpdateOrganizationDto {
     organizationDto.description = organization.description;
 
     organizationDto.type = organization.type;
-
-    organizationDto.typeId = organization.typeId;
 
     if (organization.logo) {
       organizationDto.logo = organization.logo;
