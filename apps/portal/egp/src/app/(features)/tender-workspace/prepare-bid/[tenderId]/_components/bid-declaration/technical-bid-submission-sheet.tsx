@@ -1,3 +1,9 @@
+import { useLazyGetBdsPreparationQuery } from '@/app/(features)/tender-workspace/_api/bid-attribute-datas';
+import {
+  useLazyGetTenderBidResponseQuery,
+  useSaveTenderBidResponseMutation,
+} from '@/app/(features)/tender-workspace/_api/tender-bid-response.api';
+import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 import { BiddersAuthorizedPerson } from '@/models/tender/bid-declaration/technical-bid-submission';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -5,15 +11,17 @@ import {
   Button,
   Divider,
   Flex,
+  LoadingOverlay,
   Modal,
   Stack,
   TextInput,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Section } from '@megp/core-fe';
+import { Section, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
-import { IconPlus, IconX } from '@tabler/icons-react';
-import React, { useEffect, useState } from 'react';
+import { IconDeviceFloppy, IconPlus, IconX } from '@tabler/icons-react';
+import { useParams, useSearchParams } from 'next/navigation';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 
@@ -26,13 +34,12 @@ const TechnicalBidSubmissionSheet = () => {
     phone: z.string().min(1, { message: 'This field is required' }),
     position: z.string().min(1, { message: 'This field is required' }),
   });
-
-  const [opened, { open, close }] = useDisclosure(false);
-  const [mode, setMode] = useState<'new' | 'detail'>('new');
-  const [selected, setSelected] = useState<BiddersAuthorizedPerson>();
-  const [authorizedRepresentatives, setAuthorizedRepresentatives] = useState<
-    BiddersAuthorizedPerson[]
-  >([]);
+  const { tenderId } = useParams();
+  const [trigger, { data, isLoading }] = useLazyGetBdsPreparationQuery();
+  const [
+    triggerGetSubmissionSheet,
+    { data: submissionSheet, isLoading: isSubmissionLoading },
+  ] = useLazyGetTenderBidResponseQuery();
   const {
     handleSubmit,
     reset,
@@ -42,21 +49,60 @@ const TechnicalBidSubmissionSheet = () => {
   } = useForm({
     resolver: zodResolver(bidderAuthorizedRepresentative),
   });
-  const onCreate = async (data) => {
-    setAuthorizedRepresentatives([...authorizedRepresentatives, data]);
-  };
+  const prepareBidContext = useContext(PrepareBidContext);
+  const [saveChanges, { isLoading: isSaving }] =
+    useSaveTenderBidResponseMutation();
   useEffect(() => {
-    if (mode == 'detail' && selected !== undefined) {
+    if (submissionSheet !== undefined) {
       reset({
-        fullName: selected?.fullName,
-        email: selected?.email,
-        phone: selected?.phone,
-        position: selected?.position,
+        fullName: submissionSheet?.value?.authorizedPerson?.fullName,
+        email: submissionSheet?.value?.authorizedPerson?.email,
+        phone: submissionSheet?.value?.authorizedPerson?.phone,
+        position: submissionSheet?.value?.authorizedPerson?.position,
       });
     }
-  }, [mode, reset, selected]);
+  }, [reset, submissionSheet]);
+
+  useEffect(() => {
+    if (tenderId && prepareBidContext?.password) {
+      trigger(tenderId.toString());
+      triggerGetSubmissionSheet({
+        tenderId: tenderId,
+        documentType: 'RESPONSE',
+        key: 'technicalBidSubmissionSheet',
+        password: prepareBidContext?.password,
+      });
+    }
+  }, [tenderId, trigger, triggerGetSubmissionSheet, prepareBidContext]);
+  const handleSaveChanges = (data) => {
+    saveChanges({
+      tenderId: tenderId,
+      key: 'technicalBidSubmissionSheet',
+      documentType: 'RESPONSE',
+      value: {
+        value: {
+          submitted: false,
+          bidValidityPeriod: data.bidValidityPeriod,
+          authorizedPerson: data,
+        },
+      },
+      password: prepareBidContext?.password,
+    })
+      .unwrap()
+      .then(() => {
+        notify('Success', 'lot value saved successfully');
+      })
+      .catch(() => {
+        notify('Error', 'error while saving');
+      });
+  };
   return (
     <Section title="Technical bid submission sheet">
+      <LoadingOverlay
+        visible={isLoading || isSubmissionLoading}
+        zIndex={1000}
+        overlayProps={{ radius: 'sm', blur: 2 }}
+      />
       <Box className="w-full">
         <Flex
           direction="column"
@@ -66,118 +112,62 @@ const TechnicalBidSubmissionSheet = () => {
             <Box className="bg-slate-200 font-semibold w-1/4 p-2 ">
               Bid Submission Date
             </Box>
-            <Box className="w-3/4 p-2 group-hover:bg-slate-50"></Box>
+            <Box className="w-3/4 p-2 group-hover:bg-slate-50 text-xs text-red-500">
+              * bid is not submitted yet
+            </Box>
           </Flex>
           <Flex className="border-b border-gray-400 cursor-pointer group">
             <Box className="bg-slate-200 font-semibold w-1/4 p-2 ">
               Bid Validity
             </Box>
-            <Box className="w-3/4 p-2 group-hover:bg-slate-50"></Box>
+            <Box className="w-3/4 p-2 group-hover:bg-slate-50">
+              {data && data.bidValidityPeriod}
+            </Box>
           </Flex>
           <Flex className="border-b border-gray-400 cursor-pointer group">
             <Box className="bg-slate-200 font-semibold w-1/4 p-2 ">
               <Box className="flex justify-between">
                 <Box>Bidders Authorized Person</Box>
-                <Button onClick={open}>
-                  <IconPlus size={14} /> Add
-                </Button>
               </Box>
             </Box>
             <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-              {authorizedRepresentatives &&
-                authorizedRepresentatives.map(
-                  (authorizedRep: BiddersAuthorizedPerson) => (
-                    <Box key={authorizedRep.email} className="my-2">
-                      <Flex className="border-b border-gray-400 cursor-pointer group">
-                        <Box className="bg-slate-200 font-semibold w-1/4 p-2 ">
-                          Full Name
-                        </Box>
-                        <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                          {authorizedRep.fullName}
-                        </Box>
-                      </Flex>
-                      <Flex className="border-b border-gray-400 cursor-pointer group">
-                        <Box className="bg-slate-200 font-semibold w-1/4 p-2 ">
-                          Position
-                        </Box>
-                        <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                          {authorizedRep.position}
-                        </Box>
-                      </Flex>
-                      <Flex className="border-b border-gray-400 cursor-pointer group">
-                        <Box className="bg-slate-200 font-semibold w-1/4 p-2 ">
-                          Email Address
-                        </Box>
-                        <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                          {authorizedRep.email}
-                        </Box>
-                      </Flex>
-                      <Flex className="border-b border-gray-400 cursor-pointer group">
-                        <Box className="bg-slate-200 font-semibold w-1/4 p-2 ">
-                          Phone number
-                        </Box>
-                        <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                          {authorizedRep.phone}
-                        </Box>
-                      </Flex>
-                    </Box>
-                  ),
-                )}
+              <TextInput
+                label="Full Name"
+                withAsterisk
+                error={
+                  errors?.fullName ? errors?.fullName?.message?.toString() : ''
+                }
+                {...register('fullName')}
+              />
+              <TextInput
+                label="Position"
+                withAsterisk
+                error={
+                  errors?.position ? errors?.position?.message?.toString() : ''
+                }
+                {...register('position')}
+              />
+              <TextInput
+                label="Email"
+                withAsterisk
+                error={errors?.email ? errors?.email?.message?.toString() : ''}
+                {...register('email')}
+              />
+              <TextInput
+                label="Phone number"
+                withAsterisk
+                error={errors?.phone ? errors?.phone?.message?.toString() : ''}
+                {...register('phone')}
+              />
             </Box>
           </Flex>
         </Flex>
-      </Box>
-      <Modal
-        opened={opened}
-        size={'xl'}
-        onClose={close}
-        withCloseButton={false}
-      >
-        <div className="flex justify-between">
-          <h2 className="font-medium text-lg capitalize">
-            Bidders Authorized Person
-          </h2>
-          <IconX onClick={close} />
-        </div>
-        <Divider mt={'md'} mb={'md'} />
-        <Box className="bg-white rounded shadow-sm ">
-          <Stack pos="relative">
-            <TextInput
-              label="Full Name"
-              withAsterisk
-              error={
-                errors?.fullName ? errors?.fullName?.message?.toString() : ''
-              }
-              {...register('fullName')}
-            />
-            <TextInput
-              label="Position"
-              withAsterisk
-              error={
-                errors?.position ? errors?.position?.message?.toString() : ''
-              }
-              {...register('position')}
-            />
-            <TextInput
-              label="Email"
-              withAsterisk
-              error={errors?.email ? errors?.email?.message?.toString() : ''}
-              {...register('email')}
-            />
-            <TextInput
-              label="Phone number"
-              withAsterisk
-              error={errors?.phone ? errors?.phone?.message?.toString() : ''}
-              {...register('phone')}
-            />
-            <EntityButton
-              mode={mode}
-              data={selected}
-              onCreate={handleSubmit(onCreate)}
-            />
-          </Stack>
+        <Box className="flex justify-end mt-4">
+          <Button loading={isSaving} onClick={handleSubmit(handleSaveChanges)}>
+            <IconDeviceFloppy size={14} /> Save Changes
+          </Button>
         </Box>
-      </Modal>
+      </Box>
     </Section>
   );
 };

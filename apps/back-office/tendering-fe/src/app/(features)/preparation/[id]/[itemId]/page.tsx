@@ -169,14 +169,16 @@ export default function ItemDetailPage() {
         {searchParams.get('tab') === 'sor' && (
           <>
             {selected?.procurementCategory &&
-              (selected.procurementCategory === ProcurementCategory.GOODS
-                ? sorTypeDefinition(GoodsSorType)
-                : selected.procurementCategory === ProcurementCategory.WORKS
-                  ? sorTypeDefinition(WorksSorType)
-                  : selected.procurementCategory ===
-                      ProcurementCategory.CONSULTANCYSERVICES
-                    ? sorTypeDefinition(ConsultancySorType)
-                    : sorTypeDefinition(NonConsultancySorType))}
+              ((selected.procurementCategory === ProcurementCategory.GOODS &&
+                sorTypeDefinition(GoodsSorType)) ||
+                (selected.procurementCategory === ProcurementCategory.WORKS &&
+                  sorTypeDefinition(WorksSorType)) ||
+                (selected.procurementCategory ===
+                  ProcurementCategory.CONSULTANCYSERVICES &&
+                  sorTypeDefinition(ConsultancySorType)) ||
+                (selected.procurementCategory ===
+                  ProcurementCategory.NONCONSUTANCYSERVICES &&
+                  sorTypeDefinition(NonConsultancySorType)))}
           </>
         )}
         {searchParams.get('tab') === 'sop' && (

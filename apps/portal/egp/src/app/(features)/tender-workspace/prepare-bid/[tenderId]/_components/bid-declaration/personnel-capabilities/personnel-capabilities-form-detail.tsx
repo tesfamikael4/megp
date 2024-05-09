@@ -11,24 +11,23 @@ import { EntityButton } from '@megp/entity';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
-import { useCreateMutation } from '../../_api/tender/personnel-list.api';
 import { notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { ProfessionalList } from '@/models/tender/lot/personnel';
 
 interface PersonnelFormDetailProp {
-  returnFunction: () => void;
+  returnFunction: (data) => void;
 }
 
-export default function PersonnelFormDetail({
+export default function PersonnelCapabilitiesFormDetail({
   returnFunction,
 }: PersonnelFormDetailProp) {
   const { id } = useParams();
   const PersonnelFormDetailSchema: ZodType<Partial<ProfessionalList>> =
     z.object({
-      position: z.string().min(1, { message: 'Position is required' }),
-      evaluated: z.boolean({ required_error: 'Evaluated is required' }),
-      order: z.number().min(1, { message: 'order must be one or above' }),
+      position: z.string().min(1, { message: 'this field is required' }),
+      name: z.string().min(1, { message: 'this field is required' }),
+      nationality: z.string().min(1, { message: 'this field is required' }),
     });
 
   const {
@@ -41,11 +40,9 @@ export default function PersonnelFormDetail({
     resolver: zodResolver(PersonnelFormDetailSchema),
   });
 
-  const [create, { isLoading }] = useCreateMutation();
-
   const onCreate = async (data) => {
     try {
-      await create({
+      await returnFunction({
         ...data,
         tenderId: id,
       });
@@ -58,7 +55,6 @@ export default function PersonnelFormDetail({
 
   return (
     <Stack pos={'relative'}>
-      <LoadingOverlay visible={isLoading} />
       <Flex direction={'column'} gap={'sm'}>
         <TextInput
           withAsterisk
@@ -66,22 +62,19 @@ export default function PersonnelFormDetail({
           error={errors?.position ? errors?.position?.message?.toString() : ''}
           {...register('position')}
         />
-        <Checkbox label="Evaluated" {...register('evaluated')} />
-        <Controller
-          name="order"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <NumberInput
-              label="Order"
-              max={31}
-              name={name}
-              value={value}
-              onChange={(d) => onChange(d)}
-              error={
-                errors['order'] ? errors['order']?.message?.toString() : ''
-              }
-            />
-          )}
+        <TextInput
+          withAsterisk
+          label="Name of candidate"
+          error={errors?.name ? errors?.name?.message?.toString() : ''}
+          {...register('name')}
+        />
+        <TextInput
+          withAsterisk
+          label="Nationality"
+          error={
+            errors?.nationality ? errors?.nationality?.message?.toString() : ''
+          }
+          {...register('nationality')}
         />
         <EntityButton
           mode={'new'}

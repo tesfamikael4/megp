@@ -24,7 +24,7 @@ export interface ScheduleOfPrice {
 export enum SorType {
   specification = 'specification',
   delivery = 'delivery',
-  packageAndLabeling = 'packaging and labeling',
+  packagingAndLabeling = 'packaging and labeling',
   warrantyAndSupport = 'warranty and support',
   incidentalRequirement = 'incidental requirement',
 }

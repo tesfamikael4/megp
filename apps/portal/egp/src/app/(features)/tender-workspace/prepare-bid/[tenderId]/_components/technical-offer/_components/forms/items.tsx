@@ -1,5 +1,5 @@
 'use client';
-import { ExpandableTable, Section, notify } from '@megp/core-fe';
+import { ExpandableTable, Section, logger, notify } from '@megp/core-fe';
 import { LoadingOverlay, Button, Box } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
@@ -15,7 +15,11 @@ import { ZodType, z } from 'zod';
 import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 import { Values } from '@/models/tender/bid-response/item-bid-response';
 import { useSaveTechnicalBidResponseMutation } from '@/app/(features)/tender-workspace/_api/item-bid-response.api';
-
+import { ProcurementCategory } from '@/models/tender/lot/item';
+import { SorType as GoodsSorType } from '@/models/tender/lot/item/goods.model';
+import { SorType as WorksSorType } from '@/models/tender/lot/item/work.model';
+import { SorType as ConsultancySorType } from '@/models/tender/lot/item/consultancy';
+import { SorType as NonConsultancySorType } from '@/models/tender/lot/item/non-consultancy.model';
 export default function ItemList() {
   const searchParams = useSearchParams();
   const [trigger, { data, isFetching }] = useLazyItemsQuery();
@@ -45,13 +49,6 @@ export default function ItemList() {
         notify('Error', 'Already Registered');
       });
   };
-  const sorTypes = () => {
-    const sorType = {};
-    Object.values(SorType).forEach((item: string) => {
-      sorType[item] = z.array(technicalComplianceSchema);
-    });
-    return sorType;
-  };
   const technicalComplianceSchema = z.object({
     category: z.string().optional(),
     formLink: z.string().optional(),
@@ -70,13 +67,57 @@ export default function ItemList() {
     remark: z.string().optional(),
   });
   const technicalRequirement: ZodType<any> = z.object({
-    specification: z.array(technicalComplianceSchema),
+    specification: z.array(technicalComplianceSchema, {
+      required_error: `all the specification must be filled please expand and check that all the value are filled`,
+    }),
+    delivery: z
+      .array(technicalComplianceSchema, {
+        required_error: `all the delivery must be filled please expand and check that all the value are filled`,
+      })
+      .optional(),
+    packagingAndLabeling: z
+      .array(technicalComplianceSchema, {
+        required_error: `all the packaging and labeling and labeling must be filled please expand and check that all the value are filled`,
+      })
+      .optional(),
+    personal: z
+      .array(technicalComplianceSchema, {
+        required_error: `all the personal and labeling must be filled please expand and check that all the value are filled`,
+      })
+      .optional(),
+    warrantyAndSupport: z
+      .array(technicalComplianceSchema, {
+        required_error: `all the warranty and support must be filled please expand and check that all the value are filled`,
+      })
+      .optional(),
+    incidentalRequirement: z
+      .array(technicalComplianceSchema, {
+        required_error: `all the incidental requirement must be filled please expand and check that all the value are filled`,
+      })
+      .optional(),
     itemId: z.string().min(1, { message: 'this field is required' }),
+    procurementCategory: z
+      .string()
+      .min(1, { message: 'this field is required' }),
   });
 
   const methods = useForm({
     resolver: zodResolver(technicalRequirement),
   });
+  useEffect(() => {
+    logger.log(methods.formState.errors);
+  }, [methods.formState.errors]);
+  const sorTypeDefinition = (sorTypes, selected) => {
+    return Object.keys(sorTypes).map((sorType) => (
+      <div className="my-4" key={sorType}>
+        <TechnicalRequirement
+          item={selected}
+          type={sorType}
+          title={sorTypes[sorType]}
+        />
+      </div>
+    ));
+  };
 
   const config = {
     columns: [
@@ -98,27 +139,17 @@ export default function ItemList() {
       return (
         <>
           <FormProvider {...methods}>
-            <div className="my-4">
-              <TechnicalRequirement item={item} type={SorType.SPECIFICATION} />
-            </div>
-            <div className="my-4">
-              <TechnicalRequirement item={item} type={SorType.PERSONAL} />
-            </div>
-
-            <div className="my-4">
-              <TechnicalRequirement item={item} type={SorType.DELIVERY} />
-            </div>
-
-            <div className="my-4">
-              <TechnicalRequirement item={item} type={SorType.PACKAGING} />
-            </div>
-
-            <div className="my-4">
-              <TechnicalRequirement item={item} type={SorType.WARRANTY} />
-            </div>
-            <div className="my-4">
-              <TechnicalRequirement item={item} type={SorType.INCIDENTAL} />
-            </div>
+            {item?.procurementCategory &&
+              ((item.procurementCategory === ProcurementCategory.GOODS &&
+                sorTypeDefinition(GoodsSorType, item)) ||
+                (item.procurementCategory === ProcurementCategory.WORKS &&
+                  sorTypeDefinition(WorksSorType, item)) ||
+                (item.procurementCategory ===
+                  ProcurementCategory.CONSULTANCYSERVICES &&
+                  sorTypeDefinition(ConsultancySorType, item)) ||
+                (item.procurementCategory ===
+                  ProcurementCategory.NONCONSUTANCYSERVICES &&
+                  sorTypeDefinition(NonConsultancySorType, item)))}
           </FormProvider>
           <Box className="flex justify-end">
             <Button

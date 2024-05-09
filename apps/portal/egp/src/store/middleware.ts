@@ -24,6 +24,12 @@ import { getRegistrationApi } from '@/app/(features)/_api/registration.api';
 import { ItemBidResponseApi } from '@/app/(features)/tender-workspace/_api/item-bid-response.api';
 import { administrationApi } from './api/administrationApi';
 import { noteSliceApi } from './api/notes/notes.api';
+import {
+  getBds,
+  getVenderList,
+} from '@/app/(features)/tender-workspace/_api/bid-attribute-datas';
+import { tenderResponseApi } from '@/app/(features)/tender-workspace/_api/tender-bid-response.api';
+import { lotResponseApi } from '@/app/(features)/tender-workspace/_api/lot-bid-response.api';
 
 const middleware = [
   vendorRegistrationApi.middleware,
@@ -49,6 +55,10 @@ const middleware = [
   ItemBidResponseApi.middleware,
   administrationApi.middleware,
   noteSliceApi.middleware,
+  getVenderList.middleware,
+  getBds.middleware,
+  tenderResponseApi.middleware,
+  lotResponseApi.middleware,
 ];
 
 export { middleware };
