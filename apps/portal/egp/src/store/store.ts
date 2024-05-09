@@ -25,6 +25,12 @@ import { getRegistrationApi } from '@/app/(features)/_api/registration.api';
 import { ItemBidResponseApi } from '@/app/(features)/tender-workspace/_api/item-bid-response.api';
 import { administrationApi } from './api/administrationApi';
 import { noteSliceApi } from './api/notes/notes.api';
+import {
+  getBds,
+  getVenderList,
+} from '@/app/(features)/tender-workspace/_api/bid-attribute-datas';
+import { tenderResponseApi } from '@/app/(features)/tender-workspace/_api/tender-bid-response.api';
+import { lotResponseApi } from '@/app/(features)/tender-workspace/_api/lot-bid-response.api';
 
 export const store = configureStore({
   reducer: {
@@ -51,6 +57,10 @@ export const store = configureStore({
     [ItemBidResponseApi.reducerPath]: ItemBidResponseApi.reducer,
     [administrationApi.reducerPath]: administrationApi.reducer,
     [noteSliceApi.reducerPath]: noteSliceApi.reducer,
+    [getVenderList.reducerPath]: getVenderList.reducer,
+    [getBds.reducerPath]: getBds.reducer,
+    [tenderResponseApi.reducerPath]: tenderResponseApi.reducer,
+    [lotResponseApi.reducerPath]: lotResponseApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) => {

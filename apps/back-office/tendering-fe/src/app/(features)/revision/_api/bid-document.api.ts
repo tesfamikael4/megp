@@ -8,8 +8,8 @@ export const bidDocumentApi = createApi({
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   endpoints: (builder) => ({
     getFiles: builder.query<any, any>({
-      query: (args: { id: string; type: string }) => ({
-        url: `spd-templates/download-spd-pdf/${args.id}/main-document`,
+      query: (id: string) => ({
+        url: `tenders/download-tender-document/${id}`,
       }),
       providesTags: ['spd-templates'],
     }),
@@ -22,8 +22,4 @@ export const bidDocumentApi = createApi({
   }),
 });
 
-export const {
-  useGetFilesQuery,
-  useLazyGetFilesQuery,
-  useGetBidFormFilesQuery,
-} = bidDocumentApi;
+export const { useLazyGetFilesQuery, useGetBidFormFilesQuery } = bidDocumentApi;

@@ -44,6 +44,8 @@ import ContractConditionTab from '../_components/contact-condition/contract-cond
 import Classification from '../_components/tender/invitation/classification/classification';
 import ParticipationFee from '../_components/tender/invitation/participation-fee';
 import {
+  useLazyGetBdsFilesQuery,
+  useLazyGetSccFilesQuery,
   useUploadBdsTemplateMutation,
   useUploadSccTemplateMutation,
 } from '../_api/tender/tender-template.api';
@@ -72,12 +74,18 @@ export default function TenderDetailPage() {
     useUploadBdsTemplateMutation();
   const [uploadSccFile, { isLoading: isSccUploading }] =
     useUploadSccTemplateMutation();
+  const [downloadBdsFile, { data: downloadBds, isLoading: isBdsLoading }] =
+    useLazyGetBdsFilesQuery();
+  const [downloadSccFile, { data: downloadScc, isLoading: isSccLoading }] =
+    useLazyGetSccFilesQuery();
   const [file, setFile] = useState<{ [key: string]: File | null }>({});
   useEffect(() => {
     if (selected) {
       trigger({ id: selected.id, collectionQuery: { skip: 0, take: 10 } });
+      downloadBdsFile(selected.id);
+      downloadSccFile(selected.id);
     }
-  }, [selected, trigger]);
+  }, [downloadBdsFile, downloadSccFile, selected, trigger]);
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -91,7 +99,7 @@ export default function TenderDetailPage() {
     const formData = new FormData();
     formData.append('file', file?.[type] ?? '');
     try {
-      uploadBdsFile({ id: id, type: type, file: formData });
+      uploadBdsFile({ id: id, type: type, file: formData }).unwrap();
       notify('Success', 'Bid data sheet uploaded successfully');
     } catch (err) {
       notify('Error', 'Error in uploading bid data sheet');
@@ -121,9 +129,12 @@ export default function TenderDetailPage() {
     generate({ id: id?.toString() });
     notify('Success', 'Tender document generated successfully');
   };
+  useEffect(() => {
+    logger.log('downloadBds', downloadBds);
+  }, [downloadBds]);
   return (
     <>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading || isBdsLoading || isSccLoading} />
       <div className="bg-white -mt-4 -mr-4 -ml-4">
         <div className="container mx-auto ">
           <div className="pt-10 pb-10 text-black font-bold text-2xl flex justify-between">
@@ -145,13 +156,14 @@ export default function TenderDetailPage() {
                 loading={isUpdating}
                 onClick={() => {
                   onUpdate({
-                    status: 'SUBMITTED',
+                    status:
+                      selected.status === 'SUBMITTED'
+                        ? 'PUBLISHED'
+                        : 'SUBMITTED',
                   });
                 }}
               >
-                {selected?.status === 'DRAFT'
-                  ? 'Submit to review'
-                  : 'Submit to revision'}
+                {selected?.status === 'DRAFT' ? 'Submit to review' : 'Publish'}
               </Button>
               {selected?.status === 'SUBMITTED' && (
                 <Button
@@ -292,9 +304,11 @@ export default function TenderDetailPage() {
                 )}
                 {searchParams.get('tab') === 'bidding-procedure' && (
                   <>
-                    <a href="./bds-template.docx" download>
-                      Download template
-                    </a>
+                    {downloadBds && (
+                      <a href={downloadBds.presignedUrl} download>
+                        Download template
+                      </a>
+                    )}
                     <FileButton
                       onChange={(event) => {
                         onFileChange(event, 'bds');
@@ -320,9 +334,11 @@ export default function TenderDetailPage() {
                 )}
                 {searchParams.get('tab') === 'condition' && (
                   <>
-                    <a href="./bds-template.docx" download>
-                      Download template
-                    </a>
+                    {downloadScc && (
+                      <a href={downloadScc.presignedUrl} download>
+                        Download template
+                      </a>
+                    )}
                     <FileButton
                       onChange={(event) => {
                         onFileChange(event, 'bds');

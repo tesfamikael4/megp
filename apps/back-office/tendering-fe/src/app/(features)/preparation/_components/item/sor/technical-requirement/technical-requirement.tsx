@@ -189,7 +189,7 @@ export default function TechnicalRequirement({
         withCloseButton={false}
       >
         <div className="flex justify-between">
-          <h2 className="font-medium text-lg capitalize">{type}</h2>
+          <h2 className="font-medium text-lg capitalize">{title}</h2>
           <IconX onClick={close} />
         </div>
         <Divider mt={'md'} mb={'md'} />

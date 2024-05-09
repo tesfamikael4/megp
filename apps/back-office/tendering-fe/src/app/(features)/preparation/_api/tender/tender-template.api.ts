@@ -23,9 +23,15 @@ export const tenderTemplateApi = createApi({
       }),
       invalidatesTags: ['tender-templates'],
     }),
-    getFiles: builder.query<any, any>({
-      query: (args: { id: string; type: string }) => ({
-        url: `tender-templates/download-tender-pdf/${args.id}/${args.type}`,
+    getBdsFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `tender-spd/download-bds/${id}`,
+      }),
+      providesTags: ['tender-templates'],
+    }),
+    getSccFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `tender-spd/download-scc/${id}`,
       }),
       providesTags: ['tender-templates'],
     }),
@@ -35,6 +41,6 @@ export const tenderTemplateApi = createApi({
 export const {
   useUploadBdsTemplateMutation,
   useUploadSccTemplateMutation,
-  useGetFilesQuery,
-  useLazyGetFilesQuery,
+  useLazyGetBdsFilesQuery,
+  useLazyGetSccFilesQuery,
 } = tenderTemplateApi;

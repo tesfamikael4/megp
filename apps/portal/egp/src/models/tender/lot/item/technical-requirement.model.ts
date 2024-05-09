@@ -9,10 +9,10 @@ export interface TechnicalRequirement {
 }
 
 export enum SorType {
-  SPECIFICATION = 'specification',
-  DELIVERY = 'delivery',
-  PERSONAL = 'personal',
-  PACKAGING = 'packing and labeling',
-  WARRANTY = 'warranty ans support',
-  INCIDENTAL = 'incidental requirement',
+  specification = 'specification',
+  delivery = 'delivery',
+  personal = 'personal',
+  packagingAndLabeling = 'packaging and labeling',
+  warrantyAndSupport = 'warranty and support',
+  incidentalRequirement = 'incidental requirement',
 }

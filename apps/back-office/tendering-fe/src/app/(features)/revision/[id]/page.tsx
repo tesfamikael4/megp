@@ -1,7 +1,7 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
 import { PDFHighlighter } from '../../_components/pdf-highlighter';
-import { useGetFilesQuery } from '../_api/bid-document.api';
+import { useLazyGetFilesQuery } from '../_api/bid-document.api';
 import {
   Box,
   Button,
@@ -13,6 +13,7 @@ import {
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useReadQuery, useUpdateMutation } from '../_api/tender.api';
 import { notify } from '@megp/core-fe';
+import { useEffect } from 'react';
 
 export default function DocumentPage() {
   const { id } = useParams();
@@ -21,14 +22,14 @@ export default function DocumentPage() {
     id?.toString(),
   );
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
-  const { data: url, isLoading } = useGetFilesQuery({
-    id: '96448925-0cfa-4781-8e8b-958cdf845fd1',
-    type: 'main-document',
-  });
+  const [trigger, { data: url, isLoading }] = useLazyGetFilesQuery();
   const onUpdate = (data) => {
     update({ ...data, id: id?.toString() });
     notify('Success', 'Tendering Updated successfully');
   };
+  useEffect(() => {
+    trigger(id);
+  }, [id]);
   return (
     <>
       <LoadingOverlay visible={isLoading || isTenderLoading} />

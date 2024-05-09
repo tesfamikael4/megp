@@ -6,11 +6,9 @@ import {
   Flex,
   LoadingOverlay,
   Modal,
-  SimpleGrid,
   Text,
 } from '@mantine/core';
-import { useGetFilesQuery } from '../_api/invitation-document.api';
-import { useRegistrationMutation } from '../_api/register.api';
+import { useLazyGetFilesQuery } from '../_api/invitation-document.api';
 import { useBookmarkMutation } from '../_api/bookmark.api';
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
@@ -18,14 +16,12 @@ import { IconX } from '@tabler/icons-react';
 import { notify } from '@megp/core-fe';
 import { FileViewer } from '../../_components/file-viewer';
 import { TenderFormDetail } from '../../_components/tender-form';
+import { useEffect } from 'react';
 
 export default function TenderDetailPage() {
   const [opened, { open, close }] = useDisclosure(false);
   const [bookmark, { isLoading: isBookmarking }] = useBookmarkMutation();
-  const { data: url, isLoading } = useGetFilesQuery({
-    id: '96448925-0cfa-4781-8e8b-958cdf845fd1',
-    type: 'main-document',
-  });
+  const [trigger, { data: url, isLoading }] = useLazyGetFilesQuery();
   const { id } = useParams();
   const onBookmark = async (data) => {
     bookmark(data)
@@ -37,6 +33,11 @@ export default function TenderDetailPage() {
         notify('Error', 'Already Registered');
       });
   };
+  useEffect(() => {
+    if (id) {
+      trigger(id);
+    }
+  }, [id, trigger]);
   return (
     <>
       <main className="mt-4" style={{ height: 'calc(100vh - 200px)' }}>

@@ -1,9 +1,8 @@
 'use client';
-import { ExpandableTable, Section, logger } from '@megp/core-fe';
-import { SorType } from '@/models/tender/lot/item/technical-requirement.model';
+import { ExpandableTable, Section } from '@megp/core-fe';
 import { CollectionQuery } from '@megp/entity';
 import { Item } from '@/models/tender/lot/item';
-import { Select, Textarea } from '@mantine/core';
+import { Select, Textarea, Text } from '@mantine/core';
 import { Controller } from 'react-hook-form';
 import { useFormContext } from 'react-hook-form';
 import { useContext, useEffect } from 'react';
@@ -13,10 +12,12 @@ import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 
 export default function TechnicalRequirement({
   item,
-  type = SorType.SPECIFICATION,
+  type,
+  title,
 }: Readonly<{
   item: Item;
-  type?: SorType;
+  type: string;
+  title: string;
 }>) {
   const [trigger, { data, isLoading }] = useLazyTechnicalRequirementsQuery();
   const searchParams = useSearchParams();
@@ -32,6 +33,7 @@ export default function TechnicalRequirement({
       reset({
         [type]: data.items,
         itemId: item.id,
+        procurementCategory: item.procurementCategory,
       });
     }
   }, [data, item.id, reset, type]);
@@ -112,7 +114,14 @@ export default function TechnicalRequirement({
 
   return (
     <Section
-      title={type}
+      title={
+        <>
+          <Text>{title}</Text>
+          <Text className="text-xs text-red-500">
+            {errors[type] && '*'} {errors[type]?.message?.toString()}
+          </Text>
+        </>
+      }
       collapsible={true}
       defaultCollapsed={true}
       className="capitalize"

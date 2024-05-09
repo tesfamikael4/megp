@@ -1,5 +1,5 @@
 'use client';
-import { ExpandableTable, Section, notify } from '@megp/core-fe';
+import { ExpandableTable, Section, logger, notify } from '@megp/core-fe';
 import { LoadingOverlay, Button, Box } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
@@ -90,7 +90,6 @@ export default function ItemList() {
         },
       );
   });
-
   const bidPriceSchema: ZodType<any> = z.object({
     billOfMaterial: z.array(billOfMaterialSchema),
     itemId: z.string().min(1, { message: 'this field is required' }),
@@ -99,6 +98,9 @@ export default function ItemList() {
   const methods = useForm({
     resolver: zodResolver(bidPriceSchema),
   });
+  useEffect(() => {
+    logger.log(methods.formState.errors);
+  }, [methods.formState.errors]);
 
   const config = {
     columns: [

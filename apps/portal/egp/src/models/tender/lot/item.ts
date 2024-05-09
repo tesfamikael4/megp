@@ -16,8 +16,8 @@ export interface Item {
   metadata: { [key: string]: any };
 }
 export enum ProcurementCategory {
-  GOODS = 'goods',
-  WORKS = 'works',
-  CONSULTANCYSERVICES = 'consultancy services',
-  NONCONSUTANCYSERVICES = 'non-consultancy services',
+  GOODS = 'Goods',
+  WORKS = 'Works',
+  CONSULTANCYSERVICES = 'Consultancy Services',
+  NONCONSUTANCYSERVICES = 'Non-consultancy Services',
 }

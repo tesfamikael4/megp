@@ -33,7 +33,7 @@ export default function BidProGeneral() {
       subContractAllowed: z.boolean({
         required_error: 'Sub-Contract Allowed is required',
       }),
-      maximumPercentageContractingAllowed: z.boolean({
+      maximumPercentageContractingAllowed: z.number({
         required_error: 'Maximum Percentage Contracting Allowed is required',
       }),
       clarificationDeadline: z.date(),
@@ -78,7 +78,7 @@ export default function BidProGeneral() {
       await update({
         ...data,
         tenderId: id,
-        id: selected.id?.toString(),
+        id: id?.toString(),
       });
       notify('Success', 'Bid Procurement General updated successfully');
     } catch {
@@ -96,6 +96,9 @@ export default function BidProGeneral() {
         preBidConferenceRequired: selected.preBidConferenceRequired,
         preBidConferenceDate: new Date(selected.preBidConferenceDate),
         siteVisitAllowed: selected.siteVisitAllowed,
+        maximumPercentageContractingAllowed: Number(
+          selected.maximumPercentageContractingAllowed,
+        ),
       });
     }
   }, [reset, selected, isSuccess]);

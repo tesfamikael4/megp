@@ -1,5 +1,10 @@
 'use client';
-import { useCreateMutation } from '@/app/(features)/preparation/_api/lot/documentary-evidence.api';
+import {
+  useCreateMutation,
+  useUpdateMutation,
+  useDeleteMutation,
+  useReadQuery,
+} from '@/app/(features)/preparation/_api/lot/documentary-evidence.api';
 import { DocumentaryEvidence } from '@/models/tender/lot/documentary-evidence.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -93,10 +98,14 @@ const requiredToList = [
   },
 ];
 interface DocumentaryFormProps {
+  mode;
+  adId;
   lotId: string;
   returnFunction: () => void;
 }
 export default function DocumentaryForm({
+  mode,
+  adId,
   lotId,
   returnFunction,
 }: DocumentaryFormProps) {
@@ -134,9 +143,15 @@ export default function DocumentaryForm({
   } = useForm({
     resolver: zodResolver(DocumentaryFormSchema),
   });
+  const {
+    data: selected,
+    isSuccess: isSuccess,
+    isLoading: isLoading,
+  } = useReadQuery(adId?.toString());
 
-  const [create, { isLoading }] = useCreateMutation();
-
+  const [create, { isLoading: isSaving }] = useCreateMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const onCreate = async (data) => {
     await create({
       ...data,
@@ -151,10 +166,40 @@ export default function DocumentaryForm({
         notify('Error', `Error in creating Documentary Evidence Error: ${err}`);
       });
   };
+  const onUpdate = async (data) => {
+    try {
+      await update({ ...data, id: adId?.toString() });
+      notify('Success', 'Documentary evidence updated successfully');
+      returnFunction();
+    } catch {
+      notify('Error', 'Error in updating documentary evidence');
+    }
+  };
+  const onDelete = async () => {
+    try {
+      await remove(adId?.toString());
+      notify('Success', 'Documentary evidence deleted successfully');
+      returnFunction();
+    } catch {
+      notify('Error', 'Error in deleting documentary evidence');
+    }
+  };
 
   useEffect(() => {
-    logger.log(errors);
-  }, [errors]);
+    if (mode == 'detail' && isSuccess && selected !== undefined) {
+      reset({
+        evidenceTitle: selected?.evidenceTitle,
+        evidenceType: selected?.evidenceType,
+        checkOnFirstCompliance: selected?.checkOnFirstCompliance,
+        checkOnFirstOpening: selected?.checkOnFirstOpening,
+        checkOnSecondCompliance: selected?.checkOnSecondCompliance,
+        checkOnSecondOpening: selected?.checkOnSecondOpening,
+        isRequired: selected?.isRequired,
+        requiredTo: selected?.requiredTo,
+        sectionLink: selected?.sectionLink,
+      });
+    }
+  }, [mode, reset, selected, isSuccess]);
   return (
     <Stack>
       <LoadingOverlay visible={isLoading} />
@@ -186,6 +231,30 @@ export default function DocumentaryForm({
           />
         </Flex>
         <Flex gap={'md'}>
+          <TextInput
+            withAsterisk
+            label="Section Link"
+            className="w-1/2"
+            error={
+              errors?.sectionLink
+                ? errors?.sectionLink?.message?.toString()
+                : ''
+            }
+            {...register('sectionLink')}
+          />
+          <NativeSelect
+            placeholder="Required To"
+            withAsterisk
+            className="w-1/2"
+            label="Required To"
+            data={[...requiredToList]}
+            error={
+              errors?.requiredTo ? errors?.requiredTo?.message?.toString() : ''
+            }
+            {...register('requiredTo')}
+          />
+        </Flex>
+        <Flex gap={'md'}>
           <Checkbox
             label="Check On First Compliance"
             className="w-1/2"
@@ -209,51 +278,23 @@ export default function DocumentaryForm({
             {...register('checkOnSecondOpening')}
           />
         </Flex>
-        <Flex gap={'md'}>
-          <TextInput
-            label="Spd Documentary Evidence Id"
-            className="w-1/2"
-            error={
-              errors?.spdDocumentaryEvidenceId
-                ? errors?.spdDocumentaryEvidenceId?.message?.toString()
-                : ''
-            }
-            {...register('spdDocumentaryEvidenceId')}
-          />
-          <TextInput
-            withAsterisk
-            label="Section Link"
-            className="w-1/2"
-            error={
-              errors?.sectionLink
-                ? errors?.sectionLink?.message?.toString()
-                : ''
-            }
-            {...register('sectionLink')}
-          />
-        </Flex>
+
         <Flex gap={'md'}>
           <Checkbox
             label="Is Required"
             className="w-1/2"
             {...register('isRequired')}
           />
-          <NativeSelect
-            placeholder="Required To"
-            withAsterisk
-            className="w-1/2"
-            label="Required To"
-            data={[...requiredToList]}
-            error={
-              errors?.requiredTo ? errors?.requiredTo?.message?.toString() : ''
-            }
-            {...register('requiredTo')}
-          />
         </Flex>
         <EntityButton
           mode={'new'}
           onCreate={handleSubmit(onCreate)}
+          onUpdate={handleSubmit(onUpdate)}
+          onDelete={handleSubmit(onDelete)}
           onReset={reset}
+          isSaving={isSaving}
+          isUpdating={isUpdating}
+          isDeleting={isDeleting}
         />
       </Flex>
     </Stack>
