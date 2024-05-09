@@ -47,16 +47,16 @@ export const Menu: MenuItem[] = [
     links: [
       { label: 'Donors', link: '/lookup/donors' },
       { label: 'Budget Category', link: '/lookup/budget-category' },
-      { label: 'Procurement Institution', link: '/procurement-institution' },
-      { label: 'Procurement Method', link: '/lookup/procurement-method' },
-      {
-        label: 'Procurement Procedures',
-        link: '/lookup/procurement-procedures',
-      },
-      {
-        label: 'Threshold',
-        link: '/procurement-thresholds',
-      },
+      // { label: 'Procurement Institution', link: '/procurement-institution' },
+      // { label: 'Procurement Method', link: '/lookup/procurement-method' },
+      // {
+      //   label: 'Procurement Procedures',
+      //   link: '/lookup/procurement-procedures',
+      // },
+      // {
+      //   label: 'Threshold',
+      //   link: '/procurement-thresholds',
+      // },
       {
         label: 'Workflow',
         link: '/workflow',
