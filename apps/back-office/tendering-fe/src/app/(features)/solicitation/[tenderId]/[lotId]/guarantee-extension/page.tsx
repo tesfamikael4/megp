@@ -1,7 +1,7 @@
 'use client';
 
 import { ActionIcon, Badge } from '@mantine/core';
-import { ExpandableTable, Section, logger } from '@megp/core-fe';
+import { ExpandableTable, Section } from '@megp/core-fe';
 import { CollectionQuery } from '@megp/entity';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -9,7 +9,7 @@ import { useLazyListByIdQuery } from '../_api/guarantee-request.api';
 
 export default function Extension() {
   const router = useRouter();
-  const { tenderId, lotId, guaranteeId } = useParams();
+  const { tenderId, lotId } = useParams();
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
   const config = {
@@ -34,7 +34,7 @@ export default function Extension() {
 
       {
         accessor: 'status',
-        sortable: true,
+
         width: 150,
         render: ({ status }: any) => (
           <Badge
@@ -62,7 +62,7 @@ export default function Extension() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/solicitation/${tenderId}/${lotId}/guarantee-extension/${guaranteeId}/${record?.id}`,
+                `/solicitation/${tenderId}/${lotId}/guarantee-extension/${record?.id}`,
               );
             }}
           >
@@ -73,7 +73,22 @@ export default function Extension() {
     ],
   };
   const onRequestChange = (request: CollectionQuery) => {
-    trigger({ id: lotId.toString(), collectionQuery: request });
+    trigger({
+      id: lotId.toString(),
+      collectionQuery: {
+        ...request,
+        where: [
+          ...(request?.where ?? []),
+          [
+            {
+              column: 'status',
+              operator: '=',
+              value: 'APPROVED',
+            },
+          ],
+        ],
+      },
+    });
   };
 
   return (

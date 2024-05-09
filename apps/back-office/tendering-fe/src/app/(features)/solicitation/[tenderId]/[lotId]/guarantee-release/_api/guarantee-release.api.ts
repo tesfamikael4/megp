@@ -13,6 +13,7 @@ export const guaranteeReleaseSliceApi: typeof EntitySliceApi =
 
 export const {
   useListQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useLazyReadQuery,
   useLazyListQuery,

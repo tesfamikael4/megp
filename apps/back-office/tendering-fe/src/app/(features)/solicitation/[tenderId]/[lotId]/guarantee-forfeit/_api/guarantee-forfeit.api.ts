@@ -13,6 +13,8 @@ export const guaranteeForfeitSliceApi: typeof EntitySliceApi =
 
 export const {
   useListQuery,
+  useListByIdQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useLazyReadQuery,
   useLazyListQuery,

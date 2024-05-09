@@ -1,7 +1,7 @@
 'use client';
 
 import { ActionIcon, Badge } from '@mantine/core';
-import { ExpandableTable, Section } from '@megp/core-fe';
+import { ExpandableTable, Section, logger } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useLazyListByIdQuery } from '../_api/guarantee-request.api';
@@ -9,9 +9,9 @@ import { CollectionQuery } from '@megp/entity';
 
 export default function GuaranteeRelease() {
   const router = useRouter();
-  const { tenderId, lotId, guaranteeId } = useParams();
+  const { tenderId, lotId } = useParams();
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
-
+  logger.log({ data });
   const config = {
     isSearchable: true,
     isExpandable: true,
@@ -34,7 +34,7 @@ export default function GuaranteeRelease() {
 
       {
         accessor: 'status',
-        sortable: true,
+
         width: 150,
         render: ({ status }: any) => (
           <Badge
@@ -62,7 +62,7 @@ export default function GuaranteeRelease() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/solicitation/${tenderId}/${lotId}/guarantee-release/${guaranteeId}/${record?.id}`,
+                `/solicitation/${tenderId}/${lotId}/guarantee-release/${record?.id}`,
               );
             }}
           >
@@ -73,7 +73,22 @@ export default function GuaranteeRelease() {
     ],
   };
   const onRequestChange = (request: CollectionQuery) => {
-    trigger({ id: lotId.toString(), collectionQuery: request });
+    trigger({
+      id: lotId.toString(),
+      collectionQuery: {
+        ...request,
+        where: [
+          ...(request?.where ?? []),
+          [
+            {
+              column: 'status',
+              operator: '=',
+              value: 'APPROVED',
+            },
+          ],
+        ],
+      },
+    });
   };
   return (
     <Section collapsible={false} title="Guarantee Release">

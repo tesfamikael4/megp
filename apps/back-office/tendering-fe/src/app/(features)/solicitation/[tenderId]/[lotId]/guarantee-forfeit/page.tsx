@@ -9,7 +9,7 @@ import { CollectionQuery } from '@megp/entity';
 
 export default function GuaranteeForfeit() {
   const router = useRouter();
-  const { tenderId, lotId, guaranteeId } = useParams();
+  const { tenderId, lotId } = useParams();
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
   const config = {
@@ -34,7 +34,7 @@ export default function GuaranteeForfeit() {
 
       {
         accessor: 'status',
-        sortable: true,
+
         width: 150,
         render: ({ status }: any) => (
           <Badge
@@ -62,7 +62,7 @@ export default function GuaranteeForfeit() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/solicitation/${tenderId}/${lotId}/guarantee-forfeit/${guaranteeId}/${record?.id}`,
+                `/solicitation/${tenderId}/${lotId}/guarantee-forfeit/${record?.id}`,
               );
             }}
           >
@@ -73,7 +73,22 @@ export default function GuaranteeForfeit() {
     ],
   };
   const onRequestChange = (request: CollectionQuery) => {
-    trigger({ id: lotId.toString(), collectionQuery: request });
+    trigger({
+      id: lotId.toString(),
+      collectionQuery: {
+        ...request,
+        where: [
+          ...(request?.where ?? []),
+          [
+            {
+              column: 'status',
+              operator: '=',
+              value: 'APPROVED',
+            },
+          ],
+        ],
+      },
+    });
   };
 
   return (

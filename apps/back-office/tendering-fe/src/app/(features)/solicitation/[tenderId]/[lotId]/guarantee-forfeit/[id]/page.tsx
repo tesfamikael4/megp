@@ -9,7 +9,7 @@ import {
   Text,
   Textarea,
 } from '@mantine/core';
-import { Section, notify } from '@megp/core-fe';
+import { Section, notify, logger } from '@megp/core-fe';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { ZodType, z } from 'zod';
@@ -18,10 +18,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { GuaranteeForfeit } from '@/models/guarantee-forfiet/guarantee-forfiet';
 import {
   useCreateMutation,
-  useReadQuery as useReadExtensionQuery,
-} from '../../_api/guarantee-forfeit.api';
+  useLazyListByIdQuery,
+  useListByIdQuery,
+} from '../_api/guarantee-forfeit.api';
 import { useEffect } from 'react';
-import { useReadQuery } from '../../../_api/guarantee-request.api';
+import { useReadQuery } from '../../_api/guarantee-request.api';
 
 export default function ForfeitDetail() {
   const forfeitSchema: ZodType<Partial<GuaranteeForfeit>> = z.object({
@@ -37,18 +38,19 @@ export default function ForfeitDetail() {
     resolver: zodResolver(forfeitSchema),
   });
 
-  const { id, tenderId, lotId, guaranteeId } = useParams();
+  const { id, tenderId, lotId } = useParams();
   const router = useRouter();
   const [create, { isLoading }] = useCreateMutation();
-  const { data: selected, isSuccess: selectedSuccess } = useReadExtensionQuery(
-    id?.toString(),
-  );
+
+  const [trigger, { data: selected, isSuccess: selectedSuccess }] =
+    useLazyListByIdQuery();
+
   const { data: selectedGuarantee } = useReadQuery(id?.toString());
   const onCreate = async (data) => {
     try {
       await create({
         ...data,
-        guaranteeId: guaranteeId,
+        guaranteeId: id,
         status: 'REQUESTED',
       });
 
@@ -58,13 +60,15 @@ export default function ForfeitDetail() {
     }
   };
   useEffect(() => {
+    trigger({ id: id?.toString(), collectionQuery: undefined });
+
     if (selectedSuccess && selected !== undefined) {
       reset({
-        remark: selected?.remark,
-        reason: selected?.reason,
+        remark: selected?.items.map((r) => r.remark),
+        reason: selected?.items.map((r) => r.reason),
       });
     }
-  }, [reset, selected, selectedSuccess]);
+  }, [id, reset, selected, selectedSuccess, trigger]);
   return (
     <>
       <LoadingOverlay visible={isLoading} />
