@@ -105,7 +105,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
 
     const roleSystem = await this.roleSystemService.getAdminRole(
       process.env.ORGANIZATION_ADMINISTRATOR_KEY ??
-        'ORGANIZATION_ADMINISTRATOR',
+      'ORGANIZATION_ADMINISTRATOR',
     );
 
     const orgAdmin = await this.repositoryUser.findOne({
@@ -152,6 +152,13 @@ export class OrganizationService extends EntityCrudService<Organization> {
       response.items = result;
     }
     return response;
+  }
+
+  async isBudgetCheckNeeded(id: string): Promise<boolean> {
+    return await this.repositoryOrganization.exists(
+      {
+        where: { id, budgetCheckNeeded: true },
+      })
   }
 
   private generateOrganizationCode() {

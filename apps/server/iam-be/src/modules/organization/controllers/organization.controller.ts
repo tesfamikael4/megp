@@ -9,6 +9,8 @@ import {
   Patch,
   Post,
   Query,
+  Req,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -25,7 +27,7 @@ import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
-import { AllowAnonymous } from 'src/shared/authorization';
+import { AllowAnonymous, ApiKeyGuard } from 'src/shared/authorization';
 
 const options: EntityCrudOptions = {
   createDto: CreateOrganizationDto,
@@ -97,5 +99,13 @@ export class OrganizationController extends EntityCrudController<Organization>(
       mandateKey,
       query,
     );
+  }
+
+  // for budget validation(used in planning and pr)
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  @Get('is-budget-check-needed/:id')
+  async isBudgetCheckNeeded(@Param('id') id: string) {
+    return this.organizationService.isBudgetCheckNeeded(id);
   }
 }
