@@ -56,8 +56,7 @@ export function FormDetail() {
       <TextInput
         label="Vote Code"
         withAsterisk
-        {...register('shortName')}
-        type="number"
+        {...register('voteCode')}
         disabled
       />
       <Controller

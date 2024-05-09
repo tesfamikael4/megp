@@ -14,17 +14,17 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
-  useListByIdQuery,
   useLazyListByIdQuery,
 } from '../_api/unit.api';
 import { useLazyListByIdQuery as useLazyUnitTypeListQuery } from '../../unit-type/_api/unit-type.api';
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Unit } from '@/models/unit';
 import { ParentModal } from './parentModal';
 import { notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 import React from 'react';
+import UnitTypeDetailPage from '../../unit-type/[id]/page';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -33,7 +33,6 @@ interface FormDetailProps {
 const defaultValues = {
   name: '',
   shortName: '',
-  typeId: null,
   parentId: null,
   description: '',
 };
@@ -42,14 +41,8 @@ export function FormDetail({ mode }: FormDetailProps) {
   const unitSchema: ZodType<Partial<Unit>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
     shortName: z.string().min(1, { message: 'This field is required' }),
-
-    typeId: z.string({
-      required_error: 'This field is required',
-      invalid_type_error: 'This field is required to be a string',
-    }),
     description: z.string().optional(),
-
-    parentId: z.string().optional(),
+    parentId: z.string().optional().default(''),
   });
 
   const {
@@ -68,6 +61,8 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [parents, setParents] = useState<Unit[]>([]);
   const [parent, setParent] = useState<Unit[]>([]);
   const [parentUnitId, setParentUnitId] = useState<string>('');
+  const [unitTypeId, setUnitTypeId] = useState<string | null>('');
+  const [unitErr, setUnitErr] = useState<string>('');
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -114,33 +109,44 @@ export function FormDetail({ mode }: FormDetailProps) {
     } else if (isSuccess) {
       setParents(list?.items ?? []);
     }
-  }, [id, isSuccess, list?.items, mode, selected?.parentId, selectedSuccess]);
+  }, [id, isSuccess, list?.items, mode, selected, selectedSuccess]);
 
   const onCreate = async (data) => {
-    try {
-      const result = await create({
-        ...data,
-        parentId: data?.parentId ? data?.parentId : parent[0].id,
-        organizationId: organizationId,
-      });
-      if ('data' in result) {
-        router.push(`/units/${result.data.id}`);
+    if (unitTypeId === '' || unitTypeId === null) {
+      setUnitErr('This field is required');
+    } else {
+      try {
+        setUnitErr('');
+        const result = await create({
+          ...data,
+          typeId: unitTypeId,
+          parentId: data?.parentId ? data?.parentId : parent[0].id,
+          organizationId: organizationId,
+        }).unwrap();
+
+        router.push(`/units/${result.id}`);
+
+        notify('Success', 'Unit created successfully');
+      } catch (err) {
+        notify('Error', 'Error in creating unit');
       }
-      notify('Success', 'Unit created successfully');
-    } catch (err) {
-      notify('Error', 'Error in creating unit');
     }
   };
   const onUpdate = async (data) => {
-    try {
-      await update({
-        ...data,
-        id: id?.toString(),
-        organizationId: organizationId,
-      }).unwrap();
-      notify('Success', 'Unit updated successfully');
-    } catch {
-      notify('Error', 'Error in updating unit');
+    if (unitTypeId === '' || unitTypeId === null) {
+      setUnitErr('This field is required');
+    } else {
+      try {
+        await update({
+          ...data,
+          id: id?.toString(),
+          organizationId: organizationId,
+          typeId: unitTypeId,
+        }).unwrap();
+        notify('Success', 'Unit updated successfully');
+      } catch {
+        notify('Error', 'Error in updating unit');
+      }
     }
   };
   const onDelete = async () => {
@@ -179,37 +185,8 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const onReset = async () => {
     reset({ ...defaultValues });
+    setUnitTypeId('');
   };
-
-  type SelectDropdownProps = {
-    name: string;
-    label: string;
-    value: string;
-    error: string | undefined;
-    onChange: (value: string) => void;
-    data: any[];
-  };
-
-  const SelectDropdown = memo(function SelectDropdown({
-    name,
-    label,
-    value,
-    error,
-    onChange,
-    data,
-  }: SelectDropdownProps) {
-    return (
-      <Select
-        name={name}
-        label={label}
-        value={value}
-        withAsterisk
-        error={error}
-        onChange={onChange}
-        data={data}
-      />
-    );
-  });
 
   useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
@@ -221,18 +198,15 @@ export function FormDetail({ mode }: FormDetailProps) {
         description: selected?.description,
       });
       setParentUnitId(selected?.parentId);
+      setUnitTypeId(selected?.typeId);
     }
   }, [mode, reset, selected, selectedSuccess]);
 
   useEffect(() => {
     reset({
       parentId: parentUnitId,
-      name: selected?.name,
-      shortName: selected?.shortName,
-      typeId: selected?.typeId,
-      description: selected?.description,
     });
-  }, [parentUnitId, reset, selected, mode]);
+  }, [parentUnitId, reset]);
 
   return (
     <Stack pos={'relative'}>
@@ -265,12 +239,16 @@ export function FormDetail({ mode }: FormDetailProps) {
         name="typeId"
         control={control}
         render={({ field: { onChange, value } }) => (
-          <SelectDropdown
+          <Select
+            withAsterisk
             name="name"
             label="Unit Type"
-            value={value}
-            error={errors?.typeId ? errors?.typeId?.message?.toString() : ''}
-            onChange={onChange}
+            value={unitTypeId}
+            error={unitErr}
+            onChange={(value) => {
+              setUnitTypeId(value);
+              setUnitErr('');
+            }}
             data={
               unitType?.items?.map((type) => ({
                 value: type?.id,
