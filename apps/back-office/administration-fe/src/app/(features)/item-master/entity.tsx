@@ -10,13 +10,18 @@ import { Box, Text } from '@mantine/core';
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
-  const [getItems, { data: list }] = useLazyListQuery({});
+  const [expandedItems, setExpandedItems] = useState<{
+    [key: string]: boolean;
+  }>({});
 
-  const [showMore, setShowMore] = useState(false);
-
-  const toggleShowMore = () => {
-    setShowMore(!showMore);
+  const toggleShowMore = (itemId: string) => {
+    setExpandedItems((prevState) => ({
+      ...prevState,
+      [itemId]: !prevState[itemId], // Toggle expansion state for the specified item
+    }));
   };
+
+  const [getItems, { data: list }] = useLazyListQuery({});
 
   const config: EntityConfig<Partial<ItemMaster>> = useMemo(() => {
     return {
@@ -65,38 +70,19 @@ export function Entity({ children }: { children: React.ReactElement }) {
           id: 'commodityName',
           header: 'Classification ',
           accessorKey: 'commodityName',
-          cell: ({ row: { original } }: any) => {
-            return (
-              <>
-                <Text
-                  size="sm"
-                  onClick={toggleShowMore}
-                  className="cursor-pointer"
-                >
-                  {original.commodityName && (
-                    <>
-                      {original.commodityName.length <= 95 ? (
-                        original.commodityName
-                      ) : (
-                        <>
-                          {showMore
-                            ? original.commodityName
-                            : original.commodityName.slice(0, 95) + '...'}
-                          <span className="text-xs ml-3 text-blue-500">
-                            {showMore ? 'See Less' : 'See More'}
-                          </span>
-                        </>
-                      )}
-                    </>
-                  )}
-                </Text>
-              </>
-            );
-          },
+          cell: ({ row: { original } }: any) => (
+            <>
+              <CellComponent
+                original={original}
+                showMore={expandedItems[original.id] || false}
+                toggleShowMore={() => toggleShowMore(original.id)}
+              />
+            </>
+          ),
         },
       ],
     };
-  }, [route]);
+  }, [route, expandedItems]);
 
   const pathname = usePathname();
 
@@ -126,3 +112,32 @@ export function Entity({ children }: { children: React.ReactElement }) {
     </Box>
   );
 }
+
+const CellComponent = ({
+  original,
+  showMore,
+  toggleShowMore,
+}: {
+  original: any;
+  showMore: boolean;
+  toggleShowMore: () => void;
+}) => (
+  <Text size="sm" onClick={toggleShowMore} className="cursor-pointer">
+    {original.commodityName && (
+      <>
+        {original.commodityName.length <= 95 ? (
+          original.commodityName
+        ) : (
+          <>
+            {showMore
+              ? original.commodityName
+              : original.commodityName.slice(0, 95) + '...'}
+            <span className="text-xs ml-3 text-blue-500">
+              {showMore ? 'See Less' : 'See More'}
+            </span>
+          </>
+        )}
+      </>
+    )}
+  </Text>
+);
