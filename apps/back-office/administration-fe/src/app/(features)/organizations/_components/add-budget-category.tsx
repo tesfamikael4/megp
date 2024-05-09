@@ -66,6 +66,7 @@ const AddEntityModal = () => {
     disableMultiSelect: true,
     selectable: true,
     pagination: true,
+
     onAdd: () => {
       open();
     },
@@ -109,6 +110,8 @@ const AddEntityModal = () => {
       },
     ],
   };
+
+  // logger.log(currentAssigned);
 
   return (
     <>

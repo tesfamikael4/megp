@@ -2,7 +2,7 @@ import { LoadingOverlay, Select, Stack, TextInput } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
@@ -23,7 +23,7 @@ interface FormDetailProps {
 const defaultValues = {
   name: '',
   description: '',
-  parentCategories: null,
+  parentCategories: '',
 };
 export function FormDetail({ mode }: FormDetailProps) {
   const itemSubCategorySchema: ZodType<Partial<ItemSubCategory>> = z.object({
@@ -31,6 +31,9 @@ export function FormDetail({ mode }: FormDetailProps) {
     description: z.string().optional(),
     parentCategories: z.string().min(1, { message: 'This field is required' }),
   });
+
+  const [disableFields, setDisableFields] = useState(false);
+
   const {
     handleSubmit,
     reset,
@@ -113,21 +116,33 @@ export function FormDetail({ mode }: FormDetailProps) {
     }
   }, [mode, reset, selected, selectedSuccess]);
 
+  useEffect(() => {
+    if (id == '1' || id == '2' || id == '3') {
+      setDisableFields(true);
+    }
+  }, [id]);
+
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading} />
       <TextInput
         withAsterisk
+        disabled={disableFields}
         label="Name"
         {...register('name')}
         error={errors?.name ? errors?.name?.message?.toString() : ''}
       />
-      <TextInput label="Description" {...register('description')} />
+      <TextInput
+        label="Description"
+        {...register('description')}
+        disabled={disableFields}
+      />
       <Controller
         name="parentCategories"
         control={control}
         render={({ field: { value, onChange } }) => (
           <Select
+            disabled={disableFields}
             label="Category"
             value={value}
             withAsterisk
@@ -145,6 +160,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         )}
       />
       <EntityButton
+        disabled={disableFields}
         mode={mode}
         onCreate={handleSubmit(onCreate)}
         onUpdate={handleSubmit(onUpdate)}
