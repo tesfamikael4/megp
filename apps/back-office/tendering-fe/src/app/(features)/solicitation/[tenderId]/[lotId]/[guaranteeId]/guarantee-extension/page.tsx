@@ -1,35 +1,36 @@
 'use client';
 
-import { ActionIcon, Badge } from '@mantine/core';
+import { ActionIcon, Badge, Button } from '@mantine/core';
 import { ExpandableTable, Section } from '@megp/core-fe';
-import { IconChevronRight } from '@tabler/icons-react';
-import { useRouter, useParams } from 'next/navigation';
-import { useLazyListByIdQuery } from '../_api/guarantee-request.api';
 import { CollectionQuery } from '@megp/entity';
+import { IconChevronRight } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useLazyListByIdQuery } from './_api/guarantee-extension.api';
 
-export default function GuaranteeForfeit() {
+export default function Extension() {
   const router = useRouter();
-  const { tenderId, lotId } = useParams();
+  const { tenderId, lotId, guaranteeId } = useParams();
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
   const config = {
     isSearchable: true,
-    isExpandable: true,
+
     isFetching: isFetching,
     columns: [
       {
-        accessor: 'bidderName',
-        title: 'Vendor Name',
-      },
-
-      { accessor: 'guarantorName', title: 'Guarantor Name' },
-      {
-        accessor: 'guarantorBranchName',
-        title: ' Guarantor Branch Name',
+        accessor: 'noOfDays',
+        title: ' Number of Days',
+        width: 200,
       },
       {
-        accessor: 'type',
-        title: 'Type',
+        accessor: 'reason',
+        title: ' Reason',
+        width: 200,
+      },
+      {
+        accessor: 'remark',
+        title: 'Remark',
+        width: 200,
       },
 
       {
@@ -62,37 +63,37 @@ export default function GuaranteeForfeit() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/solicitation/${tenderId}/${lotId}/guarantee-forfeit/${record?.id}`,
+                `/solicitation/${tenderId}/${lotId}/${guaranteeId}/guarantee-extension/${record?.id}`,
               );
             }}
           >
             <IconChevronRight size={14} />
           </ActionIcon>
         ),
+        width: 50,
       },
     ],
   };
   const onRequestChange = (request: CollectionQuery) => {
-    trigger({
-      id: lotId.toString(),
-      collectionQuery: {
-        ...request,
-        where: [
-          ...(request?.where ?? []),
-          [
-            {
-              column: 'status',
-              operator: '=',
-              value: 'APPROVED',
-            },
-          ],
-        ],
-      },
-    });
+    trigger({ id: guaranteeId.toString(), collectionQuery: request });
   };
 
   return (
-    <Section collapsible={false} title="Guarantee Forfeit">
+    <Section
+      collapsible={false}
+      title="Guarantee Extension"
+      action={
+        <Button
+          onClick={() =>
+            router.push(
+              `/solicitation/${tenderId}/${lotId}/${guaranteeId}/guarantee-extension/new`,
+            )
+          }
+        >
+          New
+        </Button>
+      }
+    >
       <ExpandableTable
         config={config}
         data={data?.items ?? []}
