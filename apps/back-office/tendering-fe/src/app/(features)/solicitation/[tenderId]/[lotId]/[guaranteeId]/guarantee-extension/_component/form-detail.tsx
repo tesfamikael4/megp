@@ -56,11 +56,16 @@ export default function FormDetail({ mode }: FormDetailProps) {
 
   const onCreate = async (data) => {
     try {
-      await create({
+      const result = await create({
         ...data,
         guaranteeId: guaranteeId,
         status: 'REQUESTED',
       }).unwrap();
+
+      router.push(
+        `/solicitation/${tenderId}/${lotId}/${guaranteeId}/guarantee-extension/${result?.id}`,
+      );
+
       notify('Success', 'Guarantee Extension created successfully');
     } catch (e) {
       notify('Error', 'Something went wrong');
