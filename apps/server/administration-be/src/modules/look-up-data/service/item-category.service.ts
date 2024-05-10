@@ -30,4 +30,21 @@ export class ItemCategoryService extends EntityCrudService<ItemCategory> {
       return newICat;
     }
   }
+
+  async delete(id: string): Promise<void> {
+    try {
+      const item = await this.itemCatRepository.findOneOrFail({
+        where: { id },
+      });
+      await this.itemCatRepository.remove(item);
+    } catch (error) {
+      if (error.code === '23503') {
+        throw new Error(
+          `Unable to delete. This item category is linked to other items, please delete them first.`,
+        );
+      } else {
+        throw error;
+      }
+    }
+  }
 }
