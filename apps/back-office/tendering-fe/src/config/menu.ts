@@ -41,22 +41,4 @@ export const Menu: MenuItem[] = [
     icon: IconReportAnalytics,
     link: '/report',
   },
-  {
-    label: 'Guarantees',
-    icon: IconAdjustmentsHorizontal,
-    links: [
-      {
-        label: 'Guarantee Release',
-        link: '/guarantee-release',
-      },
-      {
-        label: 'Guarantee Forfeit',
-        link: '/guarantee-forfeit',
-      },
-      {
-        label: 'Guarantee Extension',
-        link: '/guarantee-extension',
-      },
-    ],
-  },
 ];
