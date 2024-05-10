@@ -56,7 +56,7 @@ export default function BidOpening() {
   const [getBidders, { data: bidders }] = useLazyGetAllbiddersByLotIdQuery();
   return (
     <>
-      <TenderOverView />
+      <TenderOverView basePath={`/opening/team-assessment/${tenderId}`} />
       <Section title="Bidders List" collapsible={false} className="mt-2">
         <ExpandableTable
           config={config}

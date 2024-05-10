@@ -5,7 +5,7 @@ import { Team } from './_components/team';
 export default function BidAdministrationDetail() {
   return (
     <>
-      <TenderOverView />
+      <TenderOverView basePath="/administration" />
       <Team />
     </>
   );

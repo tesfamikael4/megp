@@ -6,7 +6,7 @@ import { IconChevronLeft, IconEye } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export const TenderOverView = () => {
+export const TenderOverView = ({ basePath }: { basePath: string }) => {
   const { tenderId } = useParams();
   const router = useRouter();
   const [getTender, { data }] = useLazyGetTenderDetailQuery();
@@ -20,7 +20,7 @@ export const TenderOverView = () => {
         <Flex
           justify="center"
           align="center"
-          onClick={() => router.back()}
+          onClick={() => router.push(basePath)}
           className="cursor-pointer"
         >
           <IconChevronLeft size={14} />

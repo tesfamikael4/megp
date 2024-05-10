@@ -95,7 +95,7 @@ export default function BidOpening() {
   };
   return (
     <>
-      <TenderOverView />
+      <TenderOverView basePath={`/evaluation/${tenderId}/${lotId}`} />
       <Section
         title="Bidders List"
         collapsible={false}

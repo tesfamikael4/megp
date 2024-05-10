@@ -17,6 +17,7 @@ import {
   IconCircleCheck,
 } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
+import { useParams } from 'next/navigation';
 
 export default function BiderDetail() {
   const config: ExpandableTableConfig = {
@@ -179,9 +180,11 @@ export default function BiderDetail() {
       subChecklist: [],
     },
   ];
+
+  const { tenderId, lotId } = useParams();
   return (
     <>
-      <BidderOverView />
+      <BidderOverView basePath={`/evaluation/lots/${tenderId}/${lotId}`} />
       <Flex gap={10} mt={10}>
         <Box className=" bg-white w-1/4">
           <Section

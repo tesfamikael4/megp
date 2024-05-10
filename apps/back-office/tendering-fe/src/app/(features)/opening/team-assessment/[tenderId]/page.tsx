@@ -89,7 +89,7 @@ export default function BidOpening() {
   };
   return (
     <>
-      <TenderOverView />
+      <TenderOverView basePath={`/opening/${tenderId}/lots`} />
       <Section
         title="Lots List"
         collapsible={false}
@@ -102,7 +102,7 @@ export default function BidOpening() {
               loading={isLoading}
               disabled={tenderStatus?.isTeamLead?.hasCompleted}
             >
-              Submit
+              Complete
             </Button>
           </Group>
         }

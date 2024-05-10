@@ -47,7 +47,7 @@ export default function BidPrice() {
   };
   return (
     <>
-      <TenderOverView />
+      <TenderOverView basePath="" />
 
       <Section title="Price Adjustment" className="mt-2">
         <Box className="p-2">
