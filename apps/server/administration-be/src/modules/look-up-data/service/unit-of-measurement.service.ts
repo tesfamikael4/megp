@@ -1,10 +1,9 @@
-import { ConflictException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UnitOfMeasurement } from 'src/entities/uom.entity';
 import { ExtraCrudService } from 'src/shared/service';
 import { Repository } from 'typeorm';
 import { CreateUnitOfMeasurementDto } from '../dto/uom.dto';
-import { ItemMaster } from 'src/entities';
 @Injectable()
 export class UnitOfMeasurementService extends ExtraCrudService<UnitOfMeasurement> {
   constructor(
@@ -31,15 +30,14 @@ export class UnitOfMeasurementService extends ExtraCrudService<UnitOfMeasurement
     }
   }
 
-  async deleteUoM(id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     try {
-      await super.delete(id);
+      const item = await this.uomRepository.findOneOrFail({ where: { id } });
+      await this.uomRepository.remove(item);
     } catch (error) {
       if (error.code === '23503') {
-        const referencedEntity = ItemMaster.name;
-        const referencingEntity = UnitOfMeasurement.name;
         throw new Error(
-          `Cannot delete or update this ${referencingEntity} as it is referenced by other ${referencedEntity}.`,
+          `Unable to delete. This UoM is linked to other items, please delete them first.`,
         );
       } else {
         throw error;
