@@ -54,11 +54,14 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
 
   // ! deprecated method, do not use
   async generatePresignedGetUrl(fileInfo): Promise<string> {
-    const presignedUrl = await this.minioService.generatePresignedDownloadUrl({
-      bucketName: 'megp',
-      filepath: fileInfo.fileInfo.filepath,
-      contentType: fileInfo.fileInfo.contentType,
-    });
+    const duration = Number(process.env.DURATION_OF_PRE_SIGNED_DOCUMENT ?? 120);
+
+    const presignedUrl =
+      await this.minioClientService.client.presignedGetObject(
+        'megp',
+        fileInfo.fileInfo.filepath,
+        duration,
+      );
     return presignedUrl;
   }
 
