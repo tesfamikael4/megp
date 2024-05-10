@@ -114,19 +114,24 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await remove(id?.toString()).unwrap();
       notifications.show({
-        message: 'Item-Category Deleted Successfully',
+        message: 'Item Category Deleted Successfully',
         title: 'Success',
         color: 'green',
       });
       router.push('/item-category');
-    } catch (err) {
+    } catch (error) {
+      let errorMessage = 'Error In Deleting Item Category.';
+      if (error?.data?.message) {
+        errorMessage = error.data.message;
+      }
       notifications.show({
-        message: 'Error in Deleting Item-Category.',
+        message: errorMessage,
         title: 'Error',
         color: 'red',
       });
     }
   };
+
   const onReset = async () => {
     reset({ ...defaultValues });
   };
