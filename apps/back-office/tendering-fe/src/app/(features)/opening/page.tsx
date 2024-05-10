@@ -3,7 +3,6 @@
 import { ActionIcon, Box } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
-import { data } from './_constants/data';
 import { DetailTable } from '../_components/detail-table';
 import { useRouter } from 'next/navigation';
 import { useLazyGetClosedTendersQuery } from '@/store/api/tendering/tendering.api';

@@ -40,7 +40,7 @@ export default function BidOpening() {
   };
   return (
     <>
-      <TenderOverView />
+      <TenderOverView basePath="" />
       <Section title="Lots List" collapsible={false} className="mt-2">
         <ExpandableTable
           config={config}

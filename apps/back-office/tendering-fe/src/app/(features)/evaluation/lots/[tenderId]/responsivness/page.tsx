@@ -61,7 +61,7 @@ export default function Items() {
   };
   return (
     <>
-      <TenderOverView />
+      <TenderOverView basePath="" />
       <Section title="Items" collapsible={false} className="mt-2">
         <ExpandableTable
           config={config}

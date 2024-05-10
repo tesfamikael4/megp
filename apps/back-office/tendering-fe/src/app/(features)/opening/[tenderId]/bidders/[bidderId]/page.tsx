@@ -12,6 +12,7 @@ import {
 import { BidderOverView } from '../_components/bidder-overview';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';
+import { useParams } from 'next/navigation';
 
 export default function BiderDetail() {
   const config: ExpandableTableConfig = {
@@ -58,9 +59,10 @@ export default function BiderDetail() {
       status: 'draft',
     },
   ];
+  const { tenderId } = useParams();
   return (
     <>
-      <BidderOverView />
+      <BidderOverView basePath={`/opening/${tenderId}/bidders`} />
       <Flex gap={10} mt={10}>
         <Box className=" bg-white w-1/4">
           <Section

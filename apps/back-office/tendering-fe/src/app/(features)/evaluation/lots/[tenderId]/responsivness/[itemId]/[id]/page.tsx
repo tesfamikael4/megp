@@ -123,7 +123,7 @@ export default function BiderDetail() {
   ];
   return (
     <>
-      <BidderOverView />
+      <BidderOverView basePath="/evaluation/lots/tenderId/responsiveness" />
       <Flex gap={10} mt={10}>
         <Box className=" bg-white w-1/4">
           <Section

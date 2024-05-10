@@ -66,7 +66,7 @@ export default function OpeningChecklist() {
   ];
   return (
     <>
-      <TenderOverView />
+      <TenderOverView basePath="" />
       <Flex gap={10} mt={10}>
         <Box className=" bg-white w-1/3">
           <Section title="Checklist" className="h-full" collapsible={false}>

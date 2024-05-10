@@ -5,7 +5,7 @@ import { Section } from '@megp/core-fe';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
-export const BidderOverView = () => {
+export const BidderOverView = ({ basePath }: { basePath: string }) => {
   const router = useRouter();
   return (
     <Section
@@ -13,7 +13,7 @@ export const BidderOverView = () => {
         <Tooltip
           label="List of bidders"
           className="cursor-pointer"
-          onClick={() => router.back()}
+          onClick={() => router.push(basePath)}
         >
           <Flex justify="center" align="center">
             <IconChevronLeft size={14} />
