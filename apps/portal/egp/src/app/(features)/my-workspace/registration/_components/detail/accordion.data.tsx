@@ -21,7 +21,7 @@ interface Tabs {
 export const useTabs = (extendedRegister, control, disabled): Tabs[] => [
   {
     tabValue: 'basic',
-    tabName: 'Basic Registration',
+    tabName: 'Registration Detail',
     tabDescription: 'Basic Registration Information',
     tabPanelComponent: (
       <BasicInfo register={extendedRegister} control={control} />
@@ -30,14 +30,14 @@ export const useTabs = (extendedRegister, control, disabled): Tabs[] => [
   {
     tabValue: 'address',
     tabName: 'Address Information',
-    tabDescription: 'Address Information',
+    tabDescription: 'Company Address Information',
     tabPanelComponent: (
       <AddressInformation register={extendedRegister} control={control} />
     ),
   },
   {
     tabValue: 'contactPersons',
-    tabName: 'Contact Persons',
+    tabName: 'Contact Persons Information',
     tabDescription: 'Contact Persons List',
     tabPanelComponent: (
       <ContactPersons

@@ -141,7 +141,7 @@ export default function SupportingDocuments() {
         }),
       );
       request({});
-      NotificationService.successNotification('Files Uploaded Successfully!');
+      // NotificationService.successNotification('Files Uploaded Successfully!');
       router.push('review');
     } catch (error) {
       NotificationService.requestErrorNotification(
@@ -209,7 +209,7 @@ export default function SupportingDocuments() {
           >
             Back
           </Button>
-          <Button type="submit">Save</Button>
+          <Button type="submit">Save & Continue</Button>
         </Flex>
       </form>
     </Flex>

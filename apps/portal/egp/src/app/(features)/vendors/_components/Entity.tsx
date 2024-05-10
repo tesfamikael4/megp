@@ -35,7 +35,7 @@ const Entity = ({ children }: { children: React.ReactNode }) => {
       columns: [
         {
           id: 'name',
-          header: 'Company Name',
+          header: 'Business/Company Name',
           accessorKey: 'name',
           meta: {
             widget: 'expand',
@@ -44,7 +44,7 @@ const Entity = ({ children }: { children: React.ReactNode }) => {
         },
         {
           id: 'businessType',
-          header: 'Business Type ',
+          header: 'Form of Business',
           accessorKey: 'businessType',
           meta: {
             widget: 'expand',
@@ -54,7 +54,7 @@ const Entity = ({ children }: { children: React.ReactNode }) => {
 
         {
           id: 'countryOfRegistration',
-          header: 'Country',
+          header: 'Country of Registration',
           accessorKey: 'countryOfRegistration',
           meta: {
             widget: 'expand',

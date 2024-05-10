@@ -72,7 +72,7 @@ function Page() {
   };
   const onPreviousFileExists = () => {
     NotificationService.successNotification('Payed Successfully!');
-    router.push('preferential');
+    router.push('doc');
   };
 
   useEffect(() => {

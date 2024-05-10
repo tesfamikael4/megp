@@ -55,7 +55,6 @@ export const BeneficialOwnership: React.FC<Props> = ({
                 <TextInput
                   label="Middle Name"
                   placeholder="Enter Middle name"
-                  withAsterisk
                   {...getInputProps('middleName')}
                 />
               </Group>
@@ -67,7 +66,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
                   {...getInputProps('lastName')}
                 />
                 <Select
-                  label="Nationality"
+                  label="Nationality of Ownership"
                   placeholder="Enter Nationality"
                   withAsterisk
                   searchable
@@ -84,7 +83,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
                   {...getInputProps('countryOfResidence', 'select')}
                 />
                 <NumberInput
-                  label="Share"
+                  label="Share in Percentage"
                   withAsterisk
                   hideControls
                   placeholder="Enter Share"
@@ -99,7 +98,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
               </Group>
               <Group grow>
                 <NumberInput
-                  label="Voting Rights"
+                  label="Voting Rights in Percentage"
                   withAsterisk
                   hideControls
                   placeholder="Enter Voting Rights"
