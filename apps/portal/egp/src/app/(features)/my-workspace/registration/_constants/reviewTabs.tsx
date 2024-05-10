@@ -100,6 +100,7 @@ export const formatColumns = (countryOfRegistration) => ({
     { name: 'countryOfResidence' },
     { name: 'share' },
     { name: 'votingRights' },
+    { name: 'authorityToAppointGov' },
   ],
 
   bankAccountDetails: [

@@ -104,10 +104,7 @@ export const beneficialOwnershipShareholderSchema = z.object({
     .string()
     .min(2, { message: 'Name must be at least 2 characters long' })
     .max(50, { message: 'Name cannot exceed 50 characters' }),
-  middleName: z
-    .string()
-    .min(2, { message: 'Middle Name must be at least 2 characters long' })
-    .max(50, { message: 'Middle Name cannot exceed 50 characters' }),
+  middleName: z.string().optional(),
   lastName: z
     .string()
     .min(2, { message: 'Last Name must be at least 2 characters long' })

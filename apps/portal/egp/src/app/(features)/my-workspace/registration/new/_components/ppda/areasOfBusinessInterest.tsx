@@ -115,7 +115,9 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                         {...register(`${name}.${index}.userType`, 'select')}
                         disabled={
                           !register(`${name}.${index}.classification`, 'select')
-                            .value
+                            .value ||
+                          register(`${name}.${index}.userType`, 'select')
+                            .disabled
                         }
                       />
                     </Grid.Col>
@@ -134,7 +136,9 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                               <IconCalendar size={'1.2rem'} stroke={1.5} />
                             }
                             maxDate={dayjs(new Date()).toDate()}
-                            // {...register(`areasOfBusinessInterest.${index}.activationDate`)}
+                            {...register(
+                              `areasOfBusinessInterest.${index}.activationDate`,
+                            )}
                             onChange={async (value: any) =>
                               value &&
                               field.onChange(

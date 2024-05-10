@@ -6,7 +6,7 @@ function PageTitle() {
   const path = usePathname();
   const routes = {
     basic: 'Basic Information',
-    detail: 'Detailed Information',
+    detail: 'Profile Information',
     ppda: 'Purpose of Registration',
     preferential: 'Eligibility of Preferential Treatment',
     payment: 'Payment',

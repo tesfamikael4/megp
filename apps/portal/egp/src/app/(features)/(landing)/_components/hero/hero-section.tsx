@@ -57,7 +57,7 @@ export function HeroSection() {
           >
             <InputWithButton />
             <Flex className="w-full gap-4 items-start justify-start">
-              {!data && (
+              {(data?.status === 'Initial' || data?.status === 'Draft') && (
                 <Button
                   bg={'#1D8E3F'}
                   size="sm"

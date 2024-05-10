@@ -41,6 +41,7 @@ const renderObjectCell = (cellValue) => (
 
 const renderCell = (header, item, open, setUrl, userId) => {
   const cellValue = item[header.name ?? header];
+  console.log((header.name ?? header) === 'type' && cellValue);
 
   if (header.format) {
     return <TableCell value={cellValue} />;
@@ -54,12 +55,18 @@ const renderCell = (header, item, open, setUrl, userId) => {
     return renderObjectCell(cellValue);
   }
 
-  if ((header.name ?? header) === 'isDefualt') {
+  if (
+    (header.name ?? header) === 'isDefualt' ||
+    (header.name ?? header) === 'authorityToAppointGov'
+  ) {
     return (
       <>
         <Table.Td>{cellValue ? 'Yes' : 'No'}</Table.Td>
       </>
     );
+  }
+  if ((header.name ?? header) === 'type') {
+    return <Table.Td>{cellValue?.toUpperCase()}</Table.Td>;
   }
   if (
     (header.name ?? header) === 'share' ||
@@ -125,7 +132,6 @@ export function renderTable(
         <Table.Thead className="w-fit">
           <Table.Tr>
             {(filterColumns[selected] || headers).map((header) => {
-              console.log({ header });
               if (header === 'id' || header === 'serviceId') return null;
               return (
                 <Table.Th key={header.name ?? header} className="w-fit">
