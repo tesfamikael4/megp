@@ -62,12 +62,16 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
     if (!fileInfo) {
       throw new NotFoundException();
     }
-    const presignedUrl = await this.minioService.generatePresignedDownloadUrl({
-      bucketName: 'megp',
-      filepath: fileInfo.fileInfo.filepath,
-      contentType: fileInfo.fileInfo.contentType,
-    });
-    return { presignedUrl };
+
+    const duration = Number(process.env.DURATION_OF_PRE_SIGNED_DOCUMENT ?? 120);
+
+    const presignedUrl =
+      await this.minioClientService.client.presignedGetObject(
+        'megp',
+        fileInfo.fileInfo.filepath,
+        duration,
+      );
+    return presignedUrl;
   }
 
   // ! deprecated method, do not use

@@ -22,7 +22,6 @@ const options: ExtraCrudOptions = {
   entityIdName: 'postBudgetPlanActivityId',
 };
 
-// @AllowAnonymous()
 @Controller('post-budget-activity-documents')
 @ApiTags('post-budget-activity-documents')
 export class PostBudgetActivityDocumentController extends ExtraCrudController<PostBudgetActivityDocument>(
