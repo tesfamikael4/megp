@@ -4,7 +4,13 @@ import {
 } from '@/store/api/iam/iam.api';
 import { ActionIcon, Box, Button, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Section, logger, notify } from '@megp/core-fe';
+import {
+  ExpandableTable,
+  ExpandableTableConfig,
+  Section,
+  logger,
+  notify,
+} from '@megp/core-fe';
 import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
 import { useEffect, useState } from 'react';
@@ -22,7 +28,6 @@ import {
   useCreateRequisitionerMutation as useCreatePrRequisitionerMutation,
   useLazyGetRequisitionerQuery as useLazyGetPrRequisitionerQuery,
 } from '@/store/api/pr/pr.api';
-import { ExpandableTable } from '../../_components/expandable-table';
 import { CollectionQuery } from '@megp/entity';
 
 export const Requisitioner = ({
@@ -66,7 +71,8 @@ export const Requisitioner = ({
       },
     ],
   };
-  const addConfig = {
+  const addConfig: ExpandableTableConfig = {
+    idAccessor: 'userId',
     isSearchable: true,
     selectedItems: selectedItems,
     setSelectedItems: setSelectedItems,

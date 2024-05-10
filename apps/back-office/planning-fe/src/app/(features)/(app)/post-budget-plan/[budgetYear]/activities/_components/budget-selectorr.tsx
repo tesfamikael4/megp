@@ -184,7 +184,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
   };
 
   useEffect(() => {
-    if (activity) {
+    if (activity && postBudget) {
       getSelectedData({
         id: postBudget?.appId,
         collectionQuery: {
@@ -196,7 +196,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
 
   useEffect(() => {
     if (isSelectedDataSuccess && selectedData) {
-      setValue(selectedData.items[0].budgetCode);
+      setValue(selectedData?.items[0]?.budgetCode);
     }
   }, [isSelectedDataSuccess, selectedData]);
   return (
