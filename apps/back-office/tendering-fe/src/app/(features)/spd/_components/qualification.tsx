@@ -9,7 +9,10 @@ import {
   IconTrash,
   IconX,
 } from '@tabler/icons-react';
-import { useDeleteMutation, useLazyListQuery } from '../_api/qualification.api';
+import {
+  useDeleteMutation,
+  useLazyListByIdQuery,
+} from '../_api/qualification.api';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
@@ -24,7 +27,7 @@ export default function SpdQualification({
   type?: 'legal' | 'professional' | 'technical' | 'financial' | 'performance';
 }) {
   const { id } = useParams();
-  const [trigger, { data, isFetching }] = useLazyListQuery();
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [qId, setId] = useState('');
   const [mode, setMode] = useState<'new' | 'detail'>('new');
@@ -62,22 +65,18 @@ export default function SpdQualification({
   const onReturnFunction = () => {
     close();
     trigger({
-      where: [
-        [
-          {
-            column: 'category',
-            value: type,
-            operator: '=',
-          },
+      id: id.toString(),
+      collectionQuery: {
+        where: [
+          [
+            {
+              column: 'category',
+              value: type,
+              operator: '=',
+            },
+          ],
         ],
-        [
-          {
-            column: 'spdId',
-            value: id,
-            operator: '=',
-          },
-        ],
-      ],
+      },
     });
   };
 
@@ -156,23 +155,19 @@ export default function SpdQualification({
 
   const onRequestChange = (request: any) => {
     trigger({
-      ...request,
-      where: [
-        [
-          {
-            column: 'category',
-            value: type,
-            operator: '=',
-          },
+      id: id.toString(),
+      collectionQuery: {
+        ...request,
+        where: [
+          [
+            {
+              column: 'category',
+              value: type,
+              operator: '=',
+            },
+          ],
         ],
-        [
-          {
-            column: 'spdId',
-            value: id,
-            operator: '=',
-          },
-        ],
-      ],
+      },
     });
   };
 

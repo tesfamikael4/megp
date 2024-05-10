@@ -15,7 +15,7 @@ import {
   useSearchParams,
   usePathname,
 } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { IconChevronLeft } from '@tabler/icons-react';
 import UploadTemplate from '../_components/upload-template';
 import SpdAdministrativeCompliance from '../_components/administrative-compliance';
@@ -25,8 +25,8 @@ import SpdPreferenceMargin from '../_components/preference-margin';
 import SpdTechnicalScoring from '../_components/technical-scoring';
 import SpdProfessionalSetting from '../_components/professional-setting';
 import BidForm from '../_components/bid-form';
-import { useReadQuery } from '../_api/spd.api';
-import { Section } from '@megp/core-fe';
+import { useLazyReadQuery } from '../_api/spd.api';
+import { Section, notify } from '@megp/core-fe';
 import ContractForm from '../_components/contract-form';
 import { useApproveSpdMutation } from '../_api/approve-spd.api';
 import OpeningChecklist from '../_components/openinig-checklist';
@@ -39,7 +39,7 @@ export default function SpdDetailPage() {
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
   const { id } = useParams();
-  const { data: selected, isLoading } = useReadQuery(id?.toString());
+  const [trigger, { data: selected, isLoading }] = useLazyReadQuery();
   const [approve, { isLoading: isChanging }] = useApproveSpdMutation();
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -49,6 +49,22 @@ export default function SpdDetailPage() {
     },
     [searchParams],
   );
+  useEffect(() => {
+    if (id) {
+      trigger(id.toString());
+    }
+  }, [id, trigger]);
+  const onApprove = () => {
+    approve({ id: selected.id })
+      .unwrap()
+      .then(() => {
+        notify('Success', 'spd approved successfully');
+        trigger(id.toString());
+      })
+      .catch(() => {
+        notify('Error', 'error while approving the spd');
+      });
+  };
   return (
     <>
       <LoadingOverlay visible={isLoading} />
@@ -75,7 +91,7 @@ export default function SpdDetailPage() {
                       loading={isChanging}
                       className="my-auto bg-red-500"
                       onClick={() => {
-                        approve({ id: selected.id });
+                        onApprove();
                       }}
                     >
                       Deactivate
@@ -88,7 +104,7 @@ export default function SpdDetailPage() {
                       className="my-auto"
                       loading={isChanging}
                       onClick={() => {
-                        approve({ id: selected.id });
+                        onApprove();
                       }}
                     >
                       Activate
