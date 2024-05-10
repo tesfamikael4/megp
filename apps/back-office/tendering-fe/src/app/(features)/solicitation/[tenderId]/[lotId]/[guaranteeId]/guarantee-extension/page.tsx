@@ -42,9 +42,9 @@ export default function Extension() {
             color={
               status === 'APPROVED'
                 ? 'green'
-                : status === 'REQUESTED ' || status === 'DRAFT'
-                  ? 'yellow'
-                  : 'red'
+                : status === 'REJECTED '
+                  ? 'red'
+                  : 'yellow'
             }
             variant="light"
             fw={700}
