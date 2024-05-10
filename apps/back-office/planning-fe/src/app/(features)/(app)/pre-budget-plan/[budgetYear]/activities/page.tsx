@@ -93,6 +93,13 @@ export default function PreBudget() {
       collectionQuery: {
         ...request,
         includes: ['reasons', 'preProcurementMechanism'],
+        orderBy: [
+          ...request.orderBy,
+          {
+            column: 'createdAt',
+            direction: 'DESC',
+          },
+        ],
       },
     });
   };

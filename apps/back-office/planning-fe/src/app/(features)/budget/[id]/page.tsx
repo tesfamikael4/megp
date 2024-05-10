@@ -185,7 +185,19 @@ export default function DetailPage() {
   }, [getBudgetSummation, getBudgetYear, id]);
 
   const onRequestChange = (request) => {
-    getBudgets({ id: id as string, collectionQuery: request });
+    getBudgets({
+      id: id as string,
+      collectionQuery: {
+        ...request,
+        orderBy: [
+          ...request.orderBy,
+          {
+            column: 'budgetCode',
+            direction: 'DESC',
+          },
+        ],
+      },
+    });
   };
 
   const handelExtractedData = (data) => {

@@ -94,6 +94,13 @@ export default function PostBudget() {
       collectionQuery: {
         ...request,
         includes: ['reasons', 'postProcurementMechanism'],
+        orderBy: [
+          ...request.orderBy,
+          {
+            column: 'createdAt',
+            direction: 'DESC',
+          },
+        ],
       },
     });
   };
