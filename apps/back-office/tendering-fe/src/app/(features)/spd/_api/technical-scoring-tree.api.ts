@@ -9,14 +9,14 @@ export const technicalScoringTreeApi = createApi({
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   endpoints: (builder) => ({
     getTechnicalScoring: builder.query<any, any>({
-      query: (collectionQuery: CollectionQuery) => {
+      query: (args: { spdId; collectionQuery: CollectionQuery }) => {
         let q = '';
-        if (collectionQuery) {
-          const query = encodeCollectionQuery(collectionQuery);
+        if (args.collectionQuery) {
+          const query = encodeCollectionQuery(args.collectionQuery);
           q = `?q=${query}`;
         }
         return {
-          url: `spd-technical-scoring${q}`,
+          url: `spd-technical-scoring/list/${args.spdId}${q}`,
           method: 'GET',
         };
       },

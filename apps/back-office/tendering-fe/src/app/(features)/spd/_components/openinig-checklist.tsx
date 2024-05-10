@@ -19,7 +19,7 @@ import {
 } from '@tabler/icons-react';
 import {
   useDeleteMutation,
-  useLazyListQuery,
+  useLazyListByIdQuery,
 } from '../_api/opening-checklist.api';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
@@ -30,7 +30,7 @@ import { useParams } from 'next/navigation';
 
 export default function OpeningChecklist() {
   const { id } = useParams();
-  const [trigger, { data, isFetching }] = useLazyListQuery();
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [pmId, setId] = useState('');
   const [mode, setMode] = useState<'new' | 'detail'>('new');
@@ -121,16 +121,8 @@ export default function OpeningChecklist() {
 
   const onRequestChange = (request: any) => {
     trigger({
-      ...request,
-      where: [
-        [
-          {
-            column: 'spdId',
-            value: id,
-            operator: '=',
-          },
-        ],
-      ],
+      id: id.toString(),
+      collectionQuery: request,
     });
   };
 

@@ -15,6 +15,7 @@ export const administrativeComplianceSliceApi: typeof EntitySliceApi =
 export const {
   useListQuery,
   useLazyListQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useCreateMutation,
   useUpdateMutation,

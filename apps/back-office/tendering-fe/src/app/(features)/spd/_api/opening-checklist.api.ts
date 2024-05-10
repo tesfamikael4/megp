@@ -14,6 +14,7 @@ export const openingChecklistSliceApi: typeof EntitySliceApi =
 export const {
   useListQuery,
   useLazyListQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useCreateMutation,
   useUpdateMutation,

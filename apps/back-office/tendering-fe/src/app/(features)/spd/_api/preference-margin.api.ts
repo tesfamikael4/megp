@@ -14,6 +14,7 @@ export const preferenceMarginSliceApi: typeof EntitySliceApi =
 export const {
   useListQuery,
   useLazyListQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useCreateMutation,
   useUpdateMutation,

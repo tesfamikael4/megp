@@ -15,6 +15,7 @@ export const professionalSettingSliceApi: typeof EntitySliceApi =
 export const {
   useListQuery,
   useLazyListQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useCreateMutation,
   useUpdateMutation,

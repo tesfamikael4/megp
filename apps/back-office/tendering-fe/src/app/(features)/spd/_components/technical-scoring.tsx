@@ -16,31 +16,21 @@ export default function SpdTechnicalScoring() {
   const [opened, { open, close }] = useDisclosure(false);
   const onRequestChange = (request: any) => {
     trigger({
-      ...request,
-      where: [
-        [
-          {
-            column: 'spdId',
-            value: id,
-            operator: '=',
-          },
-        ],
-      ],
+      spdId: id.toString(),
+      collectionQuery: {
+        ...request,
+      },
     });
   };
 
   const onReturnFunction = () => {
     close();
     trigger({
-      where: [
-        [
-          {
-            column: 'spdId',
-            value: id,
-            operator: '=',
-          },
-        ],
-      ],
+      spdId: id.toString(),
+      collectionQuery: {
+        skip: 1,
+        take: 10,
+      },
     });
   };
   return (

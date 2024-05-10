@@ -11,7 +11,7 @@ import {
 } from '@tabler/icons-react';
 import {
   useDeleteMutation,
-  useLazyListQuery,
+  useLazyListByIdQuery,
 } from '../_api/administrative-compliance.api';
 import { SpdAdministrativeComplianceFormDetail } from './administrative-compliance-form-detail';
 import { useDisclosure } from '@mantine/hooks';
@@ -27,7 +27,7 @@ export default function SpdAdministrativeCompliance({
   type = 'technical',
 }: SpdAdministrativeComplianceProps) {
   const { id } = useParams();
-  const [trigger, { data, isFetching }] = useLazyListQuery();
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [adId, setId] = useState('');
   const [mode, setMode] = useState<'new' | 'detail'>('new');
@@ -36,22 +36,18 @@ export default function SpdAdministrativeCompliance({
   const onReturnFunction = () => {
     close();
     trigger({
-      where: [
-        [
-          {
-            column: 'type',
-            value: type,
-            operator: '=',
-          },
+      id: id.toString(),
+      collectionQuery: {
+        where: [
+          [
+            {
+              column: 'type',
+              value: type,
+              operator: '=',
+            },
+          ],
         ],
-        [
-          {
-            column: 'spdId',
-            value: id,
-            operator: '=',
-          },
-        ],
-      ],
+      },
     });
   };
 
@@ -150,23 +146,19 @@ export default function SpdAdministrativeCompliance({
 
   const onRequestChange = (request: any) => {
     trigger({
-      ...request,
-      where: [
-        [
-          {
-            column: 'type',
-            value: type,
-            operator: '=',
-          },
+      id: id.toString(),
+      collectionQuery: {
+        ...request,
+        where: [
+          [
+            {
+              column: 'type',
+              value: type,
+              operator: '=',
+            },
+          ],
         ],
-        [
-          {
-            column: 'spdId',
-            value: id,
-            operator: '=',
-          },
-        ],
-      ],
+      },
     });
   };
 

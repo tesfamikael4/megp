@@ -19,7 +19,7 @@ import {
 } from '@tabler/icons-react';
 import {
   useDeleteMutation,
-  useLazyListQuery,
+  useLazyListByIdQuery,
 } from '../_api/professional-setting.api';
 import { useDisclosure } from '@mantine/hooks';
 import { SpdProfessionalSettingFormDetail } from './professional-setting-form-detail';
@@ -27,9 +27,11 @@ import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
 import type { SpdProfessionalSetting } from '@/models/spd/professional-setting.model';
+import { useParams } from 'next/navigation';
 
 export default function SpdProfessionalSetting() {
-  const [trigger, { data, isFetching }] = useLazyListQuery();
+  const { id } = useParams();
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'new' | 'detail'>('new');
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
@@ -130,7 +132,10 @@ export default function SpdProfessionalSetting() {
   };
 
   const onRequestChange = (request: any) => {
-    trigger(request);
+    trigger({
+      id: id.toString(),
+      collectionQuery: request,
+    });
   };
 
   return (
