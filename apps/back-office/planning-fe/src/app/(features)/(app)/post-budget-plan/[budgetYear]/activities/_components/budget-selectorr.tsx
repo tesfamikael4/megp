@@ -226,7 +226,19 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
             config={config}
             total={data?.total ?? 0}
             onRequestChange={(collectionQuery) => {
-              getBudget({ id: postBudget?.appId, collectionQuery });
+              getBudget({
+                id: postBudget?.appId,
+                collectionQuery: {
+                  ...collectionQuery,
+                  orderBy: [
+                    ...collectionQuery.orderBy,
+                    {
+                      column: 'budgetCode',
+                      direction: 'DESC',
+                    },
+                  ],
+                },
+              });
             }}
           />
 
