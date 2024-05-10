@@ -97,7 +97,7 @@ export default function PreBudget() {
           ...request.orderBy,
           {
             column: 'createdAt',
-            direction: 'DESC',
+            direction: 'ASC',
           },
         ],
       },

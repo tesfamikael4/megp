@@ -193,7 +193,7 @@ export default function DetailPage() {
           ...request.orderBy,
           {
             column: 'budgetCode',
-            direction: 'DESC',
+            direction: 'ASC',
           },
         ],
       },
