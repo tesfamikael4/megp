@@ -23,6 +23,7 @@ export default function BudgetPage() {
             {new Date(record.budgetYears.startDate).toLocaleDateString(
               'en-US',
               {
+                timeZone: 'UTC',
                 month: 'short',
                 day: '2-digit',
                 year: 'numeric',
@@ -37,6 +38,7 @@ export default function BudgetPage() {
         render: (record) => (
           <p>
             {new Date(record.budgetYears.endDate).toLocaleDateString('en-US', {
+              timeZone: 'UTC',
               month: 'short',
               day: '2-digit',
               year: 'numeric',

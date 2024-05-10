@@ -98,7 +98,7 @@ export default function PostBudget() {
           ...request.orderBy,
           {
             column: 'createdAt',
-            direction: 'DESC',
+            direction: 'ASC',
           },
         ],
       },

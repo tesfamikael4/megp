@@ -51,7 +51,7 @@ export const Reasons = ({
             <Tabs.Panel value={key} className="p-2" key={key}>
               <DetailForm
                 value={value}
-                key={key}
+                selectedKey={key}
                 page={page}
                 justification={justification}
               />
@@ -67,12 +67,12 @@ const DetailForm = ({
   value,
   justification,
   page,
-  key,
+  selectedKey,
 }: {
   value: any;
   justification: any;
   page: 'pre' | 'post' | 'pr';
-  key: string;
+  selectedKey: string;
 }) => {
   const [addJustification, { isLoading }] = useAddJustificationMutation();
 
@@ -87,7 +87,7 @@ const DetailForm = ({
     logger.log({ err });
   };
   const onSubmit = async (data, key) => {
-    logger.log(page);
+    logger.log({ key });
     try {
       await addJustification({
         ...data,
@@ -152,7 +152,7 @@ const DetailForm = ({
         <Group justify="end">
           <Button
             onClick={() => {
-              handleSubmit((data) => onSubmit(data, key), onError)();
+              handleSubmit((data) => onSubmit(data, selectedKey), onError)();
             }}
             loading={isLoading}
           >
