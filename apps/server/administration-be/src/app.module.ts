@@ -47,4 +47,4 @@ import { ContractCatalogModule } from './modules/contract-catalog/contract-catal
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

@@ -5,11 +5,14 @@ import { DataResponseFormat } from '@api-data';
 import { ContractCatalog } from '@entities';
 import { EntityCrudController } from '@generic-controllers';
 import { ContractCatalogsService } from '../services/contract-catalog.service';
-import { ContractCatalogDTO } from '../dto/contract-catalog.dto';
+import {
+  CreateContractCatalogDTO,
+  UpdateContractCatalogDTO,
+} from '../dto/contract-catalog.dto';
 
 const options: EntityCrudOptions = {
-  createDto: ContractCatalogDTO,
-  updateDto: ContractCatalogDTO,
+  createDto: CreateContractCatalogDTO,
+  updateDto: UpdateContractCatalogDTO,
 };
 @Controller('contract-catalogs')
 @ApiTags('contract-catalogs')

@@ -1,12 +1,16 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ProductCatalogsService } from '../services/product-catalog.service';
-import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiExtraModels,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { DataResponseFormat } from '@api-data';
 import { ProductCatalog } from '@entities';
 import { EntityCrudController } from '@generic-controllers';
-import { FetchMarketplaceProductsDto } from '../dto/marketplace-products.dto';
 import { AllowAnonymous, ApiKeyGuard } from 'src/shared/authorization';
+import { ProductCatalogApprovalStatus } from 'src/shared/enums/product-catalog-enum';
 
 const options: EntityCrudOptions = {};
 @Controller('product-catalogs')
@@ -20,10 +24,16 @@ export class ProductCatalogsController extends EntityCrudController<ProductCatal
     super(productCatalogService);
   }
 
+
+  approveCatalog(id: string, approvalStatus: ProductCatalogApprovalStatus, req?: any) {
+    return this.productCatalogService.approveCatalog(id, approvalStatus, req);
+  }
+  //for Market place
+
   @Post('details')
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
-  async getDetails(@Body() payload: FetchMarketplaceProductsDto) {
-    return await this.productCatalogService.getDetails(payload);
+  async getDetails(@Body() ids: string[]) {
+    return await this.productCatalogService.getDetails(ids);
   }
 }

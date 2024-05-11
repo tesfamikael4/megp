@@ -8,7 +8,7 @@ import {
   ProductCatalogData,
   ProductCatalogSchema,
 } from '../dto/product-catalog.dto';
-import { FetchMarketplaceProductsDto } from '../dto/marketplace-products.dto';
+import { ProductCatalogApprovalStatus } from 'src/shared/enums/product-catalog-enum';
 @Injectable()
 export class ProductCatalogsService extends EntityCrudService<ProductCatalog> {
   constructor(
@@ -30,10 +30,23 @@ export class ProductCatalogsService extends EntityCrudService<ProductCatalog> {
     return this.productCatalogRepository.save({ id, ...data });
   }
 
-  async getDetails(payload: FetchMarketplaceProductsDto) {
+
+  approveCatalog(id: string, approvalStatus: ProductCatalogApprovalStatus, req?: any) {
+    if (req?.user?.organization) {
+      return this.productCatalogRepository.save({
+        id,
+        approvalStatus,
+        approver: {
+          id: req?.user?.id,
+          name: req?.user?.name,
+        },
+      });
+    }
+  } 
+  async getDetails(ids: string[]) {
     return await this.productCatalogRepository.find({
       where: {
-        id: In([payload.catalogIds]),
+        id: In([ids]),
       },
     });
   }

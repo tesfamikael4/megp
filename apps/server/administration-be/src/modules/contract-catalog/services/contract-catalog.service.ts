@@ -14,7 +14,7 @@ export class ContractCatalogsService extends EntityCrudService<ContractCatalog> 
   }
   async create(data: any, req?: any): Promise<any> {
     if (req?.user?.organization) {
-      data.vendor = req.user.organization;
+      data.organization = req.user.organization;
     }
     const contractCatalog = this.contractCatalogRepository.create(data);
     return await this.contractCatalogRepository.save(contractCatalog);

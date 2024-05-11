@@ -23,7 +23,7 @@ export const dataSourceOptions = {
   password: TypeOrmConfigHelper.DATABASE_PASSWORD,
   entities: [`${pathPrefix}dist/**/*.entity.{ts,js}`],
   migrations: [`${pathPrefix}dist/migrations/*.{ts,js}`],
-  migrationsRun: true,
+  migrationsRun: false,
   seeds: [`${pathPrefix}dist/modules/seeders/**.seeder.{ts,js}`],
   migrationsTableName: 'typeorm_migrations',
   logger: 'advanced-console',
