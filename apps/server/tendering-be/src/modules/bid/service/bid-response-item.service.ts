@@ -442,21 +442,18 @@ export class BidResponseItemService {
   private buildBoQHierarchy(items: any[], code = null, responses: any) {
     const children = items?.filter((item) => item.parentCode === code);
 
-    if (!children || children.length === 0) {
-      return null;
-    }
-    return children.map((child) => {
+    const newData = children?.map((child) => {
+      child.rate = this.findItemById(responses, child.id);
+
       const childWithChildren = {
         ...child,
         children: this.buildBoQHierarchy(items, child.code, responses) ?? [],
       };
 
-      childWithChildren.rate = this.findItemRateById(
-        responses,
-        childWithChildren.id,
-      );
       return childWithChildren;
     });
+
+    return newData;
   }
 
   private buildBoQHierarchyWithRate(items: any[]) {
@@ -499,28 +496,20 @@ export class BidResponseItemService {
     }, 0);
   }
 
-  // private assignRateToItems(items: any, itemHierarchy: any) {
-  //   items = items.map((item: any) => {
-  //     let i = { ...item };
-  //     i = { ...i, rate: this.findItemRateById(itemHierarchy, item.id) };
+  private findItemById(items: any, id: string) {
+    const flattened = this.flattenHierarchy(items);
 
-  //     return i;
-  //   });
-
-  //   return items;
-  // }
-
-  private findItemRateById(items: any, id: string) {
-    if (!items || items.length < 1) {
-      return null;
-    }
-
-    const item = items?.find((item: any) => item.id === id);
-    if (item) {
-      return item.rate;
-    }
-    for (const item of items) {
-      return this.findItemRateById(item.children, id);
-    }
+    return flattened.find((item: any) => item.id === id)?.rate;
+  }
+  private flattenHierarchy(data: any, path = []) {
+    const flatData = [];
+    data.forEach((item: any) => {
+      const currentPath = path.concat(item.name || item.id); // Use name or id for path
+      flatData.push({ ...item, path: currentPath });
+      if (item.children) {
+        flatData.push(...this.flattenHierarchy(item.children, currentPath));
+      }
+    });
+    return flatData;
   }
 }
