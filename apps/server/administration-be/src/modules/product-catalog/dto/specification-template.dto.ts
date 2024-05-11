@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const SpecificationTemplateSchema = z.object({
   itemMasterId: z.string(),
-  quantity: z.number().positive(),
+  quantity: z.number().positive().default(1),
   properties: z.array(
     z.object({
       dataType: z.string(),
@@ -12,13 +12,14 @@ export const SpecificationTemplateSchema = z.object({
       key: z.string(),
       displayName: z.string(),
       category: z.string(),
+      order: z.number().min(0, { message: 'order is required' }),
     }),
   ),
   deliveries: z.array(
     z.object({
-      deliveryDate: z.date(),
-      location: z.any(),
-      deliverDays: z.number(),
+      deliveryDate: z.date().optional(),
+      location: z.any().optional(),
+      deliverDays: z.number().optional(),
     }),
   ),
   organizationId: z.string().optional(),

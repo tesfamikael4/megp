@@ -1,26 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { Response } from 'express';
 import { MinioService } from 'nestjs-minio-client';
+import { extname } from 'path';
+import { randomUUID } from 'crypto';
+import { BucketNameEnum } from './bucket-name.enum';
 
 @Injectable()
 export class MinIOService {
-  constructor(private readonly minioService: MinioService) {}
+  constructor(private readonly minioService: MinioService) { }
 
   async upload(
     file: Express.Multer.File,
-    bucketName = 'megp',
+    bucketName: string,
     metaData = {},
   ): Promise<any> {
     try {
-      const name = String(Date.now());
+      const filepath = randomUUID() + extname(file.originalname);
       await this.minioService.client.putObject(
-        bucketName,
-        name,
+        BucketNameEnum.MEGP,
+        bucketName + filepath,
         file.buffer,
-        metaData,
+        { ...metaData, 'Content-Type': file.mimetype },
       );
       return {
-        filepath: name,
+        filepath,
         bucketName,
         contentType: file.mimetype,
         originalname: file.originalname,
@@ -31,21 +34,21 @@ export class MinIOService {
   }
 
   async generatePresignedUploadUrl(fileInfo: {
-    bucketName: string;
+    bucketName?: string;
     originalname: string;
     contentType?: string;
   }): Promise<{ presignedUrl: string; file: any }> {
-    fileInfo.bucketName ??= 'megp';
+    const filepath = randomUUID() + extname(fileInfo.originalname);
+
     const duration = Number(process.env.DURATION_OF_PRE_SIGNED_DOCUMENT ?? 120);
-    const name = String(Date.now());
     const presignedUrl = await this.minioService.client.presignedPutObject(
-      fileInfo.bucketName,
-      name,
+      BucketNameEnum.MEGP,
+      fileInfo.bucketName ? fileInfo.bucketName : '' + filepath,
       duration,
     );
 
     const file = {
-      filepath: name,
+      filepath,
       bucketName: fileInfo.bucketName,
       contentType: fileInfo.contentType,
       originalname: fileInfo.originalname,
@@ -58,19 +61,24 @@ export class MinIOService {
     buffer: any,
     originalname: string,
     mimetype: string,
-    bucketName = 'megp',
+    bucketName?: string,
     metaData = {},
-  ): Promise<any> {
+  ): Promise<{
+    filepath: string;
+    bucketName: string;
+    contentType: string;
+    originalname: string;
+  }> {
     try {
-      const name = String(Date.now());
+      const filepath = randomUUID() + extname(originalname);
       await this.minioService.client.putObject(
-        bucketName,
-        name,
+        BucketNameEnum.MEGP,
+        bucketName + filepath,
         buffer,
-        metaData,
+        { ...metaData, 'Content-Type': mimetype },
       );
       return {
-        filepath: name,
+        filepath,
         bucketName,
         contentType: mimetype,
         originalname: originalname,
@@ -84,11 +92,9 @@ export class MinIOService {
     fileInfo: { bucketName: string; filepath: string; contentType?: string },
     response: Response,
   ) {
-    fileInfo.bucketName ??= 'megp';
-
     const result = await this.minioService.client.getObject(
-      fileInfo.bucketName,
-      fileInfo.filepath,
+      BucketNameEnum.MEGP,
+      fileInfo.bucketName + fileInfo.filepath,
     );
 
     response.setHeader('Content-Type', fileInfo.contentType);
@@ -106,14 +112,26 @@ export class MinIOService {
     filepath: string;
     contentType?: string;
   }): Promise<string> {
-    fileInfo.bucketName ??= 'megp';
     const duration = Number(process.env.DURATION_OF_PRE_SIGNED_DOCUMENT ?? 120);
 
     const presignedUrl = await this.minioService.client.presignedGetObject(
-      fileInfo.bucketName,
-      fileInfo.filepath,
+      BucketNameEnum.MEGP,
+      fileInfo.bucketName + fileInfo.filepath,
       duration,
     );
     return presignedUrl;
+  }
+
+  async downloadBuffer(fileInfo: {
+    bucketName: string;
+    filepath: string;
+    contentType?: string;
+  }) {
+    const result = await this.minioService.client.getObject(
+      BucketNameEnum.MEGP,
+      fileInfo.bucketName + fileInfo.filepath,
+    );
+
+    return result;
   }
 }

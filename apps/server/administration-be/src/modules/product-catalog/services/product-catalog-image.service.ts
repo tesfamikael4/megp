@@ -40,8 +40,8 @@ export class ProductCatalogImageService extends ExtraCrudService<ProductCatalogI
     );
     const documentData = {
       fileInfo: preSignedUrl.file,
-      procurementRequisitionId: file.procurementRequisitionId,
-      title: file.title,
+      productCatalogId: file.productCatalogId,
+      title: file?.title,
       organizationId: user.organization.id,
       organizationName: user.organization.name,
     };

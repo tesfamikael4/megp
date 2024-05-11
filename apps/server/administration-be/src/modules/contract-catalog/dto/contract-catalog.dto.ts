@@ -2,9 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsEnum } from 'class-validator';
 import { ContractCatalogStatus } from 'src/shared/enums/contract-catalog-enum';
 
-export class ContractCatalogDTO {
+export class CreateContractCatalogDTO {
   @ApiProperty()
-  @IsNotEmpty()
   organization: any;
 
   @ApiProperty()
@@ -29,11 +28,16 @@ export class ContractCatalogDTO {
   @IsNotEmpty()
   endDate: Date;
 
-  @ApiProperty({ enum: [ContractCatalogStatus] })
+  @ApiProperty({ enum: ContractCatalogStatus })
   @IsEnum(ContractCatalogStatus, {
     message: `Contract Catalog Status must be one of the following values: 
-    ${ContractCatalogStatus.Active}, ${ContractCatalogStatus.Inactive}, 
-    ${ContractCatalogStatus.Draft}`,
+    ${Object.values(ContractCatalogStatus).join(', ')}`,
   })
-  status: string;
+  status: ContractCatalogStatus;
+}
+
+export class UpdateContractCatalogDTO extends CreateContractCatalogDTO {
+  @ApiProperty()
+  @IsNotEmpty()
+  id: string;
 }
