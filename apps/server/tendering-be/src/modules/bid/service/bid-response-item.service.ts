@@ -125,7 +125,7 @@ export class BidResponseItemService {
     const items = [];
     let rate = 0;
     for (const value of inputDto.values) {
-      if (value.key === 'BillOfMaterial') {
+      if (value.key === 'billOfMaterial') {
         const itemRate = this.buildBoQHierarchyWithRate(value.value);
         rate += itemRate?.reduce((total: any, current: any) => {
           if (current.rate == null) {
@@ -172,7 +172,7 @@ export class BidResponseItemService {
     const rateItem = manager.getRepository(BidResponseItem).create(inputDto);
     rateItem.bidRegistrationDetailId = bidRegistrationDetail.id;
     rateItem.value = rateEncryptedValue;
-    rateItem.key = 'Rate';
+    rateItem.key = 'rate';
 
     await manager
       .getRepository(BidResponseItem)
@@ -237,12 +237,12 @@ export class BidResponseItemService {
     const bidderId = req.user.organization.id;
 
     const entityNames = {
-      BillOfMaterial: SorBillOfMaterial,
-      Equipment: SorEquipment,
-      Fee: SorFee,
-      IncidentalCost: SorIncidentalCost,
-      Labor: SorLabor,
-      ReimburseableExpense: SorReimburseableExpense,
+      billOfMaterial: SorBillOfMaterial,
+      equipment: SorEquipment,
+      fee: SorFee,
+      incidentalCost: SorIncidentalCost,
+      labor: SorLabor,
+      reimburseableExpense: SorReimburseableExpense,
     };
 
     const entityName = entityNames[inputDto.key];
@@ -343,7 +343,7 @@ export class BidResponseItemService {
     const newResult = result.map((item) => {
       let i: any = { ...item };
       const encryptedData = i.bidResponseItems?.find((x: BidResponseItem) => {
-        return item.id == x.itemId && x.key === 'Rate';
+        return item.id == x.itemId && x.key === 'rate';
       });
       let decryptedData = null;
       if (encryptedData) {
