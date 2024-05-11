@@ -159,6 +159,15 @@ export class OrganizationService extends EntityCrudService<Organization> {
       {
         where: { id, budgetCheckNeeded: true },
       })
+  }  
+  async getVoteCode(id: string): Promise<any> {
+    return await this.repositoryOrganization.findOne(
+      {
+        where: { id },
+        select: {
+          voteCode: true
+        }
+      })
   }
 
   private generateOrganizationCode() {
