@@ -1,5 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { userApi } from './api/user/user.api';
 import {
   vendorDataGetawayApi,
   vendorRegistrationApi,
@@ -25,6 +24,8 @@ import { getRegistrationApi } from '@/app/(features)/_api/registration.api';
 import { ItemBidResponseApi } from '@/app/(features)/tender-workspace/_api/item-bid-response.api';
 import { administrationApi } from './api/administrationApi';
 import { noteSliceApi } from './api/notes/notes.api';
+import { getCatalogApi } from '@/app/(features)/my-workspace/catalog-manager/_api/catalog.api';
+import { itemMasterApi } from './api/item-master/item-master.api';
 import {
   getBds,
   getVenderList,
@@ -57,6 +58,8 @@ export const store = configureStore({
     [ItemBidResponseApi.reducerPath]: ItemBidResponseApi.reducer,
     [administrationApi.reducerPath]: administrationApi.reducer,
     [noteSliceApi.reducerPath]: noteSliceApi.reducer,
+    [itemMasterApi.reducerPath]: itemMasterApi.reducer,
+    [getCatalogApi.reducerPath]: getCatalogApi.reducer,
     [getVenderList.reducerPath]: getVenderList.reducer,
     [getBds.reducerPath]: getBds.reducer,
     [tenderResponseApi.reducerPath]: tenderResponseApi.reducer,
@@ -66,7 +69,11 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(middleware);
+    }).concat(
+      ...middleware,
+      getCatalogApi.middleware,
+      itemMasterApi.middleware,
+    );
   },
 });
 
