@@ -24,7 +24,7 @@ import {
   GotoNextStateDto,
   WorkflowInstanceResponse,
 } from '../dto/workflow-instance.dto';
-import { CurrentUser, JwtGuard } from 'src/shared/authorization';
+import { AllowAnonymous, CurrentUser, JwtGuard } from 'src/shared/authorization';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
@@ -192,6 +192,11 @@ export class ApplicationExcutionController {
     const query = decodeCollectionQuery(q);
     return await this.vendorService.getRejectedVendors(user, query);
   }
+  @UseGuards(JwtGuard)
+  @Get('get-rejected-vendor-detail/:id')
+  async getRejectedApplicationDetail(@Param('id') id: string) {
+    return await this.vendorService.getRejectedApplicationDetail(id);
+  }
   @ApiPaginatedResponse(ApplicationDto)
   @UseGuards(JwtGuard)
   @Get('get-rejected-apps')
@@ -206,9 +211,5 @@ export class ApplicationExcutionController {
   }
 
 
-  @UseGuards(JwtGuard)
-  @Get('get-rejected-vendor-detail/:vendorId')
-  async getRejectedVendorById(@Param('vendorId') vendorId: string) {
-    return await this.vendorService.getRejectedISRVendorById(vendorId);
-  }
+
 }

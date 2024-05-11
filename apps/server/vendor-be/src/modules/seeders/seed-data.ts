@@ -1522,7 +1522,7 @@ export const tasksToSeed = [
     {
         id: '41fac737-e76b-471c-9c4a-7f344820518f',
         name: 'Generate Vendor Registration Certificate',
-        label: 'Generated Certeficate',
+        label: 'Generated Certificate',
         description:
             "Creating a formal certificate to officially recognize and document the upgrade registration of a vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
         bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc6',
@@ -1540,43 +1540,7 @@ export const tasksToSeed = [
     },
     //--------------------------------end of goods, works and Services
 
-    ////Profile update Workflow tasks
 
-    // {
-    //     id: '',
-    //     name: 'Approval of Vendor Profile Update Request',
-    //     label: 'Approved by RO',
-    //     description: 'Approval of Vendor Profile Update Request',
-    //     bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
-    //     handlerType: 'Assignee',
-    //     taskType: 'InitialReview',
-    //     checkList: [
-    //         {
-    //             id: '96d95fdb-7852-4ddc-982f-0e94d23d21d3',
-    //             description:
-    //                 'All the required information and related documents fullfilled',
-    //             isMandatory: 'true',
-    //         },
-    //     ],
-    //     orderBy: 2,
-    // },
-    // {
-    //     id: '277e4d2f-f996-4546-9320-3d5103e22c63',
-    //     name: 'Approval of Vendor Profile Update Request By Director General (Head of PDE)',
-    //     label: 'Vendor Profile Update Request Reviewed by Director General',
-    //     description: 'Vendor Profile Update Request Review by Director General',
-    //     bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
-    //     handlerType: 'Assignee',
-    //     taskType: 'Approval',
-    //     checkList: [
-    //         {
-    //             id: '93d95fdb-7852-4ddc-982f-0e94d23d15d3',
-    //             description: 'The bank Information is valid',
-    //             isMandatory: 'true',
-    //         },
-    //     ],
-    //     orderBy: 1,
-    // },
     ///profile update new workflow
     {
         id: '35967d94-dcaa-4449-8b55-a70350f5e698',
@@ -1595,7 +1559,7 @@ export const tasksToSeed = [
         orderBy: 1,
     },
     {
-        id: '277e4d2f-f996-4546-9320-3d5103e22c63',
+        id: '217e4d2f-f996-4546-9320-3d5103e22c63',
         name: 'Review Vendor Profile Update Request by Registration Officer',
         label: 'Reviewed Vendor Registration Request',
         description: 'Reviewing VendorProfile update',
@@ -1617,7 +1581,7 @@ export const tasksToSeed = [
         name: 'Approval of Vendor Profile Update Request by Senior or chief registration officer or RRM/DRRM',
         label: 'Reviewed by RO',
         description:
-            'aprove Vendor Profile Update Request by senior or chief registration officer',
+            'Aprove Vendor Profile Update Request by senior or chief registration officer',
         bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
         handlerType: 'Assignee',
         taskType: 'Confirmation',
@@ -1650,9 +1614,6 @@ export const tasksToSeed = [
         ],
         orderBy: 4,
     },
-
-
-
 ];
 export const pricesToSeed = [
     //cc6934e1-9706-1e1b-c03f-b35c3e6153a1

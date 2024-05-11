@@ -30,7 +30,7 @@ export class DataSeederController {
     @InjectRepository(TaskAssignmentEntity)
     private readonly assignmentRepository: Repository<TaskAssignmentEntity>,
     private readonly categoryService: CategoryService,
-  ) {}
+  ) { }
   @UseGuards(JwtGuard)
   @Post('seed-services')
   @ApiOkResponse()
@@ -249,26 +249,26 @@ export class DataSeederController {
               },
             },
             'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
-              {
-                on: {
-                  NO: 'Submit New Vendor Registration Request',
-                  YES: 'Approval of New Vendor Registration Request by Director General (DG)',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                NO: 'Submit New Vendor Registration Request',
+                YES: 'Approval of New Vendor Registration Request by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Approval of New Vendor Registration Request by Director General (DG)':
-              {
-                on: {
-                  ADJUST: 'Submit New Vendor Registration Request',
-                  APPROVE: 'Generate Vendor Registration Certificate',
-                  REJECT: 'End',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                ADJUST: 'Submit New Vendor Registration Request',
+                APPROVE: 'Generate Vendor Registration Certificate',
+                REJECT: 'End',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -324,26 +324,26 @@ export class DataSeederController {
               },
             },
             'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
-              {
-                on: {
-                  NO: 'Review New Vendor Registration Request by Registration Officer',
-                  YES: 'Approval of New Vendor Registration Request by Director General (DG)',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                NO: 'Review New Vendor Registration Request by Registration Officer',
+                YES: 'Approval of New Vendor Registration Request by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Approval of New Vendor Registration Request by Director General (DG)':
-              {
-                on: {
-                  ADJUST: 'Submit New Vendor Registration Request for Goods',
-                  APPROVE: 'Generate New Vendor Registration Certificate',
-                  REJECT: 'End',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                ADJUST: 'Submit New Vendor Registration Request for Goods',
+                APPROVE: 'Generate New Vendor Registration Certificate',
+                REJECT: 'End',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Generate New Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate New Vendor Registration Certificate',
@@ -398,26 +398,26 @@ export class DataSeederController {
             },
 
             'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
-              {
-                on: {
-                  NO: 'Review New Vendor Registration Request by Registration Officer',
-                  YES: 'Approval of New Vendor Registration Request by Director General (DG)',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                NO: 'Review New Vendor Registration Request by Registration Officer',
+                YES: 'Approval of New Vendor Registration Request by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Approval of New Vendor Registration Request by Director General (DG)':
-              {
-                on: {
-                  APPROVE: 'Generate New Vendor Registration Certificate',
-                  ADJUST: 'Submit New Vendor Registration Request for Services',
-                  REJECT: 'End',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                APPROVE: 'Generate New Vendor Registration Certificate',
+                ADJUST: 'Submit New Vendor Registration Request for Services',
+                REJECT: 'End',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Generate New Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate New Vendor Registration Certificate',
@@ -471,26 +471,26 @@ export class DataSeederController {
             },
 
             'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
-              {
-                on: {
-                  NO: 'Review New Vendor Registration Request by Registration Officer',
-                  YES: 'Approval of New Vendor Registration Request by Director General (DG)',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                NO: 'Review New Vendor Registration Request by Registration Officer',
+                YES: 'Approval of New Vendor Registration Request by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Approval of New Vendor Registration Request by Director General (DG)':
-              {
-                on: {
-                  APPROVE: 'Generate Vendor Registration Certificate',
-                  ADJUST: 'Submit New Vendor Registration Request for Works',
-                  REJECT: 'End',
-                },
-                meta: {
-                  type: 'Approval',
-                },
+            {
+              on: {
+                APPROVE: 'Generate Vendor Registration Certificate',
+                ADJUST: 'Submit New Vendor Registration Request for Works',
+                REJECT: 'End',
               },
+              meta: {
+                type: 'Approval',
+              },
+            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -535,38 +535,38 @@ export class DataSeederController {
               },
             },
             'Review Vendor Renewal Registration Request by Registration Officer(RO)':
-              {
-                on: {
-                  ADJUST: 'Submit Renewal Registration Request',
-                  CANCEL: 'End',
-                  APPROVE:
-                    'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
-                },
-                meta: {
-                  type: 'InitialReview',
-                },
+            {
+              on: {
+                ADJUST: 'Submit Renewal Registration Request',
+                CANCEL: 'End',
+                APPROVE:
+                  'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
               },
+              meta: {
+                type: 'InitialReview',
+              },
+            },
             'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM':
-              {
-                on: {
-                  NO: 'Submit Renewal Registration Request',
-                  YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                NO: 'Submit Renewal Registration Request',
+                YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Approval of Renewal Registration Request of vendor by Director General (DG)':
-              {
-                on: {
-                  APPROVE: 'Generate Vendor Registration Certificate',
-                  ADJUST: 'Submit Renewal Registration Request',
-                  REJECT: 'End',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                APPROVE: 'Generate Vendor Registration Certificate',
+                ADJUST: 'Submit Renewal Registration Request',
+                REJECT: 'End',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -611,39 +611,39 @@ export class DataSeederController {
               },
             },
             'Review Vendor Renewal Registration Request by Registration Officer(RO)':
-              {
-                on: {
-                  ADJUST: 'Submit Renewal Registration Request for Services',
-                  CANCEL: 'End',
-                  APPROVE:
-                    'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
-                },
-                meta: {
-                  type: 'InitialReview',
-                },
+            {
+              on: {
+                ADJUST: 'Submit Renewal Registration Request for Services',
+                CANCEL: 'End',
+                APPROVE:
+                  'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
               },
+              meta: {
+                type: 'InitialReview',
+              },
+            },
 
             'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM':
-              {
-                on: {
-                  NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
-                  YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+                YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Approval of Renewal Registration Request of vendor by Director General (DG)':
-              {
-                on: {
-                  APPROVE: 'Generate Vendor Registration Certificate',
-                  ADJUST: 'Submit Renewal Registration Request for Services',
-                  REJECT: 'End',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                APPROVE: 'Generate Vendor Registration Certificate',
+                ADJUST: 'Submit Renewal Registration Request for Services',
+                REJECT: 'End',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -685,39 +685,39 @@ export class DataSeederController {
               },
             },
             'Review Vendor Renewal Registration Request by Registration Officer(RO)':
-              {
-                on: {
-                  ADJUST: 'Submit Renewal Registration Request for Works',
-                  CANCEL: 'End',
-                  APPROVE:
-                    'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
-                },
-                meta: {
-                  type: 'InitialReview',
-                },
+            {
+              on: {
+                ADJUST: 'Submit Renewal Registration Request for Works',
+                CANCEL: 'End',
+                APPROVE:
+                  'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
               },
+              meta: {
+                type: 'InitialReview',
+              },
+            },
 
             'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM':
-              {
-                on: {
-                  NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
-                  YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+                YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Approval of Renewal Registration Request of vendor by Director General (DG)':
-              {
-                on: {
-                  APPROVE: 'Generate Vendor Registration Certificate',
-                  ADJUST: 'Submit Renewal Registration Request for Works',
-                  REJECT: 'End',
-                },
-                meta: {
-                  type: 'Approval',
-                },
+            {
+              on: {
+                APPROVE: 'Generate Vendor Registration Certificate',
+                ADJUST: 'Submit Renewal Registration Request for Works',
+                REJECT: 'End',
               },
+              meta: {
+                type: 'Approval',
+              },
+            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -760,38 +760,38 @@ export class DataSeederController {
               },
             },
             'Review Upgrade Registration Request of Vendor by Registration Officer':
-              {
-                on: {
-                  ADJUST: 'Submit Vendor Upgrade Registration Request',
-                  CANCEL: 'End',
-                  APPROVE:
-                    'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
-                },
-                meta: {
-                  type: 'InitialReview',
-                },
+            {
+              on: {
+                ADJUST: 'Submit Vendor Upgrade Registration Request',
+                CANCEL: 'End',
+                APPROVE:
+                  'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
               },
+              meta: {
+                type: 'InitialReview',
+              },
+            },
             'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM':
-              {
-                on: {
-                  NO: 'Submit Vendor Upgrade Registration Request',
-                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                NO: 'Submit Vendor Upgrade Registration Request',
+                YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Approval of Upgrade Registration Request of vendor by Director General (DG)':
-              {
-                on: {
-                  APPROVE: 'Generate Vendor Registration Certificate',
-                  ADJUST: 'Submit Vendor Upgrade Registration Request',
-                  REJECT: 'End',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                APPROVE: 'Generate Vendor Registration Certificate',
+                ADJUST: 'Submit Vendor Upgrade Registration Request',
+                REJECT: 'End',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -834,38 +834,38 @@ export class DataSeederController {
               },
             },
             'Review Upgrade Registration Request of Vendor by Registration Officer':
-              {
-                on: {
-                  ADJUST: 'Submit Vendor Upgrade Registration Request',
-                  CANCEL: 'End',
-                  APPROVE:
-                    'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
-                },
-                meta: {
-                  type: 'InitialReview',
-                },
+            {
+              on: {
+                ADJUST: 'Submit Vendor Upgrade Registration Request',
+                CANCEL: 'End',
+                APPROVE:
+                  'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
               },
+              meta: {
+                type: 'InitialReview',
+              },
+            },
             'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM':
-              {
-                on: {
-                  NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
-                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
+                YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Approval of Upgrade Registration Request of vendor by Director General (DG)':
-              {
-                on: {
-                  APPROVE: 'Generate Vendor Registration Certificate',
-                  ADJUST: 'Submit Vendor Upgrade Registration Request',
-                  REJECT: 'End',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                APPROVE: 'Generate Vendor Registration Certificate',
+                ADJUST: 'Submit Vendor Upgrade Registration Request',
+                REJECT: 'End',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -908,38 +908,38 @@ export class DataSeederController {
               },
             },
             'Review Upgrade Registration Request of Vendor by Registration Officer':
-              {
-                on: {
-                  ADJUST: 'Submit Vendor Upgrade Registration Request',
-                  CANCEL: 'End',
-                  APPROVE:
-                    'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM',
-                },
-                meta: {
-                  type: 'InitialReview',
-                },
+            {
+              on: {
+                ADJUST: 'Submit Vendor Upgrade Registration Request',
+                CANCEL: 'End',
+                APPROVE:
+                  'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM',
               },
+              meta: {
+                type: 'InitialReview',
+              },
+            },
             'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM':
-              {
-                on: {
-                  NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
-                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
+                YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
             'Approval of Upgrade Registration Request of vendor by Director General (DG)':
-              {
-                on: {
-                  APPROVE: 'End',
-                  ADJUST: 'Submit Vendor Upgrade Registration Request',
-                  REJECT: 'End',
-                },
-                meta: {
-                  type: 'Confirmation',
-                },
+            {
+              on: {
+                APPROVE: 'End',
+                ADJUST: 'Submit Vendor Upgrade Registration Request',
+                REJECT: 'End',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
           },
           initial: 'Submit Vendor Upgrade Registration Request',
         },
@@ -963,16 +963,16 @@ export class DataSeederController {
               },
             },
             'Submission of indigenous black Malawian(IBM) Registration Request':
-              {
-                on: {
-                  ISR: 'Approval of indigenous black Malawian(IBM) Registration Request',
-                },
-                meta: {
-                  type: {
-                    start: true,
-                  },
+            {
+              on: {
+                ISR: 'Approval of indigenous black Malawian(IBM) Registration Request',
+              },
+              meta: {
+                type: {
+                  start: true,
                 },
               },
+            },
             'Approval of indigenous black Malawian(IBM) Registration Request': {
               on: {
                 ADJUST:
@@ -1173,11 +1173,12 @@ export class DataSeederController {
               on: {},
               meta: {
                 type: 'end',
+                apiUrl: '',
               },
             },
             'Submission of Vendor Profile Update Request': {
               on: {
-                ISR: 'Approval of Vendor Profile Update Request',
+                ISR: 'Review Vendor Profile Update Request by Registration Officer',
               },
               meta: {
                 type: {
@@ -1185,28 +1186,44 @@ export class DataSeederController {
                 },
               },
             },
-            'Approval of Vendor Profile Update Request': {
+
+            'Review Vendor Profile Update Request by Registration Officer': {
               on: {
                 ADJUST: 'Submission of Vendor Profile Update Request',
                 CANCEL: 'End',
                 APPROVE:
-                  'Approval of Vendor Profile Update Request By Director General (Head of PDE)',
+                  'Approval of Vendor Profile Update Request by Senior or chief registration officer or RRM/DRRM',
               },
               meta: {
-                type: 'Approval',
+                type: 'InitialReview',
               },
             },
-            'Approval of Vendor Profile Update Request By Director General (Head of PDE)':
-              {
-                on: {
-                  ADJUST: 'Submission of Vendor Profile Update Request',
-                  APPROVE: 'End',
-                  REJECT: 'End',
-                },
+            'Approval of Vendor Profile Update Request by Senior or chief registration officer or RRM/DRRM':
+            {
+              on: {
+                NO: 'Submission of Vendor Profile Update Request',
+                YES: 'Approval of Vendor Profile update Request by Director General (DG)',
               },
+              meta: {
+                type: 'Confirmation',
+              },
+            },
+            'Approval of Vendor Profile update Request by Director General (DG)':
+            {
+              on: {
+                ADJUST: 'Submission of Vendor Profile Update Request',
+                APPROVE: 'End',
+                REJECT: 'End',
+              },
+              meta: {
+                type: 'Confirmation',
+              },
+            }
+
           },
           initial: 'Submission of Vendor Profile Update Request',
-        },
+        }
+        ,
         version: 1,
         isActive: true,
         organizationId: null,
