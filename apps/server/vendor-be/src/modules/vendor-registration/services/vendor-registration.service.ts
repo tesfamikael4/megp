@@ -2035,14 +2035,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     d.total = total;
     return d;
   }
-  async getRejectedISRVendorById(VendorId: string): Promise<any> {
+  async getRejectedApplicationDetail(id: string): Promise<any> {
     const result = await this.isrVendorsRepository.findOne({
-      where: { id: VendorId, status: ApplicationStatus.REJECTED },
+      where: { businessAreas: { id: id }, status: ApplicationStatus.REJECTED },
       relations: {
         businessAreas: { servicePrice: true, BpService: true },
         instances: true,
       },
     });
+    if (!result)
+      throw new NotFoundException("item_not_found");
     const vendor = {
       ...result,
       businessAreas: result.businessAreas.map((ba) => {
@@ -2054,7 +2056,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         }
         return result;
       }),
-      areasOfBusinessInterest: result.areasOfBusinessInterest.map((entity) => {
+      areasOfBusinessInterest: result.areasOfBusinessInterest?.map((entity) => {
         return {
           name: entity?.lineOfBusiness?.[0]?.name,
           category: entity.category,
