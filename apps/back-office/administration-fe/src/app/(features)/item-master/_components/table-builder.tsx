@@ -1,9 +1,9 @@
-import { Box, Button, Group, LoadingOverlay, Modal } from '@mantine/core';
+import { Box, Button, Group, LoadingOverlay, Modal, rem } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Popup } from './template-modal';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { IconCirclePlus } from '@tabler/icons-react';
 import {
   useCopyTemplateMutation,
@@ -36,14 +36,14 @@ export function Builder() {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     name: 'specTemp',
     control,
   });
 
   const onSave = async (data: any) => {
     try {
-      await createTemplate({
+      const result = await createTemplate({
         itemMasterId: id,
         quantity: 10,
         properties: updatedItems?.map((field: any) => {
@@ -67,7 +67,7 @@ export function Builder() {
         }),
         deliveries: [],
       }).unwrap();
-      setUpdatedItems([]);
+      replace(result?.properties);
       notify('Success', 'Created successfully');
     } catch (err) {
       notify('Error', 'Something went wrong');
@@ -75,7 +75,7 @@ export function Builder() {
   };
   const onUpdate = async () => {
     try {
-      await update({
+      const result = await update({
         id: data?.id,
         itemMasterId: id,
         quantity: 10,
@@ -98,7 +98,7 @@ export function Builder() {
         }),
         deliveries: [],
       }).unwrap();
-      setUpdatedItems([]);
+      replace(result?.properties);
 
       notify('Success', 'Template updated successfully');
     } catch (e) {
@@ -134,6 +134,7 @@ export function Builder() {
 
   useEffect(() => {
     if (isSuccess) {
+      replace([]);
       append(data?.properties ?? []);
     }
   }, [isSuccess, data]);
@@ -168,19 +169,20 @@ export function Builder() {
           setUpdatedItems={setUpdatedItems}
           open={open}
         />
-
-        {isSuccess && updatedItems?.length > 0 ? (
-          data?.properties ? (
-            <>
-              <Button onClick={onUpdate}>Update</Button>
-              <Button onClick={onDelete} ml={'sm'} color="red">
-                Delete
-              </Button>
-            </>
-          ) : (
-            <Button onClick={onSave}>Save</Button>
-          )
-        ) : null}
+        <Group mt={'lg'}>
+          {isSuccess && updatedItems?.length > 0 ? (
+            data?.properties ? (
+              <>
+                <Button onClick={onUpdate}>Update</Button>
+                <Button onClick={onDelete} color="red">
+                  Delete
+                </Button>
+              </>
+            ) : (
+              <Button onClick={onSave}>Save</Button>
+            )
+          ) : null}
+        </Group>
         <Modal
           opened={opened}
           onClose={close}
