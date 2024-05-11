@@ -262,7 +262,7 @@ export class TenderService extends EntityCrudService<Tender> {
       throw new BadRequestException('Tender not found');
     }
 
-    if (tender.status == 'SUBMITTED' || input.status == 'PUBLISHED') {
+    if (tender.status == 'SUBMITTED' && input.status == 'PUBLISHED') {
       await this.generateTenderInvitation({ id: tender.id });
     }
 

@@ -8,7 +8,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { BidRegistrationService } from '../service/bid-registration.service';
@@ -35,6 +35,11 @@ export class BidRegistrationController extends ExtraCrudController<BidRegistrati
 ) {
   constructor(private readonly bidSecurityService: BidRegistrationService) {
     super(bidSecurityService);
+  }
+
+  @Post()
+  async create(@Body() itemData: CreateBidRegistrationDto, @Req() req?: any) {
+    return await this.bidSecurityService.create(itemData, req);
   }
 
   @Get('my-registered-bids')
