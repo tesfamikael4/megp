@@ -108,4 +108,11 @@ export class OrganizationController extends EntityCrudController<Organization>(
   async isBudgetCheckNeeded(@Param('id') id: string) {
     return this.organizationService.isBudgetCheckNeeded(id);
   }
+
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  @Get('get-vote-code/:id')
+  async getVoteCode(@Param('id') id: string) {
+    return this.organizationService.getVoteCode(id);
+  }
 }
