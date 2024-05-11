@@ -119,6 +119,8 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     const encryptedData = this.generateInitialEncryption(
       dataToEncrypt,
       itemData.password,
+      itemData.financialPassword,
+      itemData.technicalPassword,
       tender.bdsSubmission.envelopType,
       salt,
     );
@@ -363,6 +365,8 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
   private generateInitialEncryption(
     dataToEncrypt: string,
     password: string,
+    financialPassword: string,
+    technicalPassword: string,
     envelopType: string,
     salt: string,
   ):
@@ -373,20 +377,30 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
         financialResponse: string;
         technicalResponse: string;
       } {
-    const encryptedData = this.encryptionHelperService.encryptData(
-      dataToEncrypt,
-      password,
-      salt,
-    );
-
     if (envelopType == EnvelopTypeEnum.SINGLE_ENVELOP) {
+      const encryptedData = this.encryptionHelperService.encryptData(
+        dataToEncrypt,
+        password,
+        salt,
+      );
       return {
         response: encryptedData,
       };
     } else {
+      const encryptedFinancialData = this.encryptionHelperService.encryptData(
+        dataToEncrypt,
+        financialPassword,
+        salt,
+      );
+
+      const encryptedTechnicalData = this.encryptionHelperService.encryptData(
+        dataToEncrypt,
+        technicalPassword,
+        salt,
+      );
       return {
-        financialResponse: encryptedData,
-        technicalResponse: encryptedData,
+        financialResponse: encryptedFinancialData,
+        technicalResponse: encryptedTechnicalData,
       };
     }
   }
