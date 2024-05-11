@@ -131,6 +131,33 @@ export class UploadBidResponseDocumentDto {
   password: string;
 }
 
+export class UploadBidResponseDocumentaryEvidenceDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  eqcDocumentaryEvidenceId: string;
+
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
+  @IsString()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsObject()
+  @IsNotEmpty()
+  value: any;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
 export class BidResponseDocumentDto {
   @ApiProperty()
   @IsUUID()
@@ -141,6 +168,23 @@ export class BidResponseDocumentDto {
   @IsUUID()
   @IsNotEmpty()
   bidFormId: string;
+
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
+  @IsString()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
+export class BidResponseDocumentaryEvidenceDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
 
   @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsString()

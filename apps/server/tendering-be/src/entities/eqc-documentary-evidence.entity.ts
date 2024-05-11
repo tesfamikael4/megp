@@ -4,9 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Lot } from '.';
+import { BidResponseDocumentaryEvidence } from './bid-response-documentary-evidence.entity';
 
 @Entity({ name: 'eqc_documentary_evidences' })
 export class EqcDocumentaryEvidence extends Audit {
@@ -40,4 +42,11 @@ export class EqcDocumentaryEvidence extends Audit {
 
   @Column({ type: 'uuid', nullable: true })
   spdDocumentaryEvidenceId: string;
+
+  @OneToMany(
+    () => BidResponseDocumentaryEvidence,
+    (bidResponseDocumentaryEvidences) =>
+      bidResponseDocumentaryEvidences.eqcDocumentaryEvidence,
+  )
+  bidResponseDocumentaryEvidences: BidResponseDocumentaryEvidence[];
 }

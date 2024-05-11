@@ -58,6 +58,9 @@ import { EncryptionHelperService } from './service/encryption-helper.service';
 import { AuthorizationModule } from 'src/shared/authorization';
 import { DocxModule } from 'src/shared/docx/docx.module';
 import { MinIOModule } from 'src/shared/min-io';
+import { BidResponseDocumentaryEvidence } from 'src/entities/bid-response-documentary-evidence.entity';
+import { BidResponseDocumentaryEvidenceService } from './service/bid-response-documentary-evidence.service';
+import { BidResponseDocumentaryEvidenceController } from './controller/bid-response-documentary-evidence.controller';
 
 @Module({
   imports: [
@@ -71,6 +74,7 @@ import { MinIOModule } from 'src/shared/min-io';
       Lot,
       BidGuarantee,
       BidResponseDocument,
+      BidResponseDocumentaryEvidence,
       OpenedBidResponseItem,
       OpenedBidResponseLot,
       OpenedBidResponseTender,
@@ -90,6 +94,7 @@ import { MinIOModule } from 'src/shared/min-io';
     BidResponseItemController,
     BidResponseTenderController,
     BidResponseDocumentController,
+    BidResponseDocumentaryEvidenceController,
     BidResponseOpeningController,
     BidGuaranteeController,
     BidGuaranteeForfeitController,
@@ -105,6 +110,7 @@ import { MinIOModule } from 'src/shared/min-io';
     BidResponseItemService,
     BidResponseTenderService,
     BidResponseDocumentService,
+    BidResponseDocumentaryEvidenceService,
     BidResponseOpeningService,
     BidGuaranteeService,
     BidGuaranteeForfeitService,
