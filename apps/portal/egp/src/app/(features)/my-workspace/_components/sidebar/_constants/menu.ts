@@ -3,7 +3,6 @@ import {
   IconBookmark,
   IconBriefcase,
   IconCoins,
-  IconDashboard,
   IconGavel,
   IconListDetails,
   IconUserCog,
@@ -65,5 +64,10 @@ export const managementLinks: MenuLinks.SidebarLinks[] = [
     label: 'My Locker',
     icon: IconBriefcase,
     link: '/my-workspace/my-locker',
+  },
+  {
+    label: 'Product Catalog',
+    icon: IconShoppingCart,
+    link: '/my-workspace/catalog-manager',
   },
 ];
