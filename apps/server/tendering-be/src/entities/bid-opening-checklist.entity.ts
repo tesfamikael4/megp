@@ -58,10 +58,10 @@ export class BidOpeningChecklist extends OrgAudit {
   remark: string;
 
   // complete when one bidder's criteria are done
-  @Column()
+  @Column({ default: false })
   complete: boolean;
 
   //complete when all bidders criteria are done
-  @Column()
+  @Column({ default: false })
   submit: boolean;
 }

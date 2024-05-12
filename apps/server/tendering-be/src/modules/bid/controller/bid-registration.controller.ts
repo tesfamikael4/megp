@@ -33,13 +33,13 @@ const options: ExtraCrudOptions = {
 export class BidRegistrationController extends ExtraCrudController<BidRegistration>(
   options,
 ) {
-  constructor(private readonly bidSecurityService: BidRegistrationService) {
-    super(bidSecurityService);
+  constructor(private readonly bidRegistrationService: BidRegistrationService) {
+    super(bidRegistrationService);
   }
 
   @Post()
   async create(@Body() itemData: CreateBidRegistrationDto, @Req() req?: any) {
-    return await this.bidSecurityService.create(itemData, req);
+    return await this.bidRegistrationService.create(itemData, req);
   }
 
   @Get('my-registered-bids')
@@ -51,7 +51,7 @@ export class BidRegistrationController extends ExtraCrudController<BidRegistrati
   })
   async getMyRegisteredBids(@Query('q') q: string, @Req() req?: any) {
     const query = decodeCollectionQuery(q);
-    return await this.bidSecurityService.getMyRegisteredBids(query, req);
+    return await this.bidRegistrationService.getMyRegisteredBids(query, req);
   }
 
   @Get('registered-bid/:tenderId')
@@ -59,7 +59,7 @@ export class BidRegistrationController extends ExtraCrudController<BidRegistrati
     @Param('tenderId') tenderId: string,
     @Req() req?: any,
   ) {
-    return await this.bidSecurityService.getRegisteredBidByTenderId(
+    return await this.bidRegistrationService.getRegisteredBidByTenderId(
       tenderId,
       req,
     );
@@ -70,7 +70,7 @@ export class BidRegistrationController extends ExtraCrudController<BidRegistrati
     @Body() itemData: CreateBidRegistrationStatusDto,
     @Req() req?: any,
   ) {
-    return await this.bidSecurityService.submitLot(itemData, req);
+    return await this.bidRegistrationService.submitLot(itemData, req);
   }
 
   @Get('all-bidders/:tenderId')
@@ -85,7 +85,7 @@ export class BidRegistrationController extends ExtraCrudController<BidRegistrati
     @Query('q') q: string,
   ) {
     const query = decodeCollectionQuery(q);
-    return await this.bidSecurityService.getAllBiddersByTenderId(
+    return await this.bidRegistrationService.getAllBiddersByTenderId(
       tenderId,
       query,
     );
@@ -103,7 +103,7 @@ export class BidRegistrationController extends ExtraCrudController<BidRegistrati
     @Query('q') q: string,
   ) {
     const query = decodeCollectionQuery(q);
-    return await this.bidSecurityService.getSubmittedBiddersByTenderId(
+    return await this.bidRegistrationService.getSubmittedBiddersByTenderId(
       tenderId,
       query,
     );
@@ -121,7 +121,7 @@ export class BidRegistrationController extends ExtraCrudController<BidRegistrati
     @Query('q') q: string,
   ) {
     const query = decodeCollectionQuery(q);
-    return await this.bidSecurityService.getSubmittedBiddersByLotId(
+    return await this.bidRegistrationService.getSubmittedBiddersByLotId(
       lotId,
       query,
     );

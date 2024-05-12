@@ -76,7 +76,7 @@ export class BidOpeningChecklistController extends ExtraCrudController<BidOpenin
     return await this.bidOpeningChecklistService.canComplete(tenderId, req);
   }
 
-  @Get('members-report/:lotId/:bidderId/spdId')
+  @Get('members-report/:lotId/:bidderId/:spdId')
   async membersReport(
     @Param('lotId') lotId: string,
     @Param('bidderId') bidderId: string,
@@ -95,15 +95,17 @@ export class BidOpeningChecklistController extends ExtraCrudController<BidOpenin
     return await this.bidOpeningChecklistService.openingMinutes(tenderId);
   }
 
-  @Get('opener-report/:lotId/:bidderId')
+  @Get('opener-report/:lotId/:bidderId/:isTeam')
   async openerReport(
     @Param('bidderId') bidderId: string,
     @Param('lotId') lotId: string,
+    @Param('isTeam') isTeam: string,
     @Req() req: any,
   ) {
     return await this.bidOpeningChecklistService.openerReport(
       lotId,
       bidderId,
+      isTeam,
       req,
     );
   }

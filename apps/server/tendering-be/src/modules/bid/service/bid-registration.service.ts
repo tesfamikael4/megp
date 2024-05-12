@@ -31,11 +31,11 @@ import { EncryptionHelperService } from './encryption-helper.service';
 export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
   constructor(
     @InjectRepository(BidRegistration)
-    private readonly bidSecurityRepository: Repository<BidRegistration>,
+    private readonly bidRegistrationRepository: Repository<BidRegistration>,
     private readonly encryptionHelperService: EncryptionHelperService,
     @Inject(REQUEST) private request: Request,
   ) {
-    super(bidSecurityRepository);
+    super(bidRegistrationRepository);
   }
 
   async create(itemData: CreateBidRegistrationDto, req?: any): Promise<any> {
@@ -91,7 +91,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
       .toString('hex')
       .slice(0, saltLength);
 
-    const bidRegistration = this.bidSecurityRepository.create({
+    const bidRegistration = this.bidRegistrationRepository.create({
       tenderId: itemData.tenderId,
       bidderId,
       bidderName,
@@ -159,7 +159,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
   async findOne(id: any, req?: any): Promise<BidRegistration> {
     const bidderId = req.user.organization.id;
 
-    return await this.bidSecurityRepository.findOne({
+    return await this.bidRegistrationRepository.findOne({
       where: { tenderId: id, bidderId },
       relations: {
         tender: {
@@ -183,7 +183,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
       },
     ]);
     const dataQuery = QueryConstructor.constructQuery<BidRegistration>(
-      this.bidSecurityRepository,
+      this.bidRegistrationRepository,
       query,
     );
     const response = new DataResponseFormat<BidRegistration>();
@@ -198,7 +198,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
   }
 
   async getRegisteredBidByTenderId(tenderId: string, req?: any): Promise<any> {
-    return await this.bidSecurityRepository.findOne({
+    return await this.bidRegistrationRepository.findOne({
       where: { tenderId: tenderId, bidderId: req.user.organization.id },
       relations: {
         tender: {
@@ -253,7 +253,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     ]);
 
     const dataQuery = QueryConstructor.constructQuery<BidRegistration>(
-      this.bidSecurityRepository,
+      this.bidRegistrationRepository,
       query,
     ).leftJoinAndSelect(
       'bid_registrations.bidRegistrationDetails',
@@ -293,7 +293,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     query.includes.push('sharedBidderKeys');
 
     const dataQuery = QueryConstructor.constructQuery<BidRegistration>(
-      this.bidSecurityRepository,
+      this.bidRegistrationRepository,
       query,
     )
       .leftJoin(
@@ -325,7 +325,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     ]);
 
     const dataQuery = QueryConstructor.constructQuery<BidRegistration>(
-      this.bidSecurityRepository,
+      this.bidRegistrationRepository,
       query,
     )
       .leftJoin(

@@ -43,6 +43,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     }
 
     itemData.submit = false;
+    itemData.complete = false;
 
     const item = this.bidOpeningChecklistsRepository.create(itemData);
     await this.bidOpeningChecklistsRepository.insert(item);
@@ -429,19 +430,59 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     return response;
   }
 
-  async openerReport(lotId, bidderId, req: any): Promise<any> {
-    return await this.bidOpeningChecklistsRepository.find({
-      where: {
-        lotId: lotId,
-        bidderId: bidderId,
-        openerId: req.user.userId,
-      },
-      select: {
-        checked: true,
-        spdOpeningChecklistEntity: {
-          name: true,
+  // returns the list of spd checklist and remark given by the opener
+  async openerReport(
+    lotId: string,
+    bidderId: string,
+    isTeam: string,
+    req: any,
+  ): Promise<any> {
+    const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const [bidOpeningCheckLists, spdChecklist] = await Promise.all([
+      manager.getRepository(BidOpeningChecklist).find({
+        where: {
+          lotId: lotId,
+          bidderId: bidderId,
+          openerId: req.user.userId,
         },
-      },
-    });
+        select: {
+          id: true,
+          spdOpeningChecklistId: true,
+          isTeamLead: true,
+          checked: true,
+        },
+      }),
+
+      manager.getRepository(SpdOpeningChecklist).find({
+        where: {
+          spd: {
+            tenderSpds: {
+              tender: {
+                lots: {
+                  id: lotId,
+                  bidOpeningCheckLists: {
+                    bidderId: bidderId,
+                    openerId: req.user.userId,
+                    isTeamLead: isTeamAssessment,
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
+    ]);
+
+    const response = spdChecklist.map((spdChecklist) => ({
+      ...spdChecklist,
+      check: bidOpeningCheckLists.find(
+        (x) =>
+          x.spdOpeningChecklistId == spdChecklist.id &&
+          x.isTeamLead == isTeamAssessment,
+      ),
+    }));
+    return response;
   }
 }
