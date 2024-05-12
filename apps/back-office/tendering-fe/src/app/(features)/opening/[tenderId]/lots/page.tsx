@@ -63,10 +63,7 @@ export default function BidOpening() {
       centered: true,
       title: 'Please confirm your action',
       children: (
-        <Text size="sm">
-          This action is so important that you are required to confirm it with a
-          modal. Please click one of these buttons to proceed.
-        </Text>
+        <Text size="sm">Are you sure you want to complete the evaluation?</Text>
       ),
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onConfirm: confirm,

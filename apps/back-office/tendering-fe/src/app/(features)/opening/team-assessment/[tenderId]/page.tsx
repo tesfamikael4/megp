@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionIcon, Box, Button, Group, Text } from '@mantine/core';
+import { ActionIcon, Button, Group, Text } from '@mantine/core';
 import {
   ExpandableTable,
   ExpandableTableConfig,
@@ -22,8 +22,6 @@ export default function BidOpening() {
   const { tenderId } = useParams();
   const config: ExpandableTableConfig = {
     isSearchable: true,
-    isExpandable: true,
-    expandedRowContent: (record) => <DetailTender tender={record} />,
     columns: [
       {
         accessor: 'name',
@@ -65,10 +63,7 @@ export default function BidOpening() {
       centered: true,
       title: 'Please confirm your action',
       children: (
-        <Text size="sm">
-          This action is so important that you are required to confirm it with a
-          modal. Please click one of these buttons to proceed.
-        </Text>
+        <Text size="sm">Are you sure you want to complete the evaluation?</Text>
       ),
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onConfirm: confirm,
@@ -122,26 +117,3 @@ export default function BidOpening() {
     </>
   );
 }
-
-const DetailTender = ({ tender }: any) => {
-  const config: ExpandableTableConfig = {
-    columns: [
-      {
-        accessor: 'name',
-      },
-      {
-        accessor: 'email',
-      },
-      {
-        accessor: 'phone',
-      },
-    ],
-  };
-
-  return (
-    <Box className="bg-white p-5">
-      <Text fw={500}>Bidders List</Text>
-      <ExpandableTable config={config} data={[]} />
-    </Box>
-  );
-};
