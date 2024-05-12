@@ -5,6 +5,7 @@ import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { BidOpeningChecklist } from 'src/entities';
 import { BidOpeningChecklistService } from '../service/bid-opening-checklist.service';
 import {
+  CompleteBidChecklistDto,
   CreateBidOpeningCheckList,
   SubmitChecklistDto,
 } from '../dto/bid-opening-checklist.dto';
@@ -57,6 +58,14 @@ export class BidOpeningChecklistController extends ExtraCrudController<BidOpenin
     );
   }
 
+  @Put('complete-checklist')
+  async completeChecklist(
+    @Body() itemData: CompleteBidChecklistDto,
+    @Req() req,
+  ) {
+    return await this.bidOpeningChecklistService.complete(itemData, req);
+  }
+
   @Put('submit-checklist')
   async submitChecklist(@Body() itemData: SubmitChecklistDto, @Req() req) {
     return await this.bidOpeningChecklistService.submit(itemData, req);
@@ -84,5 +93,18 @@ export class BidOpeningChecklistController extends ExtraCrudController<BidOpenin
   @Get('opening-minutes/:tenderId')
   async openingMinutes(@Param('tenderId') tenderId: string) {
     return await this.bidOpeningChecklistService.openingMinutes(tenderId);
+  }
+
+  @Get('opener-report/:lotId/:bidderId')
+  async openerReport(
+    @Param('bidderId') bidderId: string,
+    @Param('lotId') lotId: string,
+    @Req() req: any,
+  ) {
+    return await this.bidOpeningChecklistService.openerReport(
+      lotId,
+      bidderId,
+      req,
+    );
   }
 }

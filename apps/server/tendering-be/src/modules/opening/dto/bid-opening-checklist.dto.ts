@@ -59,4 +59,21 @@ export class CompleteBidChecklistDto {
   @IsUUID()
   @IsNotEmpty()
   tenderId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidderId: string;
+}
+
+export class OpenerResultDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidderId: string;
 }
