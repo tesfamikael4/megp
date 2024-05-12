@@ -462,11 +462,6 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
               tender: {
                 lots: {
                   id: lotId,
-                  bidOpeningCheckLists: {
-                    bidderId: bidderId,
-                    openerId: req.user.userId,
-                    isTeamLead: isTeamAssessment,
-                  },
                 },
               },
             },
