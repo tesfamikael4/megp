@@ -56,6 +56,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
         tenderId: itemData.tenderId,
         openerId: req.user.userId,
         bidderId: itemData.bidderId,
+        isTeamLead: itemData.isTeamLead,
       },
     });
     if (checklist.length == 0) {
@@ -66,6 +67,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       {
         tenderId: itemData.tenderId,
         openerId: req.user.userId,
+        isTeamLead: itemData.isTeamLead,
       },
       {
         submit: true,
@@ -78,6 +80,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       where: {
         tenderId: itemData.tenderId,
         openerId: req.user.userId,
+        isTeamLead: itemData.isTeamLead,
       },
     });
     if (checklist.length == 0) {
@@ -452,6 +455,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
           spdOpeningChecklistId: true,
           isTeamLead: true,
           checked: true,
+          remark: true,
         },
       }),
 

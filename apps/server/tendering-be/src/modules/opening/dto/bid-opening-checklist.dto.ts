@@ -64,6 +64,10 @@ export class CompleteBidChecklistDto {
   @IsUUID()
   @IsNotEmpty()
   bidderId: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  isTeamLead: boolean;
 }
 
 export class OpenerResultDto {
