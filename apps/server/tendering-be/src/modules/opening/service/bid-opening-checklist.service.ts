@@ -9,6 +9,7 @@ import { REQUEST } from '@nestjs/core';
 import { Spd, SpdOpeningChecklist, Tender } from 'src/entities';
 import {
   CompleteBidChecklistDto,
+  OpenerResultDto,
   SubmitChecklistDto,
 } from '../dto/bid-opening-checklist.dto';
 import { TeamMember } from 'src/entities/team-member.entity';
@@ -18,10 +19,6 @@ import {
   decodeCollectionQuery,
 } from 'src/shared/collection-query';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
-import { totalmem } from 'os';
-import { TenderMilestone } from 'src/entities/tender-milestone.entity';
-import { OpeningStatusEnum } from 'src/shared/enums/opening.enum';
-import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 
 @Injectable()
@@ -52,6 +49,29 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     return item;
   }
 
+  async complete(itemData: CompleteBidChecklistDto, req?: any): Promise<any> {
+    const checklist = await this.bidOpeningChecklistsRepository.find({
+      where: {
+        tenderId: itemData.tenderId,
+        openerId: req.user.userId,
+        bidderId: itemData.bidderId,
+      },
+    });
+    if (checklist.length == 0) {
+      throw new NotFoundException('Bid Opening Checklist not found');
+    }
+
+    await this.bidOpeningChecklistsRepository.update(
+      {
+        tenderId: itemData.tenderId,
+        openerId: req.user.userId,
+      },
+      {
+        submit: true,
+      },
+    );
+  }
+
   async submit(itemData: SubmitChecklistDto, req?: any): Promise<any> {
     const checklist = await this.bidOpeningChecklistsRepository.find({
       where: {
@@ -74,7 +94,6 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       },
     );
   }
-
   async checklistStatus(
     lotId: string,
     bidderId: string,
@@ -211,15 +230,15 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     return response;
   }
 
-  async complete(itemData: CompleteBidChecklistDto) {
-    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    await this.bidOpeningChecklistsRepository.update(
-      { tenderId: itemData.tenderId },
-      {
-        submit: true,
-      },
-    );
-  }
+  // async complete(itemData: CompleteBidChecklistDto) {
+  //   const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+  //   await this.bidOpeningChecklistsRepository.update(
+  //     { tenderId: itemData.tenderId },
+  //     {
+  //       submit: true,
+  //     },
+  //   );
+  // }
 
   async canComplete(
     tenderId: string,
@@ -408,5 +427,21 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       }
     }
     return response;
+  }
+
+  async openerReport(lotId, bidderId, req: any): Promise<any> {
+    return await this.bidOpeningChecklistsRepository.find({
+      where: {
+        lotId: lotId,
+        bidderId: bidderId,
+        openerId: req.user.userId,
+      },
+      select: {
+        checked: true,
+        spdOpeningChecklistEntity: {
+          name: true,
+        },
+      },
+    });
   }
 }
