@@ -1,5 +1,5 @@
 'use client';
-import { useLazyGetBidOpeningChecklistByLotIdQuery } from '@/store/api/tendering/tendering.api';
+import { useLazyGetBidOpeningChecklistByLotIdQuery } from '@/store/api/tendering/tender-opening.api';
 import { Table } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';

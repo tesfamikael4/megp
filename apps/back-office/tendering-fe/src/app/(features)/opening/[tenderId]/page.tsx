@@ -1,5 +1,5 @@
 'use client';
-import { useLazyGetOpeningByTenderIdQuery } from '@/store/api/tendering/tendering.api';
+import { useLazyGetOpeningByTenderIdQuery } from '@/store/api/tendering/tender-opening.api';
 import { Box, LoadingOverlay } from '@mantine/core';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';

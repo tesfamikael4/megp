@@ -1,5 +1,5 @@
 'use client';
-import { useCheckBidAttributeMutation } from '@/store/api/tendering/tendering.api';
+import { useCheckBidAttributeMutation } from '@/store/api/tendering/tender-opening.api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Group, Select, Textarea } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';

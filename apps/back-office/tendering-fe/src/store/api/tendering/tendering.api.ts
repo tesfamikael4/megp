@@ -21,24 +21,6 @@ export const tenderingApi = createApi({
     getTenderDetail: builder.query<any, any>({
       query: (id: string) => `tenders/${id}`,
     }),
-    getClosedTenders: builder.query<any, any>({
-      query: ({ collectionQuery }) => {
-        let q = '';
-        if (collectionQuery) {
-          const query = encodeCollectionQuery(collectionQuery);
-          q = `?q=${query}`;
-        }
-        return { url: `/opening/closed-tenders${q}`, method: 'GET' };
-      },
-    }),
-    getOpeningByTenderId: builder.query<any, any>({
-      query: (tenderId: string) => {
-        return {
-          url: `/opening/list/${tenderId}`,
-        };
-      },
-      providesTags: ['opening'],
-    }),
 
     getLotsByTenderId: builder.query<any, any>({
       query: ({
@@ -70,42 +52,7 @@ export const tenderingApi = createApi({
         };
       },
     }),
-    getAllbiddersByLotId: builder.query<any, any>({
-      query: ({ lotId, collectionQuery, team = 'member' }) => {
-        let q = '';
-        if (collectionQuery) {
-          const query = encodeCollectionQuery(collectionQuery);
-          q = `?q=${query}`;
-        }
-        return {
-          url: `/bid-opening-checklist/bidders-status/${lotId}/${team}${q}`,
-        };
-      },
-    }),
-    getBidOpeningChecklistByLotId: builder.query<any, any>({
-      query: ({
-        lotId,
-        bidderId,
-        team = 'member',
-      }: {
-        lotId: string;
-        bidderId: string;
-        team: string;
-      }) => {
-        return {
-          url: `/bid-opening-checklist/checklist-status/${lotId}/${bidderId}/${team}`,
-        };
-      },
-      providesTags: ['bidAttribute'],
-    }),
-    openTender: builder.mutation<any, any>({
-      query: (data) => ({
-        url: `/opening`,
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['opening'],
-    }),
+
     createTeam: builder.mutation<any, any>({
       query: (data) => ({
         url: `/teams`,
@@ -145,56 +92,18 @@ export const tenderingApi = createApi({
       query: (teamId) => `/team-members/list/${teamId}`,
       providesTags: ['teamMembers'],
     }),
-
-    checkBidAttribute: builder.mutation<any, any>({
-      query: (data) => ({
-        url: `/bid-opening-checklist`,
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['bidAttribute'],
-    }),
-    completeOpening: builder.mutation<any, any>({
-      query: (data: { tenderId: string; isTeamLead: boolean }) => {
-        return {
-          url: `/bid-opening-checklist/submit-checklist`,
-          method: 'PUT',
-          body: data,
-        };
-      },
-      invalidatesTags: ['opening'],
-    }),
-    getTenderOpeningStatus: builder.query<any, any>({
-      query: (tenderId) => {
-        return {
-          url: `/bid-opening-checklist/can-complete/${tenderId}`,
-          method: 'GET',
-        };
-      },
-      providesTags: ['opening'],
-    }),
-    getOpeningMinutes: builder.query<any, any>({
-      query: (tenderId) => `/bid-opening-checklist/opening-minutes/${tenderId}`,
-    }),
   }),
 });
 
 export const {
-  useLazyGetClosedTendersQuery,
-  useLazyGetOpeningByTenderIdQuery,
   useLazyGetLotsByTenderIdQuery,
   useLazyGetTenderDetailQuery,
   useLazyGetAllbiddersByTenderIdQuery,
-  useLazyGetAllbiddersByLotIdQuery,
-  useLazyGetBidOpeningChecklistByLotIdQuery,
-  useOpenTenderMutation,
+
   useCreateTeamMutation,
   useLazyGetTeamsByTenderIdQuery,
   useCreateTeamMemberMutation,
   useLazyGetTeamMembersQuery,
-  useCheckBidAttributeMutation,
-  useCompleteOpeningMutation,
-  useGetTenderOpeningStatusQuery,
-  useGetOpeningMinutesQuery,
+
   useLazyGetTendersQuery,
 } = tenderingApi;

@@ -10,13 +10,13 @@ import {
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { DetailTable } from '../../../_components/detail-table';
-import { TenderOverView } from '@/app/(features)/opening/_components/tender-overview';
 import {
   useGetLotStatusQuery,
   useLazyGetPassedBiddersQuery,
   useSubmitEvaluationMutation,
 } from '@/store/api/tendering/preliminary-compliance.api';
 import { modals } from '@mantine/modals';
+import { TenderOverView } from '../../../_components/tender-overview';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -71,10 +71,7 @@ export default function BidOpening() {
       centered: true,
       title: 'Please confirm your action',
       children: (
-        <Text size="sm">
-          This action is so important that you are required to confirm it with a
-          modal. Please click one of these buttons to proceed.
-        </Text>
+        <Text size="sm">Are you sure you want to complete the evaluation?</Text>
       ),
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onConfirm: confirm,
@@ -117,7 +114,7 @@ export default function BidOpening() {
               loading={isLoading}
               disabled={lotStatus?.isTeamLead?.hasCompleted}
             >
-              Submit
+              Complete
             </Button>
           </Group>
         }

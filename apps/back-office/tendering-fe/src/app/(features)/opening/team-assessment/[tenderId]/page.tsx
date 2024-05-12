@@ -10,12 +10,12 @@ import {
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { TenderOverView } from '../../_components/tender-overview';
-import {
-  useCompleteOpeningMutation,
-  useGetTenderOpeningStatusQuery,
-  useLazyGetLotsByTenderIdQuery,
-} from '@/store/api/tendering/tendering.api';
+import { useLazyGetLotsByTenderIdQuery } from '@/store/api/tendering/tendering.api';
 import { modals } from '@mantine/modals';
+import {
+  useSubmitOpeningMutation,
+  useGetTenderOpeningStatusQuery,
+} from '@/store/api/tendering/tender-opening.api';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -52,7 +52,7 @@ export default function BidOpening() {
     ],
   };
   const [getLots, { data: lots }] = useLazyGetLotsByTenderIdQuery();
-  const [submit, { isLoading }] = useCompleteOpeningMutation();
+  const [submit, { isLoading }] = useSubmitOpeningMutation();
   const { data: tenderStatus } = useGetTenderOpeningStatusQuery(
     tenderId as string,
   );

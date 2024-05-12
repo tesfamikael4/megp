@@ -1,5 +1,5 @@
 'use client';
-import { useLazyGetBidOpeningChecklistByLotIdQuery } from '@/store/api/tendering/tendering.api';
+import { useLazyGetBidOpeningChecklistByLotIdQuery } from '@/store/api/tendering/tender-opening.api';
 import { Box, Loader } from '@mantine/core';
 import { logger } from '@megp/core-fe';
 import { useParams, useRouter } from 'next/navigation';

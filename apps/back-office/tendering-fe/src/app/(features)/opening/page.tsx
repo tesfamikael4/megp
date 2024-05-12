@@ -5,7 +5,7 @@ import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { DetailTable } from '../_components/detail-table';
 import { useRouter } from 'next/navigation';
-import { useLazyGetClosedTendersQuery } from '@/store/api/tendering/tendering.api';
+import { useLazyGetClosedTendersQuery } from '@/store/api/tendering/tender-opening.api';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -86,7 +86,7 @@ const DetailTender = ({ tender }: any) => {
     },
     {
       key: 'Budget Amount',
-      value: tender.budgetAmount.toLocaleString('en-US', {
+      value: parseFloat(tender.budgetAmount).toLocaleString('en-US', {
         style: 'currency',
         currency: tender.budgetAmountCurrency,
         minimumFractionDigits: 2,
@@ -96,7 +96,7 @@ const DetailTender = ({ tender }: any) => {
     },
     {
       key: 'Market Estimate',
-      value: tender.marketEstimate.toLocaleString('en-US', {
+      value: parseFloat(tender.marketEstimate).toLocaleString('en-US', {
         style: 'currency',
         currency: tender.marketEstimateCurrency,
         minimumFractionDigits: 2,
