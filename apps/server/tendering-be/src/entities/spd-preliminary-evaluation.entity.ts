@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Audit } from 'src/shared/entities';
 import { Spd } from './spd.entity';
-import { TechnicalPreliminaryAssessment } from './technical-preliminary-assessment.entity';
+import { TechnicalPreliminaryAssessmentDetail } from './technical-preliminary-assessment-detail.entity';
 
 @Entity({ name: 'spd_preliminary_evaluations' })
 export class SpdPreliminaryEvaluation extends Audit {
@@ -38,10 +38,10 @@ export class SpdPreliminaryEvaluation extends Audit {
   spd: Spd;
 
   @OneToMany(
-    () => TechnicalPreliminaryAssessment,
+    () => TechnicalPreliminaryAssessmentDetail,
     (technicalPreliminaryAssessment) =>
       technicalPreliminaryAssessment.SpdPreliminaryEvaluation,
   )
   @JoinColumn()
-  technicalPreliminaryAssessment: TechnicalPreliminaryAssessment;
+  technicalPreliminaryAssessment: TechnicalPreliminaryAssessmentDetail;
 }

@@ -12,9 +12,9 @@ const options: ExtraCrudOptions = {
   createDto: CreatePreliminaryAssessment,
 };
 
-@Controller('technical-compliance-assessment-detail')
-@ApiTags('Technical compliance Assessment Detail Controller')
-export class TechnicalPreliminaryAssessmentController extends ExtraCrudController<TechnicalPreliminaryAssessmentDetail>(
+@Controller('preliminary-compliance')
+@ApiTags('preliminary compliance Controller')
+export class TechnicalPreliminaryAssessmentDetailController extends ExtraCrudController<TechnicalPreliminaryAssessmentDetail>(
   options,
 ) {
   constructor(

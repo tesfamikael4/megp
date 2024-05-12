@@ -1,0 +1,7 @@
+export enum EvaluationStatusEnum {
+  NOT_DONE = 'NOT_DONE',
+  IN_PROGRESS = 'IN_PROGRESS',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+  NOT_COMPLY = 'NOT_COMPLY',
+  COMPLY = 'COMPLY',
+}
