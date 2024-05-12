@@ -3,7 +3,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager, In, Repository, createQueryBuilder } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { REQUEST } from '@nestjs/core';
-import { TechnicalPreliminaryAssessment } from 'src/entities/technical-preliminary-assessment.entity';
+import { TechnicalPreliminaryAssessmentDetail } from 'src/entities/technical-preliminary-assessment-detail.entity';
 import { TeamMember } from 'src/entities/team-member.entity';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import {
@@ -26,14 +26,14 @@ import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.enti
 import { CreatePreliminaryAssessment } from '../dto/technical-preliminary-assessment.dto';
 
 @Injectable()
-export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<TechnicalPreliminaryAssessment> {
+export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudService<TechnicalPreliminaryAssessmentDetail> {
   constructor(
-    @InjectRepository(TechnicalPreliminaryAssessment)
-    private readonly technicalPreliminaryAssessmentRepository: Repository<TechnicalPreliminaryAssessment>,
+    @InjectRepository(TechnicalPreliminaryAssessmentDetail)
+    private readonly technicalPreliminaryAssessmentDetailRepository: Repository<TechnicalPreliminaryAssessmentDetail>,
 
     @Inject(REQUEST) private request: Request,
   ) {
-    super(technicalPreliminaryAssessmentRepository);
+    super(technicalPreliminaryAssessmentDetailRepository);
   }
 
   async openingPassedBidders(
@@ -125,24 +125,27 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
       items: [],
       total: passed.length,
     };
-    const checklists = await this.technicalPreliminaryAssessmentRepository.find(
-      {
+    const checklists =
+      await this.technicalPreliminaryAssessmentDetailRepository.find({
         where: {
-          bidRegistrationDetail: {
-            lotId,
-            bidRegistration: {
-              bidderId: In(passed.map((bidder) => bidder.bidderId)),
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+              bidRegistration: {
+                bidderId: In(passed.map((bidder) => bidder.bidderId)),
+              },
             },
+            evaluatorId,
           },
-          evaluatorId,
         },
         relations: {
-          bidRegistrationDetail: {
-            bidRegistration: true,
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetail: {
+              bidRegistration: true,
+            },
           },
         },
-      },
-    );
+      });
 
     for (const bidder of passed) {
       if (checklists.length == 0) {
@@ -151,16 +154,20 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
         spdChecklist.length ===
         checklists.filter(
           (x) =>
-            x.bidRegistrationDetail.bidRegistration.bidderId ==
-              bidder.bidderId && x.isTeamAssessment == isTeamAssessment,
+            x.technicalPreliminaryAssessment.bidRegistrationDetail
+              .bidRegistration.bidderId == bidder.bidderId &&
+            x.technicalPreliminaryAssessment.isTeamAssessment ==
+              isTeamAssessment,
         ).length
       ) {
         response.items.push({ bidder, status: 'completed' });
       } else if (
         checklists.filter(
           (x) =>
-            x.bidRegistrationDetail.bidRegistration.bidderId ==
-              bidder.bidderId && x.isTeamAssessment == isTeamAssessment,
+            x.technicalPreliminaryAssessment.bidRegistrationDetail
+              .bidRegistration.bidderId == bidder.bidderId &&
+            x.technicalPreliminaryAssessment.isTeamAssessment ==
+              isTeamAssessment,
         ).length == 0
       ) {
         response.items.push({ bidder, status: 'not started' });
@@ -247,15 +254,17 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
         },
       }),
       // Todo: check if the opener is the team member
-      this.technicalPreliminaryAssessmentRepository.find({
+      this.technicalPreliminaryAssessmentDetailRepository.find({
         where: {
-          bidRegistrationDetail: {
-            lotId,
-            bidRegistration: {
-              bidderId,
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+              bidRegistration: {
+                bidderId,
+              },
             },
+            evaluatorId,
           },
-          evaluatorId,
         },
       }),
     ]);
@@ -264,7 +273,7 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
       check: checklists.find(
         (x) =>
           x.spdPreliminaryEvaluationId == spdChecklist.id &&
-          x.isTeamAssessment == isTeamAssessment,
+          x.technicalPreliminaryAssessment.isTeamAssessment == isTeamAssessment,
       )
         ? true
         : false,
@@ -303,33 +312,41 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
 
     itemData.bidRegistrationDetailId = bidRegistrationDetail.id;
 
-    const item = this.technicalPreliminaryAssessmentRepository.create(itemData);
-    await this.technicalPreliminaryAssessmentRepository.insert(item);
+    const item =
+      this.technicalPreliminaryAssessmentDetailRepository.create(itemData);
+    await this.technicalPreliminaryAssessmentDetailRepository.insert(item);
     return item;
   }
 
   async submit(itemData: any, req?: any): Promise<any> {
-    const checklist = await this.technicalPreliminaryAssessmentRepository.find({
-      where: {
-        bidRegistrationDetail: {
-          bidRegistration: {
-            tenderId: itemData.tenderId,
+    const checklist =
+      await this.technicalPreliminaryAssessmentDetailRepository.find({
+        where: {
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetail: {
+              bidRegistration: {
+                tenderId: itemData.tenderId,
+              },
+            },
+            evaluatorId: req.user.userId,
           },
         },
-        evaluatorId: req.user.userId,
-      },
-    });
+      });
     if (checklist.length == 0) {
       throw new NotFoundException('Preliminary evaluation not started yet');
     }
 
-    await this.technicalPreliminaryAssessmentRepository.update(
+    await this.technicalPreliminaryAssessmentDetailRepository.update(
       {
         id: In(checklist.map((list) => list.id)),
-        isTeamAssessment: itemData.isTeamLead,
+        technicalPreliminaryAssessment: {
+          isTeamAssessment: itemData.isTeamLead,
+        },
       },
       {
-        submit: true,
+        technicalPreliminaryAssessment: {
+          submit: true,
+        },
       },
     );
   }
@@ -370,21 +387,25 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
           isTeamLead: true,
         },
       }),
-      manager.getRepository(TechnicalPreliminaryAssessment).exists({
+      manager.getRepository(TechnicalPreliminaryAssessmentDetail).exists({
         where: {
-          bidRegistrationDetail: {
-            lotId,
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+            evaluatorId,
+            submit: false,
           },
-          evaluatorId,
-          submit: false,
         },
       }),
-      manager.getRepository(TechnicalPreliminaryAssessment).exists({
+      manager.getRepository(TechnicalPreliminaryAssessmentDetail).exists({
         where: {
-          bidRegistrationDetail: {
-            lotId,
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+            submit: false,
           },
-          submit: false,
         },
       }),
     ]);
@@ -394,14 +415,16 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
 
     if (isTeamLead) {
       const teamCompleted =
-        await this.technicalPreliminaryAssessmentRepository.find({
+        await this.technicalPreliminaryAssessmentDetailRepository.find({
           where: {
-            bidRegistrationDetail: {
-              lotId,
+            technicalPreliminaryAssessment: {
+              bidRegistrationDetail: {
+                lotId,
+              },
+              evaluatorId,
+              isTeamAssessment: true,
+              submit: false,
             },
-            evaluatorId,
-            isTeamAssessment: true,
-            submit: false,
           },
         });
       if (teamCompleted.length == 0) {
@@ -419,15 +442,17 @@ export class TechnicalPreliminaryAssessmentService extends ExtraCrudService<Tech
   ) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const report = await manager
-      .getRepository(TechnicalPreliminaryAssessment)
+      .getRepository(TechnicalPreliminaryAssessmentDetail)
       .find({
         where: {
           spdPreliminaryEvaluationId,
-          bidRegistrationDetail: {
-            bidRegistration: {
-              bidderId,
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetail: {
+              bidRegistration: {
+                bidderId,
+              },
+              lotId,
             },
-            lotId,
           },
         },
       });

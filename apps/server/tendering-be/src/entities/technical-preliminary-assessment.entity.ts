@@ -4,19 +4,16 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
-import { SpdPreliminaryEvaluation } from './spd-preliminary-evaluation.entity';
+import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
+import { TechnicalPreliminaryAssessmentDetail } from './technical-preliminary-assessment-detail.entity';
 
-@Unique([
-  'bidRegistrationDetailId',
-  'spdPreliminaryEvaluationId',
-  'isTeamAssessment',
-  'evaluatorId',
-])
+@Unique(['bidRegistrationDetailId', 'isTeamAssessment', 'evaluatorId'])
 @Entity({ name: 'technical_preliminary_assessments' })
 export class TechnicalPreliminaryAssessment extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -27,22 +24,19 @@ export class TechnicalPreliminaryAssessment extends Audit {
 
   @ManyToOne(
     () => BidRegistrationDetail,
-    (BidRegistrationDetail) =>
-      BidRegistrationDetail.technicalPreliminaryAssessment,
+    (bidRegistrationDetail) =>
+      bidRegistrationDetail.technicalPreliminaryAssessment,
   )
   @JoinColumn({ name: 'bidRegistrationDetailId' })
   bidRegistrationDetail: BidRegistrationDetail;
 
-  @Column('uuid')
-  spdPreliminaryEvaluationId: string;
-
-  @ManyToOne(
-    () => SpdPreliminaryEvaluation,
-    (spdPreliminaryEvaluation) =>
-      spdPreliminaryEvaluation.technicalPreliminaryAssessment,
+  @OneToMany(
+    () => TechnicalPreliminaryAssessmentDetail,
+    (technicalPreliminaryAssessmentDetail) =>
+      technicalPreliminaryAssessmentDetail.technicalPreliminaryAssessment,
   )
-  @JoinColumn({ name: 'spdPreliminaryEvaluationId' })
-  SpdPreliminaryEvaluation: SpdPreliminaryEvaluation;
+  @JoinColumn()
+  technicalPreliminaryAssessmentDetail: TechnicalPreliminaryAssessmentDetail;
 
   @Column('uuid')
   evaluatorId: string;
@@ -60,15 +54,16 @@ export class TechnicalPreliminaryAssessment extends Audit {
   @Column({ type: 'boolean', default: false })
   isTeamAssessment: boolean;
 
+  @Column({
+    type: 'enum',
+    enum: EvaluationStatusEnum,
+    default: EvaluationStatusEnum.NOT_DONE,
+  })
+  qualified: string;
+
   @Column({ type: 'boolean' })
   submit: boolean;
 
   @Column({ default: 1 })
   version: number;
-
-  @Column()
-  checked: boolean;
-
-  @Column({ nullable: true })
-  remark: string;
 }

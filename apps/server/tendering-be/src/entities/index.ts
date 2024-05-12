@@ -66,4 +66,4 @@ export * from './opened-bid-response-tender.entity';
 export * from './bid-registration-detail.entity';
 export * from './bid-registration.entity';
 
-export * from './technical-preliminary-assessment.entity';
+export * from './technical-preliminary-assessment-detail.entity';
