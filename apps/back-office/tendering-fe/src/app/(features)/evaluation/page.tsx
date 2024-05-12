@@ -74,27 +74,39 @@ const DetailTender = ({ tender }: any) => {
   const data = [
     {
       key: 'Reference',
-      value: tender.reference,
+      value: tender.procurementReferenceNumber,
     },
     {
       key: 'Name',
       value: tender.name,
     },
     {
-      key: 'Envelope',
-      value: tender.envelope,
+      key: 'Procurement Category ',
+      value: tender.procurementCategory,
     },
     {
-      key: 'Bid',
-      value: tender.bid,
+      key: 'Budget Amount',
+      value: parseFloat(tender.budgetAmount).toLocaleString('en-US', {
+        style: 'currency',
+        currency: tender.budgetAmountCurrency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        currencyDisplay: 'code',
+      }),
     },
     {
-      key: 'Evaluation Method',
-      value: tender.evaluationMethod,
+      key: 'Market Estimate',
+      value: parseFloat(tender.marketEstimate).toLocaleString('en-US', {
+        style: 'currency',
+        currency: tender.marketEstimateCurrency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        currencyDisplay: 'code',
+      }),
     },
     {
-      key: 'Milestone',
-      value: tender.milestone,
+      key: 'Status',
+      value: tender.status,
     },
   ];
 

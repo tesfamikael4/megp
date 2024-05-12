@@ -9,10 +9,8 @@ import {
 } from '@megp/core-fe';
 import { TenderOverView } from '../../_components/tender-overview';
 import { useParams, useRouter } from 'next/navigation';
-import {
-  useLazyGetAllbiddersByTenderIdQuery,
-  useOpenTenderMutation,
-} from '@/store/api/tendering/tendering.api';
+import { useLazyGetAllbiddersByTenderIdQuery } from '@/store/api/tendering/tendering.api';
+import { useOpenTenderMutation } from '@/store/api/tendering/tender-opening.api';
 
 export default function BidOpening() {
   const router = useRouter();

@@ -2,8 +2,8 @@
 import { Section, logger } from '@megp/core-fe';
 import { OpeningMinuteTemplate } from './_components/pdf-template';
 import { PDFViewer } from '@react-pdf/renderer';
-import { useGetOpeningMinutesQuery } from '@/store/api/tendering/tendering.api';
 import { useParams } from 'next/navigation';
+import { useGetOpeningMinutesQuery } from '@/store/api/tendering/tender-opening.api';
 
 export default function OpeningMinute() {
   const { id } = useParams();

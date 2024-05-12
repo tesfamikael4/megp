@@ -5,11 +5,11 @@ import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { TenderOverView } from '../../../_components/tender-overview';
+import { useEffect } from 'react';
 import {
   useLazyGetAllbiddersByLotIdQuery,
-  useLazyGetBidOpeningChecklistByLotIdQuery,
-} from '@/store/api/tendering/tendering.api';
-import { useEffect } from 'react';
+  useLazyGetOpeningAssessmentsQuery,
+} from '@/store/api/tendering/tender-opening.api';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function BidOpening() {
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
-    expandedRowContent: (record) => <DetailTender bidder={record} />,
+    expandedRowContent: (record) => <BidderDetail bidder={record} />,
     columns: [
       {
         accessor: 'bidderName',
@@ -78,11 +78,11 @@ export default function BidOpening() {
   );
 }
 
-const DetailTender = ({ bidder }: any) => {
+const BidderDetail = ({ bidder }: any) => {
   const { lotId } = useParams();
 
   const [getChecklists, { data, isLoading }] =
-    useLazyGetBidOpeningChecklistByLotIdQuery();
+    useLazyGetOpeningAssessmentsQuery();
 
   useEffect(() => {
     getChecklists({
@@ -105,7 +105,11 @@ const DetailTender = ({ bidder }: any) => {
             {
               accessor: 'Assessment',
               render: (record) =>
-                record.check ? 'Evaluated' : 'Not Evaluated Yet',
+                record.check
+                  ? record?.check?.checked
+                    ? 'Yes'
+                    : 'No'
+                  : 'Not Evaluated Yet',
             },
           ],
         }}
