@@ -60,6 +60,7 @@ export class AuthController {
     private readonly emailService: EmailService,
   ) {}
 
+  @Recaptcha()
   @Post('signup')
   @AllowAnonymous()
   createAccount(@Body() createAccountDto: CreateAccountDto) {
