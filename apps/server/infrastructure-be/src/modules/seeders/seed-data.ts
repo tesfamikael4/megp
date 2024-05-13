@@ -1428,4 +1428,52 @@ export const seedPossibleReasons = [
     reason:
       'Legal challenges or concerns regarding the direct procurement decision.',
   },
+  {
+    designerId: '8529bd51-7c21-44bb-b0f7-47ed73e17259',
+    reason: 'Changes in legal regulatory',
+  },
+  {
+    designerId: '8529bd51-7c21-44bb-b0f7-47ed73e17259',
+    reason: 'Diversification of Suppliers',
+  },
+  {
+    designerId: '8529bd51-7c21-44bb-b0f7-47ed73e17259',
+    reason: 'Limited Supplier',
+  },
+  {
+    designerId: '8529bd51-7c21-44bb-b0f7-47ed73e17259',
+    reason: 'Market Dynamics',
+  },
+  {
+    designerId: '89df3826-f05e-4ffc-a9cd-4cd214f72935',
+    reason: 'Changes in legal regulatory',
+  },
+  {
+    designerId: '89df3826-f05e-4ffc-a9cd-4cd214f72935',
+    reason: 'Diversification of Suppliers',
+  },
+  {
+    designerId: '89df3826-f05e-4ffc-a9cd-4cd214f72935',
+    reason: 'Limited Supplier',
+  },
+  {
+    designerId: '89df3826-f05e-4ffc-a9cd-4cd214f72935',
+    reason: 'Market Dynamics',
+  },
+  {
+    designerId: '67722b59-af3b-45b5-8589-343dffb10ba3',
+    reason: 'Changes in legal regulatory',
+  },
+  {
+    designerId: '67722b59-af3b-45b5-8589-343dffb10ba3',
+    reason: 'Diversification of Suppliers',
+  },
+  {
+    designerId: '67722b59-af3b-45b5-8589-343dffb10ba3',
+    reason: 'Limited Supplier',
+  },
+  {
+    designerId: '67722b59-af3b-45b5-8589-343dffb10ba3',
+    reason: 'Market Dynamics',
+  },
 ];
