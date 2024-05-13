@@ -341,10 +341,36 @@ export class SubmittedPlanService extends EntityCrudService<SubmittedPlan> {
       },
     );
 
-    return await this.deepEqual(
-      Object.values(toBeCompare.plan.data),
-      Object.values(compareWith.plan.data),
+    const fieldsToRemove = ['createdAt', 'updatedAt', 'deletedAt'];
+
+    const modifiedToBeCompare = this.removeFields(
+      toBeCompare.plan,
+      fieldsToRemove,
     );
+    const modifiedCompareWith = this.removeFields(
+      compareWith.plan,
+      fieldsToRemove,
+    );
+    return await this.deepEqual(
+      Object.values(modifiedCompareWith.data),
+      Object.values(modifiedToBeCompare.data),
+    );
+  }
+  removeFields(data, fieldsToRemove) {
+    if (Array.isArray(data)) {
+      return data.map((item) => this.removeFields(item, fieldsToRemove));
+    } else if (typeof data === 'object' && data !== null) {
+      Object.keys(data).forEach((key) => {
+        if (fieldsToRemove.includes(key)) {
+          delete data[key];
+        } else {
+          data[key] = this.removeFields(data[key], fieldsToRemove);
+        }
+      });
+      return data;
+    } else {
+      return data;
+    }
   }
   async deepEqual(list1: any[], list2: any[]): Promise<ComparisonResult> {
     const addedKeys: responseObject[] = [];
