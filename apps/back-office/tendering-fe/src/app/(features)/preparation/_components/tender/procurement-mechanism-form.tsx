@@ -1,6 +1,7 @@
 import { ProcurementMechanism } from '@/models/tender/evaluation-mechanism';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  Flex,
   LoadingOverlay,
   NativeSelect,
   NumberInput,
@@ -145,7 +146,7 @@ export default function ProcurementMechanismForm() {
           }
           {...register('marketApproach')}
         />
-        <>
+        <Flex direction={'column'} gap={'sm'} className="w-1/2">
           <Controller
             name="stage"
             control={control}
@@ -155,8 +156,9 @@ export default function ProcurementMechanismForm() {
                 name={name}
                 disabled={stageTypeValue === 'single'}
                 value={value}
+                min={1}
                 withAsterisk
-                className="w-1/2"
+                className="w-full"
                 onChange={(d) => onChange(parseInt(d as string))}
                 error={
                   errors['stage'] ? errors['stage']?.message?.toString() : ''
@@ -169,7 +171,7 @@ export default function ProcurementMechanismForm() {
               Stage is required for multiple stage type
             </Text>
           )}
-        </>
+        </Flex>
       </div>
 
       <EntityButton

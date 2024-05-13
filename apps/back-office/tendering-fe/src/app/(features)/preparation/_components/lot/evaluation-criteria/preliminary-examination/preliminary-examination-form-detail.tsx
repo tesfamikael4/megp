@@ -60,9 +60,7 @@ export function PreliminaryExaminationFormDetail({
   } = useForm({
     resolver: zodResolver(preliminaryExaminationSchema),
   });
-  useEffect(() => {
-    logger.log(errors);
-  }, [errors]);
+
   const { id } = useParams();
 
   const {

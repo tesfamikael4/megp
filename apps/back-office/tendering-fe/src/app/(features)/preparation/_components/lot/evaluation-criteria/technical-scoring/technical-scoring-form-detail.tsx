@@ -23,6 +23,8 @@ import {
   RequirementCondition,
   TechnicalScoring,
 } from '@/models/tender/lot/technical-scoring.model';
+import { useReadQuery as useGetSpd } from '@/app/(features)/preparation/_api/tender/tender-spd.api';
+import { useLazyListByIdQuery } from '@/app/(features)/preparation/_api/lot/bid-form.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -37,6 +39,7 @@ export function TechnicalScoringFormDetail({
   lotId,
   returnFunction,
 }: FormDetailProps) {
+  const { id } = useParams();
   const spdSchema: ZodType<Partial<TechnicalScoring>> = z.object({
     requirement: z.string().min(1, { message: 'This field is required' }),
     formLink: z.string().min(1, { message: 'This field is required' }),
@@ -53,7 +56,11 @@ export function TechnicalScoringFormDetail({
   } = useForm({
     resolver: zodResolver(spdSchema),
   });
-  const { id } = useParams();
+  const {
+    data: selectedSpd,
+    isSuccess: isSpdSuccess,
+    isLoading: isSpdLoading,
+  } = useGetSpd(id?.toString());
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -65,9 +72,8 @@ export function TechnicalScoringFormDetail({
     isLoading,
   } = useReadQuery(id?.toString());
 
-  useEffect(() => {
-    logger.log(errors);
-  }, [errors]);
+  const [trigger, { data: bidFormLinks, isLoading: isBidFormLoading }] =
+    useLazyListByIdQuery();
 
   const onCreate = async (data) => {
     try {
@@ -107,6 +113,15 @@ export function TechnicalScoringFormDetail({
   };
 
   useEffect(() => {
+    if (isSpdSuccess && selectedSpd) {
+      trigger({
+        id: selectedSpd.spdId,
+        collectionQuery: { where: [] },
+      });
+    }
+  }, [isSpdSuccess, selectedSpd, trigger]);
+
+  useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
         requirement: selected?.requirement,
@@ -120,7 +135,15 @@ export function TechnicalScoringFormDetail({
 
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
+      <LoadingOverlay
+        visible={
+          isLoading ||
+          isUpdating ||
+          isSaving ||
+          isSpdLoading ||
+          isBidFormLoading
+        }
+      />
       <Textarea
         label="Criteria"
         withAsterisk
@@ -159,10 +182,20 @@ export function TechnicalScoringFormDetail({
           {...register('requirementCondition')}
         />
       </div>
-      <TextInput
-        label="Bid Form Link"
+      <NativeSelect
+        placeholder="Bid Form Link"
         withAsterisk
+        label="Bid Form Link"
+        className="w-1/2"
         error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
+        data={
+          bidFormLinks?.items
+            ? bidFormLinks?.items.map((link) => ({
+                label: link.title,
+                value: link.code,
+              }))
+            : []
+        }
         {...register('formLink')}
       />
       <EntityButton

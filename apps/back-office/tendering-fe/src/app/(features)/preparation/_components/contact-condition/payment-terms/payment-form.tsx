@@ -81,6 +81,7 @@ export default function PaymentForm() {
 
   const isAdvanceAllowed: boolean = watch('advancePaymentAllowed');
   const paymentLimit = watch('advancePaymentLimit');
+
   const onCreate = async (data) => {
     if (isAdvanceAllowed) {
       if (!paymentLimit || paymentLimit > 30) {
@@ -197,7 +198,7 @@ export default function PaymentForm() {
                 max={31}
                 name={name}
                 disabled={!isAdvanceAllowed}
-                value={value}
+                value={!isAdvanceAllowed ? 0 : value}
                 onChange={(d) => onChange(parseInt(d as string))}
                 error={
                   errors['advancePaymentLimit']
