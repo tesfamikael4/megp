@@ -285,7 +285,8 @@ export class BidResponseItemService {
     }
 
     if (inputDto.isTree) {
-      items[0] = this.buildBoQHierarchy(items[0], null, responses);
+      const flattenedResponse = this.flattenHierarchy(responses);
+      items[0] = this.buildBoQHierarchy(items[0], null, flattenedResponse);
     } else {
       items[0] = items[0].map((item) => {
         let i = { ...item };
@@ -439,15 +440,18 @@ export class BidResponseItemService {
     });
   }
 
-  private buildBoQHierarchy(items: any[], code = null, responses: any) {
+  private buildBoQHierarchy(items: any[], code = null, flattenedResponse: any) {
     const children = items?.filter((item) => item.parentCode === code);
 
     const newData = children?.map((child) => {
-      child.rate = this.findItemById(responses, child.id);
+      child.rate = flattenedResponse.find(
+        (item: any) => item.id === child.id,
+      )?.rate;
 
       const childWithChildren = {
         ...child,
-        children: this.buildBoQHierarchy(items, child.code, responses) ?? [],
+        children:
+          this.buildBoQHierarchy(items, child.code, flattenedResponse) ?? [],
       };
 
       return childWithChildren;
@@ -496,15 +500,10 @@ export class BidResponseItemService {
     }, 0);
   }
 
-  private findItemById(items: any, id: string) {
-    const flattened = this.flattenHierarchy(items);
-
-    return flattened.find((item: any) => item.id === id)?.rate;
-  }
   private flattenHierarchy(data: any, path = []) {
     const flatData = [];
-    data.forEach((item: any) => {
-      const currentPath = path.concat(item.name || item.id); // Use name or id for path
+    data?.forEach((item: any) => {
+      const currentPath = path.concat(item.id);
       flatData.push({ ...item, path: currentPath });
       if (item.children) {
         flatData.push(...this.flattenHierarchy(item.children, currentPath));
