@@ -20,6 +20,7 @@ import {
   UpdateGuaranteeStatusDto,
 } from '../dto/bid-guarantee.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { IgnoreTenantInterceptor } from 'src/shared/decorators/ignore-tenant-interceptor.decorator';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',
@@ -51,6 +52,7 @@ export class BidGuaranteeController extends ExtraCrudController<BidGuarantee>(
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
+  @IgnoreTenantInterceptor()
   async getBidGuarantees(@Query('q') q: string, @Req() req?: any) {
     const query = decodeCollectionQuery(q);
     return await this.bidGuaranteeService.getBidGuaranteesByGuarantorId(
