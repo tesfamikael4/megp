@@ -7,7 +7,7 @@ import {
   NumberInput,
   Stack,
 } from '@mantine/core';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -111,9 +111,7 @@ export default function BidProEvaluation() {
       });
     }
   }, [reset, selected, isSuccess]);
-  useEffect(() => {
-    logger.log(errors);
-  }, [errors]);
+
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
@@ -185,10 +183,10 @@ export default function BidProEvaluation() {
           {...register('awardType')}
         />
       </div>
-      {method !== 'compliance' && (
+      {method === 'compliance' ? (
         <>
-          <div className="flex gap-3">
-            <div>
+          <div className="w-full flex gap-3">
+            <div className="w-1/2">
               <Controller
                 name="technicalWeight"
                 control={control}
@@ -196,8 +194,9 @@ export default function BidProEvaluation() {
                   <NumberInput
                     label="Technical Weight"
                     name={name}
-                    value={value}
-                    className="w-1/2"
+                    value={0}
+                    disabled={true}
+                    className="w-full"
                     onChange={(d) => onChange(parseInt(d as string))}
                     error={
                       errors['technicalWeight']
@@ -209,7 +208,77 @@ export default function BidProEvaluation() {
                 )}
               />
             </div>
-            <div>
+            <div className="w-1/2">
+              <Controller
+                name="financialWeight"
+                control={control}
+                render={({ field: { name, value, onChange } }) => (
+                  <NumberInput
+                    label="Financial Weight"
+                    name={name}
+                    disabled={true}
+                    value={0}
+                    className="w-full"
+                    onChange={(d) => onChange(parseInt(d as string))}
+                    error={
+                      errors['financialWeight']
+                        ? errors['financialWeight']?.message?.toString()
+                        : ''
+                    }
+                    withAsterisk
+                  />
+                )}
+              />
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <Controller
+              name="passingMark"
+              control={control}
+              render={({ field: { name, value, onChange } }) => (
+                <NumberInput
+                  label="Passing Mark"
+                  name={name}
+                  value={0}
+                  disabled={true}
+                  className="w-1/2"
+                  onChange={(d) => onChange(parseInt(d as string))}
+                  error={
+                    errors['passingMark']
+                      ? errors['passingMark']?.message?.toString()
+                      : ''
+                  }
+                  withAsterisk
+                />
+              )}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="w-full flex gap-3">
+            <div className="w-1/2">
+              <Controller
+                name="technicalWeight"
+                control={control}
+                render={({ field: { name, value, onChange } }) => (
+                  <NumberInput
+                    label="Technical Weight"
+                    name={name}
+                    value={value}
+                    className="w-full"
+                    onChange={(d) => onChange(parseInt(d as string))}
+                    error={
+                      errors['technicalWeight']
+                        ? errors['technicalWeight']?.message?.toString()
+                        : ''
+                    }
+                    withAsterisk
+                  />
+                )}
+              />
+            </div>
+            <div className="w-1/2">
               <Controller
                 name="financialWeight"
                 control={control}
@@ -218,7 +287,7 @@ export default function BidProEvaluation() {
                     label="Financial Weight"
                     name={name}
                     value={value}
-                    className="w-1/2"
+                    className="w-full"
                     onChange={(d) => onChange(parseInt(d as string))}
                     error={
                       errors['financialWeight']

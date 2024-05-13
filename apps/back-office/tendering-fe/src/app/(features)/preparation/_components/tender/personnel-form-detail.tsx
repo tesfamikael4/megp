@@ -76,6 +76,7 @@ export default function PersonnelFormDetail({
               max={31}
               name={name}
               value={value}
+              min={1}
               onChange={(d) => onChange(d)}
               error={
                 errors['order'] ? errors['order']?.message?.toString() : ''

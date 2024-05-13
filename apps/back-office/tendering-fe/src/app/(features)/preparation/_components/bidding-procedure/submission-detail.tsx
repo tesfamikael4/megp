@@ -10,9 +10,9 @@ import {
   useReadQuery,
   useUpdateMutation,
 } from '@/app/(features)/preparation/_api/tender/bid-submissions.api';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
-import { DateInput } from '@mantine/dates';
+import { DateTimePicker } from '@mantine/dates';
 
 export default function SubmissionDetail() {
   const { id } = useParams();
@@ -56,13 +56,12 @@ export default function SubmissionDetail() {
     resolver: zodResolver(SubmissionSchema),
   });
   const inviteDate = watch('invitationDate');
+  const dateOfSubission = watch('submissionDeadline');
   const [initalDate, setInitalDate] = useState<Date | null>(null);
+  const [submitDate, setSubmitDate] = useState<Date | null>(null);
   const { data: selected, isSuccess, isLoading } = useReadQuery(id?.toString());
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
-  useEffect(() => {
-    logger.log(errors);
-  }, [errors]);
   const onCreate = async (data) => {
     try {
       await create({
@@ -104,6 +103,12 @@ export default function SubmissionDetail() {
       setInitalDate(inviteDate);
     }
   }, [inviteDate]);
+
+  useEffect(() => {
+    if (dateOfSubission) {
+      setSubmitDate(dateOfSubission);
+    }
+  }, [dateOfSubission]);
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
@@ -126,7 +131,7 @@ export default function SubmissionDetail() {
           name="invitationDate"
           control={control}
           render={({ field: { name, value, onChange } }) => (
-            <DateInput
+            <DateTimePicker
               name={name}
               value={value}
               minDate={new Date()}
@@ -145,12 +150,12 @@ export default function SubmissionDetail() {
       </div>
 
       <div className="flex gap-3">
-        {initalDate && (
+        {initalDate ? (
           <Controller
             name="submissionDeadline"
             control={control}
             render={({ field: { name, value, onChange } }) => (
-              <DateInput
+              <DateTimePicker
                 name={name}
                 value={value}
                 minDate={initalDate}
@@ -166,27 +171,73 @@ export default function SubmissionDetail() {
               />
             )}
           />
+        ) : (
+          <Controller
+            name="submissionDeadline"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <DateTimePicker
+                name={name}
+                placeholder="Please Select Invitation Date First"
+                value={value}
+                disabled={true}
+                withAsterisk
+                className="w-1/2"
+                onChange={onChange}
+                label="Submission Deadline"
+                error={
+                  errors['submissionDeadline']
+                    ? errors['submissionDeadline']?.message?.toString()
+                    : ''
+                }
+              />
+            )}
+          />
         )}
-
-        <Controller
-          name="openingDate"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <DateInput
-              name={name}
-              value={value}
-              withAsterisk
-              className="w-1/2"
-              onChange={onChange}
-              label="Opening Date"
-              error={
-                errors['openingDate']
-                  ? errors['openingDate']?.message?.toString()
-                  : ''
-              }
-            />
-          )}
-        />
+        {submitDate ? (
+          <Controller
+            name="openingDate"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <DateTimePicker
+                name={name}
+                value={value}
+                withAsterisk
+                minDate={submitDate}
+                className="w-1/2"
+                onChange={onChange}
+                label="Opening Date"
+                error={
+                  errors['openingDate']
+                    ? errors['openingDate']?.message?.toString()
+                    : ''
+                }
+              />
+            )}
+          />
+        ) : (
+          <Controller
+            name="openingDate"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <DateTimePicker
+                name={name}
+                placeholder="Please Select Submision Date First"
+                value={value}
+                withAsterisk
+                disabled={true}
+                className="w-1/2"
+                onChange={onChange}
+                label="Opening Date"
+                error={
+                  errors['openingDate']
+                    ? errors['openingDate']?.message?.toString()
+                    : ''
+                }
+              />
+            )}
+          />
+        )}
       </div>
 
       <EntityButton

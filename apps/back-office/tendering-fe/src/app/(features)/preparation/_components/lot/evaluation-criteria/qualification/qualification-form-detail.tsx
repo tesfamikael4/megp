@@ -20,7 +20,8 @@ import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
 import { Qualification } from '@/models/tender/lot/qualification.model';
 import { RequirementCondition } from '@/models/tender/lot/technical-scoring.model';
-
+import { useLazyListByIdQuery } from '@/app/(features)/preparation/_api/lot/bid-form.api';
+import { useReadQuery as useGetSpd } from '@/app/(features)/preparation/_api/tender/tender-spd.api';
 interface FormDetailProps {
   mode: 'new' | 'detail';
   adId: string;
@@ -36,6 +37,7 @@ export function QualificationFormDetail({
   lotId,
   returnFunction,
 }: FormDetailProps) {
+  const { id } = useParams();
   const qualificationSchema: ZodType<Partial<Qualification>> = z.object({
     category: z.string().optional(),
     factor: z.string().min(1, { message: 'This field is required' }),
@@ -62,6 +64,11 @@ export function QualificationFormDetail({
   });
 
   const {
+    data: selectedSpd,
+    isSuccess: isSpdSuccess,
+    isLoading: isSpdLoading,
+  } = useGetSpd(id?.toString());
+  const {
     handleSubmit,
     reset,
     formState: { errors },
@@ -69,10 +76,8 @@ export function QualificationFormDetail({
   } = useForm({
     resolver: zodResolver(qualificationSchema),
   });
-  useEffect(() => {
-    logger.log(errors);
-  }, [errors]);
-  const { id } = useParams();
+  const [trigger, { data: bidFormLinks, isLoading: isBidFormLoading }] =
+    useLazyListByIdQuery();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -85,7 +90,6 @@ export function QualificationFormDetail({
   } = useReadQuery(adId?.toString());
 
   const onCreate = async (data) => {
-    logger.log('here');
     try {
       await create({
         ...data,
@@ -127,7 +131,14 @@ export function QualificationFormDetail({
       notify('Error', 'Error in deleting qualification');
     }
   };
-
+  useEffect(() => {
+    if (isSpdSuccess && selectedSpd) {
+      trigger({
+        id: selectedSpd.spdId,
+        collectionQuery: { where: [] },
+      });
+    }
+  }, [isSpdSuccess, selectedSpd, trigger]);
   useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
@@ -149,7 +160,7 @@ export function QualificationFormDetail({
 
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading || isBidFormLoading || isSpdLoading} />
       <TextInput
         label="Factor"
         withAsterisk
@@ -282,11 +293,20 @@ export function QualificationFormDetail({
         />
       </div>
 
-      <TextInput
+      <NativeSelect
         placeholder="Bid Form Link"
         withAsterisk
-        label="formLink"
+        label="Bid Form Link"
+        className="w-1/2"
         error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
+        data={
+          bidFormLinks?.items
+            ? bidFormLinks?.items.map((link) => ({
+                label: link.title,
+                value: link.code,
+              }))
+            : []
+        }
         {...register('formLink')}
       />
 
