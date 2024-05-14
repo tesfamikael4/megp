@@ -27,6 +27,8 @@ import {
   QueryConstructor,
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
+import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
+import { writeFileSync } from 'fs';
 @Injectable()
 export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
   constructor(
@@ -34,6 +36,7 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
     private readonly bidGuaranteeRepository: Repository<BidGuarantee>,
     private readonly docxService: DocxService,
     private readonly minIOService: MinIOService,
+    private readonly documentManipulatorService: DocumentManipulatorService,
     @Inject(REQUEST) private request: Request,
   ) {
     super(bidGuaranteeRepository);
@@ -164,18 +167,23 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
       if (!spdTemplate) {
         throw new BadRequestException('template_not_found');
       }
-
-      const docx = await this.docxService.generateDocx(
+      const fileReadable = await this.minIOService.downloadBuffer(
         spdTemplate.documentDocx,
-        {
-          supplierName: guarantee.bidderName,
-          amount: guarantee.amount,
-        },
       );
 
+      const fileBuffer =
+        await this.documentManipulatorService.streamToBuffer(fileReadable);
+
+      const docx = await this.docxService.generateDocx(fileBuffer, {
+        public_body: guarantee.bidderName,
+      });
+
+      const pdfBuffer =
+        await this.documentManipulatorService.convertDocxToPdf(docx);
+
       updateGuaranteeStatusDto.document = await this.minIOService.uploadBuffer(
-        docx,
-        'bid_security.pdf',
+        pdfBuffer,
+        guarantee.referenceNumber + '-bid_security.pdf',
         'application/pdf',
         BucketNameEnum.BID_SECURITY_DOCUMENT,
       );
