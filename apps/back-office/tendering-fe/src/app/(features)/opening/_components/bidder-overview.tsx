@@ -64,7 +64,7 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
                 </Text>
               </Box>
               <Box>
-                {data?.lots?.[0]?.name && <>{data?.lots?.[0]?.name}</>}
+                {data?.lots?.[0]?.name && <p>{data?.lots?.[0]?.name}</p>}
                 {data?.bdsSubmission?.envelopType && (
                   <Badge variant="outline" size="xs" color="gray">
                     {data?.bdsSubmission?.envelopType}
@@ -94,6 +94,9 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
                 </Text>
               </Box>
               <Box>
+                {data?.bidRegistrations?.[0]?.bidderName && (
+                  <p>{data?.bidRegistrations?.[0]?.bidderName}</p>
+                )}
                 <Text size="sm">
                   {data?.bdsEvaluation?.evaluationMethod && (
                     <Badge variant="outline" size="xs" color="gray">
