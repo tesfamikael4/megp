@@ -47,7 +47,7 @@ export const LotOverview = ({ basePath }: { basePath: string }) => {
                 </Text>
               </Box>
               <Box>
-                {data?.lots?.[0]?.name && <>{data?.lots?.[0]?.name}</>}
+                {data?.lots?.[0]?.name && <p>{data?.lots?.[0]?.name}</p>}
                 {data?.bdsSubmission?.envelopType && (
                   <Badge variant="outline" size="xs" color="gray">
                     {data?.bdsSubmission?.envelopType}
