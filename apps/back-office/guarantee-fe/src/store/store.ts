@@ -7,6 +7,7 @@ import { forfeitApi } from './api/guarantee-forfeit/guarantee-forfeit.api';
 import { guaranteeApprovalApi } from './api/approval/approval';
 import { guaranteeIamApi } from './api/approval/iam';
 import { workflowApi } from './api/workflow/workflow.api';
+import { guaranteeApi } from './api/guarantee-request/guarantee-request.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -19,6 +20,7 @@ export const store = configureStore({
     [guaranteeApprovalApi.reducerPath]: guaranteeApprovalApi.reducer,
     [guaranteeIamApi.reducerPath]: guaranteeIamApi.reducer,
     [workflowApi.reducerPath]: workflowApi.reducer,
+    [guaranteeApi.reducerPath]: guaranteeApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -31,6 +33,7 @@ export const store = configureStore({
       guaranteeApprovalApi.middleware,
       workflowApi.middleware,
       guaranteeIamApi.middleware,
+      guaranteeApi.middleware,
     ]),
 });
 
