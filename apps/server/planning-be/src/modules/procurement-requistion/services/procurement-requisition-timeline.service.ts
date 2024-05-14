@@ -35,9 +35,7 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
             id: timelines[0].procurementRequisitionId,
           },
           relations: {
-            postBudgetPlan: {
-              app: { budgetYears: true },
-            },
+            budgetYear: true,
           },
           select: {
             id: true,
@@ -50,11 +48,9 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
             },
           },
         });
-      const budgetPlanEndDate =
-        procurementRequisition.postBudgetPlan.app.budgetYears.endDate;
+      const budgetPlanEndDate = procurementRequisition.budgetYear.endDate;
 
-      const budgetPlanStartDate =
-        procurementRequisition.postBudgetPlan.app.budgetYears.startDate;
+      const budgetPlanStartDate = procurementRequisition.budgetYear.startDate;
 
       timelines.forEach((element) => {
         element.organizationId = organization.id;
