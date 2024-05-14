@@ -18,6 +18,7 @@ import {
 import VendorDetail from '../../_components/vendor-details';
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { addSpacesToCamelCase } from '../../util/addSpaceToCamelCase';
 
 const VendorsDetail = ({ path }: { path?: string }) => {
   const router = useRouter();
@@ -29,7 +30,7 @@ const VendorsDetail = ({ path }: { path?: string }) => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (searchParams.get('type') === 'approved')
+    if (path === 'approved')
       getVendorDetail({ vendorId: vendorId as string })
         .unwrap()
         .then((res) => {
@@ -62,7 +63,7 @@ const VendorsDetail = ({ path }: { path?: string }) => {
             <Flex direction="row" className="w-8/12">
               <Box className="p-3">
                 <Avatar color="cyan" radius="xl" size="lg">
-                  {response?.name?.charAt(0)}
+                  {(response?.name ?? response?.basic?.name)?.charAt(0)}
                 </Avatar>
               </Box>
               <Flex
@@ -70,26 +71,36 @@ const VendorsDetail = ({ path }: { path?: string }) => {
                 className="w-full border-r-[1px] text-sm justify-center"
               >
                 <Box className="text-primary-800 font-bold" size="xl">
-                  {response?.name}
+                  {response?.name ?? response.basic?.name}
                 </Box>
-                <Box>Country: {response?.origin}</Box>
+                <Box>
+                  Country:{' '}
+                  {response?.countryOfRegistration ??
+                    response?.basic?.countryOfRegistration}
+                </Box>
               </Flex>
             </Flex>
             <Flex direction="column" className="border-l-gray-50 w-4/12 ml-3">
               <Flex direction="row" className="items-center gap-1 text-sm">
                 <IconTicket size={18} />
-                <Box>{response?.tin}</Box>
+                <Box>{response?.tinNumber ?? response?.basic?.tinNumber}</Box>
               </Flex>
               <Flex direction="row" className="items-center gap-1 text-sm">
                 <IconClockHour2 size={18} />
-                <Box>{response?.formOfEntity}</Box>
+                <Box>
+                  {addSpacesToCamelCase(
+                    response?.formOfEntity ?? response?.basic?.businessType,
+                  )}
+                </Box>
               </Flex>
               <Flex direction="row" className="items-center gap-1 text-sm">
                 <IconProgress size={18} />
                 <Box>
-                  {response.status === 'Inprogress'
-                    ? 'In progress'
-                    : 'Completed'}
+                  {path === 'rejected'
+                    ? 'Rejected'
+                    : response.status === 'Inprogress'
+                      ? 'In progress'
+                      : 'Completed'}
                 </Box>
               </Flex>
             </Flex>
