@@ -5,6 +5,7 @@ import { Section } from '@megp/core-fe';
 import { getNationalityValues } from './utils';
 import { CollectionQuery } from '@megp/entity';
 import { useGetBPServicesQuery } from '@/store/api/vendor_request_handler/approved-rejected-api';
+import { formOfBusiness } from '../_constants/formOfBusiness';
 
 export interface FilterObjectType {
   businessType: string | null;
@@ -55,28 +56,7 @@ export default function VendorFilterSidebar({
       <Box className={styles.formGroup}>
         <Text>Form of Business</Text>
         <Select
-          data={[
-            {
-              label: 'Sole Proprietorship',
-              value: 'soleProprietorship',
-            },
-            {
-              label: 'Partnership',
-              value: 'partnership',
-            },
-            {
-              label: 'Private Limited Company',
-              value: 'privateLimitedCompany',
-            },
-            {
-              label: 'ShareCompany',
-              value: 'shareCompany',
-            },
-            {
-              label: 'Government-Owned Enterprise',
-              value: 'governmentOwnedEnterprise',
-            },
-          ]}
+          data={formOfBusiness}
           value={filter.businessType}
           name="businessType"
           onChange={(value) => handleUpdateFilter('businessType', value)}
@@ -93,7 +73,7 @@ export default function VendorFilterSidebar({
         />
       </Box>
       <Box className={styles.formGroup}>
-        <Text>Country</Text>
+        <Text>Country Of Registration</Text>
         <Select
           data={getNationalityValues()}
           value={filter.country}

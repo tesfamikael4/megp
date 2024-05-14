@@ -189,7 +189,6 @@ export default function TaskHandler({
 
           <Button
             onClick={() => {
-              ``;
               handleButtonClick('Cancel');
               if (remark) {
                 router.push(
@@ -233,7 +232,7 @@ export default function TaskHandler({
             )}
           <Button
             onClick={() => {
-              handleButtonClick(requestType === 'update' ? 'Cancel' : 'REJECT');
+              handleButtonClick('REJECT');
               if (remark) {
                 router.push(
                   `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
@@ -243,7 +242,7 @@ export default function TaskHandler({
             className="bg-red-600 hover:bg-red-700"
             loading={loading['REJECT']}
           >
-            {requestType === 'update' ? 'Cancel' : 'Reject'}
+            Reject
           </Button>
         </Flex>
       )}

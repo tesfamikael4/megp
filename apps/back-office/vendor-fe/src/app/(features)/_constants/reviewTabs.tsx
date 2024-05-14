@@ -9,7 +9,7 @@ export const accordionTabs = (countryOfRegistration: string) => [
   },
   {
     tabValue: 'contactPersons',
-    tabName: 'Contact Persons',
+    tabName: 'Contact Persons Information',
   },
   {
     tabValue: 'businessSizeAndOwnership',
@@ -28,20 +28,12 @@ export const accordionTabs = (countryOfRegistration: string) => [
     tabName: 'Bank Account Details',
   },
   {
-    tabValue: 'areasOfBusinessInterestView',
+    tabValue: 'areasOfBusinessInterest',
     tabName: 'Purpose of Registration',
   },
   {
     tabValue: 'lineOfBusiness',
     tabName: 'Line Of Business',
-  },
-  {
-    tabValue: 'supportingDocuments',
-    tabName: 'Supporting Documents',
-  },
-  {
-    tabValue: 'paymentReceipt',
-    tabName: 'Payment Receipts',
   },
   ...(countryOfRegistration === 'Malawi'
     ? [
@@ -51,9 +43,26 @@ export const accordionTabs = (countryOfRegistration: string) => [
         },
       ]
     : []),
+  {
+    tabValue: 'paymentReceipt',
+    tabName: 'Payment Receipts',
+  },
+  {
+    tabValue: 'supportingDocuments',
+    tabName: 'Supporting Documents',
+  },
 ];
 
 export const formatColumns = (countryOfRegistration) => ({
+  ...(countryOfRegistration === 'Malawi'
+    ? {
+        newPreferential: [
+          { name: 'type', displayName: 'Preferential Service' },
+          { name: 'certiNumber', displayName: 'Certificate Number' },
+          { name: 'certificateUrl', displayName: 'Certificate' },
+        ],
+      }
+    : {}),
   basic: [
     { name: 'name', displayName: 'Name of Business Company' },
     { name: 'countryOfRegistration', displayName: 'Country of Registration' },
@@ -115,13 +124,11 @@ export const formatColumns = (countryOfRegistration) => ({
   ],
 
   service: [{ name: 'name', displayName: 'Service Type' }],
-  ...(countryOfRegistration
+  ...(countryOfRegistration === 'Malawi'
     ? {
         preferential: [
           { name: 'type', displayName: 'Preferential Service' },
           { name: 'certiNumber', displayName: 'Certificate Number' },
-          { name: 'certificateValidityPeriod', displayName: 'Validity Period' },
-          { name: 'certificateIssuedDate', displayName: 'Issued Date' },
           { name: 'certificateUrl', displayName: 'Certificate' },
         ],
       }

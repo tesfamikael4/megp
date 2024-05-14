@@ -81,6 +81,15 @@ export default function ApplicationList({
         },
       ]);
     }
+    if (filter.countryOfRegistration) {
+      newWhere.push([
+        {
+          column: 'isrVendor.basic->>countryOfRegistration',
+          operator: 'LIKE',
+          value: filter.countryOfRegistration,
+        },
+      ]);
+    }
     if (filter.customerName) {
       newWhere.push([
         {

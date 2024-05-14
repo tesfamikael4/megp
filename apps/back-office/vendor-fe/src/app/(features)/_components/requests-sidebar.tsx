@@ -4,6 +4,7 @@ import { Box, Select, TextInput, Text } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { Button } from '@mantine/core';
 import { Section } from '@megp/core-fe';
+import { getNationalityValues } from './utils';
 
 type InitialState = {
   trackingNumber: string;
@@ -11,6 +12,7 @@ type InitialState = {
   customerName: string;
   from: Date | null;
   to: Date | null;
+  countryOfRegistration: string;
 };
 const initialState: InitialState = {
   trackingNumber: '',
@@ -18,6 +20,7 @@ const initialState: InitialState = {
   customerName: '',
   from: null,
   to: null,
+  countryOfRegistration: '',
 };
 export default function RequestsSidebar({
   handleFilter,
@@ -42,7 +45,8 @@ export default function RequestsSidebar({
     !filter.status &&
     !filter.from &&
     !filter.to &&
-    !filter.customerName;
+    !filter.customerName &&
+    !filter.countryOfRegistration;
 
   return (
     <Section
@@ -50,6 +54,18 @@ export default function RequestsSidebar({
       collapsible={false}
       className={styles.sidebarwrapper}
     >
+      <Box className={styles.formGroup}>
+        <Text>Country of Registration</Text>
+        <Select
+          value={filter.countryOfRegistration}
+          data={getNationalityValues()}
+          searchable
+          type="string"
+          name="countryOfRegistration"
+          placeholder="Country of Registration"
+          onChange={(e) => updateFilter(`countryOfRegistration`, e)}
+        />
+      </Box>
       <Box className={styles.formGroup}>
         <Text>Tracking Number</Text>
         <TextInput
@@ -60,16 +76,6 @@ export default function RequestsSidebar({
           onChange={(e) => updateFilter(e.target.name, e.target.value)}
         />
       </Box>
-      {/* <Box className={styles.formGroup}>
-        <Text>Business Category</Text>
-        <Select
-          value={filter.status}
-          placeholder="Select Business Category"
-          data={['Goods', 'Services', 'Works']}
-          name={'status'}
-          onChange={(e) => updateFilter('status', e)}
-        />
-      </Box> */}
       <Box className={styles.formGroup}>
         <Text>Company Name</Text>
         <TextInput
