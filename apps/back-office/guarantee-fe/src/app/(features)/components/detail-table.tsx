@@ -12,7 +12,7 @@ export const DetailTable = ({ data }: DetailTableItem) => {
           direction="column"
           className="border-t border-l border-r border-gray-400"
         >
-          {data.map((d) =>
+          {data?.map((d) =>
             d.key ? (
               <Flex
                 key={d.key}

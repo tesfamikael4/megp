@@ -14,7 +14,6 @@ export default function Extension() {
 
   const config = {
     isSearchable: true,
-
     isFetching: isFetching,
     columns: [
       {

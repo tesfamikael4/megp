@@ -3,16 +3,17 @@ import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
 // get base group api
-const guaranteeReleaseApi = entityApi.entitySliceApi['guarantees'];
+const guaranteeReleaseApi = entityApi.entitySliceApi['bid-guarantee-releases'];
 
 export const guaranteeReleaseSliceApi: typeof EntitySliceApi =
   createEntitySlice<GuaranteeRelsease>(
     guaranteeReleaseApi as any,
-    'guaranteeguarantee',
+    'bid-guarantee-releases',
   );
 
 export const {
   useListQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useLazyReadQuery,
   useLazyListQuery,

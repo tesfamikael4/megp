@@ -1,53 +1,47 @@
 'use client';
 
+import { useLazyGetGuaranteesQuery } from '@/store/api/guarantee-request/guarantee-request.api';
 import { ActionIcon, Badge } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
+import { CollectionQuery } from '@megp/entity';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import ForfeitDetail from './[id]/page';
 
-export default function GuaranteeForfeit() {
+export default function GuaranteeRequest() {
   const router = useRouter();
-  // const { data: list } = useListQuery({});
-  const data = [
-    {
-      id: '1f344819-d64d-4986-b192-ee06f5bf0e98',
-      organizationName: 'organizationName',
-      title: 'title',
-      name: 'name',
-      type: 'type',
-      status: 'Forfeit',
-    },
-  ];
+  const [trigger, { data: list }] = useLazyGetGuaranteesQuery();
 
   const config: ExpandableTableConfig = {
     isSearchable: true,
-    isExpandable: true,
-    expandedRowContent: (record) => <ForfeitDetail />,
 
     columns: [
       {
-        accessor: 'organizationName',
-
-        sortable: true,
+        accessor: 'bidderName',
+        title: 'Customer Name',
+        width: 200,
       },
 
-      { accessor: 'title', title: 'Lot Name', sortable: true },
       {
-        accessor: 'name',
-        title: 'Procuring Entity ',
-
-        sortable: true,
+        accessor: 'contactPerson.fullName  ',
+        title: 'Contact Full Name',
+        width: 200,
+        render: (record) => record.contactPerson.fullName,
       },
       {
-        accessor: 'type',
-
-        sortable: true,
+        accessor: 'contactPerson.email  ',
+        title: 'Contact Email',
+        width: 200,
+        render: (record) => record.contactPerson.email,
+      },
+      {
+        accessor: 'contactPerson.phoneNumber  ',
+        title: 'Contact Phone Number',
+        width: 200,
+        render: (record) => record.contactPerson.phoneNumber,
       },
 
       {
         accessor: 'status',
-        sortable: true,
         width: 150,
         render: ({ status }: any) => (
           <Badge
@@ -80,13 +74,33 @@ export default function GuaranteeForfeit() {
             <IconChevronRight size={14} />
           </ActionIcon>
         ),
+        width: 50,
       },
     ],
   };
-
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger({
+      ...request,
+      where: [
+        ...(request?.where ?? []),
+        [
+          {
+            column: 'status',
+            operator: '=',
+            value: 'REQUESTED',
+          },
+        ],
+      ],
+    });
+  };
   return (
-    <Section collapsible={false} title="Guarantee Forfeit">
-      <ExpandableTable config={config} data={data ?? []} total={data?.length} />
+    <Section collapsible={false} title="Guarantee Request">
+      <ExpandableTable
+        config={config}
+        data={list?.items ?? []}
+        total={list?.total.length ?? 0}
+        onRequestChange={onRequestChange}
+      />
     </Section>
   );
 }
