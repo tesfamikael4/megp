@@ -11,7 +11,7 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { Section, notify } from '@megp/core-fe';
+import { Section, logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -63,7 +63,6 @@ export const FormDetail = ({
     reset,
     formState: { errors },
     control,
-    setValue,
     register,
   } = useForm<ProcurementRequisition>({
     resolver: zodResolver(prSchema),
@@ -101,7 +100,9 @@ export const FormDetail = ({
         notify('Success', 'Procurement Requisition created Successfully');
         router.push(`/procurement-requisition/${res.id}`);
       } catch (err) {
-        notify('Error', 'Something went wrong');
+        err?.data?.message === 'numeric field overflow'
+          ? notify('Error', 'Insufficient Budget Amount')
+          : notify('Error', 'Something went wrong');
       }
     }
   };
@@ -127,7 +128,10 @@ export const FormDetail = ({
       await updatePr(rawData).unwrap();
       notify('Success', 'Procurement Requisition Updated Successfully');
     } catch (err) {
-      notify('Error', 'Something went wrong');
+      logger.log(err?.data?.message);
+      err?.data?.message === 'numeric field overflow'
+        ? notify('Error', 'Insufficient Budget Amount')
+        : notify('Error', 'Something went wrong');
     }
   };
 
@@ -146,28 +150,23 @@ export const FormDetail = ({
 
   useEffect(() => {
     if (mode === 'detail' && isPrSuccess) {
-      setValue('name', procurementRequisition?.name);
-      setValue('currency', procurementRequisition?.currency);
-      setValue('description', procurementRequisition?.description);
-      setValue('isMultiYear', procurementRequisition?.isMultiYear);
-      setValue(
-        'requisitionReferenceNumber',
-        procurementRequisition?.procurementReference,
-      );
-      setValue('remark', procurementRequisition?.remark);
-      setValue(
-        'totalEstimatedAmount',
-        procurementRequisition?.totalEstimatedAmount,
-      );
+      reset({
+        name: procurementRequisition?.name,
+        currency: procurementRequisition?.currency,
+        description: procurementRequisition?.description,
+        isMultiYear: procurementRequisition?.isMultiYear,
+        requisitionReferenceNumber:
+          procurementRequisition?.procurementReference,
+        remark: procurementRequisition?.remark,
+        totalEstimatedAmount: procurementRequisition?.totalEstimatedAmount,
+        procurementApplication: procurementRequisition?.procurementApplication,
+        postBudgetPlanId: procurementRequisition?.postBudgetPlanId,
+        userReference: procurementRequisition?.userReference,
+      });
 
-      setValue(
-        'procurementApplication',
-        procurementRequisition?.procurementApplication,
-      );
-      setValue('postBudgetPlanId', procurementRequisition?.postBudgetPlanId);
       setBudget(procurementRequisition?.budget);
     }
-  }, [mode, isPrSuccess, setValue, procurementRequisition]);
+  }, [mode, isPrSuccess, reset, procurementRequisition]);
 
   return (
     <Section title="Procurement Requisition Identification" collapsible={false}>
@@ -209,6 +208,7 @@ export const FormDetail = ({
               {...register('name')}
               error={errors.name?.message}
               disabled={disableFields}
+              placeholder="Procurement Requisition Name"
             />
 
             <Checkbox
@@ -223,6 +223,7 @@ export const FormDetail = ({
               {...register('totalEstimatedAmount')}
               error={errors?.totalEstimatedAmount?.message}
               withAsterisk
+              placeholder="Estimated Amount"
               type="number"
               disabled={disableFields}
             />
@@ -236,13 +237,29 @@ export const FormDetail = ({
             />
             {mode == 'detail' && (
               <TextInput
-                value={isPrSuccess && procurementRequisition?.budgetYear?.name}
+                placeholder="Budget Year"
+                value={
+                  isPrSuccess ? procurementRequisition?.budgetYear?.name : ''
+                }
                 label="Budget Year"
                 disabled
               />
             )}
           </Box>
           <Box className="w-1/2">
+            {mode == 'detail' && (
+              <TextInput
+                label={'Optional Reference Number'}
+                placeholder="Optional Reference Number"
+                {...register('userReference')}
+                disabled={disableFields}
+                error={
+                  errors?.userReference
+                    ? errors?.userReference?.message?.toString()
+                    : ''
+                }
+              />
+            )}
             <Controller
               name="procurementApplication"
               control={control}
@@ -250,6 +267,7 @@ export const FormDetail = ({
                 <Select
                   name="name"
                   label="Procured By"
+                  placeholder={'Select Procurement Application'}
                   value={value}
                   disabled={disableFields}
                   withAsterisk
@@ -273,12 +291,12 @@ export const FormDetail = ({
                       label: 'Auctioning',
                     },
                   ]}
-                  placeholder="select Procurement Application"
                 />
               )}
             />
             <Textarea
               label="Description"
+              placeholder="Procurement requisition description"
               withAsterisk
               autosize
               minRows={5}
@@ -289,6 +307,7 @@ export const FormDetail = ({
             />
             <Textarea
               label="Remark"
+              placeholder="Procurement requisition remark"
               autosize
               minRows={4}
               maxRows={4}

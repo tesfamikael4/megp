@@ -104,13 +104,13 @@ export default function PrDetailPage() {
             </Box>
             <Box
               className={
-                currentTab === 'requisitioner'
+                currentTab === 'Technical Team'
                   ? activeTabStyle
                   : inActiveTabStyle
               }
-              onClick={() => setCurrentTab('requisitioner')}
+              onClick={() => setCurrentTab('Technical Team')}
             >
-              Requisitioner
+              Technical Team
             </Box>
           </Flex>
         </Container>
@@ -139,7 +139,7 @@ export default function PrDetailPage() {
               <TimelineTab disableFields={disableFields} />
             )}
 
-            {currentTab === 'requisitioner' && (
+            {currentTab === 'Technical Team' && (
               <Requisitioner page="pr" disableFields={disableFields} />
             )}
 

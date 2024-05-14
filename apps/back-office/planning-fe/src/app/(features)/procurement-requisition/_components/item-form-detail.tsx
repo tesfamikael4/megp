@@ -105,7 +105,7 @@ export const ItemDetailForm = ({
           />
           <TextInput
             type="number"
-            leftSection={item.currency !== undefined ? item.currency : 'USD'}
+            leftSection={item.currency}
             label="Unit Price"
             {...register('unitPrice')}
             error={

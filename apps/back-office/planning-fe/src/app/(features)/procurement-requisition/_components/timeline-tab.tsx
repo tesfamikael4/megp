@@ -282,8 +282,8 @@ export default function TimelineTab({
       await createTimeline(castedData).unwrap();
       notify('Success', 'Timeline saved successfully');
     } catch (err) {
-      if (err.data.statusCode === 430) {
-        notify('Error', err.data.message);
+      if (err?.data?.statusCode === 430) {
+        notify('Error', err?.data?.message);
       } else {
         notify('Error', 'Something went wrong');
       }

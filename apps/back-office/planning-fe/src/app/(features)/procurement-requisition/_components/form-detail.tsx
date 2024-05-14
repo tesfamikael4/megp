@@ -32,6 +32,7 @@ const defaultValues = {
   description: '',
   procurementType: null,
   deliveryDate: null,
+  userReference: '',
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
@@ -45,6 +46,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         invalid_type_error: 'This field is required to be a string',
       }),
       deliveryDate: z.date(),
+      userReference: z.string().optional(),
     },
   );
 
@@ -172,6 +174,16 @@ export function FormDetail({ mode }: FormDetailProps) {
                 ]}
               />
             )}
+          />
+
+          <TextInput
+            label={'userReference'}
+            {...register('userReference')}
+            error={
+              errors?.userReference
+                ? errors?.userReference?.message?.toString()
+                : ''
+            }
           />
         </Box>
         <Box className="w-1/2">
