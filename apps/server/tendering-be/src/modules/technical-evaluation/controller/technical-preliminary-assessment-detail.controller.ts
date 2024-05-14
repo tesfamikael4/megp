@@ -12,8 +12,8 @@ const options: ExtraCrudOptions = {
   createDto: CreatePreliminaryAssessment,
 };
 
-@Controller('preliminary-compliance')
-@ApiTags('preliminary compliance Controller')
+@Controller('technical-preliminary-assessment-detail')
+@ApiTags('Technical Preliminary Assessment Detail Controller')
 export class TechnicalPreliminaryAssessmentDetailController extends ExtraCrudController<TechnicalPreliminaryAssessmentDetail>(
   options,
 ) {

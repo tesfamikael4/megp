@@ -9,4 +9,4 @@ import { BiddersComparisonController } from './controller/bidders-comparison.con
   providers: [BiddersComparisonService],
   controllers: [BiddersComparisonController],
 })
-export class EvaluationModule {}
+export class BiddersComparisonModule {}

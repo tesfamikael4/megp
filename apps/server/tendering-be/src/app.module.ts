@@ -17,6 +17,7 @@ import { TeamModule } from './modules/team/team.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
 import { EvaluationModule } from './modules/technical-evaluation/technical-evaluation.module';
+import { BiddersComparisonModule } from './modules/bidders/bidders-comparsion.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { EvaluationModule } from './modules/technical-evaluation/technical-evalu
     OpeningModule,
     TeamModule,
     EvaluationModule,
+    BiddersComparisonModule,
   ],
   providers: [
     EventEmitterModule,

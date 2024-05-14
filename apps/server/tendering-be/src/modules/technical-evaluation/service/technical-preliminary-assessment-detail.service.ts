@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { EntityManager, In, Repository, createQueryBuilder } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { REQUEST } from '@nestjs/core';
 import { TechnicalPreliminaryAssessmentDetail } from 'src/entities/technical-preliminary-assessment-detail.entity';
@@ -10,7 +10,6 @@ import {
   CollectionQuery,
   FilterOperators,
   QueryConstructor,
-  decodeCollectionQuery,
 } from 'src/shared/collection-query';
 import {
   BidOpeningChecklist,
@@ -21,9 +20,8 @@ import {
 import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { NotFoundError } from 'rxjs';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
-import { CreatePreliminaryAssessment } from '../dto/technical-preliminary-assessment.dto';
+import { TechnicalPreliminaryAssessment } from 'src/entities/technical-preliminary-assessment.entity';
 
 @Injectable()
 export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudService<TechnicalPreliminaryAssessmentDetail> {
@@ -308,6 +306,30 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
 
     if (!bidRegistrationDetail) {
       throw new Error('Bid Registration Detail not found');
+    }
+
+    const technicalPreliminaryAssessment = await manager
+      .getRepository(TechnicalPreliminaryAssessment)
+      .findOne({
+        where: {
+          bidRegistrationDetailId: bidRegistrationDetail.id,
+        },
+      });
+
+    if (!technicalPreliminaryAssessment) {
+      const item = manager
+        .getRepository(TechnicalPreliminaryAssessmentDetail)
+        .create({
+          ...itemData,
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetailId: bidRegistrationDetail.id,
+            evaluatorId: req.user.userId,
+            evaluatorName: req.user.firstName + ' ' + req.user.lastName,
+            isTeamAssessment: itemData.isTeamLead,
+            submit: false,
+          },
+        });
+      await manager.getRepository(TechnicalPreliminaryAssessment).save(item);
     }
 
     itemData.bidRegistrationDetailId = bidRegistrationDetail.id;
