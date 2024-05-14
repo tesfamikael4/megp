@@ -19,7 +19,11 @@ export const tenderingApi = createApi({
       },
     }),
     getTenderDetail: builder.query<any, any>({
-      query: (id: string) => `tenders/${id}`,
+      query: (id: string) => `opening/get-tender-detail/${id}`,
+    }),
+    getLotDetail: builder.query<any, any>({
+      query: ({ tenderId, lotId }: { tenderId: string; lotId: string }) =>
+        `opening/get-lot-detail/${tenderId}/${lotId}`,
     }),
 
     getLotsByTenderId: builder.query<any, any>({
@@ -92,6 +96,18 @@ export const tenderingApi = createApi({
       query: (teamId) => `/team-members/list/${teamId}`,
       providesTags: ['teamMembers'],
     }),
+
+    getBidderDetails: builder.query<any, any>({
+      query: ({
+        tenderId,
+        lotId,
+        bidderId,
+      }: {
+        tenderId: string;
+        lotId: string;
+        bidderId: string;
+      }) => `/opening/get-bidder-detail/${tenderId}/${lotId}/${bidderId}`,
+    }),
   }),
 });
 
@@ -99,6 +115,8 @@ export const {
   useLazyGetLotsByTenderIdQuery,
   useLazyGetTenderDetailQuery,
   useLazyGetAllbiddersByTenderIdQuery,
+  useLazyGetLotDetailQuery,
+  useLazyGetBidderDetailsQuery,
 
   useCreateTeamMutation,
   useLazyGetTeamsByTenderIdQuery,

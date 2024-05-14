@@ -4,12 +4,12 @@ import { ActionIcon, Box, Badge, LoadingOverlay } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { TenderOverView } from '../../../_components/tender-overview';
 import { useEffect } from 'react';
 import {
   useLazyGetAllbiddersByLotIdQuery,
   useLazyGetOpeningAssessmentsQuery,
 } from '@/store/api/tendering/tender-opening.api';
+import { LotOverview } from '../../../_components/lot-overview';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -59,7 +59,7 @@ export default function BidOpening() {
   const [getBidders, { data: bidders }] = useLazyGetAllbiddersByLotIdQuery();
   return (
     <>
-      <TenderOverView basePath={`/opening/team-assessment/${tenderId}`} />
+      <LotOverview basePath={`/opening/team-assessment/${tenderId}`} />
       <Section title="Bidders List" collapsible={false} className="mt-2">
         <ExpandableTable
           config={config}

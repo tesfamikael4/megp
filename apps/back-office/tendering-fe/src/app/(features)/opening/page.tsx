@@ -9,7 +9,10 @@ import { useLazyGetClosedTendersQuery } from '@/store/api/tendering/tender-openi
 
 export default function BidOpening() {
   const router = useRouter();
+  const [getClosedTenders, { data: tenders, isLoading }] =
+    useLazyGetClosedTendersQuery();
   const config: ExpandableTableConfig = {
+    isLoading: isLoading,
     isSearchable: true,
     isExpandable: true,
     expandedRowContent: (record) => <DetailTender tender={record} />,
@@ -55,7 +58,7 @@ export default function BidOpening() {
   };
 
   //rtk
-  const [getClosedTenders, { data: tenders }] = useLazyGetClosedTendersQuery();
+
   return (
     <Section title="Tenders List (Opening)" collapsible={false}>
       <ExpandableTable

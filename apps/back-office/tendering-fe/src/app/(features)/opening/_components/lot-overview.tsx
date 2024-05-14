@@ -1,25 +1,18 @@
 'use client';
-import {
-  useLazyGetBidderDetailsQuery,
-  useLazyGetLotDetailQuery,
-} from '@/store/api/tendering/tendering.api';
-import { Badge, Box, Button, Flex, LoadingOverlay, Text } from '@mantine/core';
-import { Section, notify } from '@megp/core-fe';
-import { IconChevronLeft } from '@tabler/icons-react';
+import { useLazyGetLotDetailQuery } from '@/store/api/tendering/tendering.api';
+import { Badge, Box, Flex, LoadingOverlay, Text } from '@mantine/core';
+import { Section } from '@megp/core-fe';
+import { IconChevronLeft, IconEye } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export const BidderOverView = ({ basePath }: { basePath: string }) => {
-  const { tenderId, lotId, bidderId } = useParams();
+export const LotOverview = ({ basePath }: { basePath: string }) => {
+  const { tenderId, lotId } = useParams();
   const router = useRouter();
-  const [getBidder, { data, isLoading }] = useLazyGetBidderDetailsQuery();
+  const [getLot, { data, isLoading }] = useLazyGetLotDetailQuery();
 
   useEffect(() => {
-    getBidder({
-      tenderId: tenderId as string,
-      lotId: lotId as string,
-      bidderId: bidderId as string,
-    });
+    getLot({ tenderId: tenderId as string, lotId: lotId as string });
   }, [tenderId]);
   return (
     <Box pos="relative">
@@ -38,16 +31,6 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
         }
         subTitle={data?.procurementReferenceNumber ?? ''}
         collapsible={false}
-        action={
-          <Button
-            onClick={() => {
-              notify('Success', 'completed successfully');
-              router.push(basePath);
-            }}
-          >
-            Complete
-          </Button>
-        }
       >
         <Flex gap={20}>
           <Box className="w-full">
@@ -83,9 +66,6 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
           <Box className="w-full">
             <Flex gap={5}>
               <Box>
-                <Text fw={500} size="sm">
-                  Bidder :
-                </Text>
                 <Text fw={500} size="sm">
                   Evaluation method :
                 </Text>
