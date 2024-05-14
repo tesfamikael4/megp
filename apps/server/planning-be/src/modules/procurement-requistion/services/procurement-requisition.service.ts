@@ -180,7 +180,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         procurementRequisitionTechnicalTeams: true,
       },
     });
-    if (!pr && pr.procurementRequisitionItems.length === 0) {
+    if (pr.procurementRequisitionItems.length === 0) {
       throw new HttpException('Procurement Requisition is empty', 430);
     }
     if (pr.procurementRequisitionTimelines.length === 0) {
