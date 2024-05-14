@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 import type { IHighlight } from 'react-pdf-highlighter';
 // import { useDeleteMutation } from '../(app)/_api/note.api';
 import { notify } from '@megp/core-fe';
+import { useDeleteMutation } from '@/store/api/notes/notes.api';
 
 const updateHash = (highlight: IHighlight) => {
   document.location.hash = `highlight-${highlight.id}`;
@@ -28,7 +29,7 @@ export function Sidebar({
   selectedHash: string;
 }): ReactElement {
   const { user } = useAuth();
-  // const [remove] = useDeleteMutation();
+  const [remove] = useDeleteMutation();
 
   const openDeleteModal = (commentId: string) => {
     modals.openConfirmModal({
@@ -47,7 +48,7 @@ export function Sidebar({
 
   const onDelete = async (commentId: string) => {
     try {
-      // await remove(commentId).unwrap();
+      await remove(commentId).unwrap();
       notify('Success', 'Deleted Successfully');
     } catch (err) {
       notify('Error', 'Something went wrong');
@@ -89,11 +90,11 @@ export function Sidebar({
                           </ActionIcon>
                         </Menu.Target>
                         <Menu.Dropdown>
-                          <Menu.Item
+                          {/* <Menu.Item
                             leftSection={<IconArrowForwardUp size={14} />}
                           >
                             Reply
-                          </Menu.Item>
+                          </Menu.Item> */}
                           {highlight.from.id === user?.id && (
                             <Menu.Item
                               color="red"

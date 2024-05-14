@@ -30,9 +30,12 @@ export default function RequestDetail({
 
   const pickLabel = isPicked ? 'Unpick' : 'Pick';
   const router = useRouter();
-  const response = useGetApplicationRequestDetailByIdQuery({
-    instanceId: instanceId as string,
-  });
+  const response = useGetApplicationRequestDetailByIdQuery(
+    {
+      instanceId: instanceId as string,
+    },
+    { refetchOnMountOrArgChange: true },
+  );
 
   const vendorInfo =
     requestType !== 'update'
@@ -83,7 +86,7 @@ export default function RequestDetail({
         <Skeleton height={8} mt={10} width="70%" radius="xl" />
       </Paper>
     );
-  } else if (response.error) {
+  } else if (response.error || !response.data) {
     notifications.clean();
     notifications.show({
       title: 'Error',
@@ -166,7 +169,7 @@ export default function RequestDetail({
           <Flex direction="column" className="border-l-gray-50 w-4/12 ml-3">
             <Flex direction="row" className="items-center gap-1 text-sm">
               <IconTicket size={18} />
-              <Box>{response.data.applicationNumber}</Box>
+              <Box>{response.data?.applicationNumber}</Box>
             </Flex>
             <Flex direction="row" className="items-center gap-1 text-sm">
               <IconClockHour2 size={18} />
@@ -175,7 +178,7 @@ export default function RequestDetail({
             <Flex direction="row" className="items-center gap-1 text-sm">
               <IconProgress size={18} />
               <Box>
-                {response.data.status === 'Inprogress'
+                {response.data?.status === 'Inprogress'
                   ? 'In progress'
                   : 'Completed'}
               </Box>
