@@ -61,6 +61,7 @@ import { MinIOModule } from 'src/shared/min-io';
 import { BidResponseDocumentaryEvidence } from 'src/entities/bid-response-documentary-evidence.entity';
 import { BidResponseDocumentaryEvidenceService } from './service/bid-response-documentary-evidence.service';
 import { BidResponseDocumentaryEvidenceController } from './controller/bid-response-documentary-evidence.controller';
+import { DocumentManipulatorModule } from 'src/shared/document-manipulator/document-manipulator.module';
 
 @Module({
   imports: [
@@ -86,6 +87,7 @@ import { BidResponseDocumentaryEvidenceController } from './controller/bid-respo
     AuthorizationModule,
     DocxModule,
     MinIOModule,
+    DocumentManipulatorModule,
   ],
   controllers: [
     BidBookmarkController,
