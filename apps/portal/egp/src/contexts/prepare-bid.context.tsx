@@ -5,6 +5,8 @@ import { createContext, useContext } from 'react';
 interface PrepareBidContextType {
   tenderId: string;
   password: string;
+  documentType: string;
+  envelopType: string;
 }
 export const PrepareBidContext = createContext<PrepareBidContextType | null>(
   null,

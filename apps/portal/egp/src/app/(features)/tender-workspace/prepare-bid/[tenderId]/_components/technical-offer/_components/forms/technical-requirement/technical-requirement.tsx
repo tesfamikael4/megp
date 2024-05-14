@@ -105,7 +105,7 @@ export default function TechnicalRequirement({
     trigger({
       lotId: searchParams.get('lot'),
       itemId: item.id,
-      documentType: 'RESPONSE',
+      documentType: prepareBidContext?.documentType,
       key: type,
       isTree: false,
       password: prepareBidContext?.password,

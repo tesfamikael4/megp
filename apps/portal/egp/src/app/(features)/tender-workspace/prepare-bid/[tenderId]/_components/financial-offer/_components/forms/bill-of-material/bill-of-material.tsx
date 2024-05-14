@@ -13,8 +13,8 @@ export default function BillOfMaterial({ item }: Readonly<{ item: Item }>) {
   const { data: billOfMaterial } = useGetBillOfMaterialQuery({
     lotId: searchParams.get('lot'),
     itemId: item.id,
-    documentType: 'RESPONSE',
-    key: 'BillOfMaterial',
+    documentType: prepareBidContext?.documentType,
+    key: 'billOfMaterial',
     isTree: true,
     password: prepareBidContext?.password,
   });

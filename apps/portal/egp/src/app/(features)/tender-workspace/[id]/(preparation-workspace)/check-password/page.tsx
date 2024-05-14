@@ -1,45 +1,75 @@
 'use client';
-import { PasswordInput, Text, Button, Flex, Box } from '@mantine/core';
+import {
+  PasswordInput,
+  Text,
+  Button,
+  Flex,
+  Box,
+  NativeSelect,
+} from '@mantine/core';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useCheckPasswordMutation } from '@/app/(features)/vendor/_api/bid-response.api';
 import { notify } from '@megp/core-fe';
-
-const schema = z.object({
-  password: z.string(),
-});
-
-type FormSchema = z.infer<typeof schema>;
+import { useGetTenderQuery } from '@/app/(features)/procurement-notice/_api/tender.api';
+import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 
 const CheckPassword = () => {
+  // State
+  const router = useRouter();
+  const { id } = useParams();
+  const { data: selected, isLoading: isTenderDetailLoading } =
+    useGetTenderQuery(id?.toString());
+  const prepareBidContext = useContext(PrepareBidContext);
+  const schema = z.object({
+    password: z.string().min(1, { message: 'this field is required' }),
+    documentType: z
+      .string()
+      .optional()
+      .refine(
+        (val) => {
+          if (selected?.bdsSubmission?.envelopType === 'two envelop') {
+            return val && val.length > 0; // Password is required if envelopType is 'two envelop'
+          }
+          return true; // Password is optional otherwise
+        },
+        {
+          message: 'This field is required for "two envelop" envelopType',
+        },
+      ),
+  });
+  type FormSchema = z.infer<typeof schema>;
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
   } = useForm<FormSchema>({ resolver: zodResolver(schema) });
-
-  // State
-  const router = useRouter();
-  const { id } = useParams();
   const [checkPassword, { isLoading: isChecking }] = useCheckPasswordMutation();
   // Functions
   const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
     const payload = await checkPassword({
       tenderId: id,
       password: data.password,
-      documentType: 'RESPONSE',
+      documentType: data.documentType ? data.documentType : 'RESPONSE',
     });
     if (payload['data']) {
       sessionStorage.setItem(
         'password',
-        JSON.stringify({ tenderId: id, password: data.password }),
+        JSON.stringify({
+          tenderId: id,
+          password: data.password,
+          documentType: data.documentType ? data.documentType : 'RESPONSE',
+          envelopType: selected?.bdsSubmission?.envelopType,
+        }),
       );
-      router.push(`/tender-workspace/prepare-bid/${id}?tab=bid-declaration`);
+      router.push(
+        `/tender-workspace/prepare-bid/${id}?tab=${data.documentType === 'TECHNICAL_RESPONSE' || data.documentType === 'RESPONSE' ? 'bid-declaration' : 'financial-offer'}`,
+      );
     } else {
       notify('Error', 'incorrect password please insert correct password');
     }
@@ -50,9 +80,11 @@ const CheckPassword = () => {
       sessionStorage.getItem('password') &&
       JSON.parse(sessionStorage.getItem('password') ?? '').tenderId === id
     ) {
-      router.push(`/tender-workspace/prepare-bid/${id}?tab=bid-declaration`);
+      router.push(
+        `/tender-workspace/prepare-bid/${id}?tab=${JSON.parse(sessionStorage.getItem('password') ?? '')?.documentType === 'TECHNICAL_RESPONSE' || JSON.parse(sessionStorage.getItem('password') ?? '')?.documentType === 'RESPONSE' ? 'bid-declaration' : 'financial-offer'}`,
+      );
     }
-  }, [id]);
+  }, [id, router]);
 
   return (
     <Box>
@@ -91,6 +123,24 @@ const CheckPassword = () => {
           </Text>
 
           <Flex direction="column">
+            {selected?.bdsSubmission?.envelopType === 'two envelop' && (
+              <NativeSelect
+                placeholder="Envelope Type"
+                withAsterisk
+                label="Envelope Type"
+                className="my-2"
+                data={[
+                  { value: 'TECHNICAL_RESPONSE', label: 'Technical Response' },
+                  { value: 'FINANCIAL_RESPONSE', label: 'Financial Response' },
+                ]}
+                error={
+                  errors['documentType']
+                    ? errors['documentType']?.message?.toString()
+                    : ''
+                }
+                {...register('documentType')}
+              />
+            )}
             <PasswordInput
               error={errors.password?.message}
               label="Password"

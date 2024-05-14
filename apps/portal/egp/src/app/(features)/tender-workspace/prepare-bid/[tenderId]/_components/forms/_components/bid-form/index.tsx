@@ -18,12 +18,17 @@ import { FileViewer } from '@/app/(features)/_components/file-viewer';
 import { useGetBidFormFilesQuery } from '@/app/(features)/procurement-notice/_api/invitation-document.api';
 import { logger, notify } from '@megp/core-fe';
 import { useBidFormDetailQuery } from '@/app/(features)/vendor/_api/bid-form';
-import { useContext, useState } from 'react';
-import { usePreSignedUrlMutation } from '@/app/(features)/tender-workspace/_api/bid-form';
+import { useContext, useEffect, useState } from 'react';
+import {
+  useLazyDownloadFilesQuery,
+  usePreSignedUrlMutation,
+} from '@/app/(features)/tender-workspace/_api/bid-form';
 import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 
 export default function BidForm({ bidFormId }: { bidFormId: string }) {
-  const { data: url, isLoading: isBidFormLoading } =
+  const [trigger, { data: url, isLoading: isBidFormLoading }] =
+    useLazyDownloadFilesQuery();
+  const { data: pdf, isLoading: isBidFormPdfLoading } =
     useGetBidFormFilesQuery(bidFormId);
   const searchParams = useSearchParams();
   const [file, setFile] = useState<File[]>();
@@ -44,6 +49,14 @@ export default function BidForm({ bidFormId }: { bidFormId: string }) {
       logger.log(error);
     }
   };
+  useEffect(() => {
+    trigger({
+      tenderId: tenderId,
+      bidFormId: bidFormId,
+      documentType: prepareBidContext?.documentType,
+      password: prepareBidContext?.password,
+    });
+  }, [bidFormId, prepareBidContext, tenderId, trigger]);
 
   const upload = async (files: FileList | null, description: string) => {
     if (!files) {
@@ -63,7 +76,7 @@ export default function BidForm({ bidFormId }: { bidFormId: string }) {
           },
           tenderId: tenderId,
           bidFormId: searchParams.get('form'),
-          documentType: 'RESPONSE',
+          documentType: prepareBidContext?.documentType,
           key: 'Document',
           password: prepareBidContext?.password,
         }).unwrap();
@@ -104,6 +117,12 @@ export default function BidForm({ bidFormId }: { bidFormId: string }) {
           >
             <Text> {bidForm.title} </Text>
             <Flex align={'end'} justify={{ base: 'center', sm: 'flex-end' }}>
+              {logger.log(url)}
+              {url && (
+                <a href={url.presignedUrl} download>
+                  Download template
+                </a>
+              )}
               <Group gap="md" justify="end">
                 <FileInput
                   accept=".pdf"
@@ -125,13 +144,15 @@ export default function BidForm({ bidFormId }: { bidFormId: string }) {
               </Group>
             </Flex>
           </Flex>
-          <Box className="">
-            <LoadingOverlay visible={isLoading || DetailLoading} />
-            <FileViewer
-              url={url?.presignedDownload ?? ''}
-              filename="Invitation"
-            />
-          </Box>
+          {pdf && (
+            <Box className="">
+              <LoadingOverlay visible={isLoading || isBidFormPdfLoading} />
+              <FileViewer
+                url={pdf?.presignedDownload ?? ''}
+                filename={bidForm.title}
+              />
+            </Box>
+          )}
         </main>
       )}
     </>

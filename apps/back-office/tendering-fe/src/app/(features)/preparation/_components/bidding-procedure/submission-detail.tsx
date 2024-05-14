@@ -27,7 +27,7 @@ export default function SubmissionDetail() {
       openingDate: z
         .date()
         .min(new Date(), { message: 'This field is required' }),
-      envelopType: z.enum(['single envelop', 'two envelops']),
+      envelopType: z.enum(['single envelop', 'two envelop']),
     })
     .refine(
       (data) => data.openingDate.getTime() > data.submissionDeadline.getTime(),
@@ -119,7 +119,7 @@ export default function SubmissionDetail() {
           withAsterisk
           label="Envelope Type"
           className="w-1/2"
-          data={['single envelop', 'two envelops']}
+          data={['single envelop', 'two envelop']}
           error={
             errors['envelopType']
               ? errors['envelopType']?.message?.toString()

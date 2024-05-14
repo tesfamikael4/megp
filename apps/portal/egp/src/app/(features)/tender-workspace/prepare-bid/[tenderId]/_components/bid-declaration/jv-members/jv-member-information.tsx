@@ -101,7 +101,7 @@ const JvMemberInformation = () => {
     reset({
       lotId: searchParams.get('lot'),
       key: 'jvMembersInformation',
-      documentType: 'RESPONSE',
+      documentType: prepareBidContext?.documentType,
       value: { value: jv },
       password: prepareBidContext?.password,
     });
@@ -126,7 +126,7 @@ const JvMemberInformation = () => {
     if (searchParams.get('lot') && prepareBidContext?.password) {
       triggerJv({
         lotId: searchParams.get('lot'),
-        documentType: 'RESPONSE',
+        documentType: prepareBidContext?.documentType,
         key: 'jvMembersInformation',
         password: prepareBidContext?.password,
       });
@@ -138,7 +138,7 @@ const JvMemberInformation = () => {
       setJvMembers(jvMemberVal.value);
       reset({
         lotId: searchParams.get('lot'),
-        documentType: 'RESPONSE',
+        documentType: prepareBidContext?.documentType,
         key: 'jvMembersInformation',
         password: prepareBidContext?.password,
         value: jvMemberVal,

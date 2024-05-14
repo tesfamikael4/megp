@@ -16,4 +16,10 @@ export interface Tender {
   metadata: { [key: string]: any };
 }
 
-export type Status = 'draft' | 'submitted' | 'approved';
+export enum Status {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  REVIEWED = 'REVIEWED',
+  REVISED = 'REVISED',
+  PUBLISHED = 'PUBLISHED',
+}

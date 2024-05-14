@@ -17,12 +17,15 @@ import { notify } from '@megp/core-fe';
 import { FileViewer } from '../../_components/file-viewer';
 import { TenderFormDetail } from '../../_components/tender-form';
 import { useEffect } from 'react';
+import { useGetTenderQuery } from '../_api/tender.api';
 
 export default function TenderDetailPage() {
   const [opened, { open, close }] = useDisclosure(false);
   const [bookmark, { isLoading: isBookmarking }] = useBookmarkMutation();
   const [trigger, { data: url, isLoading }] = useLazyGetFilesQuery();
   const { id } = useParams();
+  const { data: selected, isLoading: isTenderDetailLoading } =
+    useGetTenderQuery(id?.toString());
   const onBookmark = async (data) => {
     bookmark(data)
       .unwrap()
@@ -38,9 +41,11 @@ export default function TenderDetailPage() {
       trigger(id);
     }
   }, [id, trigger]);
+
   return (
     <>
       <main className="mt-4" style={{ height: 'calc(100vh - 200px)' }}>
+        <LoadingOverlay visible={isTenderDetailLoading} />
         <Box px={{ base: 'xs', sm: 'lg' }}></Box>
         <Flex
           align={'center'}
@@ -99,7 +104,10 @@ export default function TenderDetailPage() {
           </div>
           <Divider mt={'md'} mb={'md'} />
           <Box className="bg-white rounded shadow-sm ">
-            <TenderFormDetail tenderId={id.toString()} />
+            <TenderFormDetail
+              tenderId={id.toString()}
+              envelopType={selected?.bdsSubmission?.envelopType}
+            />
           </Box>
         </Modal>
       </main>

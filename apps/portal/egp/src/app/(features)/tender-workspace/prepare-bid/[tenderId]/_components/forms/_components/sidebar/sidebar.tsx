@@ -25,7 +25,7 @@ function createNavLinks(
 ) {
   return links?.map((link) => (
     <UnstyledButton
-      key={link.title}
+      key={link.id}
       className={`${styles.mainLink} ${searchParams.get('form') === link.id && styles.activeLink}`}
       onClick={() =>
         link.id &&
