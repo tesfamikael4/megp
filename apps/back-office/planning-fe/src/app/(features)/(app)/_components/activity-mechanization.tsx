@@ -64,9 +64,9 @@ const activitiesSchema: ZodType<Partial<any>> = z
       required_error: 'Funding Source  is required',
     }),
 
-    isOnline: z.coerce.boolean({
-      required_error: 'Procurement Process is required',
-    }),
+    isOnline: z
+      .union([z.literal('true'), z.literal('false')])
+      .transform((val) => val === 'true'),
     targetGroup: z.array(z.string()).default(['Not Applicable']),
     donor: z.array(z.string()).optional(),
   })
@@ -221,7 +221,6 @@ export const ActivityMechanization = ({
   const onError = (err) => {
     logger.log({ err });
   };
-  logger.log('mide', mode);
 
   const onSubmit = (data) => {
     const castedData = {

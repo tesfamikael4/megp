@@ -140,7 +140,7 @@ export const Requisitioner = ({
           procurementRequisitionId: id.toString(),
           officers: castePrData,
         }).unwrap();
-        notify('Success', 'Requisitioner Assigned Successfully');
+        notify('Success', 'Technical Team Assigned Successfully');
       }
     } catch (err) {
       logger.log({ err });
@@ -190,7 +190,7 @@ export const Requisitioner = ({
   }, [requisitioners]);
   return (
     <Section
-      title="Requisitioners"
+      title={page == 'pr' ? 'Technical Team' : 'Requisitioners'}
       collapsible={false}
       action={
         <Group justify="end">
@@ -225,7 +225,11 @@ export const Requisitioner = ({
         <Modal
           opened={opened}
           onClose={close}
-          title={<Box fw={'bold'}>Add Requisitioner</Box>}
+          title={
+            <Box fw={'bold'}>
+              {page == 'pr' ? 'Add Technical Team' : 'Add Requisitioner'}
+            </Box>
+          }
           size="lg"
         >
           <ExpandableTable

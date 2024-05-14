@@ -164,6 +164,7 @@ export const BudgetSelector = ({
         disabled={disableFields}
         error={error}
         withAsterisk
+        placeholder="Budget Line"
       />
 
       <Modal

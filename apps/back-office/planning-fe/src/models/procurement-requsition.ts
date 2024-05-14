@@ -22,4 +22,5 @@ export interface ProcurementRequisition {
   isMultiYear: boolean;
   remark: string;
   isFundAvaliable: boolean;
+  userReference?: string;
 }

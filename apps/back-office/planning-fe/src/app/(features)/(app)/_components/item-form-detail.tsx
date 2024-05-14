@@ -68,7 +68,6 @@ export const ItemDetailForm = ({
       ...item,
     });
 
-    //get Unit of measurement
     getUom(item?.measurement);
   }, [item]);
   return (

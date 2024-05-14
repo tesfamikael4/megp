@@ -43,13 +43,13 @@ export default function ProcurementRequisition() {
       },
       { accessor: 'status', title: 'Status', width: 100, sortable: true },
       {
-        accessor: 'calculatedAmount',
+        accessor: 'totalEstimatedAmount',
         title: 'Total Amount',
         textAlign: 'right',
         sortable: true,
         render: (activity) => (
           <>
-            {parseInt(activity.calculatedAmount).toLocaleString('en-US', {
+            {parseInt(activity.totalEstimatedAmount).toLocaleString('en-US', {
               style: 'currency',
               currency: activity.currency,
               minimumFractionDigits: 2,

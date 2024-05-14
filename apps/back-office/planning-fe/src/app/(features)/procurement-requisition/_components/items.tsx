@@ -30,6 +30,7 @@ import ItemSelector from '@/app/(features)/procurement-requisition/_components/i
 import DataImport from './data-import';
 import { ItemDetailForm } from './item-form-detail';
 import { CollectionQuery } from '@megp/entity';
+import { useReadQuery } from '../_api/procurement-requisition.api';
 
 export function Items({
   activityId,
@@ -43,6 +44,7 @@ export function Items({
     openedImportModal,
     { close: closeImportModal, open: openImportModal },
   ] = useDisclosure(false);
+  const { id } = useParams();
   const [data, setData] = useState<any[]>([]);
   const [itemLoading, setItemLoading] = useState<boolean>(true);
   const [total, setTotal] = useState<number>(0);
@@ -56,9 +58,9 @@ export function Items({
   const [listById, { data: itemsList, isSuccess, isLoading }] =
     useLazyGetPrItemsQuery();
 
-  const [remove] = useDeleteMutation();
+  const { data: pr } = useReadQuery(id.toString());
 
-  const { id } = useParams();
+  const [remove] = useDeleteMutation();
 
   const config = {
     isExpandable: true,
@@ -83,7 +85,7 @@ export function Items({
             <p>
               {parseInt(record?.unitPrice)?.toLocaleString('en-US', {
                 style: 'currency',
-                currency: record?.currency ? record?.currency : 'USD',
+                currency: record?.currency,
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
                 currencyDisplay: 'code',
@@ -171,7 +173,7 @@ export function Items({
         width: 50,
         render: (record) => (
           <>
-            {record.annualProcurementPlanBudgetLineId === null && (
+            {
               <ActionIcon
                 color="red"
                 size="sm"
@@ -195,7 +197,7 @@ export function Items({
               >
                 <IconTrash size={14} />
               </ActionIcon>
-            )}
+            }
           </>
         ),
       },
@@ -224,7 +226,7 @@ export function Items({
     const castedData = items.map((item, index) => ({
       id: index,
       unitPrice: 0,
-      currency: itemsList?.items[0]?.currency,
+      currency: itemsList?.items[0]?.currency ?? pr.currency,
       quantity: 0,
       uoM: item.uOMId,
       description: item.description,
