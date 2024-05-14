@@ -297,7 +297,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     formattedData.beneficialOwnershipShareholders = [];
     for (const share of data?.beneficialOwnershipShareholders) {
       const formatted = this.commonService.reduceAttributes(share);
-      formatted.authorityToAppointGov = share.authorityToAppointGov ? 'Yes' : 'No';
+      formatted.authorityToAppointGov = share.authorityToAppointGov
+        ? 'Yes'
+        : 'No';
       formattedData.beneficialOwnershipShareholders.push(formatted);
     }
     //new model changes
@@ -310,11 +312,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const formated = this.commonService.reduceAttributes(pt);
       formattedData.preferential.push(formated);
     }
-    formattedData.address = this.commonService.orderAddress(data.address)
-    formattedData.basic = this.commonService.orderVendorBasicInformation(data.basic);
+    formattedData.address = this.commonService.orderAddress(data.address);
+    formattedData.basic = this.commonService.orderVendorBasicInformation(
+      data.basic,
+    );
     return formattedData;
   }
-
 
   async generatePDFForReview(data: any, user: any, title: string) {
     try {
@@ -501,59 +504,51 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             );
           }
           for (const row of data.areasOfBusinessInterest) {
-            if (
-              data.basic.countryOfRegistration == 'MW' ||
-              data.basic.countryOfRegistration == 'Malawi'
-            ) {
-              if (
-                row.category === BusinessCategories.WORKS &&
-                ncicData == null
-              ) {
-                ncicData = NcicMockData.find(
-                  (ncic) => ncic.tin == isrVendor.tinNumber,
-                );
-                // ncicData = await this.fetchFromExternalApi(
-                //   `ncic-vendors/${isrVendor.tinNumber}`,
-                // );
-                if (!ncicData) {
-                  throw new BadRequestException('not_registered_on_ncic');
-                  // isrVendor.initial.status = VendorStatusEnum.SAVE;
-                  // isrVendor.initial.level = VendorStatusEnum.PPDA;
-                  // await this.isrVendorsRepository.save(isrVendor);
-                } else {
-                  isrVendor.basic.district = ncicData?.district;
-                  isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
-                  isrVendor.address.postalCode = ncicData?.postalAddress;
-                  isrVendor.address.primaryEmail = ncicData?.email;
-                  isrVendor.basic.nameOfFirm = ncicData?.nameOfFirm;
-                  isrVendor.basic.nationalOfFirm = ncicData?.nationalOfFirm;
-                  isrVendor.basic.typeOfRegistration =
-                    ncicData?.typeOfRegistration;
-                  isrVendor.basic.branch = ncicData?.branch;
-                  isrVendor.basic.category = ncicData?.category;
-                  isrVendor.address.region = ncicData?.region;
-                  // isrVendor.basic.businessType = ncicData?.typeOfRegistration
-                  await this.isrVendorsRepository.save(isrVendor);
-                }
-              } else if (fppaData == null) {
-                fppaData = await this.fetchFromExternalApi(
-                  `fppa-vendors/${isrVendor.tinNumber}`,
-                );
-                //temporary commented
-                if (fppaData) {
-                  isrVendor.basic.businessType = fppaData.businessType;
-                  isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
-                  await this.isrVendorsRepository.save(isrVendor);
-                  continue;
-                }
-              } else if (fppaData !== null) {
+            if (row.category === BusinessCategories.WORKS && ncicData == null) {
+              ncicData = NcicMockData.find(
+                (ncic) => ncic.tin == isrVendor.tinNumber,
+              );
+              // ncicData = await this.fetchFromExternalApi(
+              //   `ncic-vendors/${isrVendor.tinNumber}`,
+              // );
+              if (!ncicData) {
+                throw new BadRequestException('not_registered_on_ncic');
+                // isrVendor.initial.status = VendorStatusEnum.SAVE;
+                // isrVendor.initial.level = VendorStatusEnum.PPDA;
+                // await this.isrVendorsRepository.save(isrVendor);
+              } else {
+                isrVendor.basic.district = ncicData?.district;
+                isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
+                isrVendor.address.postalCode = ncicData?.postalAddress;
+                isrVendor.address.primaryEmail = ncicData?.email;
+                isrVendor.basic.nameOfFirm = ncicData?.nameOfFirm;
+                isrVendor.basic.nationalOfFirm = ncicData?.nationalOfFirm;
+                isrVendor.basic.typeOfRegistration =
+                  ncicData?.typeOfRegistration;
+                isrVendor.basic.branch = ncicData?.branch;
+                isrVendor.basic.category = ncicData?.category;
+                isrVendor.address.region = ncicData?.region;
+                // isrVendor.basic.businessType = ncicData?.typeOfRegistration
+                await this.isrVendorsRepository.save(isrVendor);
+              }
+            } else if (fppaData == null) {
+              fppaData = await this.fetchFromExternalApi(
+                `fppa-vendors/${isrVendor.tinNumber}`,
+              );
+
+              if (fppaData) {
+                isrVendor.basic.businessType = fppaData.businessType;
+                isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
+                await this.isrVendorsRepository.save(isrVendor);
                 continue;
               }
-            } else {
-              isrVendor.initial.status = VendorStatusEnum.SAVE;
-              isrVendor.initial.level = VendorStatusEnum.PPDA;
-              await this.isrVendorsRepository.save(isrVendor);
+            } else if (fppaData !== null) {
+              continue;
             }
+
+            isrVendor.initial.status = VendorStatusEnum.SAVE;
+            isrVendor.initial.level = VendorStatusEnum.PPDA;
+            await this.isrVendorsRepository.save(isrVendor);
           }
 
           ///check previosly created invoice
@@ -1031,8 +1026,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     vendorEntity.tinNumber = isrVendorData.basic?.tinNumber;
     vendorEntity.userId = isrVendorData.userId;
     vendorEntity.isrVendorId = isrVendorData.id;
-    vendorEntity.registrationIssuedDate = isrVendorData.basic?.registrationIssuedDate !== "" ? isrVendorData.basic?.registrationIssuedDate : null;
-    vendorEntity.businessRegistrationNumber = this.commonService.generateRandomString(10);// isrVendorData.basic?.registrationNumber !== "" ? isrVendorData.basic?.registrationNumber : null;
+    vendorEntity.registrationIssuedDate =
+      isrVendorData.basic?.registrationIssuedDate !== ''
+        ? isrVendorData.basic?.registrationIssuedDate
+        : null;
+    vendorEntity.businessRegistrationNumber =
+      this.commonService.generateRandomString(10); // isrVendorData.basic?.registrationNumber !== "" ? isrVendorData.basic?.registrationNumber : null;
     vendorEntity.lineOfBusiness = isrVendorData.lineOfBusiness;
     const accounts = isrVendorData.bankAccountDetails.map((item) => {
       if (item.bankId == '') {
@@ -1241,12 +1240,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         throw new BadRequestException(
           'no registration number issued date found',
         );
-      let isPPDARegistered;
-      [, vendorInitiationDto, isPPDARegistered] =
+      [, vendorInitiationDto] =
         await this.verifyAndGetExternalApiData(vendorInitiationDto);
-
-      if (isPPDARegistered) initial.isPPDARegistered = true;
     }
+
+    const isPPDARegistered = await this.verifyPPDARegistration(
+      vendorInitiationDto.tinNumber,
+    );
+
+    initial.isPPDARegistered = isPPDARegistered;
 
     const vendor = await this.isrVendorsRepository.findOne({
       where: {
@@ -2043,8 +2045,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         instances: true,
       },
     });
-    if (!result)
-      throw new NotFoundException("item_not_found");
+    if (!result) throw new NotFoundException('item_not_found');
     const vendor = {
       ...result,
       businessAreas: result.businessAreas.map((ba) => {
@@ -2598,7 +2599,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       return await Promise.all([
         this.verifyMRA(itemData.tinNumber, itemData.tinIssuedDate),
         this.getAndFormatMBRSData(itemData),
-        this.verifyPPDARegistration(itemData.tinNumber),
       ]);
     } catch (error) {
       throw error;
