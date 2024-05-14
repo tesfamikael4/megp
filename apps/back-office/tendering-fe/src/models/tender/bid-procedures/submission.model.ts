@@ -4,5 +4,9 @@ export interface ITenderSubmission {
   submissionDeadline: Date;
   openingDate: Date;
   invitationDate?: Date;
-  envelopType: 'single envelop' | 'two envelops';
+  envelopType: 'single envelop' | 'two envelop';
+}
+export enum EnvelopType {
+  SINGLEENVELOP = 'single envelop',
+  TWOENVELOP = 'two envelop',
 }

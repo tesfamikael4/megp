@@ -13,7 +13,7 @@ import {
   useRouter,
   useSearchParams,
 } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import BidDeclarationPage from './_components/bid-declaration';
 import TechnicalOfferPage from './_components/technical-offer';
 import FinancialOfferPage from './_components/financial-offer';
@@ -22,6 +22,7 @@ import {
   useGetAllLotsQuery,
   useTenderDetailQuery,
 } from '../../../_api/registration.api';
+import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 
 export default function TenderDetail() {
   const router = useRouter();
@@ -37,10 +38,11 @@ export default function TenderDetail() {
   const { data: lots, isLoading: lotLoading } = useGetAllLotsQuery(
     tenderId?.toString(),
   );
+  const prepareBidContext = useContext(PrepareBidContext);
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
+      value ? params.set(name, value) : params.delete(name);
       return params.toString();
     },
     [searchParams],
@@ -57,7 +59,7 @@ export default function TenderDetail() {
               className="my-auto"
               onClick={() => {
                 sessionStorage.removeItem('password');
-                router.push(`/vendor/my-tenders/${tenderId}/check-password`);
+                router.push(`/tender-workspace/${tenderId}/check-password`);
               }}
             >
               Release Key
@@ -66,70 +68,94 @@ export default function TenderDetail() {
           <div className="flex">
             <div>
               <div className="flex space-x-4">
-                <Text
-                  className={
-                    searchParams.get('tab') === 'bid-declaration'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-20 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-20 font-medium text-center'
-                  }
-                  onClick={() => {
-                    router.push(
-                      pathname +
-                        '?' +
-                        createQueryString('tab', 'bid-declaration' as string),
-                    );
-                  }}
-                >
-                  Bid Declaration
-                </Text>
-                <Text
-                  className={
-                    searchParams.get('tab') === 'technical-offer'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-20 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-20 font-medium text-center'
-                  }
-                  onClick={() => {
-                    router.push(
-                      pathname +
-                        '?' +
-                        createQueryString('tab', 'technical-offer' as string),
-                    );
-                  }}
-                >
-                  Technical Compliance Sheet
-                </Text>
-                <Text
-                  className={
-                    searchParams.get('tab') === 'financial-offer'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-20 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-20 font-medium text-center'
-                  }
-                  onClick={() => {
-                    router.push(
-                      pathname +
-                        '?' +
-                        createQueryString('tab', 'financial-offer' as string),
-                    );
-                  }}
-                >
-                  Price Schedule
-                </Text>
-                <Text
-                  className={
-                    searchParams.get('tab') === 'forms'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-20 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-20 font-medium text-center'
-                  }
-                  onClick={() => {
-                    router.push(
-                      pathname +
-                        '?' +
-                        createQueryString('tab', 'forms' as string),
-                    );
-                  }}
-                >
-                  Forms
-                </Text>
+                {(prepareBidContext?.envelopType === 'single envelop' ||
+                  (prepareBidContext?.envelopType === 'two envelop' &&
+                    prepareBidContext.documentType ===
+                      'TECHNICAL_RESPONSE')) && (
+                  <>
+                    <Text
+                      className={
+                        searchParams.get('tab') === 'bid-declaration'
+                          ? 'border-l bg-[#F5FBFE] pointer text-gray-700 border-t border-r border-[#bbe5fb] rounded-tl-md rounded-tr-md py-2 px-20 font-medium text-center'
+                          : ' pointer text-gray-700 py-2 px-20 font-medium text-center'
+                      }
+                      onClick={() => {
+                        router.push(
+                          pathname +
+                            '?' +
+                            createQueryString(
+                              'tab',
+                              'bid-declaration' as string,
+                            ),
+                        );
+                      }}
+                    >
+                      Bid Declaration
+                    </Text>
+
+                    <Text
+                      className={
+                        searchParams.get('tab') === 'technical-offer'
+                          ? 'border-l bg-[#F5FBFE] pointer text-gray-700 border-t border-r border-[#bbe5fb] rounded-tl-md rounded-tr-md py-2 px-20 font-medium text-center'
+                          : ' pointer text-gray-700 py-2 px-20 font-medium text-center'
+                      }
+                      onClick={() => {
+                        router.push(
+                          pathname +
+                            '?' +
+                            createQueryString(
+                              'tab',
+                              'technical-offer' as string,
+                            ),
+                        );
+                      }}
+                    >
+                      Technical Compliance Sheet
+                    </Text>
+                  </>
+                )}
+                {(prepareBidContext?.envelopType === 'single envelop' ||
+                  (prepareBidContext?.envelopType === 'two envelop' &&
+                    prepareBidContext.documentType ===
+                      'FINANCIAL_RESPONSE')) && (
+                  <Text
+                    className={
+                      searchParams.get('tab') === 'financial-offer'
+                        ? 'border-l bg-[#F5FBFE] pointer text-gray-700 border-t border-r border-[#bbe5fb] rounded-tl-md rounded-tr-md py-2 px-20 font-medium text-center'
+                        : ' pointer text-gray-700 py-2 px-20 font-medium text-center'
+                    }
+                    onClick={() => {
+                      router.push(
+                        pathname +
+                          '?' +
+                          createQueryString('tab', 'financial-offer' as string),
+                      );
+                    }}
+                  >
+                    Price Schedule
+                  </Text>
+                )}
+                {(prepareBidContext?.envelopType === 'single envelop' ||
+                  (prepareBidContext?.envelopType === 'two envelop' &&
+                    prepareBidContext.documentType ===
+                      'TECHNICAL_RESPONSE')) && (
+                  <Text
+                    className={
+                      searchParams.get('tab') === 'forms'
+                        ? 'border-l bg-[#F5FBFE] pointer text-gray-700 border-t border-r border-[#bbe5fb] rounded-tl-md rounded-tr-md py-2 px-20 font-medium text-center'
+                        : ' pointer text-gray-700 py-2 px-20 font-medium text-center'
+                    }
+                    onClick={() => {
+                      router.push(
+                        pathname +
+                          '?' +
+                          createQueryString('tab', 'forms' as string),
+                      );
+                    }}
+                  >
+                    Forms
+                  </Text>
+                )}
               </div>
             </div>
           </div>

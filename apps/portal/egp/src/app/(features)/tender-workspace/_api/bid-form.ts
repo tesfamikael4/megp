@@ -1,3 +1,4 @@
+import { GetBidResponse } from '@/models/tender/bid-response/item-bid-response';
 import { baseQuery } from '@/store/base-query';
 import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
@@ -55,8 +56,10 @@ export const getBidFormApi = createApi({
       providesTags: ['bid-form'],
     }),
     downloadFiles: builder.query<any, any>({
-      query: (id: string) => ({
-        url: `bid-form/download/${id}`,
+      query: (data: GetBidResponse) => ({
+        url: `bid-document-responses/download-response`,
+        method: 'POST',
+        body: data,
       }),
       providesTags: ['bid-form'],
     }),

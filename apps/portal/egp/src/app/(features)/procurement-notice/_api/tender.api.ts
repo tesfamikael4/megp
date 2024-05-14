@@ -22,7 +22,16 @@ export const getTendersApi = createApi({
       },
       providesTags: ['active-tender'],
     }),
+    getTender: builder.query<any, any>({
+      query: (id: string) => {
+        return {
+          url: `/tenders/${id}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['active-tender'],
+    }),
   }),
 });
 
-export const { useGetTendersQuery } = getTendersApi;
+export const { useGetTendersQuery, useGetTenderQuery } = getTendersApi;

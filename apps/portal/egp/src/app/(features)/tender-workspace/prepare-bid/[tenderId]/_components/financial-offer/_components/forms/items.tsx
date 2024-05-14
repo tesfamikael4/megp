@@ -37,7 +37,7 @@ export default function ItemList() {
     saveChanges({
       lotId: searchParams.get('lot'),
       itemId: data.itemId,
-      documentType: 'RESPONSE',
+      documentType: prepareBidContext?.documentType,
       values: toApi,
       password: prepareBidContext?.password,
     })
@@ -114,7 +114,7 @@ export default function ItemList() {
         width: 150,
       },
       {
-        accessor: 'Rate',
+        accessor: 'rate',
         title: 'Rate',
         width: 150,
       },
@@ -160,25 +160,35 @@ export default function ItemList() {
   };
 
   const onRequestChange = async (request: CollectionQuery) => {
-    trigger({
-      data: {
-        lotId: searchParams.get('lot'),
-        documentType: 'RESPONSE',
-        password: prepareBidContext?.password,
-      },
-      type: 'financial',
-    });
+    if (searchParams.get('lot')) {
+      trigger({
+        data: {
+          lotId: searchParams.get('lot'),
+          documentType: prepareBidContext?.documentType,
+          password: prepareBidContext?.password,
+        },
+        type: 'financial',
+      });
+    }
   };
   useEffect(() => {
-    trigger({
-      data: {
-        lotId: searchParams.get('lot'),
-        documentType: 'RESPONSE',
-        password: prepareBidContext?.password,
-      },
-      type: 'financial',
-    });
-  }, [prepareBidContext?.password, searchParams, trigger]);
+    logger.log(searchParams.get('lot'));
+    if (searchParams.get('lot')) {
+      trigger({
+        data: {
+          lotId: searchParams.get('lot'),
+          documentType: prepareBidContext?.documentType,
+          password: prepareBidContext?.password,
+        },
+        type: 'financial',
+      });
+    }
+  }, [
+    prepareBidContext?.documentType,
+    prepareBidContext?.password,
+    searchParams,
+    trigger,
+  ]);
 
   return (
     <Section

@@ -10,6 +10,8 @@ function PrepareBid({ children }: { children: React.ReactNode }) {
   const [password, setPassword] = useState<{
     password: string;
     tenderId: string;
+    documentType: string;
+    envelopType: string;
   } | null>(null);
   useEffect(() => {
     if (window && sessionStorage.getItem('password')) {

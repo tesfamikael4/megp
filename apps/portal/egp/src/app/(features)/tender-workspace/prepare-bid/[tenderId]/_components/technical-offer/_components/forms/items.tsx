@@ -37,7 +37,7 @@ export default function ItemList() {
     saveChanges({
       lotId: searchParams.get('lot'),
       itemId: data.itemId,
-      documentType: 'RESPONSE',
+      documentType: prepareBidContext?.documentType,
       values: toApi,
       password: prepareBidContext?.password,
     })
@@ -168,7 +168,7 @@ export default function ItemList() {
     trigger({
       data: {
         lotId: searchParams.get('lot'),
-        documentType: 'RESPONSE',
+        documentType: prepareBidContext?.documentType,
         password: prepareBidContext?.password,
       },
       type: 'technical',
@@ -178,12 +178,17 @@ export default function ItemList() {
     trigger({
       data: {
         lotId: searchParams.get('lot'),
-        documentType: 'RESPONSE',
+        documentType: prepareBidContext?.documentType,
         password: prepareBidContext?.password,
       },
       type: 'technical',
     });
-  }, [searchParams, trigger]);
+  }, [
+    prepareBidContext?.documentType,
+    prepareBidContext?.password,
+    searchParams,
+    trigger,
+  ]);
   return (
     <Section
       title="Technical Offer"

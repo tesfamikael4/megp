@@ -68,7 +68,7 @@ const TechnicalBidSubmissionSheet = () => {
       trigger(tenderId.toString());
       triggerGetSubmissionSheet({
         tenderId: tenderId,
-        documentType: 'RESPONSE',
+        documentType: prepareBidContext?.documentType,
         key: 'technicalBidSubmissionSheet',
         password: prepareBidContext?.password,
       });
@@ -78,7 +78,7 @@ const TechnicalBidSubmissionSheet = () => {
     saveChanges({
       tenderId: tenderId,
       key: 'technicalBidSubmissionSheet',
-      documentType: 'RESPONSE',
+      documentType: prepareBidContext?.documentType,
       value: {
         value: {
           submitted: false,

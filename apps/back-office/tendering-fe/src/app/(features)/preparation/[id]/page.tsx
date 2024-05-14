@@ -31,7 +31,7 @@ import BidProEvaluation from '../_components/bidding-procedure/bid-pro-evaluatio
 import BidProAwards from '../_components/bidding-procedure/bid-pro-awards';
 import TechnicalTeams from '../_components/tender/technical-teams';
 import ProcurementMechanismForm from '../_components/tender/procurement-mechanism-form';
-import { useReadQuery, useUpdateMutation } from '../_api/tender/tender.api';
+import { useLazyReadQuery } from '../_api/tender/tender.api';
 import { useLazyListByIdQuery } from '../_api/tender/lot.api';
 import TenderConfigSpd from '../_components/tender/tender-config-spd';
 import PreliminaryExamination from '../_components/lot/evaluation-criteria/preliminary-examination/preliminary-examination';
@@ -55,7 +55,8 @@ import {
   useApproveTenderMutation,
   useGenerateBidMutation,
 } from '../_api/tender/approve-tender.api';
-
+import { Status } from '@/models/tender/tender.model';
+import Document from '../_components/tender/document';
 export default function TenderDetailPage() {
   const router = useRouter();
   const pathname = usePathname();
@@ -65,8 +66,9 @@ export default function TenderDetailPage() {
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
   const [value, setValue] = useState<any>(null);
+  const [currentStatus, setCurrentStatus] = useState<any>(null);
   const { id } = useParams();
-  const { data: selected, isLoading } = useReadQuery(id?.toString());
+  const [triggerDetail, { data: selected, isLoading }] = useLazyReadQuery();
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const [update, { isLoading: isUpdating }] = useApproveTenderMutation();
   const [generate, { isLoading: isGenerating }] = useGenerateBidMutation();
@@ -98,23 +100,30 @@ export default function TenderDetailPage() {
     logger.log(file);
     const formData = new FormData();
     formData.append('file', file?.[type] ?? '');
-    try {
-      uploadBdsFile({ id: id, type: type, file: formData }).unwrap();
-      notify('Success', 'Bid data sheet uploaded successfully');
-    } catch (err) {
-      notify('Error', 'Error in uploading bid data sheet');
-    }
+    uploadBdsFile({ id: id, type: type, file: formData })
+      .unwrap()
+      .then(() => {
+        notify('Success', 'Bid data sheet uploaded successfully');
+      })
+      .catch((error) => {
+        notify('Error', error?.data?.message);
+      });
   }
   async function onUploadScc(type: string) {
     logger.log(file);
     const formData = new FormData();
     formData.append('file', file?.[type] ?? '');
-    try {
-      uploadSccFile({ id: id, type: type, file: formData });
-      notify('Success', 'Bid data sheet uploaded successfully');
-    } catch (err) {
-      notify('Error', 'Error in uploading bid data sheet');
-    }
+    uploadSccFile({ id: id, type: type, file: formData })
+      .unwrap()
+      .then(() => {
+        notify(
+          'Success',
+          'Special condition of contract uploaded successfully',
+        );
+      })
+      .catch((error) => {
+        notify('Error', error?.data?.message);
+      });
   }
   function onFileChange(file: File | null, key: string) {
     const value = { [key]: file };
@@ -122,16 +131,43 @@ export default function TenderDetailPage() {
   }
   const onUpdate = (data) => {
     logger.log(data);
-    update({ ...data, id: id?.toString() });
-    notify('Success', 'Tendering Updated successfully');
+    update({ ...data, id: id?.toString() })
+      .unwrap()
+      .then(() => {
+        triggerDetail(id.toString());
+        notify('Success', 'Tendering Updated successfully');
+      })
+      .catch((error) => {
+        notify('Error', error?.data?.message);
+      });
   };
   const onGenerate = () => {
-    generate({ id: id?.toString() });
-    notify('Success', 'Tender document generated successfully');
+    generate({ id: id?.toString() })
+      .unwrap()
+      .then(() => {
+        notify('Success', 'Tender document generated successfully');
+        triggerDetail(id.toString());
+      })
+      .catch((error) => {
+        if (error?.data?.message === 'bds_not_found') {
+          notify(
+            'Error',
+            `You didn't attach bid data sheet to the document please try again`,
+          );
+        }
+        if (error?.data?.message === 'scc_not_found') {
+          notify(
+            'Error',
+            `You didn't attach special condition of contract to the document please try again`,
+          );
+        }
+      });
   };
   useEffect(() => {
-    logger.log('downloadBds', downloadBds);
-  }, [downloadBds]);
+    if (id) {
+      triggerDetail(id?.toString());
+    }
+  }, [id, triggerDetail]);
   return (
     <>
       <LoadingOverlay visible={isLoading || isBdsLoading || isSccLoading} />
@@ -150,22 +186,53 @@ export default function TenderDetailPage() {
               </Flex>
             </Tooltip>
             <Box className="flex space-x-4">
-              <Button
-                variant="filled"
-                className="my-auto"
-                loading={isUpdating}
-                onClick={() => {
-                  onUpdate({
-                    status:
-                      selected.status === 'SUBMITTED'
-                        ? 'PUBLISHED'
-                        : 'SUBMITTED',
-                  });
-                }}
-              >
-                {selected?.status === 'DRAFT' ? 'Submit to review' : 'Publish'}
-              </Button>
               {selected?.status === 'SUBMITTED' && (
+                <Button
+                  variant="filled"
+                  className="my-auto"
+                  loading={isUpdating && currentStatus === 'draft'}
+                  onClick={() => {
+                    setCurrentStatus('draft');
+                    onUpdate({
+                      status: 'DRAFT',
+                    });
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'configuration'),
+                    );
+                  }}
+                >
+                  Back to Draft
+                </Button>
+              )}
+              {selected?.status !== 'PUBLISHED' &&
+                ((selected?.tenderDocument &&
+                  selected?.status === 'SUBMITTED') ||
+                  selected?.status === 'DRAFT') && (
+                  <Button
+                    variant="filled"
+                    className="my-auto"
+                    loading={isUpdating && currentStatus === 'submitted'}
+                    onClick={() => {
+                      setCurrentStatus('submitted');
+                      onUpdate({
+                        status:
+                          selected.status === 'SUBMITTED'
+                            ? 'PUBLISHED'
+                            : 'SUBMITTED',
+                      });
+                      router.push(
+                        pathname + '?' + createQueryString('tab', 'document'),
+                      );
+                    }}
+                  >
+                    {selected?.status === 'DRAFT'
+                      ? 'Submit to review'
+                      : 'Publish'}
+                  </Button>
+                )}
+              {selected?.status !== 'DRAFT' && (
                 <Button
                   variant="filled"
                   className="my-auto"
@@ -174,200 +241,220 @@ export default function TenderDetailPage() {
                     onGenerate();
                   }}
                 >
-                  Generate
+                  {selected?.tenderDocument ? 'Regenerate' : 'Generate'}
                 </Button>
               )}
             </Box>
           </div>
           <div className="flex">
             <div>
-              <div className="flex space-x-4">
-                <Text
-                  className={
-                    searchParams.get('tab') === 'configuration'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
-                  }
-                  onClick={() => {
-                    router.push(
-                      pathname +
-                        '?' +
-                        createQueryString('tab', 'configuration'),
-                    );
-                  }}
-                >
-                  Configuration
-                </Text>
-                <Text
-                  className={
-                    searchParams.get('tab') === 'item'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
-                  }
-                  onClick={() => {
-                    router.push(
-                      pathname + '?' + createQueryString('tab', 'item'),
-                    );
-                  }}
-                >
-                  Items
-                </Text>
-                <Text
-                  className={
-                    searchParams.get('tab') === 'bidding-procedure'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
-                  }
-                  onClick={() => {
-                    router.push(
-                      pathname +
-                        '?' +
-                        createQueryString('tab', 'bidding-procedure'),
-                    );
-                  }}
-                >
-                  Bidding procedure
-                </Text>
-                <Text
-                  className={
-                    searchParams.get('tab') === 'criteria'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
-                  }
-                  onClick={() => {
-                    router.push(
-                      pathname + '?' + createQueryString('tab', 'criteria'),
-                    );
-                  }}
-                >
-                  Evaluation criteria
-                </Text>
-                <Text
-                  className={
-                    searchParams.get('tab') === 'condition'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
-                  }
-                  onClick={() => {
-                    router.push(
-                      pathname + '?' + createQueryString('tab', 'condition'),
-                    );
-                  }}
-                >
-                  Contract conditions
-                </Text>
-                <Text
-                  className={
-                    searchParams.get('tab') === 'invitation'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
-                  }
-                  onClick={() => {
-                    router.push(
-                      pathname + '?' + createQueryString('tab', 'invitation'),
-                    );
-                  }}
-                >
-                  Invitation
-                </Text>
-              </div>
+              {selected?.status === Status.DRAFT ? (
+                <div className="flex space-x-4">
+                  <Text
+                    className={
+                      searchParams.get('tab') === 'configuration'
+                        ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                        : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                    }
+                    onClick={() => {
+                      router.push(
+                        pathname +
+                          '?' +
+                          createQueryString('tab', 'configuration'),
+                      );
+                    }}
+                  >
+                    Configuration
+                  </Text>
+                  <Text
+                    className={
+                      searchParams.get('tab') === 'item'
+                        ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                        : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                    }
+                    onClick={() => {
+                      router.push(
+                        pathname + '?' + createQueryString('tab', 'item'),
+                      );
+                    }}
+                  >
+                    Items
+                  </Text>
+                  <Text
+                    className={
+                      searchParams.get('tab') === 'bidding-procedure'
+                        ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                        : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                    }
+                    onClick={() => {
+                      router.push(
+                        pathname +
+                          '?' +
+                          createQueryString('tab', 'bidding-procedure'),
+                      );
+                    }}
+                  >
+                    Bidding procedure
+                  </Text>
+                  <Text
+                    className={
+                      searchParams.get('tab') === 'criteria'
+                        ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                        : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                    }
+                    onClick={() => {
+                      router.push(
+                        pathname + '?' + createQueryString('tab', 'criteria'),
+                      );
+                    }}
+                  >
+                    Evaluation criteria
+                  </Text>
+                  <Text
+                    className={
+                      searchParams.get('tab') === 'condition'
+                        ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                        : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                    }
+                    onClick={() => {
+                      router.push(
+                        pathname + '?' + createQueryString('tab', 'condition'),
+                      );
+                    }}
+                  >
+                    Contract conditions
+                  </Text>
+                  <Text
+                    className={
+                      searchParams.get('tab') === 'invitation'
+                        ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                        : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                    }
+                    onClick={() => {
+                      router.push(
+                        pathname + '?' + createQueryString('tab', 'invitation'),
+                      );
+                    }}
+                  >
+                    Invitation
+                  </Text>
+                </div>
+              ) : (
+                <div className="flex space-x-4">
+                  <Text
+                    className={
+                      searchParams.get('tab') === 'document'
+                        ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                        : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                    }
+                    onClick={() => {
+                      router.push(
+                        pathname + '?' + createQueryString('tab', 'document'),
+                      );
+                    }}
+                  >
+                    Review
+                  </Text>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
       <Box className="container mx-auto my-4">
-        {searchParams.get('tab') !== 'configuration' && (
-          <>
-            <Box className="w-full flex flex-row justify-between items-center container my-2">
-              <p className="text-lg font-semibold">
-                <Select
-                  placeholder="Pick Lot"
-                  data={
-                    data
-                      ? data.items.map((single) => {
-                          const value = { ...single };
-                          value['label'] = value.name;
-                          value['value'] = value.id;
-                          return value;
-                        })
-                      : []
-                  }
-                  onChange={setValue}
-                />
-              </p>
-              <div className="flex justify-end items-center gap-3">
-                <LoadingOverlay visible={isFetching} />
-                {value && (
-                  <Button variant="filled" className="my-auto" onClick={open}>
-                    Split
-                  </Button>
-                )}
-                {searchParams.get('tab') === 'bidding-procedure' && (
-                  <>
-                    {downloadBds && (
-                      <a href={downloadBds.presignedUrl} download>
-                        Download template
-                      </a>
-                    )}
-                    <FileButton
-                      onChange={(event) => {
-                        onFileChange(event, 'bds');
-                      }}
-                      accept=".docx"
-                    >
-                      {(props) => (
-                        <Button {...props} variant="subtle">
-                          Select
-                        </Button>
-                      )}
-                    </FileButton>
-                    <Button
-                      variant="filled"
-                      loading={isBdsUploading}
-                      onClick={() => {
-                        onUploadBds('bds');
-                      }}
-                    >
-                      Upload
+        {searchParams.get('tab') !== 'configuration' &&
+          selected?.status === Status.DRAFT && (
+            <>
+              <Box className="w-full flex flex-row justify-between items-center container my-2">
+                <p className="text-lg font-semibold">
+                  <Select
+                    placeholder="Pick Lot"
+                    data={
+                      data
+                        ? data.items.map((single) => {
+                            const value = { ...single };
+                            value['label'] = value.name;
+                            value['value'] = value.id;
+                            return value;
+                          })
+                        : []
+                    }
+                    onChange={setValue}
+                  />
+                </p>
+                <div className="flex justify-end items-center gap-3">
+                  <LoadingOverlay visible={isFetching} />
+                  {value && (
+                    <Button variant="filled" className="my-auto" onClick={open}>
+                      Split
                     </Button>
-                  </>
-                )}
-                {searchParams.get('tab') === 'condition' && (
-                  <>
-                    {downloadScc && (
-                      <a href={downloadScc.presignedUrl} download>
-                        Download template
-                      </a>
-                    )}
-                    <FileButton
-                      onChange={(event) => {
-                        onFileChange(event, 'bds');
-                      }}
-                      accept=".docx"
-                    >
-                      {(props) => (
-                        <Button {...props} variant="subtle">
-                          Select
-                        </Button>
+                  )}
+                  {searchParams.get('tab') === 'bidding-procedure' && (
+                    <>
+                      {downloadBds && (
+                        <a href={downloadBds.presignedUrl} download>
+                          Download template
+                        </a>
                       )}
-                    </FileButton>
-                    <Button
-                      variant="filled"
-                      loading={isSccUploading}
-                      onClick={() => {
-                        onUploadScc('bds');
-                      }}
-                    >
-                      Upload
-                    </Button>
-                  </>
-                )}
+                      <FileButton
+                        onChange={(event) => {
+                          onFileChange(event, 'bds');
+                        }}
+                        accept=".docx"
+                      >
+                        {(props) => (
+                          <Button {...props} variant="subtle">
+                            Select
+                          </Button>
+                        )}
+                      </FileButton>
+                      <Button
+                        variant="filled"
+                        loading={isBdsUploading}
+                        onClick={() => {
+                          onUploadBds('bds');
+                        }}
+                      >
+                        Upload
+                      </Button>
+                    </>
+                  )}
+                  {searchParams.get('tab') === 'condition' && (
+                    <>
+                      {downloadScc && (
+                        <a href={downloadScc.presignedUrl} download>
+                          Download template
+                        </a>
+                      )}
+                      <FileButton
+                        onChange={(event) => {
+                          onFileChange(event, 'bds');
+                        }}
+                        accept=".docx"
+                      >
+                        {(props) => (
+                          <Button {...props} variant="subtle">
+                            Select
+                          </Button>
+                        )}
+                      </FileButton>
+                      <Button
+                        variant="filled"
+                        loading={isSccUploading}
+                        onClick={() => {
+                          onUploadScc('bds');
+                        }}
+                      >
+                        Upload
+                      </Button>
+                    </>
+                  )}
 
-                <Divider mb={'md'} />
-              </div>
-            </Box>
-          </>
-        )}
+                  <Divider mb={'md'} />
+                </div>
+              </Box>
+            </>
+          )}
         <Container fluid>
           {searchParams.get('tab') === 'configuration' && (
             <>
@@ -517,6 +604,34 @@ export default function TenderDetailPage() {
           )}
 
           {searchParams.get('tab') === 'condition' && <ContractConditionTab />}
+          {searchParams.get('tab') === 'document' && (
+            <>
+              {selected?.tenderDocument ? (
+                <Document />
+              ) : (
+                <>
+                  <div className="w-full bg-white flex flex-col h-96 justify-center items-center">
+                    <IconFolderOpen className="w-32 h-16 stroke-1" />
+                    <p className="text-base font-semibold">
+                      no document generated
+                    </p>
+                    <p>
+                      <Button
+                        variant="filled"
+                        className="my-auto"
+                        loading={isGenerating}
+                        onClick={() => {
+                          onGenerate();
+                        }}
+                      >
+                        {'Generate'}
+                      </Button>
+                    </p>
+                  </div>
+                </>
+              )}
+            </>
+          )}
           {searchParams.get('tab') === 'invitation' && (
             <>
               <div className="text-lg font-medium mt-4 pt-4 pb-4">

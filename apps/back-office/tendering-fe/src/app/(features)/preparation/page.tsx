@@ -8,6 +8,7 @@ import React from 'react';
 import { ExpandableTable } from '../_components/expandable-table';
 import { useLazyListQuery } from './_api/tender/tender.api';
 import TenderDetail from './_components/tender/tender-detail';
+import { Status } from '@/models/tender/tender.model';
 
 export default function Preparation() {
   const [trigger, { data, isFetching }] = useLazyListQuery();
@@ -32,7 +33,9 @@ export default function Preparation() {
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/preparation/${tender.id}?tab=configuration`);
+              router.push(
+                `/preparation/${tender.id}?tab=${tender.status === Status.DRAFT ? 'configuration' : 'document'}`,
+              );
             }}
           >
             <IconChevronRight />
