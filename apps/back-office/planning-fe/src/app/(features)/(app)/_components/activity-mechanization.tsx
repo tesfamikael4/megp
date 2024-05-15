@@ -65,8 +65,8 @@ const activitiesSchema: ZodType<Partial<any>> = z
     }),
 
     isOnline: z
-      .union([z.literal('true'), z.literal('false')])
-      .transform((val) => val === 'true'),
+      .union([z.boolean(), z.literal('true'), z.literal('false')])
+      .transform((value) => value === true || value === 'true'),
     targetGroup: z.array(z.string()).default(['Not Applicable']),
     donor: z.array(z.string()).optional(),
   })
