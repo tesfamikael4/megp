@@ -419,6 +419,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
           app: true,
         },
         budgetYear: true,
+        reasons: true,
       },
     });
     const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'pr');
