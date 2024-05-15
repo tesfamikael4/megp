@@ -417,7 +417,7 @@ export const ActivityMechanization = ({
         targetGroup: items.targetGroup,
       });
       setMode('detail');
-
+      setValue('donor', items.donor);
       setContract(items.contract);
     }
   }, [
