@@ -130,6 +130,9 @@ export class ProcurementRequisitionItemService extends ExtraCrudService<Procurem
     const item = await this.repositoryProcurementRequisitionItem.findOneOrFail({
       where: { id },
     });
+    if (!item) {
+      throw new NotFoundException(`Item not found`);
+    }
 
     await this.repositoryProcurementRequisitionItem.softDelete(id);
     await this.recalculateCalculatedAmount(item.procurementRequisitionId);
