@@ -7,14 +7,16 @@ import {
   NativeSelect,
   Stack,
   TextInput,
+  Textarea,
 } from '@mantine/core';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import { useCreateMutation } from '../_api/spd-documentary-evidence.api';
 import { useParams } from 'next/navigation';
+import { useLazyListByIdQuery } from '../_api/bid-form.api';
 
 interface SpdDocumentaryModalProps {
   returnFunction: () => void;
@@ -78,19 +80,6 @@ export default function SpdDocumentaryModal({
         .string()
         .min(1, { message: 'Evidence Title is required' }),
       evidenceType: z.string().min(1, { message: 'Evidence Type is required' }),
-      spdDocumentaryEvidenceId: z.string(),
-      checkOnFirstCompliance: z.boolean({
-        required_error: 'Check On First Compliance is required',
-      }),
-      checkOnFirstOpening: z.boolean({
-        required_error: 'Check On First Opening is required',
-      }),
-      checkOnSecondCompliance: z.boolean({
-        required_error: 'Check On second Compliance is required',
-      }),
-      checkOnSecondOpening: z.boolean({
-        required_error: 'Check On second Opening is required',
-      }),
       isRequired: z.boolean(),
       requiredTo: z.string().min(1, { message: 'Required To is required' }),
       sectionLink: z.string().min(1, { message: 'Section Link is required' }),
@@ -104,6 +93,8 @@ export default function SpdDocumentaryModal({
   } = useForm({
     resolver: zodResolver(DocumentaryFormSchema),
   });
+  const [trigger, { data: bidFormLinks, isLoading: isBidFormLoading }] =
+    useLazyListByIdQuery();
 
   const [create, { isLoading }] = useCreateMutation();
 
@@ -120,15 +111,27 @@ export default function SpdDocumentaryModal({
     }
   };
 
+  useEffect(() => {
+    logger.log(errors);
+  }, [errors]);
+
+  useEffect(() => {
+    if (id) {
+      trigger({
+        id: id.toString(),
+        collectionQuery: { where: [] },
+      });
+    }
+  }, [id, trigger]);
   return (
     <Stack>
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading || isBidFormLoading} />
       <Flex direction={'column'} gap={'lg'}>
         <Flex gap={'md'}>
-          <TextInput
+          <Textarea
             withAsterisk
             label="Evidence Title"
-            className="w-1/2"
+            className="w-full"
             error={
               errors?.evidenceTitle
                 ? errors?.evidenceTitle?.message?.toString()
@@ -136,6 +139,9 @@ export default function SpdDocumentaryModal({
             }
             {...register('evidenceTitle')}
           />
+        </Flex>
+
+        <Flex gap={'md'}>
           <NativeSelect
             placeholder="Evidence Type"
             withAsterisk
@@ -149,50 +155,24 @@ export default function SpdDocumentaryModal({
             }
             {...register('evidenceType')}
           />
-        </Flex>
-        <Flex gap={'md'}>
-          <Checkbox
-            label="Check On First Compliance"
-            className="w-1/2"
-            {...register('checkOnFirstCompliance')}
-          />
-          <Checkbox
-            label="Check On First Opening"
-            className="w-1/2"
-            {...register('checkOnFirstOpening')}
-          />
-        </Flex>
-        <Flex gap={'md'}>
-          <Checkbox
-            label="Check On Second Compliance"
-            className="w-1/2"
-            {...register('checkOnSecondCompliance')}
-          />
-          <Checkbox
-            label="Check On Second Opening"
-            className="w-1/2"
-            {...register('checkOnSecondOpening')}
-          />
-        </Flex>
-        <Flex gap={'md'}>
-          <TextInput
-            label="Spd Documentary Evidence Id"
-            className="w-1/2"
-            error={
-              errors?.spdDocumentaryEvidenceId
-                ? errors?.spdDocumentaryEvidenceId?.message?.toString()
-                : ''
-            }
-            {...register('spdDocumentaryEvidenceId')}
-          />
-          <TextInput
+
+          <NativeSelect
+            placeholder="Bid Form Link"
             withAsterisk
-            label="Section Link"
+            label="Form Link"
             className="w-1/2"
             error={
               errors?.sectionLink
                 ? errors?.sectionLink?.message?.toString()
                 : ''
+            }
+            data={
+              bidFormLinks?.items
+                ? bidFormLinks?.items.map((link) => ({
+                    label: link.title,
+                    value: link.code,
+                  }))
+                : []
             }
             {...register('sectionLink')}
           />

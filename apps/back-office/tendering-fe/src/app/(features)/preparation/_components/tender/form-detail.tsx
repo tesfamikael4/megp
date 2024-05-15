@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TextInput, LoadingOverlay } from '@mantine/core';
+import { TextInput, LoadingOverlay, Flex, Table } from '@mantine/core';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
@@ -59,7 +59,6 @@ export default function FormDetail() {
         error={errors?.name ? errors?.name?.message?.toString() : ''}
         {...register('name')}
       />
-
       <EntityButton
         mode={selectedTender ? 'detail' : 'new'}
         data={{ selectedTender }}
@@ -68,6 +67,62 @@ export default function FormDetail() {
         isSaving={false}
         isUpdating={isUpdating}
       />
+      <Flex direction={'column'} gap={'sm'} mt={'md'}>
+        <div>
+          <Table highlightOnHover withTableBorder withColumnBorders>
+            <Table.Tbody>
+              <Table.Tr>
+                <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                  Procurment Category
+                </Table.Td>
+                <Table.Td>{selectedTender.procurementCategory}</Table.Td>
+              </Table.Tr>
+
+              <Table.Tr>
+                <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                  Procurement Reference
+                </Table.Td>
+                <Table.Td>{selectedTender.procurementReferenceNumber}</Table.Td>
+              </Table.Tr>
+
+              <Table.Tr>
+                <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                  Market Estimate
+                </Table.Td>
+                <Table.Td>{selectedTender.marketEstimate}</Table.Td>
+              </Table.Tr>
+
+              <Table.Tr>
+                <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                  Budget Code
+                </Table.Td>
+                <Table.Td>{selectedTender.budgetCode}</Table.Td>
+              </Table.Tr>
+
+              <Table.Tr>
+                <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                  Budget Amount Currency
+                </Table.Td>
+                <Table.Td>{selectedTender.budgetAmountCurrency}</Table.Td>
+              </Table.Tr>
+
+              <Table.Tr>
+                <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                  Organization Name
+                </Table.Td>
+                <Table.Td>{selectedTender.organizationName}</Table.Td>
+              </Table.Tr>
+
+              <Table.Tr>
+                <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                  Status
+                </Table.Td>
+                <Table.Td>{selectedTender.status}</Table.Td>
+              </Table.Tr>
+            </Table.Tbody>
+          </Table>
+        </div>
+      </Flex>
     </div>
   );
 }
