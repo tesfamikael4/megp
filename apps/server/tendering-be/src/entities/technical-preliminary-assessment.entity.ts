@@ -36,7 +36,7 @@ export class TechnicalPreliminaryAssessment extends Audit {
       technicalPreliminaryAssessmentDetail.technicalPreliminaryAssessment,
   )
   @JoinColumn()
-  technicalPreliminaryAssessmentDetail: TechnicalPreliminaryAssessmentDetail;
+  technicalPreliminaryAssessmentDetail: TechnicalPreliminaryAssessmentDetail[];
 
   @Column('uuid')
   evaluatorId: string;

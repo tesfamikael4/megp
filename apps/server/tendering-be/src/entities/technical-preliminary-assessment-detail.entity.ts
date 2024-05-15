@@ -13,7 +13,6 @@ import { SpdPreliminaryEvaluation } from './spd-preliminary-evaluation.entity';
 import { TechnicalPreliminaryAssessment } from './technical-preliminary-assessment.entity';
 import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 
-@Unique(['technicalPreliminaryAssessmentId', 'spdPreliminaryEvaluationId'])
 @Entity({ name: 'technical_preliminary_assessment_details' })
 export class TechnicalPreliminaryAssessmentDetail extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -26,6 +25,7 @@ export class TechnicalPreliminaryAssessmentDetail extends Audit {
     () => TechnicalPreliminaryAssessment,
     (technicalPreliminaryAssessment) =>
       technicalPreliminaryAssessment.technicalPreliminaryAssessmentDetail,
+    { cascade: true },
   )
   @JoinColumn({ name: 'technicalPreliminaryAssessmentId' })
   technicalPreliminaryAssessment: TechnicalPreliminaryAssessment;
