@@ -1,13 +1,17 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ProcurementRequisitionItem,
   ProcurementRequisition,
 } from 'src/entities';
-import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProcurementRequisitionItemService extends ExtraCrudService<ProcurementRequisitionItem> {
@@ -25,95 +29,135 @@ export class ProcurementRequisitionItemService extends ExtraCrudService<Procurem
   }
 
   async bulkCreate(itemData: any, user?: any): Promise<any> {
-    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    if (user?.organization) {
-      itemData.map((item: any) => {
-        item.organizationId = user.organization.id;
-      });
+    itemData.map((item) => {
+      item.organizationId = user.organization.id;
+      item.organizationName = user.organization.name;
+    });
+
+    const pr = await this.repositoryProcurementRequisition.findOne({
+      where: { id: itemData[0].procurementRequisitionId },
+    });
+
+    if (!pr) {
+      throw new NotFoundException(`Procurement Requisition not found`);
     }
-    const result = await entityManager
-      .getRepository(ProcurementRequisitionItem)
-      .save(this.repositoryProcurementRequisitionItem.create(itemData as any));
-    await this.updatePR(itemData, 'add');
-    return result;
-  }
 
-  async create(itemData: any, req?: any): Promise<any> {
-    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bulkCalculated = itemData.reduce(
+      (acc, item) => acc + item.unitPrice * item.quantity,
+      0,
+    );
 
-    const result = await entityManager
-      .getRepository(ProcurementRequisitionItem)
-      .insert(this.repositoryProcurementRequisitionItem.create(itemData));
-    await this.updatePR(itemData, 'add');
+    const psedoCalculated = Number(pr.calculatedAmount) + bulkCalculated;
 
-    return result;
-  }
-  async update(itemData: any, req?: any): Promise<ProcurementRequisitionItem> {
-    const result = await super.update(itemData, req);
-    const balancedItem =
-      result.unitPrice * result.quantity -
-      itemData.unitPrice * itemData.quantity;
-    await this.updatePR(result, 'update', balancedItem);
-
-    return result;
-  }
-
-  async softDelete(id: string): Promise<void> {
-    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-
-    const item = await super.findOne(id);
-    const deleted = await entityManager
-      .getRepository(ProcurementRequisitionItem)
-      .softDelete(id);
-
-    if (deleted.affected > 0) {
-      await this.updatePR(item, 'remove');
-    }
-  }
-  async updatePR(
-    itemData: any,
-    type: 'add' | 'remove' | 'update',
-    balancedItem = null,
-  ): Promise<void> {
-    const procurementRequisitionId = itemData[0].procurementRequisitionId;
-    let temp = 0;
-    if (Array.isArray(itemData)) {
-      temp = itemData.reduce(
-        (acc, item) => acc + item.unitPrice * item.quantity,
-        0,
+    if (Number(pr.totalEstimatedAmount) < Number(psedoCalculated)) {
+      await this.recalculateCalculatedAmount(
+        itemData[0].procurementRequisitionId,
       );
-    } else {
-      temp = itemData.unitPrice * itemData.quantity;
-    }
-    const procurementRequisition =
-      await this.repositoryProcurementRequisition.findOne({
-        where: {
-          id: procurementRequisitionId,
-        },
-      });
-    if (type === 'add') {
-      procurementRequisition.calculatedAmount =
-        Number(procurementRequisition.calculatedAmount) + temp;
-    } else if (type === 'remove') {
-      procurementRequisition.calculatedAmount =
-        Number(procurementRequisition.calculatedAmount) - temp;
-    } else if (type === 'update') {
-      procurementRequisition.calculatedAmount = Number(
-        procurementRequisition.calculatedAmount + balancedItem,
-      );
-    }
-    if (
-      Number(procurementRequisition.totalEstimatedAmount) <
-      Number(procurementRequisition.calculatedAmount)
-    ) {
+
       throw new HttpException(
         'Total Estimated Amount cannot be less than Calculated Amount',
         430,
       );
     }
+
+    const items = this.repositoryProcurementRequisitionItem.create(itemData);
+    await this.repositoryProcurementRequisitionItem.save(items);
+    await this.recalculateCalculatedAmount(
+      itemData[0].procurementRequisitionId,
+    );
+
+    return items;
+  }
+
+  async create(itemData: any, req?: any): Promise<any> {
+    if (req?.user?.organization) {
+      itemData.organizationId = req.user.organization.id;
+      itemData.organizationName = req.user.organization.name;
+    }
+
+    const pr = await this.repositoryProcurementRequisition.findOne({
+      where: { id: itemData.procurementRequisitionId },
+    });
+
+    const psedoCalculated =
+      Number(pr.calculatedAmount) + itemData.unitPrice * itemData.quantity;
+
+    if (Number(pr.totalEstimatedAmount) < Number(psedoCalculated)) {
+      await this.recalculateCalculatedAmount(itemData.procurementRequisitionId);
+
+      throw new HttpException(
+        'Total Estimated Amount cannot be less than Calculated Amount',
+        430,
+      );
+    }
+
+    const item = this.repositoryProcurementRequisitionItem.create(itemData);
+    await this.repositoryProcurementRequisitionItem.save(item);
+    await this.recalculateCalculatedAmount(itemData.procurementRequisitionId);
+
+    return item;
+  }
+
+  async update(id: string, itemData: any): Promise<ProcurementRequisitionItem> {
+    const item = await this.repositoryProcurementRequisitionItem.findOneOrFail({
+      where: { id },
+    });
+
+    const pr = await this.repositoryProcurementRequisition.findOneOrFail({
+      where: { id: item.procurementRequisitionId },
+    });
+
+    const oldAmount = item.unitPrice * item.quantity;
+    const newAmount = itemData.unitPrice * itemData.quantity;
+    const psedoCalculated = Number(pr.calculatedAmount) - oldAmount + newAmount;
+
+    if (Number(pr.totalEstimatedAmount) < Number(psedoCalculated)) {
+      await this.recalculateCalculatedAmount(item.procurementRequisitionId);
+
+      throw new HttpException(
+        'Total Estimated Amount cannot be less than Calculated Amount',
+        430,
+      );
+    }
+
+    await this.repositoryProcurementRequisitionItem.update(id, itemData);
+    await this.recalculateCalculatedAmount(item.procurementRequisitionId);
+
+    return this.repositoryProcurementRequisitionItem.findOne({ where: { id } });
+  }
+
+  async softDelete(id: string): Promise<void> {
+    const item = await this.repositoryProcurementRequisitionItem.findOneOrFail({
+      where: { id },
+    });
+
+    await this.repositoryProcurementRequisitionItem.softDelete(id);
+    await this.recalculateCalculatedAmount(item.procurementRequisitionId);
+  }
+
+  async recalculateCalculatedAmount(procurementRequisitionId: string) {
+    const procurementRequisition =
+      await this.repositoryProcurementRequisition.findOne({
+        where: {
+          id: procurementRequisitionId,
+        },
+        relations: ['procurementRequisitionItems'],
+      });
+
+    if (!procurementRequisition)
+      throw new NotFoundException(`ProcurementRequisition not found`);
+
+    const totalCalculatedAmount =
+      procurementRequisition.procurementRequisitionItems.reduce(
+        (acc, cur) => acc + cur.unitPrice * cur.quantity,
+        0,
+      );
+
     await this.repositoryProcurementRequisition.update(
       procurementRequisition.id,
-      procurementRequisition,
+      {
+        calculatedAmount: totalCalculatedAmount,
+      },
     );
   }
 }

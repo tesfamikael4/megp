@@ -181,7 +181,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       },
     });
     if (pr.procurementRequisitionItems.length === 0) {
-      throw new HttpException('Procurement Requisition is empty', 430);
+      throw new HttpException('Procurement Requisition Items is empty', 430);
     }
     if (pr.procurementRequisitionTimelines.length === 0) {
       throw new HttpException('Procurement Requisition Timeline is empty', 430);
