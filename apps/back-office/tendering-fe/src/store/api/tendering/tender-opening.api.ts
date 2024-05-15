@@ -113,6 +113,18 @@ export const tenderOpeningApi = createApi({
       },
       invalidatesTags: ['opening'],
     }),
+    getMembersAssesmentResult: builder.query<any, any>({
+      query: ({
+        lotId,
+        bidderId,
+        checklistId,
+      }: {
+        lotId: string;
+        bidderId: string;
+        checklistId: string;
+      }) =>
+        `/bid-opening-checklist/members-report/${lotId}/${bidderId}/${checklistId}`,
+    }),
   }),
 });
 
@@ -127,4 +139,5 @@ export const {
   useLazyGetClosedTendersQuery,
   useLazyGetOpeningByTenderIdQuery,
   useLazyGetOpeningAssessmentsQuery,
+  useLazyGetMembersAssesmentResultQuery,
 } = tenderOpeningApi;

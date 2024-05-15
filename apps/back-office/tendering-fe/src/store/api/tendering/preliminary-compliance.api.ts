@@ -77,6 +77,18 @@ export const preliminaryComplianceApi = createApi({
       },
       invalidatesTags: ['evaluation'],
     }),
+    getMembersAssesmentResult: builder.query<any, any>({
+      query: ({
+        lotId,
+        bidderId,
+        checklistId,
+      }: {
+        lotId: string;
+        bidderId: string;
+        checklistId: string;
+      }) =>
+        `/technical-preliminary-assessment-detail/members-report/${lotId}/${bidderId}/${checklistId}`,
+    }),
   }),
 });
 
@@ -87,4 +99,5 @@ export const {
   useCheckBidAttributeMutation,
   useGetLotStatusQuery,
   useSubmitEvaluationMutation,
+  useLazyGetMembersAssesmentResultQuery,
 } = preliminaryComplianceApi;
