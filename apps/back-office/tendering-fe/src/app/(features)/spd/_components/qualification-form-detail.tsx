@@ -21,6 +21,7 @@ import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
 import { SpdQualification } from '@/models/spd/qualification.model';
+import { useLazyListByIdQuery } from '../_api/bid-form.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -67,6 +68,9 @@ export function SpdQualificationFormDetail({
     isSuccess: selectedSuccess,
     isLoading,
   } = useReadQuery(adId?.toString());
+
+  const [trigger, { data: bidFormLinks, isLoading: isBidFormLoading }] =
+    useLazyListByIdQuery();
 
   const onCreate = async (data) => {
     logger.log('here');
@@ -121,9 +125,18 @@ export function SpdQualificationFormDetail({
     }
   }, [mode, reset, selected, selectedSuccess]);
 
+  useEffect(() => {
+    if (id) {
+      trigger({
+        id: id.toString(),
+        collectionQuery: { where: [] },
+      });
+    }
+  }, [id, trigger]);
+
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading || isBidFormLoading} />
       <TextInput
         label="Factor"
         withAsterisk
@@ -162,11 +175,19 @@ export function SpdQualificationFormDetail({
         {...register('itbDescription')}
       />
 
-      <TextInput
+      <NativeSelect
         placeholder="Bid Form Link"
         withAsterisk
-        label="formLink"
+        label="Form Link"
         error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
+        data={
+          bidFormLinks?.items
+            ? bidFormLinks?.items.map((link) => ({
+                label: link.title,
+                value: link.code,
+              }))
+            : []
+        }
         {...register('formLink')}
       />
 

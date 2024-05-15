@@ -1,10 +1,6 @@
 export interface SpdDocumentaryEvidence {
   id: string;
   spdId: string;
-  checkOnFirstCompliance: boolean;
-  checkOnFirstOpening: boolean;
-  checkOnSecondCompliance: boolean;
-  checkOnSecondOpening: boolean;
   evidenceTitle: string;
   evidenceType: string;
   isRequired: boolean;
