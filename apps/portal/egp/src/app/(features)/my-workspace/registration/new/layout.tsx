@@ -69,8 +69,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <PrivilegeContextProvider data={vendorInfo.data} {...vendorInfo}>
       <Flex className={styles.main} gap={16}>
-        <Flex className="w-full flex-col border border-l-0 bg-white">
-          <Flex className="w-full border-b p-3 flex justify-between">
+        <Flex className="w-[70%] flex-col border border-l-0 bg-white">
+          <Flex className="border-b p-3 flex justify-between">
             <PageTitle />
             {pathname !== '/my-workspace/registration/new/basic' &&
               vendorInfo?.data?.status !== 'Adjustment' && (

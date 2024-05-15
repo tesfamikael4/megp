@@ -127,17 +127,32 @@ export function renderTable(
   const headers = Object.keys(data[0]);
 
   return (
-    <Box className="overflow-x-auto">
-      <Table className={`w-full ${tableClasses}`}>
-        <Table.Thead className="w-fit">
+    <Table.ScrollContainer
+      minWidth={400}
+      styles={{
+        scrollContainer: {
+          maxWidth: `100%`,
+        },
+      }}
+    >
+      <Table className={`${tableClasses}`} striped highlightOnHover>
+        <Table.Thead>
           <Table.Tr>
             {(filterColumns[selected] || headers).map((header) => {
               if (header === 'id' || header === 'serviceId') return null;
               return (
-                <Table.Th key={header.name ?? header} className="w-fit">
-                  {addSpacesToCamelCase(
-                    header.displayName ?? header.name ?? header,
-                  )}
+                <Table.Th key={header.name ?? header}>
+                  <Text
+                    truncate
+                    w={150}
+                    title={addSpacesToCamelCase(
+                      header.displayName ?? header.name ?? header,
+                    )}
+                  >
+                    {addSpacesToCamelCase(
+                      header.displayName ?? header.name ?? header,
+                    )}
+                  </Text>
                 </Table.Th>
               );
             })}
@@ -154,6 +169,6 @@ export function renderTable(
           ))}
         </Table.Tbody>
       </Table>
-    </Box>
+    </Table.ScrollContainer>
   );
 }

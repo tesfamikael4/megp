@@ -123,42 +123,6 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                     </Grid.Col>
                     <Grid.Col span={6}>
                       <Controller
-                        name={`areasOfBusinessInterest.${index}.activationDate`}
-                        control={control}
-                        render={({ field }) => (
-                          <DatePickerInput
-                            // name={`areasOfBusinessInterest.${index}.activationDate`}
-                            valueFormat="YYYY/MM/DD"
-                            required
-                            label="Activation Date"
-                            placeholder="Activation Date"
-                            leftSection={
-                              <IconCalendar size={'1.2rem'} stroke={1.5} />
-                            }
-                            maxDate={dayjs(new Date()).toDate()}
-                            {...register(
-                              `areasOfBusinessInterest.${index}.activationDate`,
-                            )}
-                            onChange={async (value: any) =>
-                              value &&
-                              field.onChange(
-                                dayjs(value)
-                                  .format('YYYY/MM/DD')
-                                  .toString()
-                                  .replace(/\//g, '-'),
-                              )
-                            }
-                            error={
-                              register(
-                                `areasOfBusinessInterest.${index}.activationDate`,
-                              ).error
-                            }
-                          />
-                        )}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <Controller
                         name={`areasOfBusinessInterest.${index}.expiryDate`}
                         control={control}
                         render={({ field }) => (

@@ -116,7 +116,7 @@ export interface AreasOfBusinessInterestType {
   priceRange: string;
   userType: string; // User type (Contractor, Consultant)
   classification: string; // Classification of Contractor or consultants
-  activationDate: string; // Activation date
+  // activationDate: string; // Activation date
   expiryDate: string; // Expiry date
   ncicRegistrationNumber: string;
   ncicRegistrationDate: string;
@@ -129,8 +129,8 @@ export interface PreferentialTreatment {
   serviceId: string;
   certiNumber: string;
   certificateUrl: any;
-  certificateIssuedDate: string;
-  certificateValidityPeriod: string;
+  // certificateIssuedDate: string;
+  // certificateValidityPeriod: string;
 }
 
 export interface AddFormRequestData extends FormData {

@@ -86,8 +86,6 @@ export const PreferentialTreatment: React.FC<Props> = ({
               type: category !== 'msme' ? category : '',
               certiNumber: '',
               certificateUrl: '',
-              certificateIssuedDate: '',
-              certificateValidityPeriod: '',
               serviceId:
                 category !== 'msme' ? findServiceIdByType(data, category) : '',
             });

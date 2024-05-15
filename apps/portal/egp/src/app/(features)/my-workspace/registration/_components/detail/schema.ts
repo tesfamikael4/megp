@@ -141,7 +141,9 @@ export const formDataSchema = z
         .string()
         .min(2, { message: 'Name must be at least 2 characters long' })
         .max(100, { message: 'Name cannot exceed 100 characters' }),
-      businessType: z.string().optional(),
+      businessType: z
+        .string()
+        .min(1, { message: 'Form of Business is required' }),
       countryOfRegistration: z.string(),
       tinNumber: z.string(),
     }),

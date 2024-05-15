@@ -81,7 +81,7 @@ export const areasOfBusinessInterestSchema = z
       priceRange: z.string().min(1, 'Price range must be selected'),
       userType: string(),
       classification: z.string(),
-      activationDate: z.string(),
+      // activationDate: z.string(),
       expiryDate: z.string(),
       ncicRegistrationNumber: z.string().optional(),
       ncicRegistrationDate: z.string().optional(),
@@ -105,6 +105,7 @@ export const formDataSchema = z.object({
     }),
   ppdaRegistrationNumber: z.string().optional(),
   ppdaRegistrationDate: z.string().optional(),
+  expiryDate: z.string().optional(),
 });
 
 export const AreasOfBusinessInterestForm = ({
@@ -293,6 +294,27 @@ export const AreasOfBusinessInterestForm = ({
                               .replace(/\//g, '-'),
                           ))
                         }
+                      />
+                      <DatePickerInput
+                        // name={`expiryDate`}
+                        valueFormat="YYYY/MM/DD"
+                        label="Expiry Date"
+                        placeholder="Expiry Date"
+                        leftSection={
+                          <IconCalendar size={'1.2rem'} stroke={1.5} />
+                        }
+                        maxDate={dayjs(new Date()).toDate()}
+                        {...extendedRegister(`expiryDate`)}
+                        onChange={async (value: any) =>
+                          value &&
+                          (await extendedRegister(`expiryDate`)).onChange(
+                            dayjs(value)
+                              .format('YYYY/MM/DD')
+                              .toString()
+                              .replace(/\//g, '-'),
+                          )
+                        }
+                        error={extendedRegister(`expiryDate`).error}
                       />
                     </Group>
                   )}

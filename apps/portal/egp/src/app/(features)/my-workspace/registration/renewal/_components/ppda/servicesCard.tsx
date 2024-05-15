@@ -13,6 +13,7 @@ import {
 import { Fragment, useEffect, useState } from 'react';
 import {
   useGetPriceRangeQuery,
+  useGetServicePriceRangeQuery,
   usePostRenewalInvoiceMutation,
 } from '../../../_api/query';
 import { IconCheckbox } from '@tabler/icons-react';
@@ -33,18 +34,15 @@ const transformCategoryPriceRange = (
       (item: any) =>
         item.businessArea.toLowerCase() === businessArea?.toLowerCase(),
     )
-    .filter((item: any) => item.id === id)
-    .map(
-      (item: any) => `${item.valueFrom} to ${item.valueTo} ${item.currency}`,
-    )[0];
+    .filter((item: any) => item.id === id)[0]?.businessClass;
 
 export default function ServicesCard({
   servicesData,
 }: {
   servicesData: ApprovedVendorServiceSchema;
 }) {
-  const getPriceRangeValues = useGetPriceRangeQuery({
-    type: 'new',
+  const getPriceRangeValues = useGetServicePriceRangeQuery({
+    key: 'new',
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
 

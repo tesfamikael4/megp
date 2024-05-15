@@ -45,8 +45,6 @@ export const preferentialSchema = z.discriminatedUnion('category', [
   z.object({
     category: z.enum(['ibm', 'marginalized']),
     serviceId: z.string(),
-    certificateValidityPeriod: z.string(), // Certificate validity period
-    certificateIssuedDate: z.string(), // Certificate issuance date
   }),
   z.object({
     category: z.literal('msme'),
@@ -55,9 +53,7 @@ export const preferentialSchema = z.discriminatedUnion('category', [
       z.literal('Small'),
       z.literal('Micro'),
       z.literal('Medium'),
-    ]), // Type of MSME
-    certificateValidityPeriod: z.string(), // Certificate validity period
-    certificateIssuedDate: z.string(), // Certificate issuance date
+    ]),
   }),
 ]);
 
@@ -148,20 +144,11 @@ export const PreferentialTreatmentForm = ({
 
   const onSubmit = async (data: typeof formState.defaultValues) => {
     const preferential = getValues().preferential.map(
-      ({
-        certiNumber,
-        serviceId,
-        certificateIssuedDate,
-        certificateValidityPeriod,
-        category,
-        type,
-      }) => {
+      ({ certiNumber, serviceId, category, type }) => {
         return {
           category,
           type,
           certiNumber,
-          certificateIssuedDate,
-          certificateValidityPeriod,
           serviceId,
           status: 'Draft',
         };
@@ -191,39 +178,6 @@ export const PreferentialTreatmentForm = ({
             register={extendedRegister}
             adjustment={vendorInfo.status === 'Adjustment' ? false : true}
           />
-          {watch('preferential') &&
-            watch('preferential').length > 0 &&
-            watch('basic.countryOfRegistration') === 'Malawi' && (
-              <Group grow>
-                <TextInput
-                  label="Preferential Registration Number"
-                  placeholder="Enter Preferential Registration Number"
-                />
-                {/* <Controller
-                  name={`preferentialRegistrationDate`}
-                  control={control}
-                  render={({ field }) => ( */}
-                <DatePickerInput
-                  // name={`areasOfBusinessInterest.${index}.activationDate`}
-                  valueFormat="YYYY/MM/DD"
-                  required
-                  label="Preferential Registration Issued Date"
-                  placeholder="Preferential Registration Issued Date"
-                  leftSection={<IconCalendar size={'1.2rem'} stroke={1.5} />}
-                  maxDate={dayjs(new Date()).toDate()}
-                  // {...register(`areasOfBusinessInterest.${index}.activationDate`)}
-                  // onChange={async (value: any) =>
-                  //   value &&
-                  //   field.onChange(
-                  //     dayjs(value)
-                  //       .format('YYYY/MM/DD')
-                  //       .toString()
-                  //       .replace(/\//g, '-'),
-                  //   )
-                  // }
-                />
-              </Group>
-            )}
         </Flex>
 
         <Flex className="mt-10 justify-end gap-2">

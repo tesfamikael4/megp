@@ -120,14 +120,14 @@ export default function InvoiceTemplate({
                       <td className="border p-2 items-center">
                         {item.category}
                       </td>
-                      <td className="border p-2 text-center">${item.fee}</td>
+                      <td className="border p-2 text-center">{item.fee}MWK</td>
                     </tr>
                   ))}
                   <tr className="w-full">
                     <td></td>
                     <td className="p-2 items-center">Total</td>
                     <td className="p-2 border text-center">
-                      ${invoiceData.amount}
+                      {invoiceData.amount}MWK
                     </td>
                   </tr>
                 </tbody>
