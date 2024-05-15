@@ -87,7 +87,6 @@ export type ApprovedVendorServiceSchema = z.infer<
 >;
 
 export function validateApprovedVendorServiceSchema(data: any) {
-  console.log({ data });
   const validationResult = lineOfBusinessSchema.safeParse(data);
   return {
     success: validationResult.success,

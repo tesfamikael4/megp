@@ -62,7 +62,6 @@ function Header() {
       link: '#more',
       label: 'More',
       links: [
-        { link: '/resources', label: 'Vendor Registration' },
         { link: '/vendors', label: 'Registered Vendors' },
         { link: '/about-us', label: 'Procurement Information' },
         { link: '/faq', label: 'FAQ' },

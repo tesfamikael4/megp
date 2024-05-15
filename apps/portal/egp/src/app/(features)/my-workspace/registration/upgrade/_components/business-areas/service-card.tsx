@@ -12,7 +12,10 @@ import {
   SimpleGrid,
 } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
-import { useGetPriceRangeQuery } from '../../../_api/query';
+import {
+  useGetPriceRangeQuery,
+  useGetServicePriceRangeQuery,
+} from '../../../_api/query';
 import { IconCheckbox, IconRectangle } from '@tabler/icons-react';
 import {
   ApprovedVendorServiceSchema,
@@ -25,6 +28,7 @@ import {
   useRequestUpgradeInvoiceMutation,
 } from '@/store/api/vendor-upgrade/api';
 import { z } from 'zod';
+import { getFormattedPriceRangeValues } from '../../../_utils';
 
 const statuses = {
   Paid: 'text-green-700 bg-green-50 ring-green-600/20',
@@ -49,14 +53,11 @@ const transformCategoryPriceRange = (
       (item: any) =>
         item.businessArea.toLowerCase() === businessArea?.toLowerCase(),
     )
-    .filter((item: any) => item.id === id)
-    .map(
-      (item: any) => `${item.valueFrom} to ${item.valueTo} ${item.currency}`,
-    )[0];
+    .filter((item: any) => item.id === id)[0]?.businessClass;
 
 export default function ServicesCard({ servicesData }: { servicesData: any }) {
-  const getPriceRangeValues = useGetPriceRangeQuery({
-    type: 'new',
+  const getPriceRangeValues = useGetServicePriceRangeQuery({
+    key: 'new',
   });
   const router = useRouter();
 
@@ -169,17 +170,10 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
   }, [servicesData.data]);
 
   const priceRangeByCategory = (category: 'Goods' | 'Services' | 'Works') => {
-    return getPriceRangeValues.data
-      ? getPriceRangeValues.data
-          .filter(
-            (item: any) =>
-              item.businessArea.toLowerCase() === category.toLowerCase(),
-          )
-          .map((item: any) => ({
-            value: item.id,
-            label: `${item.valueFrom} to ${item.valueTo} ${item.currency}`,
-          }))
-      : [];
+    return getFormattedPriceRangeValues(
+      category,
+      getPriceRangeValues.data ?? [],
+    );
   };
 
   return (

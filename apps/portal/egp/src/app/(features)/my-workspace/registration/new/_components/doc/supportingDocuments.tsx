@@ -15,6 +15,7 @@ import FileUploader from '@/app/(features)/my-workspace/_components/uploader';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { PreferentialTreatment } from '@/models/vendorRegistration';
 
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
@@ -35,6 +36,34 @@ export default function SupportingDocuments() {
   const docInfo = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
   const [save, saveValues] = useAddFormMutation();
   const { updateAccess, updateStatus } = usePrivilege();
+  const check = (key: string) =>
+    docInfo.data?.preferential.some(
+      (preflll: PreferentialTreatment) => preflll.category === key,
+    );
+  const supportingDocumentsSchema = z.object({
+    businessRegistration_IncorporationCertificate: z
+      .instanceof(File)
+      .optional(),
+    mRA_TPINCertificate: z.instanceof(File).optional(),
+    generalReceipt_BankDepositSlip: z.instanceof(File).optional(),
+    mRATaxClearanceCertificate: z.instanceof(File).optional(),
+    previousPPDARegistrationCertificate: z.instanceof(File).optional(),
+    MSMECertificate: check('msme')
+      ? z.instanceof(File).refine((data) => data instanceof File, {
+          message: 'MSME Certificate is required',
+        })
+      : z.instanceof(File).optional(),
+    ibmCertificate: check('ibm')
+      ? z.instanceof(File).refine((data) => data instanceof File, {
+          message: 'IBM Certificate is required',
+        })
+      : z.instanceof(File).optional(),
+    marginalizedCertificate: check('marginalized')
+      ? z.instanceof(File).refine((data) => data instanceof File, {
+          message: 'Marginalized Certificate is required',
+        })
+      : z.instanceof(File).optional(),
+  });
   const { control, formState, register, setValue, watch, handleSubmit } =
     useForm<z.infer<typeof supportingDocumentsSchema>>({
       resolver: zodResolver(supportingDocumentsSchema),
@@ -171,16 +200,24 @@ export default function SupportingDocuments() {
       <form onSubmit={handleSubmit(onSave)}>
         <Flex align={'center'} gap={16} wrap={'wrap'}>
           {files.map(({ key, file, imageUrl }) => {
-            if (
-              docInfo.data?.basic.countryOfRegistration !== 'Malawi' &&
-              [
-                'MSMECertificate',
-                'ibmCertificate',
-                'marginalizedCertificate',
-              ].includes(key)
-            )
+            const isMalawi =
+              docInfo.data?.basic.countryOfRegistration === 'Malawi';
+            const isCertificate = [
+              'MSMECertificate',
+              'ibmCertificate',
+              'marginalizedCertificate',
+            ].includes(key);
+            const hasPreferentialTreatment = docInfo.data?.preferential.find(
+              (pref: PreferentialTreatment) =>
+                key.toLocaleLowerCase().startsWith(pref.category),
+            );
+
+            if (!isMalawi && isCertificate) {
               return null;
-            else
+            } else if (
+              (isCertificate && hasPreferentialTreatment) ||
+              !isCertificate
+            )
               return (
                 <FileUploader
                   key={key}
