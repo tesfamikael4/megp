@@ -95,6 +95,7 @@ export default function BidOpening() {
     try {
       await submit({
         lotId: lotId as string,
+        tenderId: tenderId as string,
         isTeamLead: true,
       }).unwrap();
       notify('Success', 'Evaluation successfully submitted');

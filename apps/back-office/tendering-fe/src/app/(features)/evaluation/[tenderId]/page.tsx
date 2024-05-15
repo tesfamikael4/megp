@@ -21,9 +21,14 @@ export default function BidOpening() {
         sortable: true,
       },
       {
-        accessor: 'status',
-        width: 50,
+        accessor: 'milestone',
+        width: 100,
         sortable: true,
+        render: (record) =>
+          record?.tenderMilestones?.[0]?.milestoneTxt?.replace(
+            /([a-z])([A-Z])/g,
+            '$1 $2',
+          ) ?? '',
       },
 
       {
@@ -33,7 +38,15 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/evaluation/${tenderId}/${record.id}`);
+              if (
+                record?.tenderMilestones?.[0]?.milestoneTxt ===
+                'TechnicalCompliance'
+              )
+                router.push(`/evaluation/${tenderId}/${record.id}`);
+              else
+                router.push(
+                  `/evaluation/${tenderId}/${record.id}/qualification`,
+                );
             }}
           >
             <IconChevronRight size={14} />

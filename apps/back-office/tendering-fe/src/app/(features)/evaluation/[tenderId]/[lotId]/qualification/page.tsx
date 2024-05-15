@@ -24,9 +24,9 @@ import {
   useSubmitEvaluationMutation,
 } from '@/store/api/tendering/preliminary-compliance.api';
 import { modals } from '@mantine/modals';
-import { LotOverview } from '../../_components/lot-overview';
 import { useLazyGetOpeningAssessmentsQuery } from '@/store/api/tendering/tender-opening.api';
 import { useEffect } from 'react';
+import { LotOverview } from '../../../_components/lot-overview';
 export default function BidOpening() {
   const router = useRouter();
   const { tenderId, lotId } = useParams();
@@ -65,7 +65,7 @@ export default function BidOpening() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/evaluation/${tenderId}/${lotId}/${record.bidder.bidderId}`,
+                `/evaluation/${tenderId}/${lotId}/qualification/${record.bidder.bidderId}`,
               );
             }}
           >
