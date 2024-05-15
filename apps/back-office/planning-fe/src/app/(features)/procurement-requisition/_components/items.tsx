@@ -20,10 +20,11 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useDeleteMutation, useUpdateMutation } from '../_api/items.api';
 import {
   useCreateMultipleItemsMutation,
   useLazyGetPrItemsQuery,
+  useDeleteItemMutation,
+  useUpdateItemMutation,
 } from '@/store/api/pr/pr.api';
 import { modals } from '@mantine/modals';
 import ItemSelector from '@/app/(features)/procurement-requisition/_components/item-selector';
@@ -53,14 +54,14 @@ export function Items({
   const [addItems, { isLoading: isAddingItems }] =
     useCreateMultipleItemsMutation();
 
-  const [updateItem, { isLoading: isUpdating }] = useUpdateMutation();
+  const [updateItem, { isLoading: isUpdating }] = useUpdateItemMutation();
 
   const [listById, { data: itemsList, isSuccess, isLoading }] =
     useLazyGetPrItemsQuery();
 
   const { data: pr } = useReadQuery(id.toString());
 
-  const [remove] = useDeleteMutation();
+  const [remove] = useDeleteItemMutation();
 
   const config = {
     isExpandable: true,

@@ -57,6 +57,21 @@ export const prApi = createApi({
       },
       providesTags: ['items'],
     }),
+    deleteItem: builder.mutation<any, any>({
+      query: (id) => ({
+        url: `procurement-requisition-items/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['items'],
+    }),
+    updateItem: builder.mutation<any, any>({
+      query: ({ id, ...data }) => ({
+        url: `procurement-requisition-items/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['items'],
+    }),
     getSubmittedPr: builder.query<any, any>({
       query: (itemId: string) => `documents/getDocumentByItemId/${itemId}`,
     }),
@@ -117,6 +132,8 @@ export const {
   useLazyGetPrTimelineQuery,
   useGetPrItemsQuery,
   useLazyGetPrItemsQuery,
+  useDeleteItemMutation,
+  useUpdateItemMutation,
   useGetSubmittedPrQuery,
   useLazyGetSubmittedPrQuery,
   useCreateRequisitionerMutation,
