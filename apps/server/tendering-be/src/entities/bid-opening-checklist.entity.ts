@@ -42,13 +42,13 @@ export class BidOpeningChecklist extends OrgAudit {
   spdOpeningChecklistEntity: SpdOpeningChecklist;
 
   @Column('uuid')
-  bidRegistrationDetail: string;
+  bidRegistrationDetailId: string;
 
   @ManyToOne(
     () => BidRegistrationDetail,
     (bidRegistrationDetails) => bidRegistrationDetails.bidOpeningChecklist,
   )
-  @JoinColumn({ name: 'spdOpeningChecklistId' })
+  @JoinColumn({ name: 'bidRegistrationDetailId' })
   bidRegistrationDetails: BidRegistrationDetail;
 
   @Column('uuid')
