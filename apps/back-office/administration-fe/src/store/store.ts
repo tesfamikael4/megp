@@ -13,7 +13,7 @@ import { iamApi } from './api/iam/iam.api';
 import { specApi } from '@/app/(features)/item-master/_api/template.api';
 import { itemSubCategorySliceApi } from '@/app/(features)/item-sub-category/_api/item-sub-category';
 import { administrationApi } from './api/administration/administration.api';
-import { contractCatalogApi } from './api/contract-catalog/budge-category.api';
+import { contractCatalogApi } from './api/contract-catalog/contract-catalog.api';
 
 const { reducers, middleware } = entityApi;
 

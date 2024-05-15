@@ -1,4 +1,11 @@
-import { LoadingOverlay, Stack, TextInput, Box, Modal } from '@mantine/core';
+import {
+  LoadingOverlay,
+  Stack,
+  TextInput,
+  Box,
+  Modal,
+  Flex,
+} from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,10 +23,11 @@ import {
 import { DateInput } from '@mantine/dates';
 import { useDisclosure } from '@mantine/hooks';
 import SelectOrganization from './select-organization';
-import { logger, notify } from '@megp/core-fe';
+import { Section, notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
+  disableFields?: boolean;
 }
 
 const defaultValues = {
@@ -30,7 +38,7 @@ const defaultValues = {
   endDate: '',
 };
 
-export function FormDetail({ mode }: FormDetailProps) {
+export function FormDetail({ mode, disableFields }: FormDetailProps) {
   const contractSchema: ZodType<Partial<Contract>> = z.object({
     contractReferenceNumber: z.string().min(1, { message: 'Name is required' }),
     description: z.string().min(1, { message: 'Description is required' }),
@@ -129,72 +137,88 @@ export function FormDetail({ mode }: FormDetailProps) {
   }, [mode, reset, selected, selectedSuccess]);
 
   return (
-    <Stack pos="relative">
+    <Section title="Contract Catalog Identification" collapsible={false}>
       <LoadingOverlay visible={isLoading} />
-      <TextInput
-        withAsterisk
-        label="Reference No"
-        {...register('contractReferenceNumber')}
-        error={
-          errors?.contractReferenceNumber
-            ? errors?.contractReferenceNumber?.message?.toString()
-            : ''
-        }
-        required
-      />
-      <TextInput
-        withAsterisk
-        label="Contract Title"
-        {...register('contractTitle')}
-        error={
-          errors?.contractTitle
-            ? errors?.contractTitle?.message?.toString()
-            : ''
-        }
-        required
-      />
-      <TextInput
-        withAsterisk
-        label="Description"
-        {...register('description')}
-        error={
-          errors?.description ? errors?.description?.message?.toString() : ''
-        }
-        required
-      />
-      <TextInput
-        label="Organization"
-        onClick={open}
-        value={selectedOrg?.[0]?.name}
-      />
-      <Controller
-        name="startDate"
-        control={control}
-        render={({ field }) => (
-          <DateInput
-            label="Start Date"
-            value={field.value}
-            onChange={(value) => field.onChange(value)}
-            error={
-              errors?.startDate ? errors?.startDate?.message?.toString() : ''
-            }
-            required
-          />
-        )}
-      />
-      <Controller
-        name="endDate"
-        control={control}
-        render={({ field }) => (
-          <DateInput
-            label="End Date"
-            value={field.value}
-            onChange={(value) => field.onChange(value)}
-            error={errors?.endDate ? errors?.endDate?.message?.toString() : ''}
-            required
-          />
-        )}
-      />
+      <Flex className="w-full" gap={'sm'}>
+        <Box className="w-1/2">
+          <Stack pos="relative">
+            <TextInput
+              withAsterisk
+              label="Reference No"
+              {...register('contractReferenceNumber')}
+              error={
+                errors?.contractReferenceNumber
+                  ? errors?.contractReferenceNumber?.message?.toString()
+                  : ''
+              }
+              required
+            />
+            <TextInput
+              withAsterisk
+              label="Contract Title"
+              {...register('contractTitle')}
+              error={
+                errors?.contractTitle
+                  ? errors?.contractTitle?.message?.toString()
+                  : ''
+              }
+              required
+            />
+            <TextInput
+              withAsterisk
+              label="Description"
+              {...register('description')}
+              error={
+                errors?.description
+                  ? errors?.description?.message?.toString()
+                  : ''
+              }
+              required
+            />{' '}
+          </Stack>
+        </Box>
+        <Box className="w-1/2">
+          <Stack>
+            <TextInput
+              label="Vendor"
+              onClick={open}
+              value={selectedOrg?.[0]?.name}
+            />
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ field }) => (
+                <DateInput
+                  label="Start Date"
+                  value={field.value}
+                  onChange={(value) => field.onChange(value)}
+                  error={
+                    errors?.startDate
+                      ? errors?.startDate?.message?.toString()
+                      : ''
+                  }
+                  required
+                />
+              )}
+            />
+            <Controller
+              name="endDate"
+              control={control}
+              render={({ field }) => (
+                <DateInput
+                  label="End Date"
+                  value={field.value}
+                  onChange={(value) => field.onChange(value)}
+                  error={
+                    errors?.endDate ? errors?.endDate?.message?.toString() : ''
+                  }
+                  required
+                />
+              )}
+            />
+          </Stack>
+        </Box>
+      </Flex>
       <EntityButton
         mode={mode}
         // data={selected}
@@ -207,7 +231,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isDeleting={isDeleting}
       />
       <Modal
-        title={<Box>Select Organization</Box>}
+        title={<Box fw={'bold'}>Select Vendor</Box>}
         onClose={close}
         opened={opened}
         size={'xl'}
@@ -219,6 +243,6 @@ export function FormDetail({ mode }: FormDetailProps) {
           setSelectedOrg={setSelectedOrg}
         />
       </Modal>
-    </Stack>
+    </Section>
   );
 }

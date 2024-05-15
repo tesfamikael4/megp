@@ -31,13 +31,12 @@ export function Entity({
         route.push(`/item-sub-category/new`);
       },
 
-      onSearch: (search) => {
+      onSearch: (search: any) => {
         logger.log('search', search);
       },
       pagination: true,
       searchable: true,
       sortable: true,
-
       columns: [
         {
           id: 'name',
