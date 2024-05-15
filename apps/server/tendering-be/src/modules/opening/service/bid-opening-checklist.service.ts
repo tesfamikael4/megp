@@ -54,6 +54,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
         bidRegistrationDetails: true,
       },
       select: {
+        id: true,
         bidderName: true,
         bidRegistrationDetails: {
           id: true,
@@ -225,11 +226,10 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       total: bidders.total,
     };
 
-    const bidder = bidders.items.map((bidder) => bidder.bidderId);
     const checklists = await this.bidOpeningChecklistsRepository.find({
       where: {
         lotId: lotId,
-        // bidderId: In(bidder),
+        bidderId: In(bidders.items.map((bidder) => bidder.bidderId)),
         openerId,
       },
     });
