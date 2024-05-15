@@ -113,7 +113,7 @@ export default function RequestDetail({
           ...response.data?.profileUpdate?.profileData,
           ...response.data?.profileUpdate?.profileData?.basic,
         }),
-    preferential: response.data?.preferential ?? {},
+    newPreferential: response.data?.preferential ?? {},
     upgrade: response.data?.upgrade ?? {},
     renewal: response.data?.renewal ?? {},
   };
@@ -231,7 +231,7 @@ export default function RequestDetail({
                       requestType === 'preferential'
                         ? [
                             {
-                              tabValue: 'preferential',
+                              tabValue: 'newPreferential',
                               tabName: 'Preferential Treatment',
                             },
                           ]
