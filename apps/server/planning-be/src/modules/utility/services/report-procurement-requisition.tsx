@@ -94,6 +94,49 @@ export const procurementRequisitionPdf = async (
               <View style={styles.activity}>
                 <Text>Procurement Methods</Text>
               </View>
+              {procurementRequisition.reasons &&
+                procurementRequisition.reasons.map((reason) => {
+                  return (
+                    <View
+                      key={reason.id}
+                      style={{
+                        backgroundColor: '#ffe3e3',
+                        padding: '10px',
+                        borderRadius: '2px',
+                        marginTop: '5px',
+                        marginHorizontal: '20px',
+                      }}
+                    >
+                      <Text style={{ color: 'red', fontSize: 11 }}>
+                        ⚠️ Justification for{' '}
+                        {reason.type === 'procurementMethod'
+                          ? 'Procurement Method'
+                          : 'Target Group'}
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: 'bold',
+                          marginTop: '6px',
+                          fontSize: 11,
+                        }}
+                      >
+                        Possible Reason
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>{reason.reason}</Text>
+
+                      <Text
+                        style={{
+                          fontWeight: 'bold',
+                          marginTop: '5px',
+                          fontSize: 11,
+                        }}
+                      >
+                        Remark
+                      </Text>
+                      <Text style={{ fontSize: 10 }}>{reason.remark}</Text>
+                    </View>
+                  );
+                })}
               <View style={styles.activityDetail}>
                 <ReactPdfTable
                   data={[
@@ -252,10 +295,9 @@ const styles = StyleSheet.create({
   },
   // title
   activity: {
-    marginTop: 10,
-    marginBottom: 10,
+    marginVertical: 10,
     fontSize: 12,
-    marginLeft: 20,
+    marginHorizontal: 20,
   },
   activityDetail: {
     paddingHorizontal: 20,
