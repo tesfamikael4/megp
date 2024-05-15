@@ -41,7 +41,20 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       itemData.openerId = req.user.userId;
       itemData.openerName = req.user.firstName + ' ' + req.user.lastName;
     }
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
+    const bidder = await manager.getRepository(BidRegistration).findOne({
+      where: {
+        bidderId: itemData.bidderId,
+        bidRegistrationDetails: {
+          lotId: itemData.lotId,
+        },
+      },
+      select: {
+        bidderName: true,
+      },
+    });
+    itemData.bidderName = bidder.bidderName;
     itemData.submit = false;
     itemData.complete = false;
 

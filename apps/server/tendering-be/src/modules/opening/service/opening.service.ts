@@ -172,6 +172,8 @@ export class OpeningService extends ExtraCrudService<Opening> {
         },
       },
       relations: {
+        bdsEvaluation: true,
+        bdsSubmission: true,
         lots: {
           tenderMilestones: true,
         },
@@ -182,6 +184,13 @@ export class OpeningService extends ExtraCrudService<Opening> {
         procurementCategory: true,
         procurementReferenceNumber: true,
         status: true,
+        bdsEvaluation: {
+          awardType: true,
+          evaluationMethod: true,
+        },
+        bdsSubmission: {
+          envelopType: true,
+        },
         lots: {
           id: true,
           name: true,
@@ -202,17 +211,18 @@ export class OpeningService extends ExtraCrudService<Opening> {
         id: tenderId,
         lots: {
           id: lotId,
-          bidRegistrationDetails: {
-            bidRegistration: {
-              bidderId: bidderId,
-            },
-          },
+        },
+        bidRegistrations: {
+          bidderId: bidderId,
         },
       },
       relations: {
+        bdsEvaluation: true,
+        bdsSubmission: true,
         lots: {
           tenderMilestones: true,
         },
+        bidRegistrations: true,
       },
       select: {
         id: true,
@@ -220,13 +230,25 @@ export class OpeningService extends ExtraCrudService<Opening> {
         procurementCategory: true,
         procurementReferenceNumber: true,
         status: true,
+        bdsEvaluation: {
+          awardType: true,
+          evaluationMethod: true,
+        },
+        bdsSubmission: {
+          envelopType: true,
+        },
         lots: {
           id: true,
+          name: true,
           tenderMilestones: {
             milestoneNum: true,
             milestoneTxt: true,
             isCurrent: true,
           },
+        },
+        bidRegistrations: {
+          bidderId: true,
+          bidderName: true,
         },
       },
     });

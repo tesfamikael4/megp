@@ -43,6 +43,9 @@ export class BidOpeningChecklist extends OrgAudit {
   bidderId: string;
 
   @Column('uuid')
+  bidderName: string;
+
+  @Column('uuid')
   openerId: string;
 
   @Column()
