@@ -2,69 +2,73 @@
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { logger } from '@megp/core-fe';
+import { ExpandableTable, Section, logger } from '@megp/core-fe';
 import { Contract } from '@/models/contract';
 import { useLazyListQuery } from './_api/contract.api';
+import { IconChevronRight, IconPlus } from '@tabler/icons-react';
+import { ActionIcon, Button } from '@mantine/core';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
   const [trigger, { data }] = useLazyListQuery();
 
-  const config: EntityConfig<Contract> = useMemo(() => {
-    return {
-      basePath: '/contract-catalogs',
-      mode: 'list',
-      entity: 'contract-catalogs',
-      primaryKey: 'id',
-      title: 'Contract Catalogs',
-      hasAdd: true,
-      pagination: true,
-      searchable: true,
-      sortable: true,
-      onDetail: (selected: Contract) => {
-        route.push(`/contract-catalogs/${selected.id}`);
+  const config = {
+    columns: [
+      {
+        accessor: 'contractReferenceNumber',
+        title: 'Reference',
+        width: 150,
+        sortable: true,
       },
-      onAdd: () => {
-        route.push(`/contract-catalogs/new`);
+      {
+        accessor: 'contractTitle',
+        width: 300,
+        sortable: true,
       },
-
-      onSearch: (search) => {
-        logger.log('search', search);
+      { accessor: 'description', title: 'Description', sortable: true },
+      {
+        accessor: 'id',
+        title: '',
+        render: (catalog) => (
+          <ActionIcon
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              route.push(`/contract-catalogs/${catalog.id}`);
+            }}
+          >
+            <IconChevronRight />
+          </ActionIcon>
+        ),
+        width: 50,
       },
+    ],
+    isExpandable: true,
+    isSearchable: true,
+    primaryColumn: 'name',
+  };
 
-      columns: [
-        {
-          id: 'contractTitle',
-          header: 'Contract Title',
-          accessorKey: 'contractTitle',
-          cell: (info) => info.getValue(),
-        },
-      ],
-    };
-  }, [route]);
-
-  const pathname = usePathname();
-
-  const mode =
-    pathname === `/contract-catalogs`
-      ? 'list'
-      : pathname === `/contract-catalogs/new`
-        ? 'new'
-        : 'detail';
   const onRequestChange = (request: CollectionQuery) => {
     trigger(request);
   };
 
   return (
     <>
-      <EntityLayout
-        mode={mode}
-        config={config}
-        data={data?.items ?? []}
-        total={data?.total ?? 0}
-        onRequestChange={onRequestChange}
-        detail={children}
-      />
+      <Section
+        title="Contract Catalogs"
+        action={
+          <Button onClick={() => route.push('contract-catalogs/new')}>
+            <IconPlus size={14} /> Add
+          </Button>
+        }
+      >
+        <ExpandableTable
+          config={config}
+          data={data?.items ?? []}
+          total={data?.total ?? 0}
+          onRequestChange={onRequestChange}
+        />
+      </Section>
     </>
   );
 }

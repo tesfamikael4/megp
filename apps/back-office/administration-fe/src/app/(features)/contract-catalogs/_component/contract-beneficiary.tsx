@@ -1,79 +1,55 @@
+'use client';
 import React, { useEffect, useState } from 'react';
-import { Modal, Text } from '@mantine/core';
-import { Relation, RelationConfig } from '@megp/entity';
+import { Button, Group, Modal, Text } from '@mantine/core';
 import SelectOrganization from './select-organization';
 import { useParams } from 'next/navigation';
 import {
   useAssignContractBeneficiaryMutation,
   useLazyGetContractBeneficiaryQuery,
-} from '@/store/api/contract-catalog/budge-category.api';
-import { notify } from '@megp/core-fe';
-import { Organization } from '@/models/organization';
+} from '@/store/api/contract-catalog/contract-catalog.api';
+import { ExpandableTable, Section, notify } from '@megp/core-fe';
+import { IconDeviceFloppy, IconPlus } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import ContractAllocatedItem from './allocated-item';
 
 const ContractBeneficiary = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAssigned, setCurrentAssigned] = useState<any[]>([]);
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
+  const [opened, { open, close }] = useDisclosure(false);
 
   const { id } = useParams();
 
   const [assign, { isLoading: isSaving }] =
     useAssignContractBeneficiaryMutation();
-  const [getBeneficiary, { data: ContractBeneficiary, isLoading, isSuccess }] =
+  const [getBeneficiary, { data: ContractBeneficiary, isSuccess }] =
     useLazyGetContractBeneficiaryQuery();
 
-  const relationConfig: RelationConfig<Organization> = {
-    title: 'Contract Beneficiary',
-    columns: [
-      {
-        id: 'name',
-        header: 'Name',
-        accessorKey: 'name',
-        cell: (info) => info.getValue(),
-        meta: {
-          widget: 'primary',
-        },
-      },
-      {
-        id: 'shortName',
-        header: 'Short Name',
-        accessorKey: 'shortName',
-        cell: (info) => info.getValue(),
-      },
-    ],
-    onSave: async (selected) => {
-      const org = selected.map((item: any) => {
-        return {
-          id: item?.id,
-          name: item?.name,
-          shortName: item?.shortName,
-          code: item?.code,
-        };
-      });
-      try {
-        await assign({
-          organizations: org,
-          contractCatalogId: id,
-        }).unwrap();
-        notify('Success', ' successfully assigned.');
-      } catch (err) {
-        notify('Error', 'Sorry, an error encountered while assigning.');
-      }
-    },
-    onAdd: () => {
-      setIsModalOpen(true);
-    },
-  };
-
-  useEffect(() => {
-    if (!isCollapsed && id) {
-      getBeneficiary(id.toString());
-    }
-  }, [getBeneficiary, id, isCollapsed]);
-
   const handleCloseModal = () => {
-    setIsModalOpen(false);
+    close();
   };
+
+  const handleSave = async () => {
+    const org = currentAssigned.map((item: any) => {
+      return {
+        id: item?.id,
+        name: item?.name,
+        shortName: item?.shortName,
+        code: item?.code,
+      };
+    });
+    try {
+      await assign({
+        organizations: org,
+        contractCatalogId: id,
+      }).unwrap();
+
+      notify('Success', 'Beneficiary assigned successfully');
+    } catch (err) {
+      notify('Error', 'Failed to assign beneficiary');
+    }
+  };
+  useEffect(() => {
+    getBeneficiary(id?.toString());
+  }, [id]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -84,29 +60,61 @@ const ContractBeneficiary = () => {
     }
   }, [ContractBeneficiary, isSuccess]);
 
+  const config = {
+    isExpandable: true,
+    columns: [
+      {
+        title: 'Name',
+        accessor: 'name',
+        width: 150,
+      },
+      {
+        accessor: 'shortName',
+        width: 100,
+      },
+    ],
+    expandedRowContent: (requisition) => {
+      return <ContractAllocatedItem />;
+    },
+  };
+
   return (
     <>
-      <Relation
-        config={relationConfig}
-        data={currentAssigned}
-        setIsCollapsed={setIsCollapsed}
-        isLoading={isLoading}
-        isSaving={isSaving}
-      />
-      <Modal
-        title={<Text fw={'bold'}>User Assignment</Text>}
-        opened={isModalOpen}
-        onClose={handleCloseModal}
-        size={'xl'}
+      <Section
+        collapsible={false}
+        title={'Add Beneficiary'}
+        action={
+          <Group justify="end">
+            <Button onClick={open}>
+              <IconPlus size={18} /> Add
+            </Button>
+          </Group>
+        }
       >
-        <SelectOrganization
-          opened={isModalOpen}
-          close={handleCloseModal}
-          setSelectedOrg={setCurrentAssigned}
-          selectedOrg={currentAssigned}
-          mode={'assign'}
+        <ExpandableTable
+          config={config}
+          data={currentAssigned}
+          total={currentAssigned.length}
         />
-      </Modal>
+
+        <Button onClick={handleSave} loading={isSaving}>
+          <IconDeviceFloppy size={14} /> Save
+        </Button>
+        <Modal
+          title={<Text fw={'bold'}>Organization Assignment</Text>}
+          opened={opened}
+          onClose={handleCloseModal}
+          size={'xl'}
+        >
+          <SelectOrganization
+            opened={opened}
+            close={handleCloseModal}
+            setSelectedOrg={setCurrentAssigned}
+            selectedOrg={currentAssigned}
+            mode={'assign'}
+          />
+        </Modal>
+      </Section>
     </>
   );
 };

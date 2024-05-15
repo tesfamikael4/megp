@@ -1,13 +1,8 @@
-import { PageLayout } from '@megp/core-fe';
-import { Entity } from './entity';
+import { Box } from '@mantine/core';
 export default function EntityLayout({
   children,
 }: {
   children: React.ReactElement;
 }) {
-  return (
-    <PageLayout>
-      <Entity>{children}</Entity>
-    </PageLayout>
-  );
+  return <Box>{children}</Box>;
 }
