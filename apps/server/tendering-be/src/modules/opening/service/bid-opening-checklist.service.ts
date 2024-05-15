@@ -50,10 +50,20 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
           lotId: itemData.lotId,
         },
       },
+      relations: {
+        bidRegistrationDetails: true,
+      },
       select: {
         bidderName: true,
+        bidRegistrationDetails: {
+          id: true,
+        },
       },
     });
+    if (!bidder) {
+      throw new NotFoundException('Bidder not found');
+    }
+    itemData.bidRegistrationDetailId = bidder.bidRegistrationDetails[0]?.id;
     itemData.bidderName = bidder.bidderName;
     itemData.submit = false;
     itemData.complete = false;
@@ -388,6 +398,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       openingDate: any;
     };
     spdOpeningChecklists: any;
+    bidOpeningCheckLists: any[];
     bidders: any[];
     lots: any[];
   }> {
@@ -395,11 +406,6 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     const tender = await manager.getRepository(Tender).findOne({
       where: {
         id: tenderId,
-        // lots: {
-        //   teams: {
-        //     teamType: TeamRoleEnum.FINANCIAL_OPENER
-        //   },
-        // }
       },
       relations: {
         bdsSubmission: true,
@@ -420,6 +426,20 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       },
     });
 
+    const bidOpeningCheckLists = await manager
+      .getRepository(BidOpeningChecklist)
+      .find({
+        where: {
+          tenderId: tenderId,
+        },
+        relations: {
+          bidRegistrationDetails: {
+            bidRegistration: true,
+          },
+        },
+        // group
+      });
+
     const response = {
       tender: {
         id: tender.id,
@@ -431,6 +451,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       spdOpeningChecklists: tender.spd.spd.spdOpeningChecklists,
       bidders: [],
       lots: [],
+      bidOpeningCheckLists,
     };
 
     for (const lot of tender.lots) {
