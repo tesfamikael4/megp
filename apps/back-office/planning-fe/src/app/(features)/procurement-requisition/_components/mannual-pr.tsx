@@ -237,9 +237,10 @@ export const FormDetail = ({
             />
             {mode == 'detail' && (
               <TextInput
-                placeholder="Budget Year"
                 value={
-                  isPrSuccess ? procurementRequisition?.budgetYear?.name : ''
+                  isPrSuccess && procurementRequisition?.budgetYear !== null
+                    ? procurementRequisition?.budgetYear?.name
+                    : ''
                 }
                 label="Budget Year"
                 disabled
