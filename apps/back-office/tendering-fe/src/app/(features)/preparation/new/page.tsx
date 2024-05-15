@@ -9,17 +9,6 @@ import { DetailRequisition } from '../../_components/detail-requisition-list';
 import { useCreateMutation } from '../_api/tender/tender.api';
 import { useRouter } from 'next/navigation';
 
-const fakeData = [
-  {
-    id: '234',
-    requisitionReferenceNumber: '23456',
-    title: 'Fake PR Title',
-    description: 'Fake PR Title',
-    status: 'pending',
-    calculatedAmount: '2345',
-  },
-];
-
 export default function TenderingPage() {
   const router = useRouter();
   const [trigger, { data, isLoading }] = useLazyListQuery();
@@ -101,8 +90,8 @@ export default function TenderingPage() {
         </div>
         <ExpandableTable
           config={config}
-          data={data ? data.items : fakeData ?? []}
-          total={fakeData.length ?? 0}
+          data={data ? data.items : []}
+          total={data ? data.total : 0}
           onRequestChange={onRequestChange}
         />
       </Section>
