@@ -264,6 +264,9 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
             evaluatorId,
           },
         },
+        relations: {
+          technicalPreliminaryAssessment: true,
+        },
       }),
     ]);
     const response = spdChecklist.map((spdChecklist) => ({
@@ -287,56 +290,101 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
       itemData.evaluatorName = req.user.firstName + ' ' + req.user.lastName;
     }
 
-    itemData.submit = false;
-
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const bidRegistrationDetail = await manager
-      .getRepository(BidRegistrationDetail)
-      .findOne({
-        where: {
-          bidRegistration: {
-            tenderId: itemData.tenderId,
-            bidderId: itemData.bidderId,
-          },
-
+    const bidder = await manager.getRepository(BidRegistration).findOne({
+      where: {
+        bidderId: itemData.bidderId,
+        bidRegistrationDetails: {
           lotId: itemData.lotId,
         },
-      });
-
-    if (!bidRegistrationDetail) {
-      throw new Error('Bid Registration Detail not found');
+      },
+      relations: {
+        bidRegistrationDetails: true,
+      },
+      select: {
+        id: true,
+        bidderName: true,
+        bidRegistrationDetails: {
+          id: true,
+        },
+      },
+    });
+    if (!bidder) {
+      throw new NotFoundException('Bidder not found');
     }
 
+    itemData.submit = false;
+
+    // const bidRegistrationDetail = await manager
+    //   .getRepository(BidRegistrationDetail)
+    //   .findOne({
+    //     where: {
+    //       bidRegistration: {
+    //         tenderId: itemData.tenderId,
+    //         bidderId: itemData.bidderId,
+    //       },
+
+    //       lotId: itemData.lotId,
+    //     },
+    //   });
+
+    // if (!bidRegistrationDetail) {
+    //   throw new Error('Bid Registration Detail not found');
+    // }
+
+    const bidRegistrationDetailId = bidder.bidRegistrationDetails[0]?.id;
     const technicalPreliminaryAssessment = await manager
       .getRepository(TechnicalPreliminaryAssessment)
       .findOne({
         where: {
-          bidRegistrationDetailId: bidRegistrationDetail.id,
+          bidRegistrationDetailId,
+          isTeamAssessment: itemData.isTeamAssessment,
         },
       });
 
     if (!technicalPreliminaryAssessment) {
       const item = manager
+        .getRepository(TechnicalPreliminaryAssessment)
+        .create({
+          bidRegistrationDetailId: bidder.bidRegistrationDetails[0]?.id,
+          evaluatorId: req.user.userId,
+          evaluatorName: req.user.firstName + ' ' + req.user.lastName,
+          isTeamAssessment: itemData.isTeamLead,
+          submit: false,
+          // technicalPreliminaryAssessmentDetail: [itemD]
+        });
+
+      const savedItem = await manager
+        .getRepository(TechnicalPreliminaryAssessment)
+        .save(item);
+
+      const itemD = manager
         .getRepository(TechnicalPreliminaryAssessmentDetail)
         .create({
           ...itemData,
-          technicalPreliminaryAssessment: {
-            bidRegistrationDetailId: bidRegistrationDetail.id,
-            evaluatorId: req.user.userId,
-            evaluatorName: req.user.firstName + ' ' + req.user.lastName,
-            isTeamAssessment: itemData.isTeamLead,
-            submit: false,
-          },
-        });
-      await manager.getRepository(TechnicalPreliminaryAssessment).save(item);
+          technicalPreliminaryAssessmentId: savedItem.id,
+        }) as any;
+      await manager
+        .getRepository(TechnicalPreliminaryAssessmentDetail)
+        .save(itemD);
+    } else {
+      const itemD = manager
+        .getRepository(TechnicalPreliminaryAssessmentDetail)
+        .create({
+          ...itemData,
+          technicalPreliminaryAssessmentId: technicalPreliminaryAssessment.id,
+        }) as any;
+      await manager
+        .getRepository(TechnicalPreliminaryAssessmentDetail)
+        .save(itemD);
     }
 
-    itemData.bidRegistrationDetailId = bidRegistrationDetail.id;
+    itemData.bidRegistrationDetailId = bidder.bidRegistrationDetails[0]?.id;
 
     const item =
       this.technicalPreliminaryAssessmentDetailRepository.create(itemData);
-    await this.technicalPreliminaryAssessmentDetailRepository.insert(item);
+    // await this.technicalPreliminaryAssessmentDetailRepository.insert(item);
     return item;
   }
 
@@ -353,22 +401,36 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
             evaluatorId: req.user.userId,
           },
         },
+        relations: {
+          technicalPreliminaryAssessment: true,
+        },
       });
     if (checklist.length == 0) {
       throw new NotFoundException('Preliminary evaluation not started yet');
     }
 
-    await this.technicalPreliminaryAssessmentDetailRepository.update(
+    // await this.technicalPreliminaryAssessmentRepository.update(
+    //   {
+    //     id: In(checklist.map((list) => list.id)),
+    //     technicalPreliminaryAssessment: {
+    //       isTeamAssessment: itemData.isTeamLead,
+    //     },
+    //   },
+    //   {
+    //     technicalPreliminaryAssessment: {
+    //       submit: true,
+    //     },
+    //   },
+    // );
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    await manager.getRepository(TechnicalPreliminaryAssessment).update(
       {
-        id: In(checklist.map((list) => list.id)),
-        technicalPreliminaryAssessment: {
-          isTeamAssessment: itemData.isTeamLead,
-        },
+        id: In(checklist.map((list) => list.technicalPreliminaryAssessmentId)),
+        isTeamAssessment: itemData.isTeamLead,
       },
       {
-        technicalPreliminaryAssessment: {
-          submit: true,
-        },
+        submit: true,
       },
     );
   }
