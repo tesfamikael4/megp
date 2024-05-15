@@ -1,26 +1,18 @@
 'use client';
-import { useLazyGetTenderDetailQuery } from '@/store/api/tendering/tendering.api';
-import {
-  ActionIcon,
-  Badge,
-  Box,
-  Flex,
-  LoadingOverlay,
-  Text,
-  Tooltip,
-} from '@mantine/core';
+import { useLazyGetLotDetailQuery } from '@/store/api/tendering/tendering.api';
+import { Badge, Box, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { IconChevronLeft, IconEye } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export const TenderOverView = ({ basePath }: { basePath: string }) => {
-  const { tenderId } = useParams();
+export const LotOverview = ({ basePath }: { basePath: string }) => {
+  const { tenderId, lotId } = useParams();
   const router = useRouter();
-  const [getTender, { data, isLoading }] = useLazyGetTenderDetailQuery();
+  const [getLot, { data, isLoading }] = useLazyGetLotDetailQuery();
 
   useEffect(() => {
-    getTender(tenderId as string);
+    getLot({ tenderId: tenderId as string, lotId: lotId as string });
   }, [tenderId]);
   return (
     <Box pos="relative">
@@ -45,6 +37,9 @@ export const TenderOverView = ({ basePath }: { basePath: string }) => {
             <Flex gap={5}>
               <Box>
                 <Text fw={500} size="sm">
+                  Lot :
+                </Text>
+                <Text fw={500} size="sm">
                   Envelope :
                 </Text>
                 <Text fw={500} size="sm">
@@ -52,6 +47,7 @@ export const TenderOverView = ({ basePath }: { basePath: string }) => {
                 </Text>
               </Box>
               <Box>
+                {data?.lots?.[0]?.name && <p>{data?.lots?.[0]?.name}</p>}
                 {data?.bdsSubmission?.envelopType && (
                   <Badge variant="outline" size="xs" color="gray">
                     {data?.bdsSubmission?.envelopType}

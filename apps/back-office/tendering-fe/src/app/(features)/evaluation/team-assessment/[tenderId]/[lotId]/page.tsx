@@ -17,15 +17,19 @@ import {
 } from '@/store/api/tendering/preliminary-compliance.api';
 import { modals } from '@mantine/modals';
 import { TenderOverView } from '../../../_components/tender-overview';
+import { LotOverview } from '../../../_components/lot-overview';
 
 export default function BidOpening() {
   const router = useRouter();
   const { tenderId, lotId } = useParams();
   const [submit, { isLoading }] = useSubmitEvaluationMutation();
   const { data: lotStatus } = useGetLotStatusQuery(lotId as string);
+  const [getBidders, { data: bidders, isLoading: isBiddersLoading }] =
+    useLazyGetPassedBiddersQuery();
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
+    isLoading: isBiddersLoading,
     expandedRowContent: (record) => <DetailTender tender={record} />,
     columns: [
       {
@@ -65,7 +69,6 @@ export default function BidOpening() {
     ],
   };
 
-  const [getBidders, { data: bidders }] = useLazyGetPassedBiddersQuery();
   const onSubmit = () => {
     modals.openConfirmModal({
       centered: true,
@@ -92,7 +95,7 @@ export default function BidOpening() {
   };
   return (
     <>
-      <TenderOverView basePath={`/evaluation/${tenderId}/${lotId}`} />
+      <LotOverview basePath={`/evaluation/${tenderId}/${lotId}`} />
       <Section
         title="Bidders List"
         collapsible={false}

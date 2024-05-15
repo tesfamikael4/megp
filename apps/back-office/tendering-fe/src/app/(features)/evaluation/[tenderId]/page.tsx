@@ -10,8 +10,9 @@ import { TenderOverView } from '../_components/tender-overview';
 export default function BidOpening() {
   const router = useRouter();
   const { tenderId } = useParams();
-  const [getLots, { data: lots }] = useLazyGetLotsByTenderIdQuery();
+  const [getLots, { data: lots, isLoading }] = useLazyGetLotsByTenderIdQuery();
   const config: ExpandableTableConfig = {
+    isLoading: isLoading,
     isSearchable: true,
     columns: [
       {

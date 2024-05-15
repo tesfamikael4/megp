@@ -9,9 +9,12 @@ import { useLazyGetOpenedTendersQuery } from '@/store/api/tendering/preliminary-
 
 export default function BidEvaluation() {
   const router = useRouter();
+  const [getOpenedTenders, { data: tenders, isLoading }] =
+    useLazyGetOpenedTendersQuery();
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
+    isLoading: isLoading,
     expandedRowContent: (record) => <DetailTender tender={record} />,
 
     columns: [
@@ -55,7 +58,7 @@ export default function BidEvaluation() {
       },
     ],
   };
-  const [getOpenedTenders, { data: tenders }] = useLazyGetOpenedTendersQuery();
+
   return (
     <Section title="Tenders List (Evaluation)" collapsible={false}>
       <ExpandableTable

@@ -16,7 +16,7 @@ export const preliminaryComplianceApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/preliminary-compliance/opened-tenders${q}`,
+          url: `/technical-preliminary-assessment-detail/opened-tenders${q}`,
           method: 'GET',
         };
       },
@@ -30,7 +30,7 @@ export const preliminaryComplianceApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/preliminary-compliance/bidders-status/${lotId}/${team}${q}`,
+          url: `/technical-preliminary-assessment-detail/bidders-status/${lotId}/${team}${q}`,
         };
       },
     }),
@@ -45,14 +45,14 @@ export const preliminaryComplianceApi = createApi({
         team: string;
       }) => {
         return {
-          url: `/preliminary-compliance/checklist-status/${lotId}/${bidderId}/${team}`,
+          url: `/technical-preliminary-assessment-detail/checklist-status/${lotId}/${bidderId}/${team}`,
         };
       },
       providesTags: ['bidAttribute'],
     }),
     checkBidAttribute: builder.mutation<any, any>({
       query: (data) => ({
-        url: `/preliminary-compliance`,
+        url: `/technical-preliminary-assessment-detail`,
         method: 'POST',
         body: data,
       }),
@@ -61,7 +61,7 @@ export const preliminaryComplianceApi = createApi({
     getLotStatus: builder.query<any, any>({
       query: (lotId) => {
         return {
-          url: `/preliminary-compliance/can-complete/${lotId}`,
+          url: `/technical-preliminary-assessment-detail/can-complete/${lotId}`,
           method: 'GET',
         };
       },
@@ -70,7 +70,7 @@ export const preliminaryComplianceApi = createApi({
     submitEvaluation: builder.mutation<any, any>({
       query: (data: { tenderId: string; isTeamLead: boolean }) => {
         return {
-          url: `/preliminary-compliance/submit-checklist`,
+          url: `/technical-preliminary-assessment-detail/submit-checklist`,
           method: 'PUT',
           body: data,
         };
