@@ -1,6 +1,14 @@
 'use client';
 
-import { ActionIcon, Box, Badge, Group, Button, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Box,
+  Badge,
+  Group,
+  Button,
+  Text,
+  LoadingOverlay,
+} from '@mantine/core';
 import {
   ExpandableTable,
   ExpandableTableConfig,
@@ -16,8 +24,9 @@ import {
   useSubmitEvaluationMutation,
 } from '@/store/api/tendering/preliminary-compliance.api';
 import { modals } from '@mantine/modals';
-import { TenderOverView } from '../../../_components/tender-overview';
 import { LotOverview } from '../../../_components/lot-overview';
+import { useLazyGetOpeningAssessmentsQuery } from '@/store/api/tendering/tender-opening.api';
+import { useEffect } from 'react';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -30,7 +39,7 @@ export default function BidOpening() {
     isSearchable: true,
     isExpandable: true,
     isLoading: isBiddersLoading,
-    expandedRowContent: (record) => <DetailTender tender={record} />,
+    expandedRowContent: (record) => <BidderDetail bidder={record} />,
     columns: [
       {
         accessor: 'bidderName',
@@ -135,30 +144,43 @@ export default function BidOpening() {
   );
 }
 
-const DetailTender = ({ tender }: any) => {
-  const data = [
-    {
-      key: 'Name',
-      value: tender.name,
-    },
+const BidderDetail = ({ bidder }: any) => {
+  const { lotId } = useParams();
 
-    {
-      key: 'Email',
-      value: tender.email,
-    },
-    {
-      key: 'Phone',
-      value: tender.phone,
-    },
-    {
-      key: 'Status',
-      value: tender.status,
-    },
-  ];
+  const [getChecklists, { data, isLoading }] =
+    useLazyGetOpeningAssessmentsQuery();
+
+  useEffect(() => {
+    getChecklists({
+      lotId: lotId as string,
+      bidderId: bidder.bidder.bidderId,
+      team: 'teamLeader',
+    });
+  }, []);
 
   return (
-    <Box className="bg-white p-2">
-      <DetailTable data={data} />
+    <Box className="bg-white p-5" pos="relative">
+      <LoadingOverlay visible={isLoading} />
+      <ExpandableTable
+        config={{
+          minHeight: 100,
+          columns: [
+            {
+              accessor: 'name',
+            },
+            {
+              accessor: 'Assessment',
+              render: (record) =>
+                record.check
+                  ? record?.check?.checked
+                    ? 'Yes'
+                    : 'No'
+                  : 'Not Evaluated Yet',
+            },
+          ],
+        }}
+        data={data ?? []}
+      />
     </Box>
   );
 };

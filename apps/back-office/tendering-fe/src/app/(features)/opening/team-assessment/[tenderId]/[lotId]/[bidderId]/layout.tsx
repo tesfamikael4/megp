@@ -1,9 +1,9 @@
 'use client';
 
-import { BidderOverView } from '@/app/(features)/opening/[tenderId]/bidders/_components/bidder-overview';
 import { Box, Flex } from '@mantine/core';
 import { Checklist } from './_components/checklist';
 import { useParams } from 'next/navigation';
+import { BidderOverView } from '@/app/(features)/opening/_components/bidder-overview';
 
 export default function BiderDetail({
   children,

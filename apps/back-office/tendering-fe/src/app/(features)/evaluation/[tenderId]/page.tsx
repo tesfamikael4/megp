@@ -54,7 +54,7 @@ export default function BidOpening() {
           onRequestChange={(request) => {
             getLots({
               tenderId,
-              collectionQuery: request,
+              collectionQuery: { ...request, includes: ['tenderMilestones'] },
             });
           }}
         />
