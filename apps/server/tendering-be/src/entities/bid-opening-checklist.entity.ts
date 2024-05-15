@@ -9,6 +9,8 @@ import {
 import { Tender } from './tender.entity';
 import { SpdOpeningChecklist } from './spd-opening-checklist.entity';
 import { Lot } from './lot.entity';
+import { BidRegistration } from './bid-registration.entity';
+import { BidRegistrationDetail } from './bid-registration-detail.entity';
 
 @Entity({ name: 'bid_opening_checklists' })
 export class BidOpeningChecklist extends OrgAudit {
@@ -38,6 +40,16 @@ export class BidOpeningChecklist extends OrgAudit {
   )
   @JoinColumn({ name: 'spdOpeningChecklistId' })
   spdOpeningChecklistEntity: SpdOpeningChecklist;
+
+  @Column('uuid')
+  bidRegistrationDetail: string;
+
+  @ManyToOne(
+    () => BidRegistrationDetail,
+    (bidRegistrationDetails) => bidRegistrationDetails.bidOpeningChecklist,
+  )
+  @JoinColumn({ name: 'spdOpeningChecklistId' })
+  bidRegistrationDetails: BidRegistrationDetail;
 
   @Column('uuid')
   bidderId: string;

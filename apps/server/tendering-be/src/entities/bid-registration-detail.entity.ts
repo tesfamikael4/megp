@@ -18,6 +18,7 @@ import { OpenedBidResponseItem } from './opened-bid-response-item.entity';
 import { OpenedBidResponseLot } from './opened-bid-response-lot.entity';
 import { TechnicalPreliminaryAssessment } from './technical-preliminary-assessment.entity';
 import { BiddersComparison } from './bidders-comparison.entity';
+import { BidOpeningChecklist } from './bid-opening-checklist.entity';
 
 @Entity({ name: 'bid_registration_details' })
 @Unique(['bidRegistrationId', 'lotId'])
@@ -88,4 +89,10 @@ export class BidRegistrationDetail extends Audit {
     (biddersComparison) => biddersComparison.bidRegistrationDetails,
   )
   biddersComparison: BiddersComparison;
+
+  @OneToMany(
+    () => BidOpeningChecklist,
+    (bidOpeningChecklist) => bidOpeningChecklist.bidRegistrationDetails,
+  )
+  bidOpeningChecklist: BidOpeningChecklist;
 }
