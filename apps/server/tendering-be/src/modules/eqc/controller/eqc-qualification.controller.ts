@@ -1,9 +1,10 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EqcQualification } from 'src/entities';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { EqcQualificationService } from '../service/eqc-qualification.service';
+import { ChangeQualificationCategoryDto } from '../dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',
@@ -19,5 +20,10 @@ export class EqcQualificationController extends ExtraCrudController<EqcQualifica
     private readonly eqcQualificationService: EqcQualificationService,
   ) {
     super(eqcQualificationService);
+  }
+
+  @Post('change-category')
+  async changeStatus(@Body() itemData: ChangeQualificationCategoryDto) {
+    return this.eqcQualificationService.changeCategory(itemData);
   }
 }
