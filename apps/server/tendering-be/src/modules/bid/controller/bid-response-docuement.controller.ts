@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/shared/authorization';
 import { VendorGuard } from 'src/shared/authorization/guards/vendor.guard';
@@ -26,6 +26,11 @@ export class BidResponseDocumentController {
       payload,
       req,
     );
+  }
+
+  @Post('get-responses/:lotId')
+  async getBidResponse(@Param('lotId') lotId: string, @Req() req?: any) {
+    return await this.bidSecurityService.getBidResponse(lotId, req);
   }
 
   @Post('download-response-pdf')

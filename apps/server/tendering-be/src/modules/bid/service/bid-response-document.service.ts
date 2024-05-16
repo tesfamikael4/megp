@@ -164,4 +164,30 @@ export class BidResponseDocumentService {
 
     return { presignedUrl };
   }
+
+  async getBidResponse(lotId: string, req?: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bidderId = req.user.organization.id;
+
+    const bidResponseDocuments = await manager
+      .getRepository(BidResponseDocument)
+      .find({
+        where: {
+          bidRegistrationDetail: {
+            lotId: lotId,
+            bidRegistration: {
+              bidderId: bidderId,
+            },
+          },
+        },
+        relations: {
+          bidForm: true,
+          bidRegistrationDetail: {
+            bidRegistration: true,
+          },
+        },
+      });
+
+    return bidResponseDocuments;
+  }
 }

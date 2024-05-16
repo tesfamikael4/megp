@@ -44,23 +44,6 @@ async function bootstrap() {
     },
   );
 
-  // Sorting the paths and definitions alphabetically
-  document.paths = Object.keys(document.paths)
-    .sort()
-    .reduce((sortedPaths, key) => {
-      sortedPaths[key] = document.paths[key];
-      return sortedPaths;
-    }, {});
-
-  if (document.components && document.components.schemas) {
-    document.components.schemas = Object.keys(document.components.schemas)
-      .sort()
-      .reduce((sortedSchemas, key) => {
-        sortedSchemas[key] = document.components.schemas[key];
-        return sortedSchemas;
-      }, {});
-  }
-
   SwaggerModule.setup('docs', app, document, customOptions);
 
   await app.listen(port, async () => {
