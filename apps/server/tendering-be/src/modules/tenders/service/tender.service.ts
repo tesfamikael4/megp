@@ -19,12 +19,7 @@ import {
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { EntityCrudService } from 'src/shared/service';
-import {
-  EntityManager,
-  LessThanOrEqual,
-  MoreThanOrEqual,
-  Repository,
-} from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import {
   ChangeTenderStatusDto,
   CreateTenderDto,
@@ -258,8 +253,13 @@ export class TenderService extends EntityCrudService<Tender> {
     const tender = await this.tenderRepository.findOneBy({
       id: input.id,
     });
+
     if (!tender) {
       throw new BadRequestException('Tender not found');
+    }
+
+    if (tender.status == 'DRAFT' && input.status == 'SUBMITTED') {
+      await this.validateTender(tender.id);
     }
 
     if (tender.status == 'SUBMITTED' && input.status == 'PUBLISHED') {
@@ -448,5 +448,75 @@ export class TenderService extends EntityCrudService<Tender> {
       '.html',
     );
     return html;
+  }
+
+  private async validateTender(id: string) {
+    const tenderRelations = [
+      'spd',
+      'lots',
+      'tenderPersonals',
+      'bdsGeneral',
+      'bdsPreparation',
+      'bdsSubmission',
+      'bdsEvaluation',
+      'bdsAward',
+      'sccGeneralProvisions',
+      'sccContractDeliverables',
+      'sccPaymentTerms',
+      'sccPaymentSchedules',
+      'sccGuarantees',
+      'sccLiabilities',
+      'tenderClassifications',
+      'tenderParticipationFee',
+    ];
+
+    const tender = await this.tenderRepository.findOne({
+      where: { id },
+      relations: [
+        'lots.items',
+        'lots.eqcPreliminaryExaminations',
+        'lots.eqcQualifications',
+        'lots.eqcDocumentaryEvidences',
+        'lots.eqcTechnicalScorings',
+        ...tenderRelations,
+      ],
+    });
+
+    const isEmpty = (value: any) => {
+      return (
+        value == null ||
+        (typeof value === 'object' && Object.keys(value).length === 0) ||
+        (typeof value === 'string' && value.trim().length === 0)
+      );
+    };
+
+    tenderRelations.forEach((relation) => {
+      if (isEmpty(tender[relation])) {
+        throw new BadRequestException(`${relation} not found`);
+      }
+    });
+
+    const spdFields = ['bds', 'scc'];
+    spdFields.forEach((field) => {
+      if (isEmpty(tender.spd[field])) {
+        throw new BadRequestException(`${field} not found`);
+      }
+    });
+
+    const lotRelations = [
+      'items',
+      'eqcPreliminaryExaminations',
+      'eqcQualifications',
+      'eqcDocumentaryEvidences',
+      'eqcTechnicalScorings',
+    ];
+
+    tender.lots.forEach((lot) => {
+      lotRelations.forEach((relation) => {
+        if (isEmpty(tender[relation])) {
+          throw new BadRequestException(`${lot.name} ${relation} not found`);
+        }
+      });
+    });
   }
 }
