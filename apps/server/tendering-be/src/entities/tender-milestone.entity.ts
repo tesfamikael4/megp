@@ -12,7 +12,7 @@ import { Lot } from './lot.entity';
 import { Tender } from './tender.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 
-@Unique(['lotId', 'isCurrent'])
+@Unique(['lotId', 'milestoneNum', 'isCurrent'])
 @Entity({ name: 'tender_milestones' })
 export class TenderMilestone extends Audit {
   @PrimaryGeneratedColumn('uuid')
