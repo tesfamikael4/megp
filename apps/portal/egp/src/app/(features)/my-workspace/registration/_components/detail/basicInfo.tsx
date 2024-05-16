@@ -1,8 +1,17 @@
-import { Flex, Group, Select, Stack, TextInput } from '@mantine/core';
+import {
+  Flex,
+  Group,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Tooltip,
+} from '@mantine/core';
 import React from 'react';
 import { PassFormDataProps } from './formShell';
 import { formOfBusiness, malawianDistricts } from '../../_constants';
 import { getNationalityValues } from '../../new/_components/mockup/nationality';
+import { IconInfoCircle, IconInfoSmall } from '@tabler/icons-react';
 
 export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
   return (
@@ -22,8 +31,23 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
       </Group>
       <Group grow>
         <TextInput
-          label={`Name of Business/Company ${register(`basic.countryOfRegistration`, 'select').value === 'Malawi' ? '(from MBRS)' : ''}`}
-          withAsterisk
+          label={
+            <Flex align={`center`}>
+              Name of Business/Company<Text c={`red`}>*</Text>
+              {register(`basic.countryOfRegistration`, 'select').value ===
+              'Malawi' ? (
+                <Text title="From MBRS">
+                  <IconInfoCircle
+                    color="blue"
+                    stroke={1.5}
+                    style={{ marginLeft: '5px' }}
+                  />
+                </Text>
+              ) : (
+                ''
+              )}
+            </Flex>
+          }
           id="name"
           {...register(`basic.name`)}
           disabled

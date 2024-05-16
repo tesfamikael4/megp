@@ -1,4 +1,4 @@
-import { Group, Select, Stack, TextInput } from '@mantine/core';
+import { Flex, Group, Select, Stack, Text, TextInput } from '@mantine/core';
 import React, { useEffect } from 'react';
 import { PassFormDataProps } from './formShell';
 import { malawianDistricts } from '../../_constants';
@@ -8,6 +8,7 @@ import {
 } from '@/store/api/administrationApi';
 import { NotificationService } from '../../../_components/notification';
 import { Controller } from 'react-hook-form';
+import { IconInfoCircle } from '@tabler/icons-react';
 
 export const AddressInformation: React.FC<PassFormDataProps> = ({
   register,
@@ -45,8 +46,23 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
     <Stack>
       <Group grow>
         <TextInput
-          label={`Physical Address ${register(`basic.countryOfRegistration`, 'select').value === 'Malawi' ? '(from MBRS)' : ''}`}
-          withAsterisk
+          label={
+            <Flex>
+              Physical Address <Text c="red">*</Text>
+              {register(`basic.countryOfRegistration`, 'select').value ===
+              'Malawi' ? (
+                <Text title="From MBRS">
+                  <IconInfoCircle
+                    color="blue"
+                    stroke={1.5}
+                    style={{ marginLeft: '5px' }}
+                  />
+                </Text>
+              ) : (
+                ''
+              )}
+            </Flex>
+          }
           {...register(`address.physicalAddress`)}
           disabled={
             register('basic.countryOfRegistration', 'select').value === 'Malawi'
@@ -116,8 +132,23 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
       </Group>
       <Group grow>
         <TextInput
-          label={`Postal Address/Zip code ${register(`basic.countryOfRegistration`, 'select').value === 'Malawi' ? '(from MBRS)' : ''}`}
-          withAsterisk
+          label={
+            <Flex>
+              Postal Address/Zip code <Text c="red">*</Text>
+              {register(`basic.countryOfRegistration`, 'select').value ===
+              'Malawi' ? (
+                <Text title="From MBRS">
+                  <IconInfoCircle
+                    color="blue"
+                    stroke={1.5}
+                    style={{ marginLeft: '5px' }}
+                  />
+                </Text>
+              ) : (
+                ''
+              )}
+            </Flex>
+          }
           {...register(`address.postalAddress`)}
           disabled={
             register('basic.countryOfRegistration', 'select').value === 'Malawi'

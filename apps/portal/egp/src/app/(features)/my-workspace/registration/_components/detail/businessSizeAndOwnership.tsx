@@ -10,10 +10,12 @@ import React from 'react';
 import { IconCash, IconChevronDown } from '@tabler/icons-react';
 import { Select } from '@mantine/core';
 import { PassFormDataProps } from './formShell';
+import { useGetCurrenciesQuery } from '@/store/api/administrationApi';
 
 export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
   register,
 }) => {
+  const { data: currencies, isLoading, isError } = useGetCurrenciesQuery({});
   return (
     <Stack>
       <Group grow>
@@ -24,7 +26,7 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
           rightSection={
             <Select
               leftSection={<IconCash size={'1.3rem'} />}
-              data={['USD', 'ETB', 'EUR', 'GBP', 'KW']}
+              data={['USD', 'ETB', 'EUR', 'GBP', 'MKW']}
               placeholder="select"
               {...register(
                 'businessSizeAndOwnership.registeredCapital.currency',
