@@ -258,6 +258,8 @@ export class BidResponseService {
           bidRegistrationDetail.bidRegistration.tender.organizationName,
         subject_of_procurement:
           bidRegistrationDetail.bidRegistration.tender.name,
+        project_name: bidRegistrationDetail.bidRegistration.tender.name,
+        date_of_issue_of_bidding: new Date().toDateString(),
         procurement_reference_no:
           bidRegistrationDetail.bidRegistration.tender
             .procurementReferenceNumber,
