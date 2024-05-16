@@ -89,6 +89,10 @@ export const preliminaryComplianceApi = createApi({
       }) =>
         `/technical-preliminary-assessment-detail/members-report/${lotId}/${bidderId}/${checklistId}`,
     }),
+
+    getSpdDetail: builder.query<any, any>({
+      query: (spdId) => `/spd-preliminary-evaluations/${spdId}`,
+    }),
   }),
 });
 
@@ -100,4 +104,5 @@ export const {
   useGetLotStatusQuery,
   useSubmitEvaluationMutation,
   useLazyGetMembersAssesmentResultQuery,
+  useLazyGetSpdDetailQuery,
 } = preliminaryComplianceApi;

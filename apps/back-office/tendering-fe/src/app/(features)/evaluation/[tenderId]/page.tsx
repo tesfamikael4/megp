@@ -25,10 +25,9 @@ export default function BidOpening() {
         width: 100,
         sortable: true,
         render: (record) =>
-          record?.tenderMilestones?.[0]?.milestoneTxt?.replace(
-            /([a-z])([A-Z])/g,
-            '$1 $2',
-          ) ?? '',
+          record?.tenderMilestones
+            ?.filter((milestone) => milestone.isCurrent)?.[0]
+            ?.milestoneTxt?.replace(/([a-z])([A-Z])/g, '$1 $2') ?? '',
       },
 
       {
@@ -38,12 +37,12 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              if (
-                record?.tenderMilestones?.[0]?.milestoneTxt ===
-                'TechnicalCompliance'
-              )
+              const currentStage = record?.tenderMilestones?.filter(
+                (milestone) => milestone.isCurrent,
+              )?.[0]?.milestoneTxt;
+              if (currentStage === 'TechnicalCompliance')
                 router.push(`/evaluation/${tenderId}/${record.id}`);
-              else
+              else if (currentStage === 'TechnicalQualification')
                 router.push(
                   `/evaluation/${tenderId}/${record.id}/qualification`,
                 );

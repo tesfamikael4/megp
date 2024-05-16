@@ -125,6 +125,9 @@ export const tenderOpeningApi = createApi({
       }) =>
         `/bid-opening-checklist/members-report/${lotId}/${bidderId}/${checklistId}`,
     }),
+    getSpdDetail: builder.query<any, any>({
+      query: (spdId) => `/spd-opening-checklists/${spdId}`,
+    }),
   }),
 });
 
@@ -140,4 +143,5 @@ export const {
   useLazyGetOpeningByTenderIdQuery,
   useLazyGetOpeningAssessmentsQuery,
   useLazyGetMembersAssesmentResultQuery,
+  useLazyGetSpdDetailQuery,
 } = tenderOpeningApi;

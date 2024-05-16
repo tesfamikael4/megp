@@ -4,7 +4,10 @@ import { ExpandableTable, Section } from '@megp/core-fe';
 import { ChecklistAssessment } from '../_components/assesment';
 import { IconFile, IconUsers } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { useLazyGetMembersAssesmentResultQuery } from '@/store/api/tendering/tender-opening.api';
+import {
+  useLazyGetMembersAssesmentResultQuery,
+  useLazyGetSpdDetailQuery,
+} from '@/store/api/tendering/tender-opening.api';
 import { useParams } from 'next/navigation';
 
 export default function ChecklistDetail() {
@@ -18,11 +21,18 @@ export default function ChecklistDetail() {
   useEffect(() => {
     getTeamAssessment({ lotId, bidderId, checklistId });
   }, []);
+
+  const [getSbd, { data: sbdData }] = useLazyGetSpdDetailQuery();
+
+  useEffect(() => {
+    getSbd(checklistId);
+  }, [checklistId, getSbd]);
+
   return (
     <Flex gap={10}>
       <Box className=" bg-white w-2/3">
         <Section
-          title="The Bid Opening Team has opened each bid "
+          title={sbdData?.itbDescription ?? ''}
           collapsible={false}
           className="h-full overflow-scroll"
           action={
