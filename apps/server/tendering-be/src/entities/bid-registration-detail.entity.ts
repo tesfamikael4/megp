@@ -54,6 +54,9 @@ export class BidRegistrationDetail extends Audit {
   @Column({ type: 'simple-array', nullable: true })
   financialItems: string[];
 
+  @Column({ type: 'jsonb', nullable: true })
+  document: any;
+
   @OneToMany(
     () => BidResponseLot,
     (bidResponseLots) => bidResponseLots.bidRegistrationDetail,

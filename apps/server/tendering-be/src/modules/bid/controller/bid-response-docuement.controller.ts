@@ -28,12 +28,23 @@ export class BidResponseDocumentController {
     );
   }
 
-  @Post('download-response')
-  async getBidResponseDocumentByKey(
+  @Post('download-response-pdf')
+  async getBidResponseDocumentPdf(
     @Body() payload: BidResponseDocumentDto,
     @Req() req?: any,
   ) {
-    return await this.bidSecurityService.getBidResponseDocumentByKey(
+    return await this.bidSecurityService.getBidResponseDocumentPdf(
+      payload,
+      req,
+    );
+  }
+
+  @Post('download-response-docx')
+  async getBidResponseDocumentDocx(
+    @Body() payload: BidResponseDocumentDto,
+    @Req() req?: any,
+  ) {
+    return await this.bidSecurityService.getBidResponseDocumentDocx(
       payload,
       req,
     );

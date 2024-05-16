@@ -108,7 +108,7 @@ export class UploadBidResponseDocumentDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  tenderId: string;
+  lotId: string;
 
   @ApiProperty()
   @IsUUID()
@@ -162,7 +162,7 @@ export class BidResponseDocumentDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  tenderId: string;
+  lotId: string;
 
   @ApiProperty()
   @IsUUID()
@@ -335,7 +335,7 @@ export class GenerateBidDeclarationDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  tenderId: string;
+  lotId: string;
 
   @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsString()
