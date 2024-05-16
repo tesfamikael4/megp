@@ -256,6 +256,8 @@ export class BidResponseService {
       const docx = await this.docxService.generateDocx(fileBuffer, {
         public_body:
           bidRegistrationDetail.bidRegistration.tender.organizationName,
+        subject_of_procurement:
+          bidRegistrationDetail.bidRegistration.tender.name,
       });
 
       const pdfBuffer =
