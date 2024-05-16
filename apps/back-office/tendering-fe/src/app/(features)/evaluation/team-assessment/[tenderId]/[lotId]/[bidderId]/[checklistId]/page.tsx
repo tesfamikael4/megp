@@ -6,7 +6,10 @@ import { ChecklistAssessment } from '../_components/assesment';
 import { IconFile, IconUsers } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useLazyGetMembersAssesmentResultQuery } from '@/store/api/tendering/preliminary-compliance.api';
+import {
+  useLazyGetMembersAssesmentResultQuery,
+  useLazyGetSpdDetailQuery,
+} from '@/store/api/tendering/preliminary-compliance.api';
 
 export default function ChecklistDetail() {
   const [page, setPage] = useState<'teamAssessment' | 'documentPreview'>(
@@ -15,6 +18,11 @@ export default function ChecklistDetail() {
   const [getTeamAssessment, { data, isLoading }] =
     useLazyGetMembersAssesmentResultQuery();
   const { lotId, bidderId, checklistId } = useParams();
+  const [getSbd, { data: sbdData }] = useLazyGetSpdDetailQuery();
+
+  useEffect(() => {
+    getSbd(checklistId);
+  }, [checklistId, getSbd]);
 
   useEffect(() => {
     getTeamAssessment({ lotId, bidderId, checklistId });
@@ -23,7 +31,7 @@ export default function ChecklistDetail() {
     <Flex gap={10}>
       <Box className=" bg-white w-2/3">
         <Section
-          title="The Bid Opening Team has opened each bid "
+          title={sbdData?.itbDescription ?? ''}
           collapsible={false}
           className="h-full overflow-scroll"
           action={
@@ -48,7 +56,7 @@ export default function ChecklistDetail() {
         >
           {page == 'documentPreview' ? (
             <embed
-              src={'https://arxiv.org/pdf/1708.08021.pdf'}
+              src={'https://arxiv.org/pdf/1708.08021'}
               type="application/pdf"
               width="100%"
               height="400px"
