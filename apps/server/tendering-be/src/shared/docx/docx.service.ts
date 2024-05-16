@@ -19,7 +19,6 @@ export class DocxService {
     const buffer = await createReport({
       template,
       data,
-      failFast: false,
     });
     return Buffer.from(buffer);
   }
