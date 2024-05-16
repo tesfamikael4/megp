@@ -44,6 +44,6 @@ export class TenderMilestone extends Audit {
   })
   milestoneTxt: string;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: true })
   isCurrent: boolean;
 }

@@ -83,24 +83,24 @@ export class BidRegistrationDetail extends Audit {
     (technicalPreliminaryAssessment) =>
       technicalPreliminaryAssessment.bidRegistrationDetail,
   )
-  technicalPreliminaryAssessment: TechnicalPreliminaryAssessment;
+  technicalPreliminaryAssessments: TechnicalPreliminaryAssessment[];
 
   @OneToMany(
     () => TechnicalQualificationAssessment,
     (technicalQualificationAssessment) =>
       technicalQualificationAssessment.bidRegistrationDetail,
   )
-  technicalQualificationAssessment: TechnicalQualificationAssessment;
+  technicalQualificationAssessments: TechnicalQualificationAssessment[];
 
   @OneToMany(
     () => BiddersComparison,
-    (biddersComparison) => biddersComparison.bidRegistrationDetails,
+    (biddersComparison) => biddersComparison.bidRegistrationDetail,
   )
-  biddersComparison: BiddersComparison;
+  biddersComparisons: BiddersComparison[];
 
   @OneToMany(
     () => BidOpeningChecklist,
     (bidOpeningChecklist) => bidOpeningChecklist.bidRegistrationDetails,
   )
-  bidOpeningChecklist: BidOpeningChecklist;
+  bidOpeningChecklists: BidOpeningChecklist[];
 }
