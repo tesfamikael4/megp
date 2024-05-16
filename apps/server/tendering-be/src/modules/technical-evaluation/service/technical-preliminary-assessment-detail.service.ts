@@ -22,6 +22,7 @@ import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
 import { TechnicalPreliminaryAssessment } from 'src/entities/technical-preliminary-assessment.entity';
+import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 
 @Injectable()
 export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudService<TechnicalPreliminaryAssessmentDetail> {
@@ -350,7 +351,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
           bidRegistrationDetailId: bidder.bidRegistrationDetails[0]?.id,
           evaluatorId: req.user.userId,
           evaluatorName: req.user.firstName + ' ' + req.user.lastName,
-          isTeamAssessment: itemData.isTeamLead,
+          isTeamAssessment: itemData.isTeamAssessment,
           submit: false,
           // technicalPreliminaryAssessmentDetail: [itemD]
         });
@@ -394,9 +395,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
         where: {
           technicalPreliminaryAssessment: {
             bidRegistrationDetail: {
-              bidRegistration: {
-                tenderId: itemData.tenderId,
-              },
+              lotId: itemData.lotId,
             },
             evaluatorId: req.user.userId,
           },
@@ -433,6 +432,25 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
         submit: true,
       },
     );
+
+    if (itemData.isTeamLead) {
+      await manager.getRepository(TenderMilestone).update(
+        {
+          lotId: itemData.lotId,
+          tenderId: itemData.tenderId,
+        },
+        {
+          isCurrent: false,
+        },
+      );
+      await manager.getRepository(TenderMilestone).insert({
+        lotId: itemData.lotId,
+        tenderId: itemData.tenderId,
+        milestoneNum: 304,
+        milestoneTxt: 'TechnicalQualification',
+        isCurrent: true,
+      });
+    }
   }
 
   async canComplete(
