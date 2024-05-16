@@ -299,10 +299,9 @@ export class BidResponseService {
         pdfValue: encryptedValuePdf,
       });
 
-      await this.bidSecurityRepository.upsert(item, [
-        'bidRegistrationDetailId',
-        'bidFormId',
-      ]);
+      await manager
+        .getRepository(BidResponseDocument)
+        .upsert(item, ['bidRegistrationDetailId', 'bidFormId']);
     }
   }
 }
