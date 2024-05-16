@@ -7,18 +7,23 @@ import { EntityManager, Repository } from 'typeorm';
 import {
   CheckPasswordDto,
   CreateBidResponseDto,
+  GenerateBidDeclarationDto,
   GetBidResponseDto,
 } from '../dto/bid-response.dto';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
 import { EncryptionHelperService } from './encryption-helper.service';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
-import { Item } from 'src/entities';
+import { BidResponseDocument, Item } from 'src/entities';
 import {
   CollectionQuery,
   FilterOperators,
   QueryConstructor,
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
+import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
+import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
+import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
+import { DocxService } from 'src/shared/docx/docx.service';
 
 @Injectable()
 export class BidResponseService {
@@ -26,6 +31,9 @@ export class BidResponseService {
     @InjectRepository(BidResponseLot)
     private readonly bidSecurityRepository: Repository<BidResponseLot>,
     private readonly encryptionHelperService: EncryptionHelperService,
+    private readonly minIOService: MinIOService,
+    private readonly documentManipulatorService: DocumentManipulatorService,
+    private readonly docxService: DocxService,
     @Inject(REQUEST) private request: Request,
   ) {}
 
@@ -162,6 +170,88 @@ export class BidResponseService {
       response.items = result;
     }
     return response;
+  }
+
+  async generateBidDeclaration(payload: GenerateBidDeclarationDto, req?: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bidderId = req.user.organization.id;
+
+    const bidRegistrationDetail = await manager
+      .getRepository(BidRegistrationDetail)
+      .findOne({
+        where: {
+          bidRegistration: {
+            tenderId: payload.tenderId,
+            bidderId: bidderId,
+          },
+        },
+        relations: {
+          bidRegistration: {
+            tender: true,
+          },
+        },
+      });
+    if (!bidRegistrationDetail) {
+      throw new BadRequestException('bid_registration_not_found');
+    }
+
+    const isPasswordValid = this.encryptionHelperService.checkPasswordValidity(
+      bidRegistrationDetail.bidRegistration,
+      payload.documentType,
+      payload.password,
+    );
+    if (!isPasswordValid) {
+      throw new BadRequestException('invalid_password');
+    }
+
+    const spdBidForms = await manager.getRepository(SpdBidForm).findBy({
+      spd: {
+        tenderSpds: {
+          tenderId: payload.tenderId,
+        },
+      },
+    });
+
+    for (const spdBidForm of spdBidForms) {
+      const fileReadable = await this.minIOService.downloadBuffer(
+        spdBidForm.documentDocx,
+      );
+
+      const fileBuffer =
+        await this.documentManipulatorService.streamToBuffer(fileReadable);
+
+      const docx = await this.docxService.generateDocx(fileBuffer, {
+        public_body:
+          bidRegistrationDetail.bidRegistration.tender.organizationName,
+      });
+
+      const document = await this.minIOService.uploadBuffer(
+        docx,
+        spdBidForm.title + '-bid-form.docx',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        BucketNameEnum.BID_FORM_DOCUMENT,
+      );
+
+      const encryptedValue = this.encryptionHelperService.encryptData(
+        JSON.stringify({
+          value: document,
+        }),
+        payload.password,
+        bidRegistrationDetail.bidRegistration.salt,
+      );
+
+      const item = manager.getRepository(BidResponseDocument).create({
+        bidRegistrationDetailId: bidRegistrationDetail.id,
+        bidFormId: spdBidForm.id,
+        documentType: payload.documentType,
+        value: encryptedValue,
+      });
+
+      await this.bidSecurityRepository.upsert(item, [
+        'bidRegistrationDetailId',
+        'bidFormId',
+      ]);
+    }
   }
 
   async checkPassword(itemData: CheckPasswordDto, req?: any) {
