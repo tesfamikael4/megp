@@ -313,5 +313,7 @@ export class BidResponseService {
         .getRepository(BidResponseDocument)
         .upsert(item, ['bidRegistrationDetailId', 'bidFormId']);
     }
+
+    return spdBidForms;
   }
 }
