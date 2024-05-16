@@ -46,7 +46,7 @@ export class BidOpeningChecklist extends OrgAudit {
 
   @ManyToOne(
     () => BidRegistrationDetail,
-    (bidRegistrationDetails) => bidRegistrationDetails.bidOpeningChecklist,
+    (bidRegistrationDetails) => bidRegistrationDetails.bidOpeningChecklists,
   )
   @JoinColumn({ name: 'bidRegistrationDetailId' })
   bidRegistrationDetails: BidRegistrationDetail;

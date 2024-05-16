@@ -10,6 +10,7 @@ import {
 import { Tender } from './tender.entity';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
+import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 
 @Entity({ name: 'bidders-comparisons' })
 export class BiddersComparison extends Audit {
@@ -21,35 +22,53 @@ export class BiddersComparison extends Audit {
 
   @ManyToOne(
     () => BidRegistrationDetail,
-    (bidRegistrationDetails) => bidRegistrationDetails.biddersComparison,
+    (bidRegistrationDetails) => bidRegistrationDetails.biddersComparisons,
   )
   @JoinColumn({ name: 'bidRegistrationId' })
-  bidRegistrationDetails: BidRegistrationDetail[];
+  bidRegistrationDetail: BidRegistrationDetail;
 
-  @Column()
+  @Column({
+    type: 'uuid',
+    default: '00000000-0000-0000-0000-000000000000',
+  })
   itemId: string;
 
   @Column({
     type: 'enum',
     enum: TenderMilestoneEnum,
   })
-  milestone: string;
+  milestoneNum: number;
 
-  @Column()
-  bidderStatus: string;
+  @Column({
+    type: 'enum',
+    enum: Object.values(TenderMilestoneEnum),
+  })
+  milestoneTxt: string;
 
-  @Column()
-  technicalPoints: string;
+  @Column({
+    type: 'enum',
+    enum: BidderStatusEnum,
+  })
+  bidderStatus: number;
 
-  @Column()
-  financialPoints: string;
+  @Column({
+    type: 'enum',
+    enum: Object.values(BidderStatusEnum),
+  })
+  bidderStatusTxt: string;
 
-  @Column()
+  @Column({ default: 0 })
+  technicalPoints: number;
+
+  @Column({ default: 0 })
+  financialPoints: number;
+
+  @Column({ default: true })
   isCurrent: boolean;
 
   @Column()
-  passFail: string;
+  passFail: boolean;
 
-  @Column()
-  version: string;
+  @Column({ default: 1 })
+  version: number;
 }

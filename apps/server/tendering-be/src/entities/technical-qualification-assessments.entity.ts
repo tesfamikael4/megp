@@ -22,7 +22,7 @@ export class TechnicalQualificationAssessment {
   @ManyToOne(
     () => BidRegistrationDetail,
     (bidRegistrationDetail) =>
-      bidRegistrationDetail.technicalQualificationAssessment,
+      bidRegistrationDetail.technicalQualificationAssessments,
   )
   @JoinColumn({ name: 'bidRegistrationDetailId' })
   bidRegistrationDetail: BidRegistrationDetail;

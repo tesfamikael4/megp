@@ -23,6 +23,7 @@ import { DataResponseFormat } from 'src/shared/api-data';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
 import { TechnicalPreliminaryAssessment } from 'src/entities/technical-preliminary-assessment.entity';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
+import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
 
 @Injectable()
 export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudService<TechnicalPreliminaryAssessmentDetail> {
@@ -450,6 +451,37 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
         milestoneTxt: 'TechnicalQualification',
         isCurrent: true,
       });
+
+      const bidRegistration = await manager
+        .getRepository(BidRegistrationDetail)
+        .find({
+          where: {
+            // bidderId: itemData.bidderId,
+
+            lotId: itemData.lotId,
+            bidRegistration: {
+              tenderId: itemData.tenderId,
+            },
+          },
+        });
+
+      const biddersComparison = checklist.map((list) => {
+        return {
+          bidRegistrationId:
+            list.technicalPreliminaryAssessment.bidRegistrationDetailId,
+          milestoneNum: 304,
+          milestoneTxt: 'TechnicalQualification',
+          bidderStatus:
+            list.technicalPreliminaryAssessment.qualified == 'comply'
+              ? 304
+              : 303,
+          bidderStatusTxt:
+            list.technicalPreliminaryAssessment.qualified == 'comply'
+              ? 'TechnicalComplianceSucceeded'
+              : 'TechnicalComplianceFailed',
+        };
+      });
+      await manager.getRepository(BiddersComparison).insert(biddersComparison);
     }
   }
 

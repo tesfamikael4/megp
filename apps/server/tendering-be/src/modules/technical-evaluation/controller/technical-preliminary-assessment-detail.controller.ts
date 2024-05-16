@@ -8,7 +8,7 @@ import { CreatePreliminaryAssessment } from '../dto/technical-preliminary-assess
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
-  entityIdName: 'lotId',
+  entityIdName: 'technicalPreliminaryAssessmentId',
   createDto: CreatePreliminaryAssessment,
 };
 

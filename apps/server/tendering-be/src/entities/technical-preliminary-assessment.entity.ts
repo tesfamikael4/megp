@@ -25,7 +25,7 @@ export class TechnicalPreliminaryAssessment extends Audit {
   @ManyToOne(
     () => BidRegistrationDetail,
     (bidRegistrationDetail) =>
-      bidRegistrationDetail.technicalPreliminaryAssessment,
+      bidRegistrationDetail.technicalPreliminaryAssessments,
   )
   @JoinColumn({ name: 'bidRegistrationDetailId' })
   bidRegistrationDetail: BidRegistrationDetail;
