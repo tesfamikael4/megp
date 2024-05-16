@@ -330,3 +330,20 @@ export class OpenBidResponseDto {
   @IsNotEmpty()
   password: string;
 }
+
+export class GenerateBidDeclarationDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenderId: string;
+
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
+  @IsString()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}

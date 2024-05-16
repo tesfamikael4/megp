@@ -9,18 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { BidResponseLot } from 'src/entities/bid-response-lot.entity';
-import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { BidResponseService } from '../service/bid-response.service';
-import { ExtraCrudController } from 'src/shared/controller';
 import {
   CheckPasswordDto,
   CreateBidResponseDto,
-  CreateBidResponseItemDto,
-  CreateBidResponseTenderDto,
+  GenerateBidDeclarationDto,
   GetBidResponseDto,
-  GetBidResponseItemDto,
-  GetBidResponseTenderDto,
 } from '../dto/bid-response.dto';
 import { JwtGuard } from 'src/shared/authorization';
 import { VendorGuard } from 'src/shared/authorization/guards/vendor.guard';
@@ -66,5 +60,13 @@ export class BidResponseController {
     @Req() req?: any,
   ) {
     return await this.bidSecurityService.getBidResponseByKey(payload, req);
+  }
+
+  @Post('generate-bid-declaration')
+  async generateBidDeclaration(
+    @Body() payload: GenerateBidDeclarationDto,
+    @Req() req?: any,
+  ) {
+    return await this.bidSecurityService.generateBidDeclaration(payload, req);
   }
 }
