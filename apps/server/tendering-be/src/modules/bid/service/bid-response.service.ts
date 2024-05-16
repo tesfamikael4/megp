@@ -263,6 +263,9 @@ export class BidResponseService {
         procurement_reference_no:
           bidRegistrationDetail.bidRegistration.tender
             .procurementReferenceNumber,
+        procurement_Reference_no:
+          bidRegistrationDetail.bidRegistration.tender
+            .procurementReferenceNumber,
       });
 
       const pdfBuffer =
