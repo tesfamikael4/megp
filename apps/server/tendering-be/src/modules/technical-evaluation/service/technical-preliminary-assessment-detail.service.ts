@@ -214,7 +214,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     )
       .leftJoin('tenders.tenderMilestones', 'tenderMilestones')
       .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true })
-      .andWhere('tenderMilestones.milestoneNum = :milestoneNum', {
+      .andWhere('tenderMilestones.milestoneNum >= :milestoneNum', {
         milestoneNum: 303,
       })
       .addSelect('tenderMilestones');
