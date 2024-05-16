@@ -263,7 +263,7 @@ export class BidResponseService {
         procurement_reference_no:
           bidRegistrationDetail.bidRegistration.tender
             .procurementReferenceNumber,
-        procurement_Reference_no:
+        procurement_Reference_number:
           bidRegistrationDetail.bidRegistration.tender
             .procurementReferenceNumber,
       });
