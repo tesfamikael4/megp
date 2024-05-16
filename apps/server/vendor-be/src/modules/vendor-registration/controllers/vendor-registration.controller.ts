@@ -269,11 +269,11 @@ export class VendorRegistrationsController {
   //submit profile update request
   @Post('submit-vendor-update-information')
   async submitProfileUpdateRequest(
-    @Body() vendorprofileUpdateDara: any,
+    @Body() vendorprofileUpdateData: any,
     @CurrentUser() userInfo: string,
   ) {
     return await this.regService.submitVendorProfileUpdate(
-      vendorprofileUpdateDara,
+      vendorprofileUpdateData,
       userInfo,
     );
   }
@@ -301,13 +301,14 @@ export class VendorRegistrationsController {
     return await this.regService.getCertificateInformations(userInfo.id);
   }
   //for testing purpose # document generation
+  // @AllowAnonymous()
   @Post('submit-registration-request')
   async submitRegistrationRequest(
     @CurrentUser() user: string,
     @Res() res: any,
   ) {
 
-
+    // const user = { id: '4be243cf-1192-456e-b4b7-a4bed5729bf5' };
 
     const data2 = {
       "tenantId": 0,
@@ -371,6 +372,7 @@ export class VendorRegistrationsController {
       ]
       ,
       "basic": {
+        "XxYc": "test data",
         "name": "MBRS BUSINESS NAME",
         "status": "Draft",
         "address": {

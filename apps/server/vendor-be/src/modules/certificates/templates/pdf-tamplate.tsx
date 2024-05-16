@@ -6,7 +6,31 @@ import ReactPDF, {
   View,
   StyleSheet,
 } from '@react-pdf/renderer';
-
+function formatKey(key) {
+  const levels = {
+    //basic information
+    name: 'Company',
+    countryOfRegistration: 'Country of Registration',
+    tinNumber: 'TIN',
+    tinIssuedDate: 'TIN Issued Date',
+    registrationNumber: 'Registration Number',
+    registrationIssuedDate: 'Registration Issued Date',
+    businessType: 'Form of Business',
+    //address information
+    fax: 'Fax',
+    region: 'Region',
+    website: 'Website',
+    district: 'District',
+    telephone: 'Telephone',
+    primaryEmail: 'Primary Email',
+    postalAddress: 'Postal Address',
+    alternateEmail: 'Alternate Email',
+    physicalAddress: 'Physical Address',
+  };
+  const label = levels[key];
+  if (label) return label;
+  else return formatKeyForLabel(key);
+}
 const PdfDocumentTemplate = async (data) => {
   return await ReactPDF.renderToStream(
     <Document title="Registered Vendor">
@@ -53,9 +77,7 @@ const PdfDocumentTemplate = async (data) => {
               <Text style={{ marginBottom: '8px' }}>
                 Registration Upgrade Service Request
               </Text>
-            ) : (
-              ''
-            )}
+            ) : null}
             {data?.upgrades?.length ? (
               <ReactPdfTableGrid3
                 config={{
@@ -120,7 +142,7 @@ const PdfDocumentTemplate = async (data) => {
           <View style={styles.activityDetail}>
             <ReactPdfTable
               data={Object.entries(data?.basic).map(([key, value]) => ({
-                key,
+                key: formatKey(key),
                 value,
               }))}
               config={{}}
@@ -129,10 +151,10 @@ const PdfDocumentTemplate = async (data) => {
 
           {/* Address Information */}
           <View style={styles.activity}>
-            <Text style={{ marginBottom: '8px' }}> Address Information</Text>
+            <Text style={{ marginBottom: '8px' }}> Address Information </Text>
             <ReactPdfTable
               data={Object.entries(data?.address).map(([key, value]) => ({
-                key,
+                key: formatKey(key),
                 value,
               }))}
               config={{}}
@@ -386,7 +408,7 @@ const ReactPdfTable = ({ data }: any) => {
         {data?.map((row: any, i: number) => (
           <View key={i} style={styles.row}>
             <Text style={styles.row1}>
-              <Text style={styles.bold}>{formatKeyForLabel(row.key)}</Text>
+              <Text style={styles.bold}>{row.key}</Text>
             </Text>
             <Text style={styles.row2}>{row.value}</Text>
           </View>
@@ -457,7 +479,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     marginTop: 10,
-    marginBottom: 15,
+    marginBottom: 5,
   },
   activities: {
     padding: 10,
@@ -465,7 +487,7 @@ const styles = StyleSheet.create({
   },
   // title
   activity: {
-    marginTop: 10,
+    marginTop: 5,
     marginBottom: 10,
     fontSize: 12,
     marginLeft: 20,

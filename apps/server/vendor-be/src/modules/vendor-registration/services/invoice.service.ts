@@ -321,14 +321,15 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     if (result) delete result.service;
     return result;
   }
-  async getInvoiceByUser(userId: string): Promise<InvoiceEntity> {
+  async getInvoiceByUser(userId: string, serviceId: string): Promise<InvoiceEntity> {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(new Date().getDate() - 7);
     const result = await this.invoiceRepository.findOne({
       where: {
         userId: userId,
         createdOn: MoreThanOrEqual(oneWeekAgo),
-        paymentStatus: PaymentStatus.PENDING,
+        paymentStatus: In([PaymentStatus.PENDING, PaymentStatus.PAID]),
+        serviceId: serviceId
       },
       relations: { service: true },
     });

@@ -288,10 +288,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
     formattedData.bankAccountDetails = [];
     for (const bank of data.bankAccountDetails) {
-      const formated = this.commonService.reduceAttributes(bank);
-      const isDefault = formated.isDefualt ? 'Yes' : 'No';
-      formated.isDefualt = isDefault;
-      formattedData.bankAccountDetails.push(formated);
+      const formatted = this.commonService.reduceAttributes(bank);
+      const isDefault = formatted.isDefualt ? 'Yes' : 'No';
+      formatted.isDefualt = isDefault;
+      formattedData.bankAccountDetails.push(formatted);
     }
     //new model changes
     formattedData.beneficialOwnershipShareholders = [];
@@ -309,8 +309,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
     formattedData.preferential = [];
     for (const pt of data?.preferential ?? []) {
-      const formated = this.commonService.reduceAttributes(pt);
-      formattedData.preferential.push(formated);
+      const formatted = this.commonService.reduceAttributes(pt);
+      formattedData.preferential.push(formatted);
     }
     formattedData.address = this.commonService.orderAddress(data.address);
     formattedData.basic = this.commonService.orderVendorBasicInformation(
@@ -1503,10 +1503,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
         }
         vendorEntity.areasOfBusinessInterestView = formattedAreaOfBi;
-        const invoice = this.invoiceService.getInvoiceByUser(userId);
-        if (invoice) {
-          vendorEntity.invoice = invoice;
-        }
+
+
+
       }
 
       // getting the preferential treatments  if any
@@ -1522,6 +1521,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         );
         vendorEntity.certificate = certeficate?.certificateUrl;
         vendorEntity.preferential = [...ptResult];
+        const service = vendorEntity.businessAreas.find((item: BusinessAreaEntity) => item.status == ApplicationStatus.PENDING && item.priceRangeId != null);
+        if (service) {
+          const invoice = this.invoiceService.getInvoiceByUser(userId, service.serviceId);
+          vendorEntity.invoice = invoice;
+        }
+
+
+
       }
 
       return vendorEntity;
