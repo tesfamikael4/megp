@@ -1,10 +1,8 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BidResponseTender } from 'src/entities/bid-response-tender.entity';
 import { EntityManager, Repository } from 'typeorm';
 import {
   BidResponseDocumentDto,
-  GetBidResponseTenderDto,
   UploadBidResponseDocumentDto,
 } from '../dto/bid-response.dto';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
@@ -13,7 +11,6 @@ import { EncryptionHelperService } from './encryption-helper.service';
 import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 import { BidResponseDocument } from 'src/entities/bid-response-document.entity';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
-import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
 
 @Injectable()
 export class BidResponseDocumentService {
@@ -36,8 +33,8 @@ export class BidResponseDocumentService {
       .getRepository(BidRegistrationDetail)
       .findOne({
         where: {
+          lotId: itemData.lotId,
           bidRegistration: {
-            tenderId: itemData.tenderId,
             bidderId: bidderId,
           },
         },
@@ -73,7 +70,7 @@ export class BidResponseDocumentService {
 
     const item = manager.getRepository(BidResponseDocument).create(itemData);
     item.bidRegistrationDetailId = bidRegistrationDetail.id;
-    item.value = encryptedValue;
+    item.pdfValue = encryptedValue;
 
     await this.bidSecurityRepository.upsert(item, [
       'bidRegistrationDetailId',
@@ -85,7 +82,7 @@ export class BidResponseDocumentService {
     };
   }
 
-  async getBidResponseDocumentByKey(
+  async getBidResponseDocumentDocx(
     itemData: BidResponseDocumentDto,
     req?: any,
   ) {
@@ -99,8 +96,8 @@ export class BidResponseDocumentService {
           documentType: itemData.documentType,
           bidFormId: itemData.bidFormId,
           bidRegistrationDetail: {
+            lotId: itemData.lotId,
             bidRegistration: {
-              tenderId: itemData.tenderId,
               bidderId: bidderId,
             },
           },
@@ -112,19 +109,51 @@ export class BidResponseDocumentService {
         },
       });
     if (!bidResponseDocument) {
-      const spdBidForm = await manager.getRepository(SpdBidForm).findOneBy({
-        id: itemData.bidFormId,
-      });
-
-      const presignedUrl = await this.minIOService.generatePresignedDownloadUrl(
-        spdBidForm.documentDocx,
-      );
-
-      return { presignedUrl };
+      throw new BadRequestException('bid_response_document_not_found');
     }
 
     const decryptedValue = this.encryptionHelperService.decryptedData(
       bidResponseDocument.value,
+      itemData.password,
+      bidResponseDocument.bidRegistrationDetail.bidRegistration.salt,
+    );
+
+    const presignedUrl = await this.minIOService.generatePresignedDownloadUrl(
+      JSON.parse(decryptedValue).value,
+    );
+
+    return { presignedUrl };
+  }
+
+  async getBidResponseDocumentPdf(itemData: BidResponseDocumentDto, req?: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bidderId = req.user.organization.id;
+
+    const bidResponseDocument = await manager
+      .getRepository(BidResponseDocument)
+      .findOne({
+        where: {
+          documentType: itemData.documentType,
+          bidFormId: itemData.bidFormId,
+          bidRegistrationDetail: {
+            lotId: itemData.lotId,
+            bidRegistration: {
+              bidderId: bidderId,
+            },
+          },
+        },
+        relations: {
+          bidRegistrationDetail: {
+            bidRegistration: true,
+          },
+        },
+      });
+    if (!bidResponseDocument) {
+      throw new BadRequestException('bid_response_document_not_found');
+    }
+
+    const decryptedValue = this.encryptionHelperService.decryptedData(
+      bidResponseDocument.pdfValue,
       itemData.password,
       bidResponseDocument.bidRegistrationDetail.bidRegistration.salt,
     );

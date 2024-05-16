@@ -4,15 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Tender } from './tender.entity';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 
-@Entity({ name: 'bidders-comparisons' })
+@Entity({ name: 'bidders_comparisons' })
 export class BiddersComparison extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

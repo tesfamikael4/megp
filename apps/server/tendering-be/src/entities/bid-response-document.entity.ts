@@ -36,4 +36,7 @@ export class BidResponseDocument extends Audit {
 
   @Column({ type: 'text' })
   value: string;
+
+  @Column({ type: 'text', nullable: true })
+  pdfValue: string;
 }
