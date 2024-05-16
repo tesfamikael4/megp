@@ -156,7 +156,6 @@ export const BankAccountDetails: React.FC<Props> = ({
                   </>
                 ) : (
                   <>
-                    {' '}
                     <TextInput
                       label="Bank Name"
                       placeholder="Enter Bank name"

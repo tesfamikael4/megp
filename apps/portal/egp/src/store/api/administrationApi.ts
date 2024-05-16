@@ -45,6 +45,11 @@ export const administrationApi = createApi({
         method: 'GET',
       }),
     }),
+    getCurrencies: builder.query<any, any>({
+      query: () => ({
+        url: `currencies`,
+      }),
+    }),
   }),
 });
 
@@ -53,4 +58,5 @@ export const {
   useGetRegionsQuery,
   useGetDistrictsByRegionQuery,
   useLazyGetDistrictsByRegionQuery,
+  useGetCurrenciesQuery,
 } = administrationApi;
