@@ -22,7 +22,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -33,7 +33,7 @@ export const seedTasks = [
     name: 'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
     label: 'Reviewed by RO',
     description:
-      'aprove new  registration request for Goods by senior or chief registration officer',
+      'Approve new  registration request by senior or chief registration officer',
     bpId: 'c811c2d4-1023-4327-a172-adfcd78a30d5',
     handlerType: 'Assignee',
     taskType: 'Confirmation',
@@ -41,7 +41,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -60,7 +60,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -69,7 +69,7 @@ export const seedTasks = [
   {
     id: '96752a13-205f-45eb-8b6f-118ebf0c89c7',
     name: 'Generate Vendor Registration Certificate',
-    label: 'Generated Certeficates',
+    label: 'Generated Certificates',
     description:
       "Creating a formal certificate to officially recognize and document the registration of a new vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
     bpId: 'c811c2d4-1023-4327-a172-adfcd78a30d5',
@@ -90,7 +90,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -108,7 +108,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -119,7 +119,7 @@ export const seedTasks = [
     name: 'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
     label: 'Reviewed by RO/RRM/DRRM',
     description:
-      'Aprove renewal  registration request for Works by senior or chief registration officer',
+      'Approve renewal  registration request for Works by senior or chief registration officer',
     bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6520d3',
     handlerType: 'Assignee',
     taskType: 'Confirmation',
@@ -127,7 +127,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -145,7 +145,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -154,7 +154,7 @@ export const seedTasks = [
   {
     id: '41fbc737-e712-471c-9c4b-7f345820538f',
     name: 'Generate Vendor Registration Certificate',
-    label: 'Generated Certeficate',
+    label: 'Generated Certificate',
     description:
       "Creating a formal certificate to officially recognize and document the upgrade of  vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
     bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6520d3',
@@ -164,7 +164,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -193,7 +193,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -204,7 +204,7 @@ export const seedTasks = [
     name: 'Approval of Micro Enterprises(ME) Registration Request by Senior or chief registration officer or RRM/DRRM',
     label: 'Reviewed by RO',
     description:
-      'Approve  Micro Enterprises(ME) registration request for Goods by senior or chief registration officer',
+      'Approve  Micro Enterprises(ME) registration request  by senior or chief registration officer',
     bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
     handlerType: 'Assignee',
     taskType: 'Confirmation',
@@ -212,7 +212,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -231,7 +231,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -271,7 +271,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -282,7 +282,7 @@ export const seedTasks = [
     name: 'Approval of Small Enterprises(SE) Registration Request by Senior or chief registration officer or RRM/DRRM',
     label: 'Reviewed by RO',
     description:
-      'Approve Small Enterprises(SE) registration request for Goods by senior or chief registration officer',
+      'Approve Small Enterprises(SE) registration request by senior or chief registration officer',
     bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
     handlerType: 'Assignee',
     taskType: 'Confirmation',
@@ -290,7 +290,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -309,7 +309,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -349,7 +349,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -360,7 +360,7 @@ export const seedTasks = [
     name: 'Approval of Medium Enterprise Registration Request by Senior or chief registration officer or RRM/DRRM',
     label: 'Reviewed by RO',
     description:
-      'Approve  Medium Enterprise registration request for Goods by senior or chief registration officer',
+      'Approve  Medium Enterprise registration request by senior or chief registration officer',
     bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
     handlerType: 'Assignee',
     taskType: 'Confirmation',
@@ -368,7 +368,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -387,7 +387,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -417,7 +417,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-912f-0e94d23d15d3',
         description:
-          'The Attached IBM certeficate and  other documents are valid.',
+          'The Attached IBM Certificate and  other documents are valid.',
         isMandatory: 'true',
       },
     ],
@@ -435,7 +435,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -446,7 +446,7 @@ export const seedTasks = [
     name: 'Approval of indigenous black Malawian(IBM) Registration Request by Senior or chief registration officer or RRM/DRRM',
     label: 'Reviewed by RO.4',
     description:
-      'aprove indigenous black Malawian(IBM)  registration request for Goods by senior or chief registration officer',
+      'Approve indigenous black Malawian(IBM)  registration request by senior or chief registration officer',
     bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
     handlerType: 'Assignee',
     taskType: 'Confirmation',
@@ -454,7 +454,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -473,7 +473,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -482,7 +482,7 @@ export const seedTasks = [
   {
     id: '16752a13-205f-45eb-8b5f-118ebf0c29c1',
     name: 'Generate Vendor Registration Certificate',
-    label: 'Generated Certeficate',
+    label: 'Generated Certificate',
     description: 'Generate Vendor Registration Certificate',
     bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
     handlerType: 'Assignee',
@@ -513,7 +513,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -524,7 +524,7 @@ export const seedTasks = [
     name: 'Approval of Marginalized Group Registration Request by Senior or chief registration officer or RRM/DRRM',
     label: 'Reviewed by RO',
     description:
-      'aprove Marginalized Group registration request by senior or chief registration officer',
+      'Approve Marginalized Group registration request by senior or chief registration officer',
     bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
     handlerType: 'Assignee',
     taskType: 'Confirmation',
@@ -532,7 +532,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -551,7 +551,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -560,7 +560,7 @@ export const seedTasks = [
   {
     id: '12752a13-205f-11eb-8b5f-118ebf0c21c2',
     name: 'Generate Vendor Registration Certificate',
-    label: 'Generated Certeficate',
+    label: 'Generated Certificate',
     description: 'Generate Vendor Registration Certificate',
     bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
     handlerType: 'Assignee',
@@ -580,7 +580,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -598,7 +598,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -609,7 +609,7 @@ export const seedTasks = [
     name: 'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
     label: 'Approved Uppgrade Request by CRO/RRM/DRRM',
     description:
-      'Aprove upgrade registration request by senior or chief registration officer',
+      'Approve upgrade registration request by senior or chief registration officer',
     bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc6',
     handlerType: 'Assignee',
     taskType: 'Confirmation',
@@ -617,7 +617,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -635,7 +635,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-1852-4ddc-982f-0e94d23d11d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -644,7 +644,7 @@ export const seedTasks = [
   {
     id: '41fac737-e76b-471c-9c4a-7f344820518f',
     name: 'Generate Vendor Registration Certificate',
-    label: 'Generated Certeficate',
+    label: 'Generated Certificate',
     description:
       "Creating a formal certificate to officially recognize and document the upgrade registration of a vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
     bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc6',
@@ -654,7 +654,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -689,7 +689,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -700,7 +700,7 @@ export const seedTasks = [
     name: 'Approval of Vendor Profile Update Request by Senior or chief registration officer or RRM/DRRM',
     label: 'Reviewed by RO',
     description:
-      'aprove Vendor Profile Update Request by senior or chief registration officer',
+      'Approve Vendor Profile Update Request by senior or chief registration officer',
     bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
     handlerType: 'Assignee',
     taskType: 'Confirmation',
@@ -708,7 +708,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],
@@ -727,7 +727,7 @@ export const seedTasks = [
       {
         id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
         description:
-          'All the required information and related documents fullfilled',
+          'All the required information and related documents fulfilled',
         isMandatory: 'true',
       },
     ],

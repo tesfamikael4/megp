@@ -57,7 +57,7 @@ export class NotificationsService extends EntityCrudService<Notification> {
       // );
       const notification: Notification = new Notification();
       notification.content = `Your license is expiring on ${vendor.expireDate}. Please renew it.`;
-      notification.userId = vendor.vendor.userId;
+      notification.userId = vendor.vendor.metaData.initial.userId;
       notification.title = 'Notification of Business Renewal';
       notification.category = "Renewal_Notification";
       this.notificationRepository.insert(notification);
@@ -102,7 +102,7 @@ export class NotificationsService extends EntityCrudService<Notification> {
         'vendor.userId',
         Notification,
         'notif',
-        'notif.userId=vendor.userId',
+        'vendor.userId=notif.userId',
       )
       .where('extract(day from ba.expireDate -:today) <=:expiryRemainingDays AND ba.expireDate is not null and notif.id is null', { today: today, expiryRemainingDays: expiryRemainingDays })
       .orWhere('notif.category=:category AND notif.createdAt < :nDaysAgo', { category: "Renewal_Notification", nDaysAgo: nDaysAgo })

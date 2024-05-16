@@ -203,8 +203,8 @@ export class WorkflowService {
           ApplicationStatus.CANCEL.toUpperCase()
         ) {
           response = await this.vendorRegService.cancelApplication(wfInstance);
-          this.notificationService.sendCancelNotification(
-            user.id,
+          await this.notificationService.sendCancelNotification(
+            wfInstance.userId,
             workflowInstance.applicationNumber,
             bp.service.name,
           );
@@ -218,14 +218,14 @@ export class WorkflowService {
             nextCommand.action.toLowerCase ==
             ApplicationStatus.APPROVE.toLowerCase
           ) {
-            this.notificationService.sendCompletionNotification(
-              user.id,
+            await this.notificationService.sendCompletionNotification(
+              wfInstance.userId,
               workflowInstance.applicationNumber,
               bp.service.name,
             );
           } else {
-            this.notificationService.sendRejectNotification(
-              user.id,
+            await this.notificationService.sendRejectNotification(
+              wfInstance.userId,
               workflowInstance.applicationNumber,
               bp.service.name,
             );

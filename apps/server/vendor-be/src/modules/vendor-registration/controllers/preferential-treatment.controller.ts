@@ -31,7 +31,7 @@ const options: EntityCrudOptions = {
   updateDto: UpdateBusinessAreaDto,
 };
 @Controller('preferentail-treatment')
-@ApiTags('Preferentail Treatment')
+@ApiTags('Preferential Treatment')
 @UseGuards(JwtGuard)
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class PreferentailTreatmentsController extends EntityCrudController<PreferentialTreatmentsEntity>(
