@@ -2709,11 +2709,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       return partner;
     });
 
-    itemData.name = mbrsRecords?.business_name;
+    const now = Date.now();
+    itemData.name = `${mbrsRecords?.business_name}-${now}`;
     // itemData.shareHolders = mbrsRecords.partners;
     itemData.address = {};
-    itemData.address.postalAddress = mbrsRecords?.postal_address;
-    itemData.address.physicalAddress = mbrsRecords?.physical_address;
+    itemData.address.postalAddress = `${mbrsRecords?.postal_address}-${now}`;
+    itemData.address.physicalAddress = `${mbrsRecords?.physical_address}-${now}`;
 
     return itemData;
   }
