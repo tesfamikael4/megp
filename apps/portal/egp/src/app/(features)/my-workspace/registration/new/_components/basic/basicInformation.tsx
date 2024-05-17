@@ -183,6 +183,28 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
                 }
                 {...lockElements('basic')}
               />
+              <DatePickerInput
+                valueFormat="YYYY/MM/DD"
+                label="TIN Issued date"
+                leftSection={<IconCalendar size={'1.2rem'} stroke={1.5} />}
+                maxDate={dayjs(new Date()).toDate()}
+                onChange={async (value: any) =>
+                  // console.log(dayjs(value).format('YYYY/MM/DD'))
+                  value &&
+                  (await setValue(
+                    'tinIssuedDate',
+                    dayjs(value)
+                      .format('YYYY/MM/DD')
+                      .toString()
+                      .replace(/\//g, '-'),
+                  ))
+                }
+                error={
+                  formState.errors.tinIssuedDate &&
+                  formState.errors.tinIssuedDate.message
+                }
+                {...lockElements('basic')}
+              />
             </>
           )}
 
