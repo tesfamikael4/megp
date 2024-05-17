@@ -20,6 +20,7 @@ import ItemSelector from './Item-selector';
 
 import CreateContractItem from './new-contract-item';
 import {
+  IconCirclePlus,
   IconDeviceFloppy,
   IconDotsVertical,
   IconPlus,
@@ -90,6 +91,39 @@ export default function ContractItem() {
       {
         accessor: 'utilizedQuantity',
       },
+    ],
+    expandedRowContent: (record, Collapse) => (
+      <CreateContractItem
+        contractItem={record}
+        onDone={(data, id) => handleOnDone(data, id, Collapse)}
+      />
+    ),
+  };
+  const newItemConfig = {
+    ...config,
+    columns: [
+      ...config.columns,
+      {
+        title: '',
+        accessor: 'actions',
+        render: (record) => (
+          <Group
+            onClick={(e) => {
+              e.stopPropagation();
+              const temp = newItems.filter((i) => i.id != record.id);
+              setNewItems(temp);
+            }}
+          >
+            <IconTrash size={14} color="red" />
+          </Group>
+        ),
+      },
+    ],
+  };
+  const addConfig = {
+    ...config,
+    columns: [
+      ...config.columns,
       {
         title: '',
         accessor: 'actions',
@@ -137,16 +171,6 @@ export default function ContractItem() {
       },
     ],
   };
-  const addConfig = {
-    ...config,
-    expandedRowContent: (record, Collapse) => (
-      <CreateContractItem
-        contractItem={record}
-        onDone={(data, id) => handleOnDone(data, id, Collapse)}
-      />
-    ),
-    columns: [...config.columns],
-  };
 
   logger.log(newItems, 'item');
   const handelOnSave = async () => {
@@ -185,9 +209,15 @@ export default function ContractItem() {
 
   return (
     <Section
-      title="Contract Item"
+      title="Contract Items"
       collapsible={false}
-      action={<Button onClick={open}>Select Item</Button>}
+      action={
+        <Button onClick={open}>
+          {' '}
+          <IconCirclePlus className="me-1" />
+          Add Item
+        </Button>
+      }
     >
       <Box>
         {newItems.length !== 0 && (
@@ -195,10 +225,14 @@ export default function ContractItem() {
             <Text className="text-lg" fw="500">
               New Contract Items
             </Text>
-            <ExpandableTable config={addConfig} data={newItems} />
+            <ExpandableTable config={newItemConfig} data={newItems} />
 
             <Flex justify="end" className="my-2" gap="sm">
-              <Button onClick={handelOnSave} loading={isSaving}>
+              <Button
+                onClick={handelOnSave}
+                loading={isSaving}
+                className="ml-auto"
+              >
                 <IconDeviceFloppy /> Save
               </Button>
               <Button variant="outline" onClick={() => setNewItems([])}>

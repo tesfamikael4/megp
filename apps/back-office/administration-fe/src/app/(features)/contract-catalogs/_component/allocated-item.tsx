@@ -11,21 +11,25 @@ import {
 } from '@mantine/core';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { useCreateMutation } from '../_api/contract.api';
 import { useDisclosure } from '@mantine/hooks';
 import SelectOrganization from './select-organization';
 import { Section, notify } from '@megp/core-fe';
-import { useReadItemMasterQuery } from '@/store/api/contract-catalog/contract-catalog.api';
+import { useLazyReadItemMasterQuery } from '@/store/api/contract-catalog/contract-catalog.api';
 
 interface AllocatedItem {
   maximumQuantity: number;
   utilizedQuantity: number;
 }
 
-export default function ContractAllocatedItem() {
+export default function ContractAllocatedItem({
+  beneficiary,
+}: {
+  beneficiary: any;
+}) {
   const AllocateditemSchema: ZodType<Partial<AllocatedItem>> = z.object({
     maximumQuantity: z.number(),
     utilizedQuantity: z.number(),
@@ -42,7 +46,7 @@ export default function ContractAllocatedItem() {
 
   const [opened, { open, close }] = useDisclosure();
   const [selectedOrg, setSelectedOrg] = useState<any[]>([]);
-  const { data: item } = useReadItemMasterQuery(selectedOrg[0]?.itemMasterId);
+  const [triggerItem, { data: item }] = useLazyReadItemMasterQuery();
 
   const [create] = useCreateMutation();
 
@@ -51,6 +55,8 @@ export default function ContractAllocatedItem() {
       const result = await create({
         ...data,
         contractItemId: selectedOrg[0]?.id,
+        itemMasterId: selectedOrg[0]?.itemMasterId,
+        contractBeneficiaryId: beneficiary.id,
       }).unwrap();
 
       router.push(`/contract-catalogs/${result?.id}`);
@@ -61,11 +67,13 @@ export default function ContractAllocatedItem() {
       notify('Error', errorMessage);
     }
   };
+  useEffect(() => {
+    triggerItem(selectedOrg[0]?.itemMasterId);
+  }, [selectedOrg]);
 
   return (
     <Section title="Allocated item" collapsible={false}>
       <Stack pos="relative">
-        {/* <LoadingOverlay visible={isLoading} /> */}
         <Flex gap={4}>
           <Box className="w-1/2">
             <TextInput
@@ -115,7 +123,9 @@ export default function ContractAllocatedItem() {
         </Flex>
 
         <Group>
-          <Button onClick={handleSubmit(onCreate)}>Save</Button>
+          <Button onClick={handleSubmit(onCreate)} className="ml-auto">
+            Save
+          </Button>
         </Group>
         <Modal
           title={<Box fw={'bold'}>Select Vendor</Box>}

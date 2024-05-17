@@ -23,7 +23,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { IconArrowLeft } from '@tabler/icons-react';
 interface Price {
   unitPrice: number;
-  location: string;
+  location: {
+    location: string;
+  };
   deliveryDate: Date;
   currency: string;
 }
@@ -31,7 +33,9 @@ interface Price {
 export default function ContractItemPrice() {
   const ContractItemSchema: ZodType<Partial<Price>> = z.object({
     unitPrice: z.number().min(1, { message: 'Unit Price is required' }),
-    location: z.string().min(1, { message: 'Location is required' }),
+    location: z.object({
+      location: z.string().min(1, { message: 'Location is required' }),
+    }),
     deliveryDate: z
       .date()
       .min(new Date(), { message: 'Delivery Date is required' }),
@@ -43,10 +47,8 @@ export default function ContractItemPrice() {
 
   const {
     handleSubmit,
-
     formState: { errors },
     control,
-
     register,
   } = useForm({
     resolver: zodResolver(ContractItemSchema),
@@ -79,8 +81,6 @@ export default function ContractItemPrice() {
     }
   };
 
-  logger.log('contractItemPrice', contractItemPrice);
-
   return (
     <Section
       title={
@@ -111,7 +111,7 @@ export default function ContractItemPrice() {
               label="Location"
               placeholder="Enter location"
               error={errors.location?.message?.toString()}
-              {...register('location')}
+              {...register('location.location')}
             />
           </Box>
           <Box className="w-1/2">
