@@ -33,10 +33,10 @@ export class ItemMasterConroller extends EntityCrudController<ItemMaster>(
   }
 
   @Put(':id')
-  async update(
+  async updateItemMaster(
     @Param('id') id: string,
     @Body() itemData: any,
-  ): Promise<ItemMaster> {
+  ): Promise<ItemMaster[]> {
     return this.itemMasterService.updateWithChildren(id, itemData);
   }
 
