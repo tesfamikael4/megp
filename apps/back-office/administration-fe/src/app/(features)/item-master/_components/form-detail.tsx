@@ -103,6 +103,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const itemCategoryId = watch('itemCategoryId');
   const [itemCategoryName, setItemCategoryName] = useState<string>('');
 
+  // Fetching data
   const { data: measurements, isLoading: isMeasurementLoading } =
     useGetMeasurementsQuery({} as any);
   const [getCategories, { data: categories, isLoading: isCategoriesLoading }] =
@@ -120,12 +121,13 @@ export function FormDetail({ mode }: FormDetailProps) {
     useListItemSubCatQuery({});
   const [getItemTags, { data: itemTags, isSuccess: isItemTagSuccess }] =
     useLazyGetTagsByItemMasterQuery();
-  const [getItemMasters, { data, isSuccess }] = useLazyReadQuery();
+  const [getItemMasters, { data: itemData, isSuccess }] = useLazyReadQuery();
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
+  // logger.log('item master', itemData);
   const treeConfig: TreeConfig<any> = {
     id: 'itemCategoryId',
     label: 'itemCategoryName',
@@ -158,6 +160,8 @@ export function FormDetail({ mode }: FormDetailProps) {
       };
     },
   };
+
+  // Handling Form Submission
   const onCreate = async (data) => {
     const rawData = {
       ...data,
@@ -172,10 +176,20 @@ export function FormDetail({ mode }: FormDetailProps) {
       notify('Error', 'Something went wrong');
     }
   };
+
   const onUpdate = async (data) => {
+    const modNewTag = data.itemTags.map((tag) => {
+      const idnew = itemData.itemTags.filter((t) => t.tagId == tag);
+      return {
+        tagId: tag,
+        itemMasterId: id,
+        id: idnew?.[0]?.id,
+        // Include the itemMasterId for each tag
+      };
+    });
     const rawData = {
       ...data,
-      itemTags: data.itemTags.map((tag) => ({ tagId: tag })),
+      itemTags: modNewTag,
     };
     try {
       const res = await update({ id: id as string, ...rawData }).unwrap();
@@ -185,6 +199,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notify('Error', 'Something went wrong');
     }
   };
+
   const onDelete = async (data) => {
     try {
       await remove(id?.toString()).unwrap();
@@ -194,6 +209,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notify('Error', 'Something went wrong');
     }
   };
+
   const onReset = async () => {
     reset({ ...defaultValues });
   };
@@ -207,18 +223,19 @@ export function FormDetail({ mode }: FormDetailProps) {
   useEffect(() => {
     if (mode == 'detail' && isSuccess) {
       reset({
-        description: data?.description,
-        commodityCode: data?.commodityCode,
-        commodityName: data?.commodityName,
-        itemCategoryId: data?.itemCategoryId,
-        itemSubCategoryId: data?.itemSubCategoryId,
-        uOMId: data?.uOMId,
-        uOMName: data?.uOMName,
-        measurementId: data?.measurementId,
+        description: itemData?.description,
+        commodityCode: itemData?.commodityCode,
+        commodityName: itemData?.commodityName,
+        itemCategoryId: itemData?.itemCategoryId,
+        itemSubCategoryId: itemData?.itemSubCategoryId,
+        uOMId: itemData?.uOMId,
+        uOMName: itemData?.uOMName,
+        measurementId: itemData?.measurementId,
+        itemTags: itemData?.itemTags.map((tag) => tag.tagId),
       });
-      setItemCode(data?.itemCode);
+      setItemCode(itemData?.itemCode);
     }
-  }, [data, isSuccess, mode, setValue]);
+  }, [itemData, isSuccess, mode, setValue]);
 
   useEffect(() => {
     isItemTagSuccess &&
