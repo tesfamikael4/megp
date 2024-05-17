@@ -187,11 +187,11 @@ export function FormDetail({ mode, disableFields }: FormDetailProps) {
             <Controller
               name="startDate"
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange } }) => (
                 <DateInput
                   label="Start Date"
-                  value={field.value}
-                  onChange={(value) => field.onChange(value)}
+                  value={value}
+                  onChange={onChange}
                   error={
                     errors?.startDate
                       ? errors?.startDate?.message?.toString()
@@ -204,11 +204,11 @@ export function FormDetail({ mode, disableFields }: FormDetailProps) {
             <Controller
               name="endDate"
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange } }) => (
                 <DateInput
                   label="End Date"
-                  value={field.value}
-                  onChange={(value) => field.onChange(value)}
+                  value={value}
+                  onChange={onChange}
                   error={
                     errors?.endDate ? errors?.endDate?.message?.toString() : ''
                   }

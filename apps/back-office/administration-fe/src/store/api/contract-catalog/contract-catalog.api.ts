@@ -57,6 +57,14 @@ export const contractCatalogApi = createApi({
       },
       invalidatesTags: ['ContractItem'],
     }),
+    deleteContractBeneficiary: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `contract-beneficiaries/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['ContractBeneficiary'],
+    }),
+
     listContractItem: builder.query<any, string>({
       query: (id) => ({
         url: `contract-items/list/${id}`,
@@ -107,6 +115,7 @@ export const {
   useAssignContractBeneficiaryMutation,
   useGetContractBeneficiaryQuery,
   useLazyGetContractBeneficiaryQuery,
+  useDeleteContractBeneficiaryMutation,
 
   useCreateContractItemMutation,
   useReadContractItemQuery,
@@ -122,4 +131,5 @@ export const {
   useGetTemplateQuery,
 
   useReadItemMasterQuery,
+  useLazyReadItemMasterQuery,
 } = contractCatalogApi;

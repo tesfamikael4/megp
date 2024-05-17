@@ -39,6 +39,7 @@ export default function CreateContractItem({
     utilizedQuantity: z
       .number()
       .min(1, { message: 'Utilized quantity  is required' }),
+    description: z.string(),
   });
 
   const {
@@ -46,6 +47,7 @@ export default function CreateContractItem({
     reset,
     formState: { errors },
     control,
+    register,
   } = useForm({
     resolver: zodResolver(contractItemSchema),
   });
@@ -58,7 +60,7 @@ export default function CreateContractItem({
     isSuccess: selectedSuccess,
     isLoading,
   } = useReadContractItemQuery(id?.toString());
-  logger.log('contractItem', contractItem);
+
   const onCreate = (data) => {
     onDone &&
       onDone(
@@ -91,7 +93,13 @@ export default function CreateContractItem({
   useEffect(() => {
     template(contractItem.itemMasterId?.toString());
   }, [contractItem]);
-  logger.log('selected', templateData);
+
+  useEffect(() => {
+    logger.log('contractItem', contractItem?.description);
+    reset({
+      description: contractItem?.description,
+    });
+  }, [contractItem?.description]);
 
   return (
     <>
@@ -99,7 +107,11 @@ export default function CreateContractItem({
         <LoadingOverlay visible={isLoading} />
         <Flex gap="sm">
           <Box className="w-1/2">
-            <Textarea label={'description'} disabled />
+            <Textarea
+              label={'description'}
+              disabled
+              {...register('description')}
+            />
 
             <Controller
               name="maximumQuantity"
@@ -141,13 +153,13 @@ export default function CreateContractItem({
             />
           </Box>
         </Flex>
-        <Group>
+        <Group className="ml-auto">
           {selected ? (
             <Button onClick={handleSubmit(onUpdate)} loading={isUpdating}>
               Update
             </Button>
           ) : (
-            <Button onClick={handleSubmit(onCreate)}>Done</Button>
+            <Button onClick={handleSubmit(onCreate)}>Save</Button>
           )}
         </Group>
       </Stack>
