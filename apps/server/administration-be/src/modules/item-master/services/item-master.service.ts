@@ -6,7 +6,7 @@ import { ItemMaster } from 'src/entities/item-master.entity';
 import { Classification } from 'src/entities/classification.entity';
 import { EntityCrudService } from 'src/shared/service';
 import { ClassificationService } from 'src/modules/classification/services/classification.service';
-import { ItemMetaData } from 'src/entities';
+import { ItemMetaData, ItemTag } from 'src/entities';
 export class ItemMasterService extends EntityCrudService<ItemMaster> {
   constructor(
     @InjectRepository(Classification)
@@ -18,8 +18,19 @@ export class ItemMasterService extends EntityCrudService<ItemMaster> {
     @Inject(ItemCodeGeneratorService)
     private readonly itemCodeGenerateService: ItemCodeGeneratorService,
     private readonly classificationService: ClassificationService,
+    @InjectRepository(ItemTag)
+    private readonly itemTagRepository: Repository<ItemTag>,
   ) {
     super(itemMasterRepository);
+  }
+
+  async findOne(id: string): Promise<ItemMaster> {
+    return this.itemMasterRepository.findOne({
+      where: { id },
+      relations: {
+        itemTags: true,
+      },
+    });
   }
 
   async create(itemData: ItemMaster): Promise<ItemMaster> {
@@ -38,7 +49,7 @@ export class ItemMasterService extends EntityCrudService<ItemMaster> {
     return await this.itemMasterRepository.save(instance);
   }
 
-  async updateWithChildren(id: string, itemData: any): Promise<ItemMaster> {
+  async updateWithChildren(id: string, itemData: any): Promise<ItemMaster[]> {
     if (itemData.commodityCode) {
       const commodityCode = itemData.commodityCode;
       const hierarchy: any[] =
@@ -52,10 +63,17 @@ export class ItemMasterService extends EntityCrudService<ItemMaster> {
       });
       itemData.itemMetaData = itemMetaData;
     }
-
-    const instance: any = this.itemMasterRepository.create({
+    const existingItem = await this.findOne(id);
+    // Identify tags to remove
+    const tagsToRemove = existingItem.itemTags.filter(
+      (tag) => !itemData.itemTags.includes(tag.id),
+    );
+    // Remove the tags that are not in the updated list
+    await this.itemTagRepository.remove(tagsToRemove);
+    const instance = this.itemMasterRepository.create({
       ...itemData,
-      id: id,
+      id,
+      itemTags: itemData.itemTags,
     });
     return await this.itemMasterRepository.save(instance);
   }
