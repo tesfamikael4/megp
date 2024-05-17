@@ -46,6 +46,10 @@ export default function BidOpening() {
                 router.push(
                   `/evaluation/${tenderId}/${record.id}/qualification`,
                 );
+              else if (currentStage === 'TechnicalResponsiveness')
+                router.push(
+                  `/evaluation/${tenderId}/${record.id}/responsiveness`,
+                );
             }}
           >
             <IconChevronRight size={14} />

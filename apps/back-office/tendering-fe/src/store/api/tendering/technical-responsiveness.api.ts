@@ -1,9 +1,9 @@
 import { baseQuery } from '@/store/base-query';
-import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
+import { encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-export const technicalQualification = createApi({
-  reducerPath: 'technicalQualification',
+export const technicalResponsiveness = createApi({
+  reducerPath: 'technicalResponsiveness',
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   tagTypes: ['evaluation', 'bidAttribute', 'bidder'],
@@ -20,7 +20,7 @@ export const technicalQualification = createApi({
         };
       },
     }),
-    getQualificationChecklistByLotId: builder.query<any, any>({
+    getResponsivenessChecklistByLotId: builder.query<any, any>({
       query: ({
         lotId,
         bidderId,
@@ -48,7 +48,7 @@ export const technicalQualification = createApi({
       }),
       invalidatesTags: ['bidAttribute'],
     }),
-    getQualificationAssessments: builder.query<any, any>({
+    getResponsivenessAssessments: builder.query<any, any>({
       query: ({
         lotId,
         bidderId,
@@ -60,7 +60,7 @@ export const technicalQualification = createApi({
       }) =>
         `/technical-qualification-assessment-detail/evaluator-report/${lotId}/${bidderId}/${team}`,
     }),
-    completeQualificationEvaluation: builder.mutation<any, any>({
+    completeResponsivenessEvaluation: builder.mutation<any, any>({
       query: (data: {
         lotId: string;
         bidderId: string;
@@ -93,7 +93,6 @@ export const technicalQualification = createApi({
       },
       invalidatesTags: ['evaluation'],
     }),
-
     getMembersAssesmentResult: builder.query<any, any>({
       query: ({
         lotId,
@@ -111,12 +110,12 @@ export const technicalQualification = createApi({
 
 export const {
   useLazyGetPassedBiddersQuery,
-  useLazyGetQualificationChecklistByLotIdQuery,
+  useLazyGetResponsivenessChecklistByLotIdQuery,
   useLazyGetSpdDetailQuery,
   useCheckBidAttributeMutation,
   useGetLotStatusQuery,
-  useLazyGetQualificationAssessmentsQuery,
-  useCompleteQualificationEvaluationMutation,
+  useLazyGetResponsivenessAssessmentsQuery,
+  useCompleteResponsivenessEvaluationMutation,
   useSubmitEvaluationMutation,
   useLazyGetMembersAssesmentResultQuery,
-} = technicalQualification;
+} = technicalResponsiveness;

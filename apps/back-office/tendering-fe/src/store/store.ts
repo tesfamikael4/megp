@@ -16,6 +16,7 @@ import { iamApi } from './api/iam/iam-api';
 import { preliminaryComplianceApi } from './api/tendering/preliminary-compliance.api';
 import { tenderOpeningApi } from './api/tendering/tender-opening.api';
 import { technicalQualification } from './api/tendering/technical-qualification';
+import { technicalResponsiveness } from './api/tendering/technical-responsiveness.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -25,6 +26,7 @@ export const store = configureStore({
     [tenderingApi.reducerPath]: tenderingApi.reducer,
     [preliminaryComplianceApi.reducerPath]: preliminaryComplianceApi.reducer,
     [technicalQualification.reducerPath]: technicalQualification.reducer,
+    [technicalResponsiveness.reducerPath]: technicalResponsiveness.reducer,
     [tenderOpeningApi.reducerPath]: tenderOpeningApi.reducer,
     [iamApi.reducerPath]: iamApi.reducer,
     [technicalScoringTreeApi.reducerPath]: technicalScoringTreeApi.reducer,
@@ -56,6 +58,7 @@ export const store = configureStore({
       tenderingApi.middleware,
       preliminaryComplianceApi.middleware,
       technicalQualification.middleware,
+      technicalResponsiveness.middleware,
       tenderOpeningApi.middleware,
       bidDocumentApi.middleware,
       iamApi.middleware,
