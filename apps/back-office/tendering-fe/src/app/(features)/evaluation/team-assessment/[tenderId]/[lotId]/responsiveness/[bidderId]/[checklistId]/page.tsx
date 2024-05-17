@@ -1,29 +1,27 @@
 'use client';
-
 import { ActionIcon, Box, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { ExpandableTable, Section } from '@megp/core-fe';
 import { ChecklistAssessment } from '../_components/assesment';
-import { IconFile, IconUsers } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import {
   useLazyGetMembersAssesmentResultQuery,
   useLazyGetSpdDetailQuery,
-} from '@/store/api/tendering/preliminary-compliance.api';
+} from '@/store/api/tendering/technical-responsiveness.api';
+import { IconFile, IconUsers } from '@tabler/icons-react';
 
 export default function ChecklistDetail() {
+  const { lotId, bidderId, checklistId } = useParams();
   const [page, setPage] = useState<'teamAssessment' | 'documentPreview'>(
     'documentPreview',
   );
   const [getTeamAssessment, { data, isLoading }] =
     useLazyGetMembersAssesmentResultQuery();
-  const { lotId, bidderId, checklistId } = useParams();
   const [getSbd, { data: sbdData }] = useLazyGetSpdDetailQuery();
 
   useEffect(() => {
     getSbd(checklistId);
   }, [checklistId, getSbd]);
-
   useEffect(() => {
     getTeamAssessment({ lotId, bidderId, checklistId });
   }, []);

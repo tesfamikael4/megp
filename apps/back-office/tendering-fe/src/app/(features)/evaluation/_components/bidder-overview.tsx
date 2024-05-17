@@ -13,7 +13,10 @@ export const BidderOverView = ({
   milestone,
 }: {
   basePath: string;
-  milestone: 'technicalCompliance' | 'technicalQualification';
+  milestone:
+    | 'technicalCompliance'
+    | 'technicalQualification'
+    | 'technicalResponsiveness';
 }) => {
   const { tenderId, lotId, bidderId } = useParams();
   const router = useRouter();
