@@ -1,33 +1,31 @@
 'use client';
-import { Box, Button, Flex } from '@mantine/core';
+import { Box, Flex } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 
 import { useParams } from 'next/navigation';
 import { WorkflowHandling } from '../../../approval/workflow';
-import { DetailTable } from '../../../components/detail-table';
+import { useGetGuranateeDocumentQuery } from '@/store/api/guarantee-document/guarantee-document.api';
 
 export default function ForfeitDetail() {
-  const { id } = useParams();
-  const data = [
-    {
-      key: 'Guaranter Name',
-      value: 'Zemen',
-    },
-    {
-      key: 'Validity Date',
-      value: 'Mar/30/2024',
-    },
-    {
-      key: 'Request Date',
-      value: 'Mar/30/2024',
-    },
-  ];
+  const { id, guaranteeId } = useParams();
+  const { data: document } = useGetGuranateeDocumentQuery(
+    guaranteeId.toLocaleString(),
+  );
   return (
     <>
       <Flex gap={10} mt={10}>
         <Box className=" bg-white w-3/4 h-full">
-          <Section title=" Guarantee Extension Detail" collapsible={false}>
-            <DetailTable data={data} />
+          <Section
+            title="Guarantee Document"
+            collapsible={false}
+            className="overflow-scroll"
+          >
+            <embed
+              src={document?.document?.presignedUrl}
+              type="application/pdf"
+              width="100%"
+              height="800px"
+            />
           </Section>
         </Box>
         <Box className=" bg-white w-1/4">
