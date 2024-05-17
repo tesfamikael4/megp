@@ -56,3 +56,19 @@ export class SubmitDto {
   @IsNotEmpty()
   bidderId: string;
 }
+export class CompleteBidderEvaluationDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidderId: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  isTeamLead: boolean;
+}

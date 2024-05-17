@@ -4,7 +4,10 @@ import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { TechnicalPreliminaryAssessmentDetail } from 'src/entities/technical-preliminary-assessment-detail.entity';
 import { TechnicalPreliminaryAssessmentDetailService } from '../service/technical-preliminary-assessment-detail.service';
-import { CreatePreliminaryAssessment } from '../dto/technical-preliminary-assessment.dto';
+import {
+  CompleteBidderEvaluationDto,
+  CreatePreliminaryAssessment,
+} from '../dto/technical-preliminary-assessment.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
@@ -89,6 +92,16 @@ export class TechnicalPreliminaryAssessmentDetailController extends ExtraCrudCon
       spdId,
       bidderId,
       lotId,
+    );
+  }
+  @Put('complete-bidder-evaluation')
+  async completeBidderEvaluation(
+    @Body() itemData: CompleteBidderEvaluationDto,
+    @Req() req,
+  ) {
+    return await this.technicalPreliminaryAssessmentDetailService.completeBidderEvaluation(
+      itemData,
+      req,
     );
   }
 }
