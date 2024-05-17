@@ -920,6 +920,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
           // TRIGGER RMQ EVENT TO IAM AFTER GENERATING EGP REGISTRATION NUMBER
           const eventPayload = {
+            id: newlySavedVendor.id,
             name: newlySavedVendor.name,
             accountId: newlySavedVendor.userId,
             egpRegistrationNumber: newlySavedVendor.registrationNumber,
@@ -1503,9 +1504,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
         }
         vendorEntity.areasOfBusinessInterestView = formattedAreaOfBi;
-
-
-
       }
 
       // getting the preferential treatments  if any
@@ -1521,14 +1519,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         );
         vendorEntity.certificate = certeficate?.certificateUrl;
         vendorEntity.preferential = [...ptResult];
-        const service = vendorEntity.businessAreas.find((item: BusinessAreaEntity) => item.status == ApplicationStatus.PENDING && item.priceRangeId != null);
+        const service = vendorEntity.businessAreas.find(
+          (item: BusinessAreaEntity) =>
+            item.status == ApplicationStatus.PENDING &&
+            item.priceRangeId != null,
+        );
         if (service) {
-          const invoice = this.invoiceService.getInvoiceByUser(userId, service.serviceId);
+          const invoice = this.invoiceService.getInvoiceByUser(
+            userId,
+            service.serviceId,
+          );
           vendorEntity.invoice = invoice;
         }
-
-
-
       }
 
       return vendorEntity;
