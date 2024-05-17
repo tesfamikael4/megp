@@ -68,16 +68,22 @@ export class BidResponseDocumentService {
       bidRegistrationDetail.bidRegistration.salt,
     );
 
-    const item = manager.getRepository(BidResponseDocument).create(itemData);
-    item.bidRegistrationDetailId = bidRegistrationDetail.id;
-    item.pdfValue = encryptedValue;
+    const bidResponseDocument = await manager
+      .getRepository(BidResponseDocument)
+      .findOneBy({
+        documentType: itemData.documentType,
+        bidFormId: itemData.bidFormId,
+        bidRegistrationDetailId: bidRegistrationDetail.id,
+      });
 
-    await this.bidSecurityRepository.upsert(item, [
-      'bidRegistrationDetailId',
-      'bidFormId',
-    ]);
+    await manager
+      .getRepository(BidResponseDocument)
+      .update(bidResponseDocument.id, {
+        pdfValue: encryptedValue,
+      });
+
     return {
-      ...item,
+      ...bidResponseDocument,
       presignedDownload: document.presignedUrl,
     };
   }
