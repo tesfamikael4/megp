@@ -8,6 +8,7 @@ import { guaranteeApprovalApi } from './api/approval/approval';
 import { guaranteeIamApi } from './api/approval/iam';
 import { workflowApi } from './api/workflow/workflow.api';
 import { guaranteeApi } from './api/guarantee-request/guarantee-request.api';
+import { guaranteeDocumentApi } from './api/guarantee-document/guarantee-document.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -21,6 +22,7 @@ export const store = configureStore({
     [guaranteeIamApi.reducerPath]: guaranteeIamApi.reducer,
     [workflowApi.reducerPath]: workflowApi.reducer,
     [guaranteeApi.reducerPath]: guaranteeApi.reducer,
+    [guaranteeDocumentApi.reducerPath]: guaranteeDocumentApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -34,6 +36,7 @@ export const store = configureStore({
       workflowApi.middleware,
       guaranteeIamApi.middleware,
       guaranteeApi.middleware,
+      guaranteeDocumentApi.middleware,
     ]),
 });
 
