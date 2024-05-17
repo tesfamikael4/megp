@@ -4,12 +4,13 @@ import { useLazyGetBidderDetailsQuery } from '@/store/api/tendering/tendering.ap
 import { Badge, Box, Button, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
 import { IconChevronLeft } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export const BidderOverView = ({ basePath }: { basePath: string }) => {
   const { tenderId, lotId, bidderId } = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const [getBidder, { data, isLoading }] = useLazyGetBidderDetailsQuery();
   const [completeEvaluation, { isLoading: isCompleting }] =
     useCompleteEvaluationMutation();
@@ -27,7 +28,7 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
       await completeEvaluation({
         lotId: lotId as string,
         bidderId: bidderId as string,
-        isTeamLead: false,
+        isTeamLead: pathname.includes('team-assessment'),
       }).unwrap();
       notify('Success', 'completed successfully');
       router.push(basePath);
