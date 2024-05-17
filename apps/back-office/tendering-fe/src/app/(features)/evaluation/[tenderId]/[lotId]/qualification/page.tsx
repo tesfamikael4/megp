@@ -17,16 +17,15 @@ import {
 } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { DetailTable } from '../../../_components/detail-table';
+import { modals } from '@mantine/modals';
+import { useEffect } from 'react';
+import { LotOverview } from '../../../_components/lot-overview';
 import {
   useGetLotStatusQuery,
   useLazyGetPassedBiddersQuery,
+  useLazyGetQualificationAssessmentsQuery,
   useSubmitEvaluationMutation,
-} from '@/store/api/tendering/preliminary-compliance.api';
-import { modals } from '@mantine/modals';
-import { useLazyGetOpeningAssessmentsQuery } from '@/store/api/tendering/tender-opening.api';
-import { useEffect } from 'react';
-import { LotOverview } from '../../../_components/lot-overview';
+} from '@/store/api/tendering/technical-qualification';
 export default function BidOpening() {
   const router = useRouter();
   const { tenderId, lotId } = useParams();
@@ -116,7 +115,7 @@ export default function BidOpening() {
                 variant="outline"
                 onClick={() => {
                   router.push(
-                    `/evaluation/team-assessment/${tenderId}/${lotId}`,
+                    `/evaluation/team-assessment/${tenderId}/${lotId}/qualification`,
                   );
                 }}
                 disabled={!lotStatus?.canTeamAssess}
@@ -127,7 +126,7 @@ export default function BidOpening() {
             <Button
               onClick={onSubmit}
               loading={isLoading}
-              disabled={lotStatus?.hasCompleted}
+              disabled={lotStatus?.hasCompleted ?? true}
             >
               Complete
             </Button>
@@ -151,7 +150,7 @@ const BidderDetail = ({ bidder }: any) => {
   const { lotId } = useParams();
 
   const [getChecklists, { data, isLoading }] =
-    useLazyGetOpeningAssessmentsQuery();
+    useLazyGetQualificationAssessmentsQuery();
 
   useEffect(() => {
     getChecklists({
@@ -168,15 +167,15 @@ const BidderDetail = ({ bidder }: any) => {
           minHeight: 100,
           columns: [
             {
-              accessor: 'name',
+              accessor: 'itbDescription',
+              title: 'Name',
             },
             {
               accessor: 'Assessment',
+              width: 200,
               render: (record) =>
-                record.check
-                  ? record?.check?.checked
-                    ? 'Yes'
-                    : 'No'
+                record.check?.qualified
+                  ? record?.check?.qualified
                   : 'Not Evaluated Yet',
             },
           ],

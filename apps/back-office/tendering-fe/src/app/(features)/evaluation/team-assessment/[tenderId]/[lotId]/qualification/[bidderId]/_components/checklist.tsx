@@ -1,13 +1,7 @@
 'use client';
 import { useLazyGetQualificationChecklistByLotIdQuery } from '@/store/api/tendering/technical-qualification';
 import { Box, Table } from '@mantine/core';
-import {
-  ExpandableTable,
-  ExpandableTableConfig,
-  MantineTree,
-  Section,
-  logger,
-} from '@megp/core-fe';
+import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -17,7 +11,11 @@ export const Checklist = () => {
     useLazyGetQualificationChecklistByLotIdQuery();
 
   useEffect(() => {
-    getChecklists({ lotId: lotId as string, bidderId: bidderId as string });
+    getChecklists({
+      lotId: lotId as string,
+      bidderId: bidderId as string,
+      team: 'teamLeader',
+    });
   }, []);
   const router = useRouter();
   const { tenderId, lotId, bidderId } = useParams();
@@ -35,7 +33,7 @@ export const Checklist = () => {
                 className="cursor-pointer"
                 onClick={() =>
                   router.push(
-                    `/evaluation/${tenderId}/${lotId}/qualification/${bidderId}/${list.id}`,
+                    `/evaluation/team-assessment/${tenderId}/${lotId}/qualification/${bidderId}/${list.id}`,
                   )
                 }
               >

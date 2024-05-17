@@ -17,9 +17,9 @@ import {
 } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { DetailTable } from '../../../_components/detail-table';
 import {
   useGetLotStatusQuery,
+  useLazyGetComplianceAssessmentsQuery,
   useLazyGetPassedBiddersQuery,
   useSubmitEvaluationMutation,
 } from '@/store/api/tendering/preliminary-compliance.api';
@@ -127,7 +127,7 @@ export default function BidOpening() {
             <Button
               onClick={onSubmit}
               loading={isLoading}
-              disabled={lotStatus?.hasCompleted}
+              disabled={lotStatus?.hasCompleted ?? true}
             >
               Complete
             </Button>
@@ -151,7 +151,7 @@ const BidderDetail = ({ bidder }: any) => {
   const { lotId } = useParams();
 
   const [getChecklists, { data, isLoading }] =
-    useLazyGetOpeningAssessmentsQuery();
+    useLazyGetComplianceAssessmentsQuery();
 
   useEffect(() => {
     getChecklists({
@@ -168,15 +168,15 @@ const BidderDetail = ({ bidder }: any) => {
           minHeight: 100,
           columns: [
             {
-              accessor: 'name',
+              accessor: 'itbDescription',
+              title: 'Name',
             },
             {
               accessor: 'Assessment',
+              width: 200,
               render: (record) =>
-                record.check
-                  ? record?.check?.checked
-                    ? 'Yes'
-                    : 'No'
+                record.check?.qualified
+                  ? record?.check?.qualified
                   : 'Not Evaluated Yet',
             },
           ],

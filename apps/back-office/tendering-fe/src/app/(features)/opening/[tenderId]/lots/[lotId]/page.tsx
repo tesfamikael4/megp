@@ -98,6 +98,7 @@ const BidderDetail = ({ bidder }: any) => {
             },
             {
               accessor: 'Assessment',
+              width: 200,
               render: (record) =>
                 record.check
                   ? record?.check?.checked

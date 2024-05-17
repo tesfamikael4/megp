@@ -70,7 +70,7 @@ export const LotOverview = ({ basePath }: { basePath: string }) => {
                   Evaluation method :
                 </Text>
                 <Text fw={500} size="sm">
-                  Status :
+                  Milestone :
                 </Text>
               </Box>
               <Box>
@@ -84,7 +84,10 @@ export const LotOverview = ({ basePath }: { basePath: string }) => {
                 <Text size="sm">
                   {data?.status && (
                     <Badge variant="outline" size="xs" color="gray">
-                      {data?.status}
+                      {data?.lots?.[0]?.tenderMilestones?.[0]?.milestoneTxt?.replace(
+                        /([a-z])([A-Z])/g,
+                        '$1 $2',
+                      )}
                     </Badge>
                   )}
                 </Text>

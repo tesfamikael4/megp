@@ -90,7 +90,7 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
                   Evaluation method :
                 </Text>
                 <Text fw={500} size="sm">
-                  Milestone :
+                  Status :
                 </Text>
               </Box>
               <Box>
