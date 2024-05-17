@@ -266,6 +266,8 @@ export class BidResponseService {
         procurement_Reference_number:
           bidRegistrationDetail.bidRegistration.tender
             .procurementReferenceNumber,
+        place_and_date: new Date().toDateString(),
+        date: new Date().toDateString(),
       });
 
       const pdfBuffer =
