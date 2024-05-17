@@ -15,7 +15,7 @@ import {
 } from 'src/entities';
 import { RfxProcurementMechanism } from 'src/entities/rfx-procurement-mechanism.entity';
 import { DataSource, EntityManager, In, Repository } from 'typeorm';
-import { CreateRFXDto } from '../dtos/rfx.dto';
+import { CreateRFXDto, UpdateRFXDto } from '../dtos/rfx.dto';
 import { ERfxStatus } from 'src/utils/enums/rfx.enums';
 import { ERfxItemStatus } from 'src/utils/enums/rfx-items.enum';
 import { RfxBidInvitation } from '../../../entities';
@@ -78,20 +78,20 @@ export class RfxService extends EntityCrudService<RFX> {
         throw new BadRequestException('pr_is_not_approved');
 
       const rfxPayload = {
-        name: prResponse.name,
-        procurementCategory:
-          prResponse.procurementMechanisms?.procurementType ?? 'Goods',
-        procurementReferenceNumber: prResponse.procurementReference,
-        budgetAmount: Number(prResponse.totalEstimatedAmount),
-        budgetAmountCurrency: prResponse.currency,
-        budgetCode: prResponse.budget?.budgetCode || 'PR Budget Id',
+        name: prResponse?.name,
+        procurementCategory: prResponse?.procurementMechanisms?.procurementType,
+        procurementReferenceNumber: prResponse?.procurementReference,
+        budgetAmount: Number(prResponse?.totalEstimatedAmount),
+        budgetAmountCurrency: prResponse?.currency,
+        budgetCode: prResponse?.budget?.budgetCode,
         prId: prId,
-        marketEstimate: Number(prResponse.calculatedAmount),
-        marketEstimateCurrency: prResponse.currency,
+        marketEstimate: Number(prResponse?.calculatedAmount),
+        marketEstimateCurrency: prResponse?.currency,
         status: ERfxStatus.DRAFT,
-        organizationId: req?.user?.organization.id || prResponse.organizationId,
+        organizationId:
+          req?.user?.organization.id || prResponse?.organizationId,
         organizationName:
-          req?.user?.organization.name || prResponse.organizationName,
+          req?.user?.organization.name || prResponse?.organizationName,
       };
 
       const rfx = manager.getRepository(RFX).create(rfxPayload);
@@ -101,8 +101,8 @@ export class RfxService extends EntityCrudService<RFX> {
       for (const iterator of prResponse.procurementRequisitionTechnicalTeams) {
         const procurementTechnicalTeam = new RfxProcurementTechnicalTeam();
         procurementTechnicalTeam.rfxId = rfx.id;
-        procurementTechnicalTeam.userId = iterator.userId;
-        procurementTechnicalTeam.userName = iterator.userName;
+        procurementTechnicalTeam.userId = iterator?.userId;
+        procurementTechnicalTeam.userName = iterator?.userName;
         procurementTechnicalTeam.isTeamLead = false;
         procurementTechnicalTeams.push(procurementTechnicalTeam);
       }
@@ -134,14 +134,15 @@ export class RfxService extends EntityCrudService<RFX> {
       for (const iterator of prResponse.procurementRequisitionItems) {
         const item = new RFXItem();
         item.rfxId = rfx.id;
-        item.itemCode = iterator.itemCode;
-        item.procurementCategory = iterator.procurementCategory ?? `Goods`;
-        item.name = iterator.description;
-        item.description = iterator.description;
-        item.quantity = iterator.quantity;
-        item.unitOfMeasure = iterator.uom;
-        item.estimatedPrice = Number(iterator.unitPrice);
-        item.estimatedPriceCurrency = iterator.currency;
+        item.itemCode = iterator?.itemCode;
+        item.procurementCategory =
+          prResponse.procurementMechanisms.procurementType;
+        item.name = iterator?.description;
+        item.description = iterator?.description;
+        item.quantity = iterator?.quantity;
+        item.unitOfMeasure = iterator?.uom;
+        item.estimatedPrice = Number(iterator?.unitPrice);
+        item.estimatedPriceCurrency = iterator?.currency;
         item.prId = itemData.prId;
         items.push(item);
       }
@@ -213,16 +214,13 @@ export class RfxService extends EntityCrudService<RFX> {
     await this.updateRfxChildrenStatus(rfx.id, status);
   }
 
-  async submitForReview(rfxId: string) {
+  async submitForReview(rfxId: string, payload: UpdateRFXDto) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
     const rfx = await this.getCompleteRfx(rfxId);
 
-    if (rfx.status != ERfxStatus.DRAFT && rfx.status != ERfxStatus.ADJUSTEDMENT)
-      throw new BadRequestException('rfx_not_draft_or_adjustment');
-
-    if (!rfx?.reviewDeadline)
-      throw new BadRequestException('rfx_review_deadline_not_found');
+    // if (rfx.status != ERfxStatus.DRAFT && rfx.status != ERfxStatus.ADJUSTEDMENT)
+    //   throw new BadRequestException('rfx_not_draft_or_adjustment');
 
     await this.validateRfxOnSubmit(rfx);
 
@@ -231,6 +229,7 @@ export class RfxService extends EntityCrudService<RFX> {
     await Promise.all([
       entityManager.getRepository(RFX).update(rfxId, {
         status: ERfxStatus.TEAM_REVIEWAL,
+        reviewDeadline: payload.reviewDeadline,
       }),
       entityManager.getRepository(RfxRevisionApproval).delete({
         rfxId,
@@ -245,7 +244,7 @@ export class RfxService extends EntityCrudService<RFX> {
 
     if (
       rfx.status == ERfxStatus.TEAM_REVIEWAL &&
-      rfx.revisionApprovals.length == 0
+      rfx.revisionApprovals?.length == 0
     )
       return true;
 
@@ -265,8 +264,7 @@ export class RfxService extends EntityCrudService<RFX> {
   async isAdjustable(rfx: RFX): Promise<boolean> {
     if (
       rfx.revisionApprovals.some(
-        (approval) =>
-          approval.status == ERfxRevisionApprovalStatusEnum.ADJUST_WITH_COMMENT,
+        (approval) => approval.status == ERfxRevisionApprovalStatusEnum.ADJUST,
       )
     )
       return true;
@@ -437,8 +435,7 @@ export class RfxService extends EntityCrudService<RFX> {
     }
 
     const allApproved = revisions.every(
-      (revision) =>
-        revision.status !== ERfxRevisionApprovalStatusEnum.ADJUST_WITH_COMMENT,
+      (revision) => revision.status === ERfxRevisionApprovalStatusEnum.APPROVED,
     );
 
     if (!allApproved)
@@ -446,20 +443,12 @@ export class RfxService extends EntityCrudService<RFX> {
   }
 
   private validateInvitation(rfx: RFX) {
-    const allItemsHaveInvitations = rfx.items.every((item) => {
-      if (item.isOpen) return true;
-      item.bidInvitations.length > 0;
-    });
-
-    if (allItemsHaveInvitations)
-      throw new BadRequestException('item_not_open_or_do_not_have_invitation');
-
-    const allItemsSubmitted = rfx.items.every(
-      (item) => item.status == ERfxItemStatus.SUBMITTED,
+    const allItemsHaveInvitations = rfx.items.every(
+      (item) => item.status == ERfxItemStatus.INVITATION_PREPARED,
     );
 
-    if (!allItemsSubmitted)
-      throw new BadRequestException('all_items_must_be_submitted');
+    if (!allItemsHaveInvitations)
+      throw new BadRequestException('item_not_open_or_do_not_have_invitation');
   }
 
   private initiateWorkflow(rfx: RFX) {

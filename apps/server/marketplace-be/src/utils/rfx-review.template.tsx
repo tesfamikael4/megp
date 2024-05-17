@@ -14,20 +14,6 @@ export const rfxPdf = async ({ rfx }: any) => {
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>{rfx?.name}</Text>
         <View style={styles.activities}>
-          {/* <View
-                style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    backgroundColor: '#f0f0f0',
-                    padding: 5,
-                    fontSize: 12.5,
-                }}
-                >
-                <Text style={{ marginTop: 5 }}>{rfx?.name}</Text>
-                </View> */}
-          {/* End Title */}
-
           <View style={styles.activity}>
             <Text>RFX Detail</Text>
           </View>
@@ -60,19 +46,19 @@ export const rfxPdf = async ({ rfx }: any) => {
                   key: 'Procurment Type',
                   value:
                     rfx?.rfxProcurementMechanism?.PRRfxProcurementMechanisms
-                      .procurementType,
+                      ?.procurementType,
                 },
                 {
                   key: 'Procurment Method',
                   value:
                     rfx?.rfxProcurementMechanism?.PRRfxProcurementMechanisms
-                      .procurementMethod,
+                      ?.procurementMethod,
                 },
                 {
                   key: 'Funding Source',
                   value:
                     rfx?.rfxProcurementMechanism?.PRRfxProcurementMechanisms
-                      .fundingSource,
+                      ?.fundingSource,
                 },
               ]}
               config={{}}
@@ -80,64 +66,51 @@ export const rfxPdf = async ({ rfx }: any) => {
           </View>
 
           {/* items */}
-          {rfx?.items && rfx?.items.length > 0 && (
-            <View style={styles.activity}>
-              <Text style={{ marginBottom: '8px' }}>Items</Text>
-              <ReactPdfTableGrid3
-                config={{
-                  columns: [
-                    {
-                      accessor: 'description',
-                      title: 'Description',
-                      width: '700px',
-                    },
-                    {
-                      accessor: 'technicalRequirement',
-                      title: 'Technical Requirement',
-                      render: (value) => {
-                        return Object.entries(
-                          value?.technicalRequirement?.technicalSpecification,
-                        ).map(([key, value]) => (
-                          <Text key={key}>
-                            {key}: {value?.toString()}
-                          </Text>
-                        ));
-                      },
-                    },
-                    {
-                      accessor: 'technicalRequirement',
-                      title: 'Delivery Specification',
-                      render: (value) => {
-                        return Object.entries(
-                          value?.technicalRequirement?.technicalSpecification,
-                        ).map(([key, value]) => (
-                          <Text key={key}>
-                            {key}: {value?.toString()}
-                          </Text>
-                        ));
-                      },
-                    },
-                    {
-                      accesor: 'bidInvitations',
-                      title: 'Suppliers Invited',
-                      render: (value) => {
-                        return (
-                          <Text>
-                            {value.bidInvitations
-                              .map(
-                                (invitation) => invitation.vendorMetadata?.name,
-                              )
-                              .join(', ')}
-                          </Text>
-                        );
-                      },
-                    },
-                  ],
-                  data: rfx?.items,
-                }}
-              />
-            </View>
-          )}
+          <View style={styles.activity}>
+            <Text>Items</Text>
+          </View>
+          {rfx?.items &&
+            rfx?.items.length > 0 &&
+            rfx.items.map((item, index) => {
+              const technicalSpecConfig = Object.entries(
+                item?.technicalRequirement?.technicalSpecification || {},
+              )
+                .filter(([key]) => key !== 'url')
+                .map(([key, value]) => ({
+                  key: `${key.charAt(0).toUpperCase() + key.slice(1)}`,
+                  value: value ?? '',
+                }));
+              const deliverySpecConfig = Object.entries(
+                item?.technicalRequirement?.deliverySpecification || {},
+              )
+                .filter(([key]) => key !== 'url')
+                .map(([key, value]) => ({
+                  key: `${key.charAt(0).toUpperCase() + key.slice(1)}`,
+                  value: value ?? '',
+                }));
+
+              const descriptionConfig = item?.description
+                ?.split('\n')
+                .flatMap((desc) => {
+                  const [key, value] = desc.split(':');
+                  return { key, value };
+                });
+              return (
+                <View style={styles.activity} key={item?.id}>
+                  <Text style={{ fontSize: '7px' }}>Item {index + 1}</Text>
+                  <ReactPdfTable data={descriptionConfig} config={{}} />
+
+                  <Text style={{ marginVertical: '4px' }}>
+                    Technical Specification
+                  </Text>
+                  <ReactPdfTable data={technicalSpecConfig} config={{}} />
+                  <Text style={{ marginTop: '4px' }}>
+                    Delivery Specification
+                  </Text>
+                  <ReactPdfTable data={deliverySpecConfig} config={{}} />
+                </View>
+              );
+            })}
 
           <View style={styles.activity}>
             <Text>Bid Procedure</Text>

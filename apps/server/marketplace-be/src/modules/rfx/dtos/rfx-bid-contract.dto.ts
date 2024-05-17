@@ -6,6 +6,7 @@ import {
   Max,
   IsArray,
   IsOptional,
+  IsNumber,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -24,9 +25,9 @@ export class CreateRfxBidContractConditionDTO {
   deliverySite: string;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  warrantyPeriod: string;
+  warrantyPeriod: number;
 
   @ApiProperty()
   @IsInt()

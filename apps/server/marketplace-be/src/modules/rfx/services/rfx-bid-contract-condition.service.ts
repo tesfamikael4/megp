@@ -62,6 +62,9 @@ export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContr
         where: {
           id,
         },
+        relations: {
+          rfx: true,
+        },
         select: {
           id: true,
           rfx: {
@@ -71,6 +74,9 @@ export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContr
           },
         },
       });
+
+    if (!rfxBidProcedure)
+      throw new BadRequestException('rfx_bid_condition_not_found');
 
     const isUpdatable = await this.rfxService.isUpdatable(rfxBidProcedure.rfx);
 

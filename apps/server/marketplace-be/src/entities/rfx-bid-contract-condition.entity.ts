@@ -30,8 +30,8 @@ export class RfxBidContractCondition extends Audit {
   @Column()
   deliverySite: string;
 
-  @Column({ nullable: true })
-  warrantyPeriod: string;
+  @Column()
+  warrantyPeriod: number;
 
   @Column({ default: 0 })
   liquidityDamage: number;

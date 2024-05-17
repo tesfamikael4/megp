@@ -12,7 +12,6 @@ import { RFXItem } from './rfx-items.entity';
 import { EInvitationStatus } from 'src/utils/enums/rfx-invitation.enum';
 
 @Entity({ name: 'rfx_bid_invitations' })
-@Unique(['rfxItemId', 'vendorId'])
 export class RfxBidInvitation extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

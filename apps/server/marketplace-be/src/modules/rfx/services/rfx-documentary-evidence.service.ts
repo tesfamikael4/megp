@@ -64,7 +64,11 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
           reviewDeadline: true,
         },
       },
+      relations: {
+        rfx: true,
+      },
     });
+
     const isUpdatable = await this.rfxService.isUpdatable(rfxDocEvidence.rfx);
     if (!isUpdatable) throw new BadRequestException('rfx_not_updatable');
 

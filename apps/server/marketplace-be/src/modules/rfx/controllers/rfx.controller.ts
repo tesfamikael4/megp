@@ -18,8 +18,11 @@ export class RfxController extends EntityCrudController<RFX>(options) {
     super(rfxService);
   }
   @Post('review/:rfxId')
-  async submitForReview(@Param('rfxId') rfxId: string) {
-    return await this.rfxService.submitForReview(rfxId);
+  async submitForReview(
+    @Param('rfxId') rfxId: string,
+    @Body() payload: UpdateRFXDto,
+  ) {
+    return await this.rfxService.submitForReview(rfxId, payload);
   }
 
   @Post('submit/:rfxId')

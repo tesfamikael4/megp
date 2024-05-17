@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import { RFXItem, RfxBidInvitation } from 'src/entities';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, In } from 'typeorm';
 import { CreateRfxBidInvitationDto } from '../dtos/rfx-bid-invitaiton.dto';
 import { ProductCatalogueDto } from '../dtos/product-catalogue.dto';
 import { EInvitationStatus } from 'src/utils/enums/rfx-invitation.enum';
@@ -36,7 +36,10 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
       this.rfxItemRepository.findOne({
         where: {
           id: rfxItemId,
-          status: ERfxItemStatus.DRAFT,
+          status: In([
+            ERfxItemStatus.DRAFT,
+            ERfxItemStatus.INVITATION_PREPARED,
+          ]),
         },
       }),
       this.getRefinedProductCatalogues(itemData.productCatalogueIds),
@@ -69,6 +72,7 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
       }),
       entityManager.getRepository(RFXItem).update(rfxItemId, {
         isOpen: false,
+        status: ERfxItemStatus.INVITATION_PREPARED,
       }),
     ]);
 
@@ -85,7 +89,7 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     const rfxItem = await this.rfxItemRepository.findOne({
       where: {
         id: rfxItemId,
-        status: ERfxItemStatus.DRAFT,
+        status: In([ERfxItemStatus.DRAFT, ERfxItemStatus.INVITATION_PREPARED]),
       },
       select: {
         id: true,
@@ -95,12 +99,15 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
 
     if (!rfxItem) throw new BadRequestException('no_rfx_item_found');
 
-    if (rfxItem.status !== ERfxItemStatus.DRAFT)
-      throw new BadRequestException('rfx_item_already_submitted');
-
-    await this.rfxBidInvitationRepository.delete({
-      rfxItemId,
-    });
+    await Promise.all([
+      this.rfxBidInvitationRepository.delete({
+        rfxItemId,
+      }),
+      this.rfxItemRepository.update(rfxItemId, {
+        isOpen: false,
+        status: ERfxItemStatus.DRAFT,
+      }),
+    ]);
   }
 
   update(id: string, itemData: any): any {
@@ -111,7 +118,7 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     const rfxItem = await this.rfxItemRepository.findOne({
       where: {
         id: rfxItemId,
-        status: ERfxItemStatus.DRAFT,
+        status: In([ERfxItemStatus.DRAFT, ERfxItemStatus.INVITATION_PREPARED]),
       },
       select: {
         id: true,
@@ -124,6 +131,7 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     await Promise.all([
       this.rfxItemRepository.update(rfxItemId, {
         isOpen: true,
+        status: ERfxItemStatus.INVITATION_PREPARED,
       }),
       this.rfxBidInvitationRepository.delete({
         rfxItemId,
@@ -137,29 +145,19 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     productCatalogueIds: string[],
   ): Promise<any[]> {
     try {
-      // const productCatalogue = ProductCatalogue.filter((product: any) =>
-      //   productCatalogueIds.includes(product.id),
-      // );
-
-      // if (productCatalogue.length == 0)
-      //   throw new BadRequestException('product_catalogue_not_found');
-
-      // return productCatalogue;
-
+      return ProductCatalogue;
       const ADMINISTRATION_CATALOGUE_ENDPOINT =
         process.env.ADMINISTRATION_CATALOGUE_ENDPOINT ??
         'https://dev-bo.megp.peragosystems.com/administration/api/product-catalogs/details';
 
       const catalogueResponse = await axios.post(
         ADMINISTRATION_CATALOGUE_ENDPOINT,
+        productCatalogueIds,
         {
           headers: {
             'x-api-key':
               process.env.API_KEY || '25bc1622e5fb42cca3d3e62e90a3a20f',
           },
-          body: JSON.stringify({
-            productCatalogueIds,
-          }),
         },
       );
 
