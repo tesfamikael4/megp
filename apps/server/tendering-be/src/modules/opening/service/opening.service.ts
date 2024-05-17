@@ -169,6 +169,9 @@ export class OpeningService extends ExtraCrudService<Opening> {
         id: tenderId,
         lots: {
           id: lotId,
+          tenderMilestones: {
+            isCurrent: true,
+          },
         },
       },
       relations: {
@@ -211,6 +214,9 @@ export class OpeningService extends ExtraCrudService<Opening> {
         id: tenderId,
         lots: {
           id: lotId,
+          tenderMilestones: {
+            isCurrent: true,
+          },
         },
         bidRegistrations: {
           bidderId: bidderId,

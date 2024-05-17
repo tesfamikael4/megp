@@ -50,7 +50,6 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const evaluatorId = req.user.userId;
     const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
-
     // const teamMember = this.isTeamMember(lotId, req.user.userId);
     // if (!teamMember) {
     //   throw new Error('You are not a team member');
@@ -437,22 +436,22 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     );
 
     if (itemData.isTeamLead) {
-      // await manager.getRepository(TenderMilestone).update(
-      //   {
-      //     lotId: itemData.lotId,
-      //     tenderId: itemData.tenderId,
-      //   },
-      //   {
-      //     isCurrent: false,
-      //   },
-      // );
-      // await manager.getRepository(TenderMilestone).insert({
-      //   lotId: itemData.lotId,
-      //   tenderId: itemData.tenderId,
-      //   milestoneNum: 304,
-      //   milestoneTxt: 'TechnicalQualification',
-      //   isCurrent: true,
-      // });
+      await manager.getRepository(TenderMilestone).update(
+        {
+          lotId: itemData.lotId,
+          tenderId: itemData.tenderId,
+        },
+        {
+          isCurrent: false,
+        },
+      );
+      await manager.getRepository(TenderMilestone).insert({
+        lotId: itemData.lotId,
+        tenderId: itemData.tenderId,
+        milestoneNum: 304,
+        milestoneTxt: 'TechnicalQualification',
+        isCurrent: true,
+      });
 
       const technicalPreliminaryAssessment = await manager
         .getRepository(TechnicalPreliminaryAssessment)
@@ -468,15 +467,15 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
 
       const biddersComparison = technicalPreliminaryAssessment.map((list) => {
         return {
-          bidRegistrationId: list.bidRegistrationDetailId,
+          bidRegistrationDetailId: list.bidRegistrationDetailId,
           milestoneNum: 303,
           milestoneTxt: 'TechnicalCompliance',
-          bidderStatus: list.qualified == 'comply' ? 304 : 303,
+          bidderStatus: list.qualified == 'COMPLY' ? 304 : 303,
           bidderStatusTxt:
-            list.qualified == 'comply'
+            list.qualified == 'COMPLY'
               ? 'TechnicalComplianceSucceeded'
               : 'TechnicalComplianceFailed',
-          passFail: list.qualified == 'comply' ? true : false,
+          passFail: list.qualified == 'COMPLY' ? true : false,
         };
       });
       await manager.getRepository(BiddersComparison).insert(biddersComparison);
@@ -608,6 +607,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
             lotId: itemData.lotId,
           },
           evaluatorId: req.user.userId,
+          isTeamAssessment: itemData.isTeamLead,
         },
         relations: {
           technicalPreliminaryAssessmentDetail: true,
@@ -621,5 +621,67 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
         qualified: EvaluationStatusEnum.COMPLY,
       },
     );
+  }
+
+  async evaluatorReport(
+    lotId: string,
+    bidderId: string,
+    isTeam: string,
+    req: any,
+  ): Promise<any> {
+    const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const [technicalPreliminaryAssessmentDetail, spdChecklist] =
+      await Promise.all([
+        manager.getRepository(TechnicalPreliminaryAssessmentDetail).find({
+          where: {
+            technicalPreliminaryAssessment: {
+              bidRegistrationDetail: {
+                lotId: lotId,
+                bidRegistration: {
+                  bidderId: bidderId,
+                },
+              },
+              evaluatorId: req.user.userId,
+              isTeamAssessment: isTeamAssessment,
+            },
+          },
+          relations: {
+            SpdPreliminaryEvaluation: true,
+          },
+          select: {
+            id: true,
+            qualified: true,
+            spdPreliminaryEvaluationId: true,
+            remark: true,
+            technicalPreliminaryAssessment: {
+              isTeamAssessment: true,
+            },
+          },
+        }),
+
+        manager.getRepository(SpdPreliminaryEvaluation).find({
+          where: {
+            spd: {
+              tenderSpds: {
+                tender: {
+                  lots: {
+                    id: lotId,
+                  },
+                },
+              },
+            },
+          },
+        }),
+      ]);
+
+    const response = spdChecklist.map((spdChecklist) => ({
+      ...spdChecklist,
+      check: technicalPreliminaryAssessmentDetail.find(
+        (x) => x.spdPreliminaryEvaluationId == spdChecklist.id,
+      ),
+    }));
+    return response;
   }
 }

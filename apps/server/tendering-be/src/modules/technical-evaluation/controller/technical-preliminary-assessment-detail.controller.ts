@@ -104,4 +104,19 @@ export class TechnicalPreliminaryAssessmentDetailController extends ExtraCrudCon
       req,
     );
   }
+
+  @Get('evaluator-report/:lotId/:bidderId/:isTeam')
+  async evaluatorReport(
+    @Param('bidderId') bidderId: string,
+    @Param('lotId') lotId: string,
+    @Param('isTeam') isTeam: string,
+    @Req() req: any,
+  ) {
+    return await this.technicalPreliminaryAssessmentDetailService.evaluatorReport(
+      lotId,
+      bidderId,
+      isTeam,
+      req,
+    );
+  }
 }
