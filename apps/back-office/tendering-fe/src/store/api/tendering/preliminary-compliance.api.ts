@@ -6,7 +6,7 @@ export const preliminaryComplianceApi = createApi({
   reducerPath: 'preliminaryComplianceApi',
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
-  tagTypes: ['evaluation', 'bidAttribute'],
+  tagTypes: ['evaluation', 'bidAttribute', 'bidder'],
   endpoints: (builder) => ({
     getOpenedTenders: builder.query<any, any>({
       query: ({ collectionQuery }: { collectionQuery?: CollectionQuery }) => {
@@ -65,7 +65,7 @@ export const preliminaryComplianceApi = createApi({
           method: 'GET',
         };
       },
-      providesTags: ['evaluation'],
+      providesTags: ['evaluation', 'bidder'],
     }),
     submitEvaluation: builder.mutation<any, any>({
       query: (data: { tenderId: string; isTeamLead: boolean }) => {
@@ -93,6 +93,21 @@ export const preliminaryComplianceApi = createApi({
     getSpdDetail: builder.query<any, any>({
       query: (spdId) => `/spd-preliminary-evaluations/${spdId}`,
     }),
+
+    completeEvaluation: builder.mutation<any, any>({
+      query: (data: {
+        lotId: string;
+        bidderId: string;
+        isTeamLead: boolean;
+      }) => {
+        return {
+          url: `/technical-preliminary-assessment-detail/complete-bidder-evaluation`,
+          method: 'PUT',
+          body: data,
+        };
+      },
+      invalidatesTags: ['evaluation', 'bidder'],
+    }),
   }),
 });
 
@@ -105,4 +120,5 @@ export const {
   useSubmitEvaluationMutation,
   useLazyGetMembersAssesmentResultQuery,
   useLazyGetSpdDetailQuery,
+  useCompleteEvaluationMutation,
 } = preliminaryComplianceApi;

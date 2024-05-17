@@ -1,4 +1,5 @@
 'use client';
+import { useCompleteEvaluationMutation } from '@/store/api/tendering/preliminary-compliance.api';
 import { useLazyGetBidderDetailsQuery } from '@/store/api/tendering/tendering.api';
 import { Badge, Box, Button, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
@@ -10,6 +11,8 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
   const { tenderId, lotId, bidderId } = useParams();
   const router = useRouter();
   const [getBidder, { data, isLoading }] = useLazyGetBidderDetailsQuery();
+  const [completeEvaluation, { isLoading: isCompleting }] =
+    useCompleteEvaluationMutation();
 
   useEffect(() => {
     getBidder({
@@ -18,6 +21,20 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
       bidderId: bidderId as string,
     });
   }, [tenderId]);
+
+  const complete = async () => {
+    try {
+      await completeEvaluation({
+        lotId: lotId as string,
+        bidderId: bidderId as string,
+        isTeamLead: false,
+      }).unwrap();
+      notify('Success', 'completed successfully');
+      router.push(basePath);
+    } catch {
+      notify('Error', 'Something went wrong');
+    }
+  };
   return (
     <Box pos="relative">
       <LoadingOverlay visible={isLoading} />
@@ -36,12 +53,7 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
         subTitle={data?.procurementReferenceNumber ?? ''}
         collapsible={false}
         action={
-          <Button
-            onClick={() => {
-              notify('Success', 'completed successfully');
-              router.push(basePath);
-            }}
-          >
+          <Button onClick={complete} loading={isCompleting}>
             Complete
           </Button>
         }

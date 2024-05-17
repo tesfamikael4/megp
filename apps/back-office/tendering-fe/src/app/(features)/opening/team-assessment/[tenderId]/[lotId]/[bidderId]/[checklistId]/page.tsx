@@ -32,7 +32,7 @@ export default function ChecklistDetail() {
     <Flex gap={10}>
       <Box className=" bg-white w-2/3">
         <Section
-          title={sbdData?.itbDescription ?? ''}
+          title={sbdData?.name ?? ''}
           collapsible={false}
           className="h-full overflow-scroll"
           action={
@@ -57,7 +57,7 @@ export default function ChecklistDetail() {
         >
           {page == 'documentPreview' ? (
             <embed
-              src={'https://arxiv.org/pdf/1708.08021.pdf'}
+              src={'https://arxiv.org/pdf/1708.08021'}
               type="application/pdf"
               width="100%"
               height="400px"
