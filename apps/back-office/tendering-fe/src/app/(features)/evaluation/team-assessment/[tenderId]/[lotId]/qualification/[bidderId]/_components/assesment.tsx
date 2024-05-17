@@ -31,6 +31,7 @@ export const ChecklistAssessment = () => {
       lotId,
       bidderId,
       tenderId,
+      isTeamAssessment: true,
     };
     try {
       await checkBidAttribute(tempData).unwrap();
@@ -58,10 +59,6 @@ export const ChecklistAssessment = () => {
             ]}
             withAsterisk
             onChange={onChange}
-            // onChange={(val) => {
-            //   if (val === 'true') onChange(true);
-            //   else if (val === 'false') onChange(false);
-            // }}
             error={errors.qualified?.message?.toString()}
           />
         )}

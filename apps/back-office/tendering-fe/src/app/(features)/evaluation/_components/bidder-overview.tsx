@@ -1,5 +1,6 @@
 'use client';
 import { useCompleteEvaluationMutation } from '@/store/api/tendering/preliminary-compliance.api';
+import { useCompleteQualificationEvaluationMutation } from '@/store/api/tendering/technical-qualification';
 import { useLazyGetBidderDetailsQuery } from '@/store/api/tendering/tendering.api';
 import { Badge, Box, Button, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
@@ -7,13 +8,23 @@ import { IconChevronLeft } from '@tabler/icons-react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export const BidderOverView = ({ basePath }: { basePath: string }) => {
+export const BidderOverView = ({
+  basePath,
+  milestone,
+}: {
+  basePath: string;
+  milestone: 'technicalCompliance' | 'technicalQualification';
+}) => {
   const { tenderId, lotId, bidderId } = useParams();
   const router = useRouter();
   const pathname = usePathname();
   const [getBidder, { data, isLoading }] = useLazyGetBidderDetailsQuery();
   const [completeEvaluation, { isLoading: isCompleting }] =
     useCompleteEvaluationMutation();
+  const [
+    completeQualificationEvaluation,
+    { isLoading: isQualificationCompleting },
+  ] = useCompleteQualificationEvaluationMutation();
 
   useEffect(() => {
     getBidder({
@@ -25,11 +36,19 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
 
   const complete = async () => {
     try {
-      await completeEvaluation({
-        lotId: lotId as string,
-        bidderId: bidderId as string,
-        isTeamLead: pathname.includes('team-assessment'),
-      }).unwrap();
+      if (milestone === 'technicalCompliance') {
+        await completeEvaluation({
+          lotId: lotId as string,
+          bidderId: bidderId as string,
+          isTeamLead: pathname.includes('team-assessment'),
+        }).unwrap();
+      } else if (milestone === 'technicalQualification') {
+        await completeQualificationEvaluation({
+          lotId: lotId as string,
+          bidderId: bidderId as string,
+          isTeamLead: pathname.includes('team-assessment'),
+        }).unwrap();
+      }
       notify('Success', 'completed successfully');
       router.push(basePath);
     } catch {
@@ -54,7 +73,10 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
         subTitle={data?.procurementReferenceNumber ?? ''}
         collapsible={false}
         action={
-          <Button onClick={complete} loading={isCompleting}>
+          <Button
+            onClick={complete}
+            loading={isCompleting || isQualificationCompleting}
+          >
             Complete
           </Button>
         }
@@ -100,7 +122,7 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
                   Evaluation method :
                 </Text>
                 <Text fw={500} size="sm">
-                  Status :
+                  Milestone :
                 </Text>
               </Box>
               <Box>
@@ -117,7 +139,10 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
                 <Text size="sm">
                   {data?.status && (
                     <Badge variant="outline" size="xs" color="gray">
-                      {data?.status}
+                      {data?.lots?.[0]?.tenderMilestones?.[0]?.milestoneTxt?.replace(
+                        /([a-z])([A-Z])/g,
+                        '$1 $2',
+                      )}
                     </Badge>
                   )}
                 </Text>

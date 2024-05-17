@@ -17,23 +17,20 @@ import {
 } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { DetailTable } from '../../../_components/detail-table';
+import { modals } from '@mantine/modals';
+import { useEffect } from 'react';
 import {
   useGetLotStatusQuery,
-  useLazyGetComplianceAssessmentsQuery,
   useLazyGetPassedBiddersQuery,
+  useLazyGetQualificationAssessmentsQuery,
   useSubmitEvaluationMutation,
-} from '@/store/api/tendering/preliminary-compliance.api';
-import { modals } from '@mantine/modals';
-import { LotOverview } from '../../../_components/lot-overview';
-import { useLazyGetOpeningAssessmentsQuery } from '@/store/api/tendering/tender-opening.api';
-import { useEffect } from 'react';
-
+} from '@/store/api/tendering/technical-qualification';
+import { LotOverview } from '@/app/(features)/evaluation/_components/lot-overview';
 export default function BidOpening() {
   const router = useRouter();
   const { tenderId, lotId } = useParams();
-  const [submit, { isLoading }] = useSubmitEvaluationMutation();
   const { data: lotStatus } = useGetLotStatusQuery(lotId as string);
+  const [submit, { isLoading }] = useSubmitEvaluationMutation();
   const [getBidders, { data: bidders, isLoading: isBiddersLoading }] =
     useLazyGetPassedBiddersQuery();
   const config: ExpandableTableConfig = {
@@ -67,7 +64,7 @@ export default function BidOpening() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/evaluation/team-assessment/${tenderId}/${lotId}/${record.bidder.bidderId}`,
+                `/evaluation/team-assessment/${tenderId}/${lotId}/qualification/${record.bidder.bidderId}`,
               );
             }}
           >
@@ -96,17 +93,17 @@ export default function BidOpening() {
     try {
       await submit({
         lotId: lotId as string,
-        tenderId: tenderId as string,
         isTeamLead: true,
+        tenderId: tenderId as string,
       }).unwrap();
-      notify('Success', 'Evaluation successfully submitted');
+      notify('Success', 'Evaluation successfully completed');
     } catch (err) {
       notify('Error', 'Something went wrong');
     }
   };
   return (
     <>
-      <LotOverview basePath={`/evaluation/${tenderId}/${lotId}`} />
+      <LotOverview basePath={`/evaluation/${tenderId}`} />
       <Section
         title="Bidders List"
         collapsible={false}
@@ -117,8 +114,9 @@ export default function BidOpening() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  router.push(`/evaluation/${tenderId}/${lotId}`);
+                  router.push(`/evaluation/${tenderId}/${lotId}/qualification`);
                 }}
+                disabled={!lotStatus?.canTeamAssess}
               >
                 Personal Assessment
               </Button>
@@ -150,7 +148,7 @@ const BidderDetail = ({ bidder }: any) => {
   const { lotId } = useParams();
 
   const [getChecklists, { data, isLoading }] =
-    useLazyGetComplianceAssessmentsQuery();
+    useLazyGetQualificationAssessmentsQuery();
 
   useEffect(() => {
     getChecklists({
