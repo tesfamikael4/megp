@@ -19,6 +19,7 @@ import {
 import { ContactNumberCommand } from 'src/shared/domain';
 
 export class VendorRegistrationCompletedEvent {
+  id: string;
   name: string;
   email: string;
   accountId: string;
@@ -70,7 +71,6 @@ export class CreateOrganizationDto {
   @Matches(/^\d{3}$/, {
     message: 'Vote code must contain exactly three digits.',
   })
-
   voteCode: string;
 
   static fromDto(organizationDto: CreateOrganizationDto): Organization {

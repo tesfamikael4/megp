@@ -105,7 +105,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
 
     const roleSystem = await this.roleSystemService.getAdminRole(
       process.env.ORGANIZATION_ADMINISTRATOR_KEY ??
-      'ORGANIZATION_ADMINISTRATOR',
+        'ORGANIZATION_ADMINISTRATOR',
     );
 
     const orgAdmin = await this.repositoryUser.findOne({
@@ -155,19 +155,17 @@ export class OrganizationService extends EntityCrudService<Organization> {
   }
 
   async isBudgetCheckNeeded(id: string): Promise<boolean> {
-    return await this.repositoryOrganization.exists(
-      {
-        where: { id, budgetCheckNeeded: true },
-      })
-  }  
+    return await this.repositoryOrganization.exists({
+      where: { id, budgetCheckNeeded: true },
+    });
+  }
   async getVoteCode(id: string): Promise<any> {
-    return await this.repositoryOrganization.findOne(
-      {
-        where: { id },
-        select: {
-          voteCode: true
-        }
-      })
+    return await this.repositoryOrganization.findOne({
+      where: { id },
+      select: {
+        voteCode: true,
+      },
+    });
   }
 
   private generateOrganizationCode() {
@@ -213,6 +211,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
     const account = await this.accountService.getAccountByEmail(payload.email);
 
     const organizationDto = {
+      id: payload.id,
       name: payload.name,
       shortName: payload.name,
       code: payload.egpRegistrationNumber,
