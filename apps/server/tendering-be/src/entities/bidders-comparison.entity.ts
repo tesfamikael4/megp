@@ -16,13 +16,13 @@ export class BiddersComparison extends Audit {
   id: string;
 
   @Column()
-  bidRegistrationId: string;
+  bidRegistrationDetailId: string;
 
   @ManyToOne(
     () => BidRegistrationDetail,
     (bidRegistrationDetails) => bidRegistrationDetails.biddersComparisons,
   )
-  @JoinColumn({ name: 'bidRegistrationId' })
+  @JoinColumn({ name: 'bidRegistrationDetailId' })
   bidRegistrationDetail: BidRegistrationDetail;
 
   @Column({

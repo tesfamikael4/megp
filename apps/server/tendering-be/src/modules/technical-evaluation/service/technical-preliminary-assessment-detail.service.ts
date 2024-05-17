@@ -24,6 +24,8 @@ import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.enti
 import { TechnicalPreliminaryAssessment } from 'src/entities/technical-preliminary-assessment.entity';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
+import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
+import { CompleteBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
 
 @Injectable()
 export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudService<TechnicalPreliminaryAssessmentDetail> {
@@ -435,54 +437,46 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     );
 
     if (itemData.isTeamLead) {
-      await manager.getRepository(TenderMilestone).update(
-        {
-          lotId: itemData.lotId,
-          tenderId: itemData.tenderId,
-        },
-        {
-          isCurrent: false,
-        },
-      );
-      await manager.getRepository(TenderMilestone).insert({
-        lotId: itemData.lotId,
-        tenderId: itemData.tenderId,
-        milestoneNum: 304,
-        milestoneTxt: 'TechnicalQualification',
-        isCurrent: true,
-      });
+      // await manager.getRepository(TenderMilestone).update(
+      //   {
+      //     lotId: itemData.lotId,
+      //     tenderId: itemData.tenderId,
+      //   },
+      //   {
+      //     isCurrent: false,
+      //   },
+      // );
+      // await manager.getRepository(TenderMilestone).insert({
+      //   lotId: itemData.lotId,
+      //   tenderId: itemData.tenderId,
+      //   milestoneNum: 304,
+      //   milestoneTxt: 'TechnicalQualification',
+      //   isCurrent: true,
+      // });
 
-      const bidRegistration = await manager
-        .getRepository(BidRegistrationDetail)
+      const technicalPreliminaryAssessment = await manager
+        .getRepository(TechnicalPreliminaryAssessment)
         .find({
           where: {
             // bidderId: itemData.bidderId,
-
-            lotId: itemData.lotId,
-            bidRegistration: {
-              tenderId: itemData.tenderId,
+            isTeamAssessment: true,
+            bidRegistrationDetail: {
+              lotId: itemData.lotId,
             },
           },
         });
 
-      const biddersComparison = checklist.map((list) => {
+      const biddersComparison = technicalPreliminaryAssessment.map((list) => {
         return {
-          bidRegistrationId:
-            list.technicalPreliminaryAssessment.bidRegistrationDetailId,
-          milestoneNum: 304,
-          milestoneTxt: 'TechnicalQualification',
-          bidderStatus:
-            list.technicalPreliminaryAssessment.qualified == 'comply'
-              ? 304
-              : 303,
+          bidRegistrationId: list.bidRegistrationDetailId,
+          milestoneNum: 303,
+          milestoneTxt: 'TechnicalCompliance',
+          bidderStatus: list.qualified == 'comply' ? 304 : 303,
           bidderStatusTxt:
-            list.technicalPreliminaryAssessment.qualified == 'comply'
+            list.qualified == 'comply'
               ? 'TechnicalComplianceSucceeded'
               : 'TechnicalComplianceFailed',
-          passFail:
-            list.technicalPreliminaryAssessment.qualified == 'comply'
-              ? true
-              : false,
+          passFail: list.qualified == 'comply' ? true : false,
         };
       });
       await manager.getRepository(BiddersComparison).insert(biddersComparison);
@@ -595,5 +589,37 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
         },
       });
     return report;
+  }
+
+  // complete evaluators assessment report for individual bidders
+  async completeBidderEvaluation(
+    itemData: CompleteBidderEvaluationDto,
+    req: any,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const assessment = await manager
+      .getRepository(TechnicalPreliminaryAssessment)
+      .findOne({
+        where: {
+          bidRegistrationDetail: {
+            bidRegistration: {
+              bidderId: itemData.bidderId,
+            },
+            lotId: itemData.lotId,
+          },
+          evaluatorId: req.user.userId,
+        },
+        relations: {
+          technicalPreliminaryAssessmentDetail: true,
+        },
+      });
+    await manager.getRepository(TechnicalPreliminaryAssessment).update(
+      {
+        id: assessment.id,
+      },
+      {
+        qualified: EvaluationStatusEnum.COMPLY,
+      },
+    );
   }
 }
