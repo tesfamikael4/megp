@@ -61,7 +61,12 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
           reviewDeadline: true,
         },
       },
+      relations: {
+        rfx: true,
+      },
     });
+
+    if (!rfxBidProcedure) throw new BadRequestException('rfx_not_found');
 
     const isUpdatable = await this.rfxService.isUpdatable(rfxBidProcedure.rfx);
 

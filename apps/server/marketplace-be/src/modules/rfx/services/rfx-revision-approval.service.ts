@@ -27,9 +27,12 @@ export class RfxRevisionApprovalService extends ExtraCrudService<RfxRevisionAppr
         .getRepository(RfxProcurementTechnicalTeam)
         .findOneBy({ userId: user.id });
 
-      if (team.isTeamLead) {
-        throw new BadRequestException('leader_cannot_approve');
-      }
+      //   if(!team)
+      //     throw new BadRequestException("User is not a Team Member.")
+
+      // if (team?.isTeamLead) {
+      //   throw new BadRequestException('leader_cannot_approve');
+      // }
 
       const item = manager
         .getRepository(RfxRevisionApproval)

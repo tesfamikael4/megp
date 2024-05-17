@@ -63,7 +63,13 @@ export class RfxBidQualificationService extends ExtraCrudService<RfxBidQualifica
           reviewDeadline: true,
         },
       },
+      relations: {
+        rfx: true,
+      },
     });
+
+    if (!rfxBidQuali)
+      throw new NotFoundException('no_rfx_bid_qualification_found');
 
     const isUpdatable = await this.rfxService.isUpdatable(rfxBidQuali.rfx);
     if (!isUpdatable) throw new BadRequestException('rfx_not_updatable');
