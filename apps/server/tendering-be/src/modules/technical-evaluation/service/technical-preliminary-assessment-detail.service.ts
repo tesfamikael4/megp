@@ -479,6 +479,10 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
             list.technicalPreliminaryAssessment.qualified == 'comply'
               ? 'TechnicalComplianceSucceeded'
               : 'TechnicalComplianceFailed',
+          passFail:
+            list.technicalPreliminaryAssessment.qualified == 'comply'
+              ? true
+              : false,
         };
       });
       await manager.getRepository(BiddersComparison).insert(biddersComparison);
