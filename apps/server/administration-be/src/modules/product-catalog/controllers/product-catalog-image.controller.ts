@@ -11,7 +11,7 @@ import {
 import { ProductCatalogImageService } from '../services/product-catalog-image.service';
 
 const options: ExtraCrudOptions = {
-  entityIdName: 'procurementRequisitionId',
+  entityIdName: 'productCatalogId',
   createDto: CreateProductCatalogImageDto,
   updateDto: UpdateProductCatalogImageDto,
 };

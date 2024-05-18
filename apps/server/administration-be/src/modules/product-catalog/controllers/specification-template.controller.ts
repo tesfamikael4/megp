@@ -30,7 +30,6 @@ export class SpecificationTemplatesController extends EntityCrudController<Speci
   }
 
   @Get('item/:itemMasterId')
-  @ApiBody({ type: SpecificationTemplate })
   async getByItem(
     @Param('itemMasterId') itemMasterId: string,
   ): Promise<SpecificationTemplate> {

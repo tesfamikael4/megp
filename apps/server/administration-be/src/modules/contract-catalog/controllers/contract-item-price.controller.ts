@@ -3,11 +3,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ContractItemPrice } from 'src/entities';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { ContractItemPricesService } from '../services/contract-item.service';
 import {
   CreateContractItemPriceDto,
   UpdateContractItemPriceDto,
 } from '../dto/contract-item-price.dto';
+import { ContractItemPricesService } from '../services/contract-item-price.service';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'contractItemId',
