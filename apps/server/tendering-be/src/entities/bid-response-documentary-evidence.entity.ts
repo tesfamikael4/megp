@@ -1,4 +1,4 @@
-import { OrgAudit } from 'src/shared/entities';
+import { Audit } from 'src/shared/entities';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -13,7 +13,7 @@ import { DocumentTypeEnum } from 'src/shared/enums';
 
 @Entity({ name: 'bid_response_documentary_evidences' })
 @Unique(['bidRegistrationDetailId', 'eqcDocumentaryEvidenceId'])
-export class BidResponseDocumentaryEvidence extends OrgAudit {
+export class BidResponseDocumentaryEvidence extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
