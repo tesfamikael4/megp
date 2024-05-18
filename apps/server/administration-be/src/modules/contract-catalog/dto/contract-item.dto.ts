@@ -16,13 +16,10 @@ export class CreateContractItemDto {
   @Min(0)
   maximumQuantity: number;
 
-  @ApiProperty()
-  @IsNumber()
-  @Min(0)
+  @ApiProperty({ default: 0 })
   utilizedQuantity: number;
 
   @ApiProperty()
-  @IsNotEmpty()
   specification: any;
 
   @ApiProperty({ enum: ContractItemStatus })

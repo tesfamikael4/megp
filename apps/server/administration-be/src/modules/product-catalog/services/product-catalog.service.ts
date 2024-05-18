@@ -30,11 +30,8 @@ export class ProductCatalogsService extends EntityCrudService<ProductCatalog> {
     return this.productCatalogRepository.save({ id, ...data });
   }
 
-  approveCatalog(
-    id: string,
-    approvalStatus: ProductCatalogApprovalStatus,
-    req?: any,
-  ) {
+
+  approveCatalog(id: string, approvalStatus: ProductCatalogApprovalStatus, req?: any) {
     if (req?.user?.organization) {
       return this.productCatalogRepository.save({
         id,
@@ -45,7 +42,7 @@ export class ProductCatalogsService extends EntityCrudService<ProductCatalog> {
         },
       });
     }
-  }
+  } 
   async getDetails(ids: string[]) {
     return await this.productCatalogRepository.find({
       where: {

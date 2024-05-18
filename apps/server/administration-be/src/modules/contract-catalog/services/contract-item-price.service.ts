@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ContractItem } from '@entities';
+import { ContractItemPrice } from '@entities';
 import { ExtraCrudService } from '@generic-services';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class ContractItemsService extends ExtraCrudService<ContractItem> {
+export class ContractItemPricesService extends ExtraCrudService<ContractItemPrice> {
   constructor(
-    @InjectRepository(ContractItem)
-    private readonly contractItemRepository: Repository<ContractItem>,
+    @InjectRepository(ContractItemPrice)
+    private readonly contractItemPriceRepository: Repository<ContractItemPrice>,
   ) {
-    super(contractItemRepository);
+    super(contractItemPriceRepository);
   }
 }
