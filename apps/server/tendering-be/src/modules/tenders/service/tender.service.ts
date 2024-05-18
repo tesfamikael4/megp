@@ -90,7 +90,7 @@ export class TenderService extends EntityCrudService<Tender> {
         const procurementTechnicalTeam = new ProcurementTechnicalTeam();
         procurementTechnicalTeam.tenderId = tender.id;
         procurementTechnicalTeam.userId = iterator.userId;
-        procurementTechnicalTeam.userName = iterator.userName;
+        procurementTechnicalTeam.userName = iterator.name;
         procurementTechnicalTeam.isTeamLead = false;
         procurementTechnicalTeams.push(procurementTechnicalTeam);
       }
