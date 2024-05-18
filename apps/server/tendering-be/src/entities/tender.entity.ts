@@ -59,7 +59,7 @@ export class Tender extends Audit {
   @Column()
   prId: string;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   marketEstimate: number;
 
   @Column()
