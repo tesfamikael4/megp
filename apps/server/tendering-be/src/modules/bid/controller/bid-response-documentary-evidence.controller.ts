@@ -5,6 +5,7 @@ import { VendorGuard } from 'src/shared/authorization/guards/vendor.guard';
 import { BidResponseDocumentaryEvidenceService } from '../service/bid-response-documentary-evidence.service';
 import {
   BidResponseDocumentaryEvidenceDto,
+  GetPresignedBidResponseDocumentaryEvidenceDto,
   UploadBidResponseDocumentaryEvidenceDto,
 } from '../dto/bid-response.dto';
 
@@ -36,6 +37,15 @@ export class BidResponseDocumentaryEvidenceController {
     return await this.bidSecurityService.getBidResponseDocumentaryEvidence(
       payload,
       req,
+    );
+  }
+
+  @Post('download-response-by-id')
+  async getBidResponseDocumentaryEvidenceById(
+    @Body() payload: GetPresignedBidResponseDocumentaryEvidenceDto,
+  ) {
+    return await this.bidSecurityService.getBidResponseDocumentaryEvidenceById(
+      payload,
     );
   }
 }

@@ -197,6 +197,18 @@ export class BidResponseDocumentaryEvidenceDto {
   password: string;
 }
 
+export class GetPresignedBidResponseDocumentaryEvidenceDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  id: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
 export class GetBidResponseDto {
   @ApiProperty()
   @IsUUID()

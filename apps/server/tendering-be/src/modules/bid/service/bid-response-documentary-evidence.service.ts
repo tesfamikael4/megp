@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import {
   BidResponseDocumentaryEvidenceDto,
+  GetPresignedBidResponseDocumentaryEvidenceDto,
   UploadBidResponseDocumentaryEvidenceDto,
 } from '../dto/bid-response.dto';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
@@ -111,5 +112,36 @@ export class BidResponseDocumentaryEvidenceService {
       });
 
     return bidResponseDocumentaryEvidences;
+  }
+
+  async getBidResponseDocumentaryEvidenceById(
+    payload: GetPresignedBidResponseDocumentaryEvidenceDto,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const bidResponseDocumentaryEvidence = await manager
+      .getRepository(BidResponseDocumentaryEvidence)
+      .findOne({
+        where: {
+          id: payload.id,
+        },
+        relations: {
+          bidRegistrationDetail: {
+            bidRegistration: true,
+          },
+        },
+      });
+
+    const decryptedValue = this.encryptionHelperService.decryptedData(
+      bidResponseDocumentaryEvidence.value,
+      payload.password,
+      bidResponseDocumentaryEvidence.bidRegistrationDetail.bidRegistration.salt,
+    );
+
+    const presignedUrl = await this.minIOService.generatePresignedDownloadUrl(
+      JSON.parse(decryptedValue).value,
+    );
+
+    return { presignedUrl };
   }
 }
