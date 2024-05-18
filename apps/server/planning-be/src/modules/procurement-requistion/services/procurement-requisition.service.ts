@@ -493,6 +493,13 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         operator: FilterOperators.EqualTo,
       },
     ]);
+    query.where.push([
+      {
+        column: 'isUsed',
+        value: false,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
 
     const dataQuery = QueryConstructor.constructQuery<ProcurementRequisition>(
       this.repositoryProcurementRequisition,
