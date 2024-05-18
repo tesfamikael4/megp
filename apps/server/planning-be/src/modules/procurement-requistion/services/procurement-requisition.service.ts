@@ -31,6 +31,7 @@ import {
   QueryConstructor,
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
+import { ProcurementApplication } from 'src/shared/domain';
 
 @Injectable()
 export class ProcurementRequisitionService extends EntityCrudService<ProcurementRequisition> {
@@ -459,6 +460,44 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       },
     });
     return pr;
+  }
+
+  async getProcurementRequisitions(query: CollectionQuery, req?: any) {
+    query.where.push([
+      {
+        column: 'status',
+        value: 'Approved',
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'procurementApplication',
+        value: ProcurementApplication.TENDERING,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'organizationId',
+        value: req.user.organization.id,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    const dataQuery = QueryConstructor.constructQuery<ProcurementRequisition>(
+      this.repositoryProcurementRequisition,
+      query,
+    );
+
+    const response = new DataResponseFormat<ProcurementRequisition>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 
   async getProcurementRequisitionStatus(query: CollectionQuery, req?: any) {

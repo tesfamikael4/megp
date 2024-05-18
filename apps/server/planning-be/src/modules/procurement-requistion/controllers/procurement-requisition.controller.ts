@@ -89,6 +89,7 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
     const query = decodeCollectionQuery(q);
     return await this.procurementRequisitionService.getCurrentBudget(query);
   }
+
   //for tendering
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
@@ -97,6 +98,24 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
   async getProcurementRequisitionByReference(@Param('id') id: string) {
     return await this.procurementRequisitionService.getProcurementRequisitionById(
       id,
+    );
+  }
+
+  @Get('get-procurement-requisitions')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getProcurementRequisitions(
+    @Query('q') q?: string,
+    @CurrentUser() user?: any,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.procurementRequisitionService.getProcurementRequisitions(
+      query,
+      user,
     );
   }
 
