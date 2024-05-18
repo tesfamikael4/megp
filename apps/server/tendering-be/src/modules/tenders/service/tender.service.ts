@@ -55,15 +55,19 @@ export class TenderService extends EntityCrudService<Tender> {
         throw new Error('PR already used in a tender');
       }
 
-      const PR_ENDPOINT =
-        process.env.PR_ENDPOINT ??
-        'https://dev-bo.megp.peragosystems.com/planning/api/procurement-requisitions/get-procurement-requisition/';
+      const PR_BASE_ENDPOINT =
+        process.env.PR_BASE_ENDPOINT ??
+        'https://dev-bo.megp.peragosystems.com/planning/api/';
 
-      const prRequest = await axios.get(PR_ENDPOINT + prId, {
-        headers: {
-          'X-API-KEY': '25bc1622e5fb42cca3d3e62e90a3a20f',
+      const prRequest = await axios.get(
+        `${PR_BASE_ENDPOINT}procurement-requisitions/get-procurement-requisition/${prId}`,
+        {
+          headers: {
+            'X-API-KEY':
+              process.env.API_KEY ?? '25bc1622e5fb42cca3d3e62e90a3a20f',
+          },
         },
-      });
+      );
 
       const prResponse = prRequest.data;
 
@@ -146,9 +150,17 @@ export class TenderService extends EntityCrudService<Tender> {
         milestoneNum: TenderMilestoneEnum.Initiation,
         milestoneTxt: 'Initiation',
       });
-      // await axios.post('', {
 
-      // })
+      await axios.post(
+        `${PR_BASE_ENDPOINT}procurement-requisitions/update-procurement-requisition-is-used/${prId}`,
+        {},
+        {
+          headers: {
+            'X-API-KEY':
+              process.env.API_KEY ?? '25bc1622e5fb42cca3d3e62e90a3a20f',
+          },
+        },
+      );
 
       return tender;
     } catch (error) {
