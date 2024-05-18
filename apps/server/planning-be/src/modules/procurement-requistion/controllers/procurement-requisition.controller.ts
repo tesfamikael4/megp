@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -130,6 +131,15 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
     const query = decodeCollectionQuery(q);
     return this.procurementRequisitionService.getProcurementRequisitionStatus(
       query,
+    );
+  }
+
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  @Post('procurement-requisition-is-used/:id')
+  async updateProcurementRequisitionIsUsed(@Param('id') id: string) {
+    return this.procurementRequisitionService.updateProcurementRequisitionIsUsed(
+      id,
     );
   }
 }

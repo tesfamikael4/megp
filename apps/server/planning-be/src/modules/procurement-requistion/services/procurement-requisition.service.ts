@@ -554,4 +554,10 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     }
     return response;
   }
+
+  async updateProcurementRequisitionIsUsed(id: string) {
+    await this.repositoryProcurementRequisition.update(id, {
+      isUsed: true,
+    });
+  }
 }
