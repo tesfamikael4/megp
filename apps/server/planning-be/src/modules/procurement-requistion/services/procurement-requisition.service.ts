@@ -462,13 +462,13 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     return pr;
   }
 
-  async getProcurementRequisitions(query: CollectionQuery, req?: any) {
+  async getProcurementRequisitions(query: CollectionQuery, user?: any) {
     query.includes.push('procurementRequisitionTechnicalTeams');
 
     query.where.push([
       {
         column: 'status',
-        value: 'Approved',
+        value: ProcurementRequisitionStatusEnum.APPROVED,
         operator: FilterOperators.EqualTo,
       },
     ]);
@@ -482,14 +482,14 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     query.where.push([
       {
         column: 'organizationId',
-        value: req.user.organization.id,
+        value: user.organization.id,
         operator: FilterOperators.EqualTo,
       },
     ]);
     query.where.push([
       {
         column: 'procurementRequisitionTechnicalTeams.userId',
-        value: req.user.userId,
+        value: user.userId,
         operator: FilterOperators.EqualTo,
       },
     ]);
@@ -514,7 +514,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     query.where.push([
       {
         column: 'status',
-        value: 'Approved',
+        value: ProcurementRequisitionStatusEnum.APPROVED,
         operator: FilterOperators.EqualTo,
       },
     ]);
