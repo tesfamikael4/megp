@@ -463,6 +463,8 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
   }
 
   async getProcurementRequisitions(query: CollectionQuery, req?: any) {
+    query.includes.push('procurementRequisitionTechnicalTeams');
+
     query.where.push([
       {
         column: 'status',
@@ -484,6 +486,14 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         operator: FilterOperators.EqualTo,
       },
     ]);
+    query.where.push([
+      {
+        column: 'procurementRequisitionTechnicalTeams.userId',
+        value: req.user.userId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+
     const dataQuery = QueryConstructor.constructQuery<ProcurementRequisition>(
       this.repositoryProcurementRequisition,
       query,

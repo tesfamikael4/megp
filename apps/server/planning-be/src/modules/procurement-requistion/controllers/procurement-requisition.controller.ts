@@ -101,7 +101,7 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
     );
   }
 
-  @Get('get-procurement-requisitions')
+  @Get('get-procurement-requisitions-for-tenders')
   @ApiQuery({
     name: 'q',
     type: String,
