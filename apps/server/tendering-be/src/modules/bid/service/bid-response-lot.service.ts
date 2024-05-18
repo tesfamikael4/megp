@@ -288,6 +288,7 @@ export class BidResponseLotService {
         place_and_date: new Date().toDateString(),
         date: new Date().toDateString(),
         experts: experts,
+        company_name: bidRegistrationDetail.bidRegistration.bidderName,
       });
 
       const pdfBuffer =
