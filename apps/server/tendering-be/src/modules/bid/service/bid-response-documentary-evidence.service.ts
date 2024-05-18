@@ -110,21 +110,6 @@ export class BidResponseDocumentaryEvidenceService {
         },
       });
 
-    for (const bidResponseDocumentaryEvidence of bidResponseDocumentaryEvidences) {
-      const decryptedValue = this.encryptionHelperService.decryptedData(
-        bidResponseDocumentaryEvidence.value,
-        itemData.password,
-        bidResponseDocumentaryEvidence.bidRegistrationDetail.bidRegistration
-          .salt,
-      );
-
-      const presignedUrl = await this.minIOService.generatePresignedDownloadUrl(
-        JSON.parse(decryptedValue).value,
-      );
-
-      bidResponseDocumentaryEvidence['presignedUrl'] = presignedUrl;
-    }
-
     return bidResponseDocumentaryEvidences;
   }
 }
