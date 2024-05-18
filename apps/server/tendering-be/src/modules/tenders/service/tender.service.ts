@@ -156,6 +156,33 @@ export class TenderService extends EntityCrudService<Tender> {
     }
   }
 
+  async findAll(query: CollectionQuery, req?: any) {
+    query.includes.push('procurementTechnicalTeams');
+
+    query.where.push([
+      {
+        column: 'procurementTechnicalTeams.userId',
+        operator: FilterOperators.EqualTo,
+        value: req.user.userId,
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<Tender>(
+      this.tenderRepository,
+      query,
+    );
+
+    const response = new DataResponseFormat<Tender>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
   async findOne(id: any, req?: any) {
     return await this.tenderRepository.findOne({
       where: { id },
