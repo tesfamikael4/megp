@@ -95,7 +95,7 @@ export class TenderService extends EntityCrudService<Tender> {
         procurementTechnicalTeam.tenderId = tender.id;
         procurementTechnicalTeam.userId = iterator.userId;
         procurementTechnicalTeam.userName = iterator.name;
-        procurementTechnicalTeam.isTeamLead = false;
+        procurementTechnicalTeam.isTeamLead = iterator.isTeamLead ?? false;
         procurementTechnicalTeams.push(procurementTechnicalTeam);
       }
 
