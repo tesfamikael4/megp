@@ -34,7 +34,7 @@ import {
   BidRegistrationController,
   BidResponseItemController,
   BidResponseTenderController,
-  BidResponseController,
+  BidResponseLotController,
 } from './controller';
 
 // Services
@@ -50,7 +50,7 @@ import {
   BidResponseTenderService,
   BidResponseDocumentService,
   BidResponseOpeningService,
-  BidResponseService,
+  BidResponseLotService,
 } from './service';
 import { EncryptionHelperService } from './service/encryption-helper.service';
 
@@ -92,7 +92,7 @@ import { DocumentManipulatorModule } from 'src/shared/document-manipulator/docum
   controllers: [
     BidBookmarkController,
     BidRegistrationController,
-    BidResponseController,
+    BidResponseLotController,
     BidResponseItemController,
     BidResponseTenderController,
     BidResponseDocumentController,
@@ -107,7 +107,7 @@ import { DocumentManipulatorModule } from 'src/shared/document-manipulator/docum
   providers: [
     BidBookmarkService,
     BidRegistrationService,
-    BidResponseService,
+    BidResponseLotService,
     EncryptionHelperService,
     BidResponseItemService,
     BidResponseTenderService,

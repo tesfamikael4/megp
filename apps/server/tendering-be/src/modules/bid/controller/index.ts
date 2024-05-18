@@ -9,4 +9,4 @@ export * from './bid-response-docuement.controller';
 export * from './bid-response-item.controller';
 export * from './bid-response-opening.controller';
 export * from './bid-response-tender.controller';
-export * from './bid-response.controller';
+export * from './bid-response-lot.controller';

@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { BidResponseService } from '../service/bid-response.service';
+import { BidResponseLotService } from '../service/bid-response-lot.service';
 import {
   CheckPasswordDto,
   CreateBidResponseDto,
@@ -24,8 +24,8 @@ import { decodeCollectionQuery } from 'src/shared/collection-query';
 @Controller('bid-responses')
 @ApiTags('Bid Response Controller')
 @UseGuards(JwtGuard, VendorGuard())
-export class BidResponseController {
-  constructor(private readonly bidSecurityService: BidResponseService) {}
+export class BidResponseLotController {
+  constructor(private readonly bidSecurityService: BidResponseLotService) {}
 
   @Post()
   async create(@Body() itemData: CreateBidResponseDto, @Req() req?: any) {

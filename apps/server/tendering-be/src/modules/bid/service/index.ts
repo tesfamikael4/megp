@@ -9,4 +9,4 @@ export * from './bid-response-document.service';
 export * from './bid-response-item.service';
 export * from './bid-response-opening.service';
 export * from './bid-response-tender.service';
-export * from './bid-response.service';
+export * from './bid-response-lot.service';

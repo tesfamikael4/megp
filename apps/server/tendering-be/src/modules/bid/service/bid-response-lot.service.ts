@@ -26,7 +26,7 @@ import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
 import { BidRegistrationDetail, BidResponseDocument } from 'src/entities';
 
 @Injectable()
-export class BidResponseService {
+export class BidResponseLotService {
   constructor(
     @InjectRepository(BidResponseLot)
     private readonly bidSecurityRepository: Repository<BidResponseLot>,
@@ -84,7 +84,6 @@ export class BidResponseService {
   }
 
   async getBidResponseByKey(itemData: GetBidResponseDto, req?: any) {
-    // const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const bidderId = req.user.organization.id;
 
     const bidResponse = await this.bidSecurityRepository.findOne({
@@ -237,6 +236,26 @@ export class BidResponseService {
       throw new BadRequestException('invalid_password');
     }
 
+    const bidResponseLot = await manager
+      .getRepository(BidResponseLot)
+      .findOneBy({
+        bidRegistrationDetailId: bidRegistrationDetail.id,
+        documentType: payload.documentType,
+        key: 'experts',
+      });
+
+    if (!bidResponseLot) {
+      throw new BadRequestException('experts_not_found');
+    }
+
+    const decryptedExperts = this.encryptionHelperService.decryptedData(
+      bidResponseLot.value,
+      payload.password,
+      bidRegistrationDetail.bidRegistration.salt,
+    );
+
+    const experts = JSON.parse(decryptedExperts).value;
+
     const spdBidForms = await manager.getRepository(SpdBidForm).findBy({
       spd: {
         tenderSpds: {
@@ -268,6 +287,7 @@ export class BidResponseService {
             .procurementReferenceNumber,
         place_and_date: new Date().toDateString(),
         date: new Date().toDateString(),
+        experts: experts,
       });
 
       const pdfBuffer =
