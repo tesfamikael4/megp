@@ -4,9 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Lot } from '.';
+import { TechnicalQualificationAssessmentDetail } from './technical-qualification-assessment-detail.entity';
 
 @Entity({ name: 'eqc_qualifications' })
 export class EqcQualification extends Audit {
@@ -59,4 +61,11 @@ export class EqcQualification extends Audit {
   // Relation?
   @Column({ type: 'uuid', nullable: true })
   spdQualificationId: string;
+
+  @OneToMany(
+    () => TechnicalQualificationAssessmentDetail,
+    (technicalQualificationAssessmentDetail) =>
+      technicalQualificationAssessmentDetail.eqcQualification,
+  )
+  technicalQualificationAssessmentDetails: TechnicalQualificationAssessmentDetail[];
 }

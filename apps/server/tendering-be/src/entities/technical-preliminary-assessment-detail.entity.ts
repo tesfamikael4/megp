@@ -12,6 +12,7 @@ import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { SpdPreliminaryEvaluation } from './spd-preliminary-evaluation.entity';
 import { TechnicalPreliminaryAssessment } from './technical-preliminary-assessment.entity';
 import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
+import { EqcPreliminaryExamination } from './eqc-preliminary-examination.entity';
 
 @Entity({ name: 'technical_preliminary_assessment_details' })
 export class TechnicalPreliminaryAssessmentDetail extends Audit {
@@ -31,15 +32,15 @@ export class TechnicalPreliminaryAssessmentDetail extends Audit {
   technicalPreliminaryAssessment: TechnicalPreliminaryAssessment;
 
   @Column('uuid')
-  spdPreliminaryEvaluationId: string;
+  eqcPreliminaryExaminationId: string;
 
   @ManyToOne(
-    () => SpdPreliminaryEvaluation,
-    (spdPreliminaryEvaluation) =>
-      spdPreliminaryEvaluation.technicalPreliminaryAssessment,
+    () => EqcPreliminaryExamination,
+    (eqcPreliminaryExamination) =>
+      eqcPreliminaryExamination.technicalPreliminaryAssessments,
   )
-  @JoinColumn({ name: 'spdPreliminaryEvaluationId' })
-  SpdPreliminaryEvaluation: SpdPreliminaryEvaluation;
+  @JoinColumn({ name: 'eqcPreliminaryExaminationId' })
+  eqcPreliminaryExamination: EqcPreliminaryExamination;
 
   @Column({
     type: 'enum',
