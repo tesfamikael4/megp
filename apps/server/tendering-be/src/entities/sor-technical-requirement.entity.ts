@@ -4,9 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Item } from './tender-item.entity';
+import { TechnicalResponsivenessAssessmentDetail } from './technical-responsiveness-assessment-detail.entity';
 
 @Entity({ name: 'sor_technical_requirements' })
 export class SorTechnicalRequirement extends Audit {
@@ -37,4 +39,12 @@ export class SorTechnicalRequirement extends Audit {
 
   @Column()
   formLink: string;
+
+  @OneToMany(
+    () => TechnicalResponsivenessAssessmentDetail,
+    (technicalResponsivenessAssessmentDetail) =>
+      technicalResponsivenessAssessmentDetail.sorTechnicalRequirement,
+  )
+  @JoinColumn()
+  technicalResponsivenessAssessmentDetails: TechnicalResponsivenessAssessmentDetail[];
 }

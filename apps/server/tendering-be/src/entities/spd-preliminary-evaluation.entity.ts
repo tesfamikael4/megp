@@ -36,12 +36,4 @@ export class SpdPreliminaryEvaluation extends Audit {
   @ManyToOne(() => Spd, (spd) => spd.spdPreliminaryEvaluations)
   @JoinColumn({ name: 'spdId' })
   spd: Spd;
-
-  @OneToMany(
-    () => TechnicalPreliminaryAssessmentDetail,
-    (technicalPreliminaryAssessment) =>
-      technicalPreliminaryAssessment.SpdPreliminaryEvaluation,
-  )
-  @JoinColumn()
-  technicalPreliminaryAssessment: TechnicalPreliminaryAssessmentDetail;
 }

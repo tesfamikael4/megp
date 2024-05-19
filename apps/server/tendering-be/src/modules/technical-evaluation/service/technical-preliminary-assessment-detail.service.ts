@@ -276,7 +276,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
       ...spdChecklist,
       check: checklists.find(
         (x) =>
-          x.spdPreliminaryEvaluationId == spdChecklist.id &&
+          x.eqcPreliminaryExaminationId == spdChecklist.id &&
           x.technicalPreliminaryAssessment.isTeamAssessment == isTeamAssessment,
       )
         ? true
@@ -567,7 +567,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
   }
 
   async membersReport(
-    spdPreliminaryEvaluationId: string,
+    eqcPreliminaryExaminationId: string,
     bidderId: string,
     lotId: string,
   ) {
@@ -576,7 +576,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
       .getRepository(TechnicalPreliminaryAssessmentDetail)
       .find({
         where: {
-          spdPreliminaryEvaluationId,
+          eqcPreliminaryExaminationId,
           technicalPreliminaryAssessment: {
             bidRegistrationDetail: {
               bidRegistration: {
@@ -648,12 +648,12 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
             },
           },
           relations: {
-            SpdPreliminaryEvaluation: true,
+            eqcPreliminaryExamination: true,
           },
           select: {
             id: true,
             qualified: true,
-            spdPreliminaryEvaluationId: true,
+            eqcPreliminaryExaminationId: true,
             remark: true,
             technicalPreliminaryAssessment: {
               isTeamAssessment: true,
@@ -679,7 +679,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     const response = spdChecklist.map((spdChecklist) => ({
       ...spdChecklist,
       check: technicalPreliminaryAssessmentDetail.find(
-        (x) => x.spdPreliminaryEvaluationId == spdChecklist.id,
+        (x) => x.eqcPreliminaryExaminationId == spdChecklist.id,
       ),
     }));
     return response;

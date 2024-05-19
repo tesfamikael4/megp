@@ -39,11 +39,4 @@ export class SpdQualification extends Audit {
   @ManyToOne(() => Spd, (spd) => spd.spdQualifications)
   @JoinColumn({ name: 'spdId' })
   spd: Spd;
-
-  @OneToMany(
-    () => TechnicalQualificationAssessmentDetail,
-    (technicalQualificationAssessmentDetail) =>
-      technicalQualificationAssessmentDetail.spdQualification,
-  )
-  technicalQualificationAssessmentDetails: TechnicalQualificationAssessmentDetail[];
 }

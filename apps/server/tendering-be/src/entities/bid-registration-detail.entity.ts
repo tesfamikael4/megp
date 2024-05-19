@@ -20,6 +20,7 @@ import { TechnicalPreliminaryAssessment } from './technical-preliminary-assessme
 import { BiddersComparison } from './bidders-comparison.entity';
 import { BidOpeningChecklist } from './bid-opening-checklist.entity';
 import { TechnicalQualificationAssessment } from './technical-qualification-assessments.entity';
+import { TechnicalResponsivenessAssessment } from './technical-responsiveness-assessments.entity';
 
 @Entity({ name: 'bid_registration_details' })
 @Unique(['bidRegistrationId', 'lotId'])
@@ -94,6 +95,13 @@ export class BidRegistrationDetail extends Audit {
       technicalQualificationAssessment.bidRegistrationDetail,
   )
   technicalQualificationAssessments: TechnicalQualificationAssessment[];
+
+  @OneToMany(
+    () => TechnicalResponsivenessAssessment,
+    (technicalResponsivenessAssessment) =>
+      technicalResponsivenessAssessment.bidRegistrationDetail,
+  )
+  technicalResponsivenessAssessments: TechnicalResponsivenessAssessment[];
 
   @OneToMany(
     () => BiddersComparison,

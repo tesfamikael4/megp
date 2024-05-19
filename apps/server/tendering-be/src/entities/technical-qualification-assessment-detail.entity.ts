@@ -9,6 +9,7 @@ import { TechnicalQualificationAssessment } from './technical-qualification-asse
 import { OrgAudit } from 'src/shared/entities';
 import { SpdQualification } from './spd-qualification.entity';
 import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
+import { EqcQualification } from './eqc-qualification.entity';
 
 @Entity()
 export class TechnicalQualificationAssessmentDetail extends OrgAudit {
@@ -28,15 +29,15 @@ export class TechnicalQualificationAssessmentDetail extends OrgAudit {
   technicalQualificationAssessment: TechnicalQualificationAssessment;
 
   @Column('uuid')
-  spdQualificationId: string;
+  eqcQualificationId: string;
 
   @ManyToOne(
-    () => SpdQualification,
-    (spdQualification) =>
-      spdQualification.technicalQualificationAssessmentDetails,
+    () => EqcQualification,
+    (eqcQualification) =>
+      eqcQualification.technicalQualificationAssessmentDetails,
   )
-  @JoinColumn({ name: 'spdQualificationId' })
-  spdQualification: SpdQualification;
+  @JoinColumn({ name: 'eqcQualificationId' })
+  eqcQualification: EqcQualification;
 
   @Column({
     type: 'enum',

@@ -4,9 +4,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Lot } from '.';
+import { Lot, TechnicalPreliminaryAssessmentDetail } from '.';
 
 @Entity({ name: 'eqc_preliminary_examinations' })
 export class EqcPreliminaryExamination extends Audit {
@@ -47,4 +48,12 @@ export class EqcPreliminaryExamination extends Audit {
   // relation?
   @Column({ type: 'uuid', nullable: true })
   spdEqcPreliminaryExaminationId: string;
+
+  @OneToMany(
+    () => TechnicalPreliminaryAssessmentDetail,
+    (technicalPreliminaryAssessment) =>
+      technicalPreliminaryAssessment.eqcPreliminaryExamination,
+  )
+  @JoinColumn()
+  technicalPreliminaryAssessments: TechnicalPreliminaryAssessmentDetail[];
 }

@@ -1,0 +1,99 @@
+import { Body, Controller, Get, Param, Put, Query, Req } from '@nestjs/common';
+import { ExtraCrudController } from 'src/shared/controller';
+import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
+import { TechnicalResponsivenessAssessmentDetail } from 'src/entities/technical-responsiveness-assessment-detail.entity';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { AllowAnonymous } from 'src/shared/authorization';
+import { ApiTags } from '@nestjs/swagger';
+import { CompleteBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
+import { TechnicalResponsivenessAssessmentDetailService } from '../service/technical-responsiveness-assessment-detail.service';
+
+const options: ExtraCrudOptions = {
+  entityIdName: 'technicalResponsivenessAssessmentId',
+  // createDto: CreateTechnicalResponsivenessAssessmentDetailDto,
+};
+
+@Controller('technical-responsiveness-assessment-detail')
+@ApiTags('Technical Responsiveness Assessment Detail Controller')
+export class TechnicalResponsivenessAssessmentDetailController extends ExtraCrudController<TechnicalResponsivenessAssessmentDetail>(
+  options,
+) {
+  constructor(
+    private readonly technicalResponsivenessAssessmentDetailService: TechnicalResponsivenessAssessmentDetailService,
+  ) {
+    super(technicalResponsivenessAssessmentDetailService);
+  }
+
+  @Get('bidders-status/:lotId/:isTeam')
+  async passedBidders(
+    @Param('lotId') lotId: string,
+    @Param('isTeam') isTeam: string,
+    @Req() req,
+    @Query('q') q: string,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.technicalResponsivenessAssessmentDetailService.passedBidders(
+      lotId,
+      isTeam,
+      query,
+      req,
+    );
+  }
+
+  // @Get('checklist-status/:lotId/:bidderId/:isTeam')
+  // async checklistStatus(
+  //   @Param('lotId') lotId: string,
+  //   @Param('isTeam') isTeam: string,
+  //   @Param('bidderId') bidderId: string,
+  //   @Req() req,
+  // ) {
+  //   return await this.technicalResponsivenessAssessmentDetailService.checklistStatus(
+  //     lotId,
+  //     bidderId,
+  //     isTeam,
+  //     req,
+  //   );
+  // }
+
+  @Get('can-complete/:lotId')
+  async canComplete(@Param('lotId') lotId: string, @Req() req) {
+    return await this.technicalResponsivenessAssessmentDetailService.canComplete(
+      lotId,
+      req,
+    );
+  }
+
+  @Put('complete-bidder-evaluation')
+  async completeBidderEvaluation(
+    @Body() itemData: CompleteBidderEvaluationDto,
+    @Req() req,
+  ) {
+    return await this.technicalResponsivenessAssessmentDetailService.completeBidderEvaluation(
+      itemData,
+      req,
+    );
+  }
+
+  @Get('evaluator-report/:lotId/:bidderId/:isTeam')
+  async evaluatorReport(
+    @Param('bidderId') bidderId: string,
+    @Param('lotId') lotId: string,
+    @Param('isTeam') isTeam: string,
+    @Req() req: any,
+  ) {
+    return await this.technicalResponsivenessAssessmentDetailService.evaluatorReport(
+      lotId,
+      bidderId,
+      isTeam,
+      req,
+    );
+  }
+
+  @Put('submit-checklist')
+  async submitChecklist(@Body() itemData: any, @Req() req) {
+    return await this.technicalResponsivenessAssessmentDetailService.submit(
+      itemData,
+      req,
+    );
+  }
+}
