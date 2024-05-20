@@ -79,11 +79,13 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
     fileInfo,
     req,
   ): Promise<{ presignedUrl: string; id: string }> {
-    const presignedUrl = await this.minioService.generatePresignedUploadUrl({
-      bucketName: fileInfo.bucketName,
-      contentType: fileInfo.contentType,
-      originalname: fileInfo.originalname,
-    });
+    const presignedUrl = await this.minioService.generatePresignedUploadUrl(
+      {
+        contentType: fileInfo.contentType,
+        originalname: fileInfo.originalname,
+      },
+      fileInfo.bucketName,
+    );
 
     const doc = await this.repositoryPreBudgetActivityDocument.create({
       title: fileInfo.name,

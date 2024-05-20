@@ -63,7 +63,7 @@ export class MinIOService {
     buffer: any,
     originalname: string,
     mimetype: string,
-    bucketName: string,
+    bucketName = '',
     metaData = {},
   ): Promise<{
     filepath: string;
