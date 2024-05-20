@@ -567,9 +567,9 @@ export default function TenderDetailPage() {
                     Qualification
                   </div>
                   <div className="py-2">
-                    <Qualification type="legal" lotId={value} />
+                    <Qualification lotId={value} />
                   </div>
-                  <div className="py-2">
+                  {/* <div className="py-2">
                     <Qualification type="professional" lotId={value} />
                   </div>
                   <div className="py-2">
@@ -577,7 +577,7 @@ export default function TenderDetailPage() {
                   </div>
                   <div className="py-2">
                     <Qualification type="financial" lotId={value} />
-                  </div>
+                  </div> */}
                   <div className="text-lg font-medium mt-4 pt-4 pb-4">
                     Documentary Evidence
                   </div>

@@ -25,7 +25,7 @@ import { useReadQuery as useGetSpd } from '@/app/(features)/preparation/_api/ten
 interface FormDetailProps {
   mode: 'new' | 'detail';
   adId: string;
-  type: 'legal' | 'professional' | 'technical' | 'financial' | 'performance';
+  type: string;
   lotId: string;
   returnFunction: () => void;
 }
