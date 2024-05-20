@@ -1,15 +1,26 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { EntityManager, In, Repository } from 'typeorm';
+import {
+  ArrayContains,
+  EntityManager,
+  In,
+  JsonContains,
+  Repository,
+} from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { TechnicalResponsivenessAssessmentDetail } from 'src/entities/technical-responsiveness-assessment-detail.entity';
-import { CollectionQuery } from 'src/shared/collection-query';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
 import { REQUEST } from '@nestjs/core';
 import {
   BidRegistration,
   BidRegistrationDetail,
+  Item,
   SorTechnicalRequirement,
 } from 'src/entities';
 import { TeamMember } from 'src/entities/team-member.entity';
@@ -19,6 +30,7 @@ import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
+import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
 export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudService<TechnicalResponsivenessAssessmentDetail> {
@@ -30,9 +42,33 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
   ) {
     super(technicalResponsivenessAssessmentDetailRepository);
   }
+  async getItemsByLotId(lotId: string, query: CollectionQuery, req: any) {
+    query.where.push([
+      {
+        column: 'lotId',
+        value: lotId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
+    const dataQuery = QueryConstructor.constructQuery<Item>(
+      manager.getRepository(Item),
+      query,
+    );
+    const response = new DataResponseFormat<Item>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
   async passedBidders(
     lotId: string,
+    itemId: string,
     isTeam: string,
     query: CollectionQuery,
     req: any,
@@ -41,16 +77,17 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
     // then checks if the opener has completed the spd compliance for each bidder.
     //Todo check if the opener is in the team
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const evaluatorId = 'bed33925-3a83-4cba-be4a-fd563a306c3b';
+    const evaluatorId = req.user.userId;
     const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
 
     // const evaluatorId = req.user.userId;
 
     const [passed, spdChecklist] = await Promise.all([
-      await manager.getRepository(BiddersComparison).find({
+      manager.getRepository(BiddersComparison).find({
         where: {
           bidRegistrationDetail: {
             lotId: lotId,
+            technicalItems: ArrayContains([itemId]),
           },
           milestoneNum: 303,
           bidderStatus: 304,
@@ -75,7 +112,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       }),
       manager.getRepository(SorTechnicalRequirement).findAndCount({
         where: {
-          itemId: '',
+          itemId,
         },
       }),
     ]);

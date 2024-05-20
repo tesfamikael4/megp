@@ -13,6 +13,12 @@ import { TechnicalQualificationAssessmentDetailService } from './service/technic
 import { TechnicalQualificationAssessment } from 'src/entities/technical-qualification-assessments.entity';
 import { TechnicalQualificationAssessmentDetail } from 'src/entities/technical-qualification-assessment-detail.entity';
 import { TechnicalQualificationAssessmentController } from './controller/technical-qualification-assessments.controller';
+import { TechnicalResponsivenessAssessmentDetailController } from './controller/technical-responsiveness-assessment-detail.controller';
+import { TechnicalResponsivenessAssessmentController } from './controller/technical-responsiveness-assessments.controller';
+import { TechnicalResponsivenessAssessmentDetailService } from './service/technical-responsiveness-assessment-detail.service';
+import { TechnicalResponsivenessAssessmentService } from './service/technical-responsiveness-assessment.service';
+import { TechnicalResponsivenessAssessment } from 'src/entities/technical-responsiveness-assessments.entity';
+import { TechnicalResponsivenessAssessmentDetail } from 'src/entities/technical-responsiveness-assessment-detail.entity';
 
 @Module({
   imports: [
@@ -21,6 +27,8 @@ import { TechnicalQualificationAssessmentController } from './controller/technic
       TechnicalPreliminaryAssessmentDetail,
       TechnicalQualificationAssessment,
       TechnicalQualificationAssessmentDetail,
+      TechnicalResponsivenessAssessment,
+      TechnicalResponsivenessAssessmentDetail,
     ]),
     BidModule,
   ],
@@ -29,12 +37,16 @@ import { TechnicalQualificationAssessmentController } from './controller/technic
     TechnicalPreliminaryAssessmentService,
     TechnicalQualificationAssessmentDetailService,
     TechnicalQualificationAssessmentService,
+    TechnicalResponsivenessAssessmentDetailService,
+    TechnicalResponsivenessAssessmentService,
   ],
   controllers: [
     TechnicalPreliminaryAssessmentController,
     TechnicalPreliminaryAssessmentDetailController,
     TechnicalQualificationAssessmentDetailController,
     TechnicalQualificationAssessmentController,
+    TechnicalResponsivenessAssessmentDetailController,
+    TechnicalResponsivenessAssessmentController,
   ],
 })
 export class EvaluationModule {}

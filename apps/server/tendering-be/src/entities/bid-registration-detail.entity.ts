@@ -49,7 +49,7 @@ export class BidRegistrationDetail extends Audit {
   })
   status: string;
 
-  @Column({ type: 'simple-array', nullable: true })
+  @Column({ type: 'text', array: true, nullable: true })
   technicalItems: string[];
 
   @Column({ type: 'simple-array', nullable: true })
