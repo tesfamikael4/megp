@@ -5,6 +5,7 @@ import {
   Min,
   IsNumber,
   IsBoolean,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -32,6 +33,11 @@ export class CreateRfxBidProcedureDTO {
   @ApiProperty()
   @IsBoolean()
   isReverseAuction: boolean;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  idleTime: number;
 
   @ApiProperty()
   @IsInt()

@@ -7,6 +7,7 @@ import {
   IsArray,
   IsOptional,
   IsNumber,
+  IsBoolean,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -42,8 +43,8 @@ export class CreateRfxBidContractConditionDTO {
   liquidityDamageLimit: number;
 
   @ApiProperty()
-  @IsString()
-  paymentTerm: string;
+  @IsBoolean()
+  isPartialAllowed: boolean;
 
   @ApiProperty()
   @IsArray()

@@ -6,12 +6,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExtraCrudService } from 'megp-shared-be';
 import { RFX, RfxBidQualification } from 'src/entities';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   CreateRfxBidQualificationDto,
   UpdateRfxBidQualificationDto,
 } from '../dtos/rfx-qualification.dto';
-import { ERfxStatus } from 'src/utils/enums/rfx.enums';
 import { RfxService } from './rfx.service';
 
 @Injectable()
@@ -38,11 +37,11 @@ export class RfxBidQualificationService extends ExtraCrudService<RfxBidQualifica
       },
     });
 
-    if (!rfx) throw new NotFoundException('no_rfx_found');
+    if (!rfx) throw new NotFoundException('no rfx found');
 
     const isUpdatable = await this.rfxService.isUpdatable(rfx);
 
-    if (!isUpdatable) throw new BadRequestException('rfx_not_updatable');
+    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
 
     const rfxBidQualification =
       this.rfxBidQualificationRepository.create(itemData);
@@ -69,10 +68,10 @@ export class RfxBidQualificationService extends ExtraCrudService<RfxBidQualifica
     });
 
     if (!rfxBidQuali)
-      throw new NotFoundException('no_rfx_bid_qualification_found');
+      throw new NotFoundException('no rfx bid qualification found');
 
     const isUpdatable = await this.rfxService.isUpdatable(rfxBidQuali.rfx);
-    if (!isUpdatable) throw new BadRequestException('rfx_not_updatable');
+    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
 
     const rfxDocUpdate = this.rfxBidQualificationRepository.create(itemData);
     await this.rfxBidQualificationRepository.update(id, itemData);

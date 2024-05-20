@@ -6,15 +6,19 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
-import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
-import { RFXItem, RfxBidInvitation } from 'src/entities';
+import {
+  CollectionQuery,
+  DataResponseFormat,
+  ENTITY_MANAGER_KEY,
+  ExtraCrudService,
+  QueryConstructor,
+} from 'megp-shared-be';
+import { RFX, RFXItem, RfxBidInvitation } from 'src/entities';
 import { EntityManager, Repository, In } from 'typeorm';
 import { CreateRfxBidInvitationDto } from '../dtos/rfx-bid-invitaiton.dto';
 import { ProductCatalogueDto } from '../dtos/product-catalogue.dto';
-import { EInvitationStatus } from 'src/utils/enums/rfx-invitation.enum';
-import { ERfxItemStatus } from 'src/utils/enums/rfx-items.enum';
+import { ERfxItemStatus, ERfxStatus } from 'src/utils/enums';
 import { REQUEST } from '@nestjs/core';
-import { EWorkflowResponseStatus } from 'src/utils/enums/workflow-response.enum';
 import { ProductCatalogue } from 'src/utils/mock/product-catalogues';
 
 @Injectable()
@@ -29,6 +33,64 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     super(rfxBidInvitationRepository);
   }
 
+  async myRfxItemInvitations(rfxItemId: string, user: any) {
+    const myInvitations = await this.rfxBidInvitationRepository.find({
+      where: {
+        rfxItem: {
+          id: rfxItemId,
+          status: ERfxItemStatus.APPROVED,
+        },
+        vendorId: user.organization.id,
+      },
+    });
+
+    if (myInvitations.length == 0)
+      throw new NotFoundException('RFQ Item Invitaiton not found');
+
+    return myInvitations;
+  }
+
+  async myRfxDetail(rfxId: string, user: any) {
+    const rfxItems = await this.rfxItemRepository.find({
+      where: {
+        rfxId,
+        status: ERfxItemStatus.APPROVED,
+        bidInvitations: {
+          vendorId: user.organization.id,
+        },
+      },
+    });
+
+    if (rfxItems.length == 0) throw new NotFoundException('RFQ Item not found');
+
+    return rfxItems;
+  }
+
+  async myInvitations(query: CollectionQuery, user: any) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const dataQuery = QueryConstructor.constructQuery<RFX>(
+      entityManager.getRepository(RFX),
+      query,
+    )
+      .where('rfxs.status = :status', { status: ERfxStatus.APPROVED })
+      .leftJoinAndSelect('rfxs.items', 'rfxItems')
+      .leftJoinAndSelect('rfxItems.bidInvitations', 'bidInvitation')
+      .andWhere('bidInvitation.vendorId = :vendorId', {
+        vendorId: user.organization.id,
+      });
+
+    // Select Open RFXes
+    const response = new DataResponseFormat<RFX>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
   async inviteSelected(rfxItemId: string, itemData: CreateRfxBidInvitationDto) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
@@ -51,7 +113,7 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     productCatalogues.forEach((catalogue: ProductCatalogueDto) => {
       if (catalogue.quantity < rfxItem.quantity)
         throw new BadRequestException(
-          `can_not_invite_a_vendor_of_less_quantity`,
+          `can not invite a vendor of less quantity`,
         );
 
       const rfxBidInvitation = this.createInvitationFromCatalogue(
@@ -97,7 +159,7 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
       },
     });
 
-    if (!rfxItem) throw new BadRequestException('no_rfx_item_found');
+    if (!rfxItem) throw new BadRequestException('no rfx item found');
 
     await Promise.all([
       this.rfxBidInvitationRepository.delete({
@@ -126,7 +188,7 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
       },
     });
 
-    if (!rfxItem) throw new BadRequestException('no_rfx_item_found');
+    if (!rfxItem) throw new BadRequestException('no rfx item found');
 
     await Promise.all([
       this.rfxItemRepository.update(rfxItemId, {
@@ -162,7 +224,7 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
       );
 
       if (catalogueResponse.data.length == 0)
-        throw new BadRequestException('products_not_found');
+        throw new BadRequestException('products not found');
 
       this.refineProducts(productCatalogueIds, catalogueResponse.data);
 
@@ -181,7 +243,7 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     );
 
     if (!allCatalogueFound)
-      throw new BadRequestException('not_all_product_catalogues_found');
+      throw new BadRequestException('not all product catalogues found');
   }
 
   private createInvitationFromCatalogue(

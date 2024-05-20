@@ -4,10 +4,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ExtraCrudService } from 'megp-shared-be';
+import {
+  CollectionQuery,
+  DataResponseFormat,
+  ExtraCrudOptions,
+  ExtraCrudService,
+  FilterOperators,
+  QueryConstructor,
+} from 'megp-shared-be';
 import { RFXItem } from 'src/entities';
-import { ERfxItemStatus } from 'src/utils/enums/rfx-items.enum';
-import { ERfxStatus } from 'src/utils/enums/rfx.enums';
+import { ERfxItemStatus } from 'src/utils/enums';
 import { Repository } from 'typeorm';
 import { RfxService } from './rfx.service';
 
@@ -53,10 +59,10 @@ export class RFXItemService extends ExtraCrudService<RFXItem> {
       },
     });
 
-    if (!rfxItem) throw new NotFoundException('draft_rfx_item_not_found');
+    if (!rfxItem) throw new NotFoundException('draft rfx item not found');
 
     if (rfxItem.bidInvitations.length == 0 && !rfxItem.isOpen)
-      throw new BadRequestException('rfx_bid_invitation_not_found');
+      throw new BadRequestException('rfx bid invitation not found');
 
     rfxItem.status = ERfxItemStatus.SUBMITTED;
 

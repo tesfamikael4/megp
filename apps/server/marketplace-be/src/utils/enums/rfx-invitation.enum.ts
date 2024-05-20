@@ -1,8 +1,0 @@
-export enum EInvitationStatus {
-  DRAFT = 'DRAFT',
-  PENDING = 'PENDING',
-  SUBMITTED = 'SUBMITTED',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-  CANCELLED = 'CANCELLED',
-}

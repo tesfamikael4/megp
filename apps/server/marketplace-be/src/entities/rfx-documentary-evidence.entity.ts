@@ -26,7 +26,10 @@ export class RfxDocumentaryEvidence extends Audit {
   @Column()
   documentTitle: string;
 
-  @Column({ nullable: true, default: false })
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ default: true })
   required: boolean;
 
   @Column({ default: 1 })

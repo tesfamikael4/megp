@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { RFX } from './rfx.entity';
-import { ERfxRevisionApprovalStatusEnum } from 'src/utils/enums/rfx-revision-approval.enum';
+import { ERfxRevisionApprovalStatusEnum } from 'src/utils/enums';
 import { Audit } from 'megp-shared-be';
 
 @Entity({ name: 'rfx_revision_approvals' })

@@ -46,6 +46,7 @@ import { MinIOModule } from 'megp-shared-be';
 import { UtilityModule } from 'src/utils/utils.module';
 import { RfxRevisionApprovalController } from './controllers/rfx-revision-approval.controller';
 import { RfxRevisionApprovalService } from './services/rfx-revision-approval.service';
+import { SolicitationModule } from '../solicitation/solicitation.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { RfxRevisionApprovalService } from './services/rfx-revision-approval.ser
     ]),
     MinIOModule,
     UtilityModule,
+    SolicitationModule,
     ClientsModule.register([
       {
         name: 'RFX_RMQ_SERVICE',
@@ -94,8 +96,8 @@ import { RfxRevisionApprovalService } from './services/rfx-revision-approval.ser
     RfxBidInvitationController,
     RfxDocumentaryEvidenceController,
     RfxOpenProductController,
-    DocumentController,
     RfxRevisionApprovalController,
+    DocumentController,
   ],
   providers: [
     RfxService,

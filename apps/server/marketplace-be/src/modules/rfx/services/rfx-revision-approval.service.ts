@@ -31,7 +31,7 @@ export class RfxRevisionApprovalService extends ExtraCrudService<RfxRevisionAppr
       //     throw new BadRequestException("User is not a Team Member.")
 
       // if (team?.isTeamLead) {
-      //   throw new BadRequestException('leader_cannot_approve');
+      //   throw new BadRequestException('leader cannot approve');
       // }
 
       const item = manager

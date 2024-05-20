@@ -54,7 +54,7 @@
     "jwk-to-pem": "^2.0.5",
     "jwks-rsa": "^3.0.1",
     "libreoffice-convert": "^1.5.1",
-    "megp-shared-be": "0.0.9",
+    "megp-shared-be": "1.0.1",
     "nestjs-minio-client": "^2.2.0",
     "nodemailer": "^6.9.1",
     "passport": "^0.6.0",

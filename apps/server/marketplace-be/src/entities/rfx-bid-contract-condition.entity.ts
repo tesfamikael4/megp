@@ -39,8 +39,8 @@ export class RfxBidContractCondition extends Audit {
   @Column()
   liquidityDamageLimit: number;
 
-  @Column()
-  paymentTerm: string;
+  @Column({ default: false })
+  isPartialAllowed: boolean;
 
   @Column({ type: 'simple-array' })
   paymentMode: string[];

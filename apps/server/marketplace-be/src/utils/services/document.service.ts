@@ -15,13 +15,14 @@ export class DocumentService extends EntityCrudService<Document> {
     super(repositoryDocument);
   }
 
-  async create(itemData: any, organization: any): Promise<any> {
+  async create(itemData: any, user: any): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      itemData.organizationId = organization.organizationId;
-      itemData.organizationName = organization.organizationName;
+      itemData.organizationId = user?.organization?.organizationId;
+      itemData.organizationName = user?.organization?.organizationName;
+      itemData.userId = user?.id;
 
       const doc = await this.repositoryDocument.findOne({
         where: {

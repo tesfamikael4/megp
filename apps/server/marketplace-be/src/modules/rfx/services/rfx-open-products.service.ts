@@ -7,13 +7,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ExtraCrudService } from 'megp-shared-be';
 import { RFXItem } from 'src/entities';
 import { RfxOpenProduct } from 'src/entities/rfx-open-products.entity';
-import { ERfxItemStatus } from 'src/utils/enums/rfx-items.enum';
 import { Repository } from 'typeorm';
 import {
   CreateRfxOpenProductDto,
   UpdateRfxOpenProductDto,
 } from '../dtos/rfx-open-products.dto';
-import { ERfxOpenProductsStatus } from 'src/utils/enums/rfx-open-products.enum';
+import { ERfxItemStatus, ERfxOpenProductsStatus } from 'src/utils/enums';
 
 @Injectable()
 export class RfxOpenProductService extends ExtraCrudService<RfxOpenProduct> {
@@ -35,7 +34,7 @@ export class RfxOpenProductService extends ExtraCrudService<RfxOpenProduct> {
       },
     });
 
-    if (!rfxItem) throw new NotFoundException('rfx_item_not_found');
+    if (!rfxItem) throw new NotFoundException('rfx item not found');
 
     const rfxOpenProduct = this.rfxOpenProductRepository.create(itemData);
     await this.rfxOpenProductRepository.insert(rfxOpenProduct);
@@ -63,10 +62,10 @@ export class RfxOpenProductService extends ExtraCrudService<RfxOpenProduct> {
     });
 
     if (!rfxOpenProduct)
-      throw new BadRequestException('no_draft_rfx_product_found');
+      throw new BadRequestException('no draft rfx product found');
 
     if (rfxOpenProduct.rfxItem.status !== ERfxItemStatus.APPROVED)
-      throw new BadRequestException('can_not_update_rfx_open_product');
+      throw new BadRequestException('can not update rfx open product');
 
     const openProduct = this.rfxOpenProductRepository.create(itemData);
     await this.rfxOpenProductRepository.update(id, openProduct);

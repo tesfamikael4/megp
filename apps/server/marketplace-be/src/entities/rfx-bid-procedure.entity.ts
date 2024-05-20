@@ -11,6 +11,7 @@ import { RFX } from './rfx.entity';
 
 @Entity({ name: 'rfx_bid_procedures' })
 @Check('"openingDate" > "submissionDeadline"')
+@Check('"submissionDeadline" > CURRENT_TIMESTAMP')
 @Check(
   '"minimumBidDecrementPercentage" >= 0 AND "minimumBidDecrementPercentage" < 100',
 )
@@ -28,19 +29,19 @@ export class RfxBidProcedure extends Audit {
   @Column()
   bidValidityPeriod: number;
 
-  @Column()
-  submissionDeadline: string;
+  @Column({ type: 'timestamp' })
+  submissionDeadline: Date;
 
-  @Column()
-  openingDate: string;
+  @Column({ type: 'timestamp' })
+  openingDate: Date;
 
-  @Column({ nullable: true })
-  invitationDate: string;
+  @Column({ nullable: true, type: 'timestamp' })
+  invitationDate: Date;
 
   @Column()
   deltaPercentage: number;
 
-  @Column({ default: 'false' })
+  @Column({ default: false })
   isReverseAuction: boolean;
 
   @Column({ default: 1 })
@@ -49,6 +50,9 @@ export class RfxBidProcedure extends Audit {
   @Column({ nullable: true })
   minimumBidDecrementPercentage: number;
 
-  @Column({ nullable: true })
+  @Column()
   roundDuration: number; // in minutes
+
+  @Column({ nullable: true })
+  idleTime: number; // in minutes
 }

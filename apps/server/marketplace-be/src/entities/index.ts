@@ -12,3 +12,11 @@ export * from './rfx-item-document.entity';
 export * from './rfx-note.entity';
 export * from './document.entity';
 export * from './rfx-revision-approval.entity';
+
+export * from './sol-registration.entity';
+// export * from './sol-remark.entity';
+export * from './sol-offer.entity';
+export * from './sol-round.entity';
+export * from './sol-item-response.entity';
+export * from './sol-response.entity';
+export * from './sol-bookmark.entity';
