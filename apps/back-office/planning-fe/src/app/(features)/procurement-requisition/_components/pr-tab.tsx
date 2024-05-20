@@ -1,6 +1,10 @@
 'use client';
 
-import { useReadQuery } from '@/store/api/pr/pr.api';
+import {
+  useReadQuery,
+  useLazyGetAnalyticsQuery,
+  useLazyGetTargetGroupQuery,
+} from '@/store/api/pr/pr.api';
 import {
   useApprovePrMutation,
   useLazyGetPrItemsQuery,
@@ -44,6 +48,7 @@ const PrTab = () => {
   const router = useRouter();
 
   const { data: pr } = useReadQuery(id?.toString());
+  const [triggerAnalytics, { data: analytics }] = useLazyGetAnalyticsQuery();
 
   const { data: canSubmit } = useCanSubmitQuery('procurementRequisition');
 
@@ -104,6 +109,10 @@ const PrTab = () => {
   useEffect(() => {
     if ((pr as any)?.status == 'DRAFT') getApprovalDocuments(id);
   }, [id, getApprovalDocuments, pr]);
+
+  useEffect(() => {
+    triggerAnalytics(id.toString());
+  }, [id]);
 
   return (
     <Box>
@@ -188,21 +197,22 @@ const PrTab = () => {
               <Flex>
                 <StatisticCard
                   title="MSME"
-                  value={pr?.targetGroupPercentages?.MSME ?? 0}
+                  value={analytics?.targetGroupPercentages?.MSME ?? 0}
                   minValue={50}
                   type="targetGroup"
                 />
                 <StatisticCard
                   title="Marginalized Group"
                   value={
-                    pr?.targetGroupPercentages?.['Marginalized Group'] ?? 0
+                    analytics?.targetGroupPercentages?.['Marginalized Group'] ??
+                    0
                   }
                   minValue={50}
                   type="targetGroup"
                 />
                 <StatisticCard
                   title="Others"
-                  value={pr?.targetGroupPercentages?.Others ?? 0}
+                  value={analytics?.targetGroupPercentages?.Others ?? 0}
                   minValue={50}
                   type="targetGroup"
                 />
