@@ -11,28 +11,55 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
-import { useReadQuery, useUpdateMutation } from '../_api/tender.api';
-import { notify } from '@megp/core-fe';
+import { useReadQuery as useGetTenderById } from '../_api/tender.api';
+import { logger, notify } from '@megp/core-fe';
+import { useCreateMutation, useReadQuery } from '../_api/revision.api';
 import { useEffect } from 'react';
+import { RevisionApprovalStatusEnum } from '@/models/revision/revision.model';
 
 export default function DocumentPage() {
+  const RevisionApprovalEnum = RevisionApprovalStatusEnum;
   const { id } = useParams();
   const router = useRouter();
-  const { data: selected, isLoading: isTenderLoading } = useReadQuery(
+  const { data: selected, isLoading: isTenderLoading } = useGetTenderById(
     id?.toString(),
   );
-  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+
+  const { data: revisionData, isLoading: isRevisionLoading } = useReadQuery(
+    id?.toString(),
+  );
+  const [create, { isLoading: isSaving }] = useCreateMutation();
   const [trigger, { data: url, isLoading }] = useLazyGetFilesQuery();
-  const onUpdate = (data) => {
-    update({ ...data, id: id?.toString() });
-    notify('Success', 'Tendering Updated successfully');
-  };
+
   useEffect(() => {
-    trigger(id);
+    logger.log(revisionData);
+  }, [revisionData]);
+
+  const onCreate = (data) => {
+    logger.log(data);
+    create({ ...data, id: id?.toString() })
+      .unwrap()
+      .then(() => {
+        notify('Success', 'Submitted successfully');
+      })
+      .catch((error) => {
+        notify('Error', `Error while submitting ${error}`);
+      });
+  };
+
+  useEffect(() => {
+    trigger({
+      // id: '96448925-0cfa-4781-8e8b-958cdf845fd1',
+      id: id,
+      type: 'main-document',
+    });
   }, [id]);
+
   return (
     <>
-      <LoadingOverlay visible={isLoading || isTenderLoading} />
+      <LoadingOverlay
+        visible={isLoading || isTenderLoading || isSaving || isRevisionLoading}
+      />
       <div className="bg-white -mt-4 -mr-4 -ml-4">
         <div className="container mx-auto ">
           <div className="pt-10 pb-10 text-black font-bold text-2xl flex justify-between">
@@ -55,22 +82,37 @@ export default function DocumentPage() {
               closeDelay={400}
             >
               <Menu.Target>
-                <Button loading={isUpdating}>Submit</Button>
+                <Button loading={isSaving}>Submit</Button>
               </Menu.Target>
 
               <Menu.Dropdown>
                 <Menu.Item
                   onClick={() => {
-                    onUpdate({
-                      ...selected,
-                      status: 'PUBLISHED',
+                    onCreate({
+                      status: RevisionApprovalEnum.APPROVED,
                     });
                   }}
                 >
                   Approve
                 </Menu.Item>
-                <Menu.Item>Approve with comment</Menu.Item>
-                <Menu.Item>Adjust with comment</Menu.Item>
+                <Menu.Item
+                  onClick={() => {
+                    onCreate({
+                      status: RevisionApprovalEnum.APPROVED_WITH_COMMENT,
+                    });
+                  }}
+                >
+                  Approve with comment
+                </Menu.Item>
+                <Menu.Item
+                  onClick={() => {
+                    onCreate({
+                      status: RevisionApprovalEnum.ADJUST_WITH_COMMENT,
+                    });
+                  }}
+                >
+                  Adjust with comment
+                </Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </div>

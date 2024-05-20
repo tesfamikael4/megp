@@ -214,4 +214,8 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     entity: 'bid-guarantee-forfeits',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
+  {
+    entity: 'revision-approvals',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
 ];
