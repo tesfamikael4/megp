@@ -359,6 +359,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       const srvendor = await this.isrVendorsRepository.findOne({
         where: { userId: user.id },
+        relations: { businessAreas: true }
       });
       if (!vendorData) throw new NotFoundException('vendor_not_found ');
 
@@ -372,7 +373,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           subDirectory,
         );
       }
-
+      const approvedPTs = await this.ptService.getMyPreferetialTreatments(user.id);
       const paymentReceipt = {
         transactionNumber: paymentReceiptDto?.transactionNumber,
         invoiceId: paymentReceiptDto?.invoiceIds,
@@ -404,10 +405,23 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           status = businessAreas[0].status;
           instanceId = businessAreas[0].instanceId;
         }
+
+        const approvedABIAs = await this.baService.getVendorServicesWithPrice(vendorData.id);
+        const previousBusinessInterestAreas = [];
+        for (const ba of approvedABIAs) {
+          const bi = {
+            category: ba.category,
+            priceRange: this.commonService.formatPriceRange(ba.servicePrice),
+          };
+          previousBusinessInterestAreas.push(bi);
+        }
+
         if (status == ApplicationStatus.ADJUSTMENT) {
           const dto = new GotoNextStateDto();
           dto.action = 'ISR';
           const formattedData = await this.formatData(srvendor);
+          formattedData['preferential'] = approvedPTs;
+          formattedData['previousBusinessInterestAreas'] = previousBusinessInterestAreas;
           const documentId = await this.generatePDFForReview(
             formattedData,
             user,
@@ -437,6 +451,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           wfi.serviceId = invoice.serviceId;
           wfi.requestorId = vendorData.id;
           const formattedData = await this.formatData(srvendor);
+          formattedData['previousBusinessInterestAreas'] = previousBusinessInterestAreas;
+          formattedData['preferential'] = approvedPTs;
           const documentId = await this.generatePDFForReview(
             formattedData,
             user,
@@ -447,13 +463,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             fileId: fileId,
             ...formattedData,
           };
-          const resonse = await this.workflowService.intiateWorkflowInstance(
+          const response = await this.workflowService.intiateWorkflowInstance(
             wfi,
             user,
           );
           for (const row of businessAreas) {
-            row.instanceId = resonse.application?.id;
-            row.applicationNumber = resonse.application?.applicationNumber;
+            row.instanceId = response.application?.id;
+            row.applicationNumber = response.application?.applicationNumber;
             await this.baService.update(row.id, row);
           }
         }
@@ -1990,14 +2006,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       bussinessAreas.push(businessarea);
     }
     rest.areasOfBusinessInterest = bussinessAreas;
-    const certeficate = await this.baService.getCerteficate(vendorData.id);
+    const certificate = await this.baService.getCerteficate(vendorData.id);
     const preferentails = await this.ptService.getMyPreferetialTreatments(
       vendorData.userId,
     );
 
     const vendor = {
       ...rest,
-      certificate: certeficate?.certificateUrl,
+      certificate: certificate?.certificateUrl,
       preferentail: [...preferentails],
     };
     return vendor;
@@ -2413,12 +2429,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-  async submitVendorProfileUpdate(profileData: any, userInfo: any) {
+  async submitVendorProfileUpdate(profileData: any, user: any) {
     const title = 'Profile Update Application';
     const fileId = uuidv4();
     try {
       const vendor = await this.vendorRepository.findOne({
-        where: { userId: userInfo.id },
+        where: { userId: user.id },
       });
       if (!vendor) throw new NotFoundException('vendor not found');
 
@@ -2437,19 +2453,23 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             status: In([ApplicationStatus.ADJUSTMENT, ApplicationStatus.DRAFT]),
           },
         });
+        const approvedPTs = await this.ptService.getMyPreferetialTreatments(user.id);
+        let profileInfoEntity = new ProfileInfoEntity();
         if (updateInfo?.status == ApplicationStatus.ADJUSTMENT) {
           updateInfo.status = ApplicationStatus.SUBMITTED;
           updateInfo.profileData = profileData;
+          updateInfo.profileData['preferential'] = approvedPTs;
           const formattedData = await this.formatData(
             updateInfo.profileData,
             ServiceKeyEnum.PROFILE_UPDATE,
           );
+          formattedData.areasOfBusinessInterest = profileData.areasOfBusinessInterest;
           const documentId = await this.generatePDFForReview(
             formattedData,
-            userInfo,
+            user,
             title,
           );
-          const response = await this.goToworkflow(userInfo, {
+          const response = await this.goToworkflow(user, {
             documentId: documentId,
             fileId: fileId,
             ...formattedData,
@@ -2459,16 +2479,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         } else if (updateInfo?.status == ApplicationStatus.DRAFT) {
           updateInfo.status = ApplicationStatus.SUBMITTED;
           updateInfo.profileData = profileData;
-          await this.profileInfoRepository.save(updateInfo);
+          ///
+          profileInfoEntity = { ...updateInfo };
+          // await this.profileInfoRepository.save(updateInfo);
         } else {
-          const profileInfoEntity = new ProfileInfoEntity();
           profileInfoEntity.vendorId = vendor?.id;
           profileInfoEntity.status = ApplicationStatus.SUBMITTED;
           profileInfoEntity.profileData = profileData;
-          await this.profileInfoRepository.save(profileInfoEntity);
+
         }
         const wfi = new CreateWorkflowInstanceDto();
-        wfi.user = userInfo;
+        wfi.user = user;
         const bp = await this.bpService.findBpWithServiceByKey(
           VendorStatusEnum.PROFILE_UPDATE_KEY,
         );
@@ -2477,21 +2498,24 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         wfi.bpId = bp.id;
         wfi.serviceId = bp.serviceId;
         wfi.requestorId = vendor.id;
+        profileData['preferential'] = approvedPTs;
         const formattedData = await this.formatData(
           profileData,
           ServiceKeyEnum.PROFILE_UPDATE,
         );
+        formattedData.areasOfBusinessInterest = profileData.areasOfBusinessInterest;
+
         const documentId = await this.generatePDFForReview(
           formattedData,
-          userInfo,
+          user,
           title,
         );
         wfi.data = { documentId: documentId, fileId: fileId, ...formattedData };
-
         const workflowInstance =
-          await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
+          await this.workflowService.intiateWorkflowInstance(wfi, user);
         if (!workflowInstance)
           throw new HttpException('workflow initiation failed', 400);
+        await this.profileInfoRepository.save(profileInfoEntity);
         const baEntity = new BusinessAreaEntity();
         baEntity.instanceId = workflowInstance.application.id;
         baEntity.category = ServiceKeyEnum.PROFILE_UPDATE;
@@ -2523,8 +2547,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const response = [];
     const vendorId = profileData.vendorId;
     const businessArea = await this.businessAreaRepository.findOne({
-      where: { vendorId: vendorId, status: VendorStatusEnum.ADJUSTMENT },
+      where: { vendorId: vendorId, status: VendorStatusEnum.ADJUSTMENT, BpService: { key: ServiceKeyEnum.PROFILE_UPDATE } },
+      relations: { BpService: true }
     });
+    if (!businessArea) throw new NotFoundException("Previous_profile_update_request_not_found");
     const dto = new GotoNextStateDto();
     dto.action = 'ISR';
     dto.data = profileData;

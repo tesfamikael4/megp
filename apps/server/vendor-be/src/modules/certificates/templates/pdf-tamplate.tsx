@@ -70,7 +70,6 @@ const PdfDocumentTemplate = async (data) => {
               />
             ) : null}
           </View>
-
           {/*  Upgrade Service */}
           <View style={styles.activity}>
             {data?.upgrades?.length ? (
@@ -134,7 +133,6 @@ const PdfDocumentTemplate = async (data) => {
               />
             ) : null}
           </View>
-
           {/* Basic Registration */}
           <View style={styles.activity}>
             <Text> Basic Registration</Text>
@@ -148,7 +146,6 @@ const PdfDocumentTemplate = async (data) => {
               config={{}}
             />
           </View>
-
           {/* Address Information */}
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}> Address Information </Text>
@@ -216,7 +213,6 @@ const PdfDocumentTemplate = async (data) => {
               config={{}}
             />
           </View>
-
           {/* Beneficial Ownership */}
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}>
@@ -338,6 +334,28 @@ const PdfDocumentTemplate = async (data) => {
               }}
             />
           </View>
+          {/* previousBusinessInterestAreas */}
+          <View style={styles.activity}>
+            {data?.previousBusinessInterestAreas?.length ? (
+              <Text style={{ marginBottom: '8px' }}>
+                Approved Purpose of Registration
+              </Text>
+            ) : null}
+
+            <ReactPdfTableGrid3
+              config={{
+                columns: [
+                  {
+                    accessor: 'category',
+                    title: 'Category',
+                  },
+                  { accessor: 'priceRange', title: 'Price Range' },
+                ],
+                data: data?.previousBusinessInterestAreas,
+              }}
+            />
+          </View>
+
           {/*Business Lines*/}
           <View style={styles.activity}>
             <Text style={{ marginBottom: '8px' }}> line of Business</Text>
@@ -353,16 +371,13 @@ const PdfDocumentTemplate = async (data) => {
               })}
             </View>
           </View>
-
           {/* preferential information Documents */}
           <View style={styles.activity}>
             {data?.preferential?.length ? (
               <Text style={{ marginBottom: '8px' }}>
                 Eligibility for Preferential Services
               </Text>
-            ) : (
-              ''
-            )}
+            ) : null}
             {data?.preferential?.length ? (
               <ReactPdfTableGrid3
                 config={{
@@ -382,9 +397,7 @@ const PdfDocumentTemplate = async (data) => {
               />
             ) : null}
           </View>
-
           {/* Supporting Documents */}
-
           {/* Payment Reciepts */}
         </View>
       </Page>

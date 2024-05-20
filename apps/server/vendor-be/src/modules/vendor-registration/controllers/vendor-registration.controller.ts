@@ -269,11 +269,11 @@ export class VendorRegistrationsController {
   //submit profile update request
   @Post('submit-vendor-update-information')
   async submitProfileUpdateRequest(
-    @Body() vendorprofileUpdateData: any,
+    @Body() vendorProfileUpdateData: any,
     @CurrentUser() userInfo: string,
   ) {
     return await this.regService.submitVendorProfileUpdate(
-      vendorprofileUpdateData,
+      vendorProfileUpdateData,
       userInfo,
     );
   }
