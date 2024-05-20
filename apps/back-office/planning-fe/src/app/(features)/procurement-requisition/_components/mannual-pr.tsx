@@ -253,7 +253,7 @@ export const FormDetail = ({
                 label={'Optional Reference Number'}
                 placeholder="Optional Reference Number"
                 {...register('userReference')}
-                disabled={disableFields}
+                disabled
                 error={
                   errors?.userReference
                     ? errors?.userReference?.message?.toString()

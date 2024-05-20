@@ -122,6 +122,12 @@ export const prApi = createApi({
         };
       },
     }),
+    getTargetGroup: builder.query<any, any>({
+      query: (id) => ({
+        url: `procurement-requisitions/${id}/target-group-percentage`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -146,6 +152,7 @@ export const {
 
   useGetAnalyticsQuery,
   useLazyGetAnalyticsQuery,
+  useLazyGetTargetGroupQuery,
 
   useGetBudgetQuery,
   useLazyGetBudgetQuery,

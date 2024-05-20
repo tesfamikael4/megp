@@ -18,6 +18,7 @@ import { useLazyListQuery } from './_api/procurement-requisition.api';
 import { useDisclosure } from '@mantine/hooks';
 import { ActivitySelector } from './_components/activity-selector';
 import { useState } from 'react';
+import { CollectionQuery } from '@megp/entity';
 
 export default function ProcurementRequisition() {
   const [trigger, { data, isLoading }] = useLazyListQuery();
@@ -95,14 +96,14 @@ export default function ProcurementRequisition() {
     isExpandable: true,
     isSearchable: true,
     isLoading: isLoading,
-    primaryColumn: 'title',
+    primaryColumn: 'name',
 
     expandedRowContent: (requisition) => {
       return <DetailRequisition requisition={requisition} />;
     },
   };
 
-  const onRequestChange = (request: any) => {
+  const onRequestChange = (request: CollectionQuery) => {
     request?.where?.push([
       {
         column: 'status',
