@@ -72,3 +72,25 @@ export class CompleteBidderEvaluationDto {
   @IsNotEmpty()
   isTeamLead: boolean;
 }
+
+export class CompleteResponsivenessBidderEvaluationDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  itemId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidderId: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  isTeamLead: boolean;
+}
