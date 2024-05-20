@@ -22,7 +22,7 @@ export class DocumentController extends EntityCrudController<Document>(
   @Post()
   @ApiBody({})
   async create(@Body() itemData: any, @CurrentUser() user): Promise<any> {
-    return await this.documentService.create(itemData, user.organization);
+    return await this.documentService.create(itemData, user);
   }
 
   @Get('download/:id')

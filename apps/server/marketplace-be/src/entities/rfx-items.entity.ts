@@ -10,10 +10,12 @@ import {
 } from 'typeorm';
 import { RFX } from './rfx.entity';
 import { RfxTechnicalRequirement } from './rfx-technical-requirement.entity';
-import { ERfxItemStatus } from 'src/utils/enums/rfx-items.enum';
+import { ERfxItemStatus } from 'src/utils/enums';
 import { RfxBidInvitation } from './rfx-bid-invitation.entity';
 import { RfxItemDocument } from './rfx-item-document.entity';
 import { RfxOpenProduct } from './rfx-open-products.entity';
+import { SolOffer } from './sol-offer.entity';
+import { SolItemResponse } from './sol-item-response.entity';
 
 @Entity({ name: 'rfx_items' })
 export class RFXItem extends Audit {
@@ -93,4 +95,13 @@ export class RFXItem extends Audit {
 
   @OneToMany(() => RfxOpenProduct, (rfxOpenProducts) => rfxOpenProducts.rfxItem)
   openProducts: RfxOpenProduct[];
+
+  @OneToMany(() => SolOffer, (offer) => offer.rfxItem)
+  solOffers: SolOffer[];
+
+  @OneToMany(
+    () => SolItemResponse,
+    (rfxItemResponse) => rfxItemResponse.rfxItem,
+  )
+  itemResponses: SolItemResponse[];
 }

@@ -1888,8 +1888,8 @@ importers:
         specifier: ^1.5.1
         version: 1.5.1
       megp-shared-be:
-        specifier: 0.0.9
-        version: 0.0.9(amqp-connection-manager@4.1.14)(amqplib@0.10.4)(express@4.19.2)(ts-node@10.9.2)
+        specifier: 1.0.1
+        version: 1.0.1(amqp-connection-manager@4.1.14)(amqplib@0.10.4)(express@4.19.2)(ts-node@10.9.2)
       nestjs-minio-client:
         specifier: ^2.2.0
         version: 2.2.0(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)
@@ -8997,7 +8997,6 @@ packages:
 
   /@types/node@18.16.12:
     resolution: {integrity: sha512-tIRrjbY9C277MOfP8M3zjMIhtMlUJ6YVqkGgLjz+74jVsdf4/UjC6Hku4+1N0BS0qyC0JAS6tJLUk9H6JUKviQ==}
-    dev: true
 
   /@types/node@20.5.1:
     resolution: {integrity: sha512-4tT2UrL5LBqDwoed9wZ6N3umC4Yhz3W3FloMmiiG4JwmUJWpie0c7lcnUNd4gtMKuDEO4wRVS8B6Xa0uMRsMKg==}
@@ -16886,8 +16885,8 @@ packages:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
     engines: {node: '>= 0.6'}
 
-  /megp-shared-be@0.0.9(amqp-connection-manager@4.1.14)(amqplib@0.10.4)(express@4.19.2)(ts-node@10.9.2):
-    resolution: {integrity: sha512-RVZyYQTua9xdphej+H361LsstZRsg5D4uaLu/O6JaXxITc4Si2uELLzwJt/6EaD9Fxh610qsvJqSCa6k0iYmTQ==}
+  /megp-shared-be@1.0.1(amqp-connection-manager@4.1.14)(amqplib@0.10.4)(express@4.19.2)(ts-node@10.9.2):
+    resolution: {integrity: sha512-/rxkjoi+V+fyX8FgW5SMziepjgbhVetogj1HuF/04XeIwuAa7K7E9vwWKrJCrbPkCYC2ySnoSEAmE3IpEF3WoQ==}
     dependencies:
       '@nestjs-modules/mailer': 1.11.2(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(nodemailer@6.9.13)
       '@nestjs/common': 9.4.3(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.1.14)(rxjs@7.8.1)
@@ -21478,6 +21477,7 @@ packages:
       typescript: 4.9.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    dev: true
 
   /ts-node@10.9.2(@types/node@18.16.12)(typescript@5.4.5):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
@@ -21508,7 +21508,6 @@ packages:
       typescript: 5.4.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
-    dev: true
 
   /ts-node@10.9.2(@types/node@20.5.1)(typescript@5.4.5):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
@@ -21911,7 +21910,7 @@ packages:
       pg: 8.11.5
       reflect-metadata: 0.2.2
       sha.js: 2.4.11
-      ts-node: 10.9.2(@types/node@16.18.96)(typescript@4.9.5)
+      ts-node: 10.9.2(@types/node@18.16.12)(typescript@5.4.5)
       tslib: 2.6.2
       uuid: 9.0.1
       yargs: 17.7.2
@@ -21922,6 +21921,7 @@ packages:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+    dev: true
 
   /typescript@5.4.5:
     resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}

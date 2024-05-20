@@ -5,14 +5,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExtraCrudService } from 'megp-shared-be';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
 import {
   CreateRfxDocumetaryEvidenceDto,
   UpdateRfxDocumetaryEvidenceDto,
 } from '../dtos/rfx-documentary-evidence.dto';
 import { RFX } from 'src/entities';
-import { ERfxStatus } from 'src/utils/enums/rfx.enums';
 import { RfxService } from './rfx.service';
 
 @Injectable()
@@ -39,11 +38,11 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
       },
     });
 
-    if (!rfx) throw new NotFoundException('no_rfx_found');
+    if (!rfx) throw new NotFoundException('no rfx found');
 
     const isUpdatable = await this.rfxService.isUpdatable(rfx);
 
-    if (!isUpdatable) throw new BadRequestException('rfx_not_updatable');
+    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
 
     const rfxBidQualification =
       this.rfxDocumentaryEvidenceRepository.create(itemData);
@@ -70,7 +69,7 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
     });
 
     const isUpdatable = await this.rfxService.isUpdatable(rfxDocEvidence.rfx);
-    if (!isUpdatable) throw new BadRequestException('rfx_not_updatable');
+    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
 
     const rfxDocUpdate = this.rfxDocumentaryEvidenceRepository.create(itemData);
     await this.rfxDocumentaryEvidenceRepository.update(id, itemData);

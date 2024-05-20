@@ -1,7 +1,0 @@
-export enum ERfxOpenProductsStatus {
-  DRAFT = 'DRAFT',
-  SUBMITTED = 'SUBMITTED',
-  SELECTED = 'SELECTED',
-  REJECTED = 'REJECTED',
-  CANCELLED = 'CANCELLED',
-}

@@ -28,4 +28,7 @@ export class RfxBidQualification extends Audit {
 
   @Column({ default: 1 })
   order: number;
+
+  @Column({ nullable: true })
+  description: string;
 }

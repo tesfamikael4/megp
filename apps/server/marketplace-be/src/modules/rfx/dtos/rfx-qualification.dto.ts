@@ -11,6 +11,11 @@ export class CreateRfxBidQualificationDto {
   criteria: string;
 
   @ApiProperty()
+  @IsString()
+  @IsOptional()
+  description: string;
+
+  @ApiProperty()
   @IsNumber()
   @IsOptional()
   order: number;

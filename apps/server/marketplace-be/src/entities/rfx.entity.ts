@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -13,10 +14,14 @@ import { RfxProcurementTechnicalTeam } from './rfx-procurement-technical-team.en
 import { RfxBidProcedure } from './rfx-bid-procedure.entity';
 import { RfxBidQualification } from './rfx-bid-qualification.entity';
 import { RfxBidContractCondition } from './rfx-bid-contract-condition.entity';
-import { ERfxStatus } from 'src/utils/enums/rfx.enums';
+import { ERfxStatus } from 'src/utils/enums';
 import { RfxDocumentaryEvidence } from './rfx-documentary-evidence.entity';
 import { RfxNote } from './rfx-note.entity';
 import { RfxRevisionApproval } from './rfx-revision-approval.entity';
+import { SolRegistration } from './sol-registration.entity';
+import { SolRound } from './sol-round.entity';
+import { SolResponse } from './sol-response.entity';
+import { SolBookmark } from './sol-bookmark.entity';
 
 @Entity({ name: 'rfxs' })
 export class RFX extends Audit {
@@ -117,4 +122,16 @@ export class RFX extends Audit {
     (revisionApproval) => revisionApproval.rfx,
   )
   revisionApprovals: RfxRevisionApproval[];
+
+  @OneToMany(() => SolBookmark, (bookmark) => bookmark.rfx)
+  solBookmarks: SolBookmark[];
+
+  @OneToMany(() => SolRegistration, (bookmark) => bookmark.rfx)
+  solRegistrations: SolRegistration[];
+
+  @OneToMany(() => SolRound, (round) => round.rfx)
+  solRounds: SolRound[];
+
+  @OneToMany(() => SolResponse, (response) => response.rfx)
+  responses: SolResponse[];
 }

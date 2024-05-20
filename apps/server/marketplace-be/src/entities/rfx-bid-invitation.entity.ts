@@ -3,13 +3,11 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from 'typeorm';
 import { RFXItem } from './rfx-items.entity';
-import { EInvitationStatus } from 'src/utils/enums/rfx-invitation.enum';
+import { EInvitationStatus } from 'src/utils/enums/rfx.enum';
 
 @Entity({ name: 'rfx_bid_invitations' })
 export class RfxBidInvitation extends Audit {

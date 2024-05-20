@@ -23,4 +23,13 @@ export class Document extends Audit {
 
   @Column()
   key: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  userId: string;
+
+  @Column({ nullable: true, type: 'uuid' })
+  organizationId: string;
+
+  @Column({ nullable: true })
+  organizationName: string;
 }

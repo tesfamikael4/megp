@@ -3,13 +3,12 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
   ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import { RFXItem } from './rfx-items.entity';
-import { ERfxOpenProductsStatus } from 'src/utils/enums/rfx-open-products.enum';
+import { ERfxOpenProductsStatus } from 'src/utils/enums';
 
 @Entity({ name: 'rfx_open_products' })
 @Unique(['rfxItemId', 'vendorId'])

@@ -16,14 +16,16 @@ import {
 import { RfxProcurementMechanism } from 'src/entities/rfx-procurement-mechanism.entity';
 import { DataSource, EntityManager, In, Repository } from 'typeorm';
 import { CreateRFXDto, UpdateRFXDto } from '../dtos/rfx.dto';
-import { ERfxStatus } from 'src/utils/enums/rfx.enums';
-import { ERfxItemStatus } from 'src/utils/enums/rfx-items.enum';
 import { RfxBidInvitation } from '../../../entities';
 import { ClientProxy } from '@nestjs/microservices';
 import { PdfGeneratorService } from 'src/utils/services/pdf-generator.service';
 import { DocumentService } from 'src/utils/services/document.service';
-import { ERfxRevisionApprovalStatusEnum } from 'src/utils/enums/rfx-revision-approval.enum';
-import { version } from 'os';
+import { SolRoundService } from 'src/modules/solicitation/services/round.service';
+import {
+  ERfxStatus,
+  ERfxRevisionApprovalStatusEnum,
+  ERfxItemStatus,
+} from 'src/utils/enums';
 
 @Injectable()
 export class RfxService extends EntityCrudService<RFX> {
@@ -39,6 +41,7 @@ export class RfxService extends EntityCrudService<RFX> {
     private readonly pdfGeneratorService: PdfGeneratorService,
     private readonly documentService: DocumentService,
     private readonly minIOService: MinIOService,
+    private readonly solRoundServuce: SolRoundService,
   ) {
     super(rfxRepository);
   }
@@ -69,13 +72,13 @@ export class RfxService extends EntityCrudService<RFX> {
 
       const prResponse = prRequest.data;
 
-      if (!prResponse) throw new BadRequestException('pr_not_found');
+      if (!prResponse) throw new BadRequestException('pr not found');
 
       // if (prResponse.procurementApplication != 'marketplace')
       //   throw new BadRequestException('wrong pr procurement application');
 
       if (prResponse.status != 'APPROVED')
-        throw new BadRequestException('pr_is_not_approved');
+        throw new BadRequestException('pr is not approved');
 
       const rfxPayload = {
         name: prResponse?.name,
@@ -83,7 +86,7 @@ export class RfxService extends EntityCrudService<RFX> {
         procurementReferenceNumber: prResponse?.procurementReference,
         budgetAmount: Number(prResponse?.totalEstimatedAmount),
         budgetAmountCurrency: prResponse?.currency,
-        budgetCode: prResponse?.budget?.budgetCode,
+        budgetCode: prResponse?.budget?.budgetCode || 'N/A',
         prId: prId,
         marketEstimate: Number(prResponse?.calculatedAmount),
         marketEstimateCurrency: prResponse?.currency,
@@ -131,6 +134,10 @@ export class RfxService extends EntityCrudService<RFX> {
         .insert(procurementMechanism);
 
       const items: RFXItem[] = [];
+
+      if (prResponse.procurementRequisitionItems.length == 0)
+        throw new BadRequestException('PR does not have Items');
+
       for (const iterator of prResponse.procurementRequisitionItems) {
         const item = new RFXItem();
         item.rfxId = rfx.id;
@@ -173,10 +180,10 @@ export class RfxService extends EntityCrudService<RFX> {
       },
     });
 
-    if (!rfx) throw new BadRequestException('rfx_on_reviewal_not_found');
+    if (!rfx) throw new BadRequestException('rfx on reviewal not found');
 
     const isAdjustable = await this.isAdjustable(rfx);
-    if (!isAdjustable) throw new BadRequestException('rfx_not_adjustable');
+    if (!isAdjustable) throw new BadRequestException('rfx not adjustable');
 
     await this.rfxRepository.update(rfxId, { status: ERfxStatus.ADJUSTEDMENT });
 
@@ -187,7 +194,7 @@ export class RfxService extends EntityCrudService<RFX> {
     const rfx = await this.getCompleteRfx(rfxId);
 
     if (rfx.status != ERfxStatus.TEAM_REVIEWAL)
-      throw new BadRequestException('rfx_not_on_reviewal');
+      throw new BadRequestException('rfx not on reviewal');
 
     await this.validateRfxOnSubmit(rfx);
 
@@ -206,12 +213,18 @@ export class RfxService extends EntityCrudService<RFX> {
         id: payload.itemId,
         status: ERfxStatus.SUBMITTED,
       },
+      relations: {
+        rfxBidProcedure: true,
+      },
     });
 
     if (!rfx) throw new BadRequestException('RFX not found');
 
     const status = payload.status == 'Approved' ? 'APPROVED' : 'REJECTED';
+
     await this.updateRfxChildrenStatus(rfx.id, status);
+    if (status == 'APPROVED')
+      await this.solRoundServuce.scheduleRounds(rfx.rfxBidProcedure);
   }
 
   async submitForReview(rfxId: string, payload: UpdateRFXDto) {
@@ -354,7 +367,7 @@ export class RfxService extends EntityCrudService<RFX> {
     });
 
     if (!rfx) {
-      throw new BadRequestException('no_rfx_found');
+      throw new BadRequestException('no rfx found');
     }
 
     return rfx;
@@ -370,9 +383,12 @@ export class RfxService extends EntityCrudService<RFX> {
           entityManager.getRepository(RFX).update(rfxId, {
             status,
           }),
-          entityManager.getRepository(RFXItem).update(rfxId, {
-            status,
-          }),
+          entityManager.getRepository(RFXItem).update(
+            { rfxId },
+            {
+              status,
+            },
+          ),
           entityManager.getRepository(RFXItem).find({
             where: {
               rfxId: rfxId,
@@ -404,19 +420,19 @@ export class RfxService extends EntityCrudService<RFX> {
 
   private async validateRfxOnSubmit(rfx: RFX) {
     if (!rfx.rfxBidQualifications) {
-      throw new BadRequestException('rfx_bid_qualification_not_found');
+      throw new BadRequestException('rfx bid qualification not found');
     }
     if (!rfx.rfxProcurementTechnicalTeams) {
-      throw new BadRequestException('rfx_procurement_technical_team_not_found');
+      throw new BadRequestException('rfx procurement technical team not found');
     }
     if (!rfx.rfxBidContractCondition) {
-      throw new BadRequestException('rfx_bid_contract_condition_not_found');
+      throw new BadRequestException('rfx bid contract condition not found');
     }
     if (!rfx.rfxBidProcedure) {
-      throw new BadRequestException('rfx_bid_procedure_not_found');
+      throw new BadRequestException('rfx bid procedure not found');
     }
     if (!rfx.rfxProcurementMechanism) {
-      throw new BadRequestException('rfx_procurement_mechanism_not_found');
+      throw new BadRequestException('rfx procurement mechanism not found');
     }
 
     await this.validateRfxReviewal(rfx);
@@ -431,7 +447,7 @@ export class RfxService extends EntityCrudService<RFX> {
 
     if (now < new Date(rfx.reviewDeadline)) {
       if (revisions.length != 2)
-        throw new BadRequestException('reviewal_not_ended');
+        throw new BadRequestException('reviewal not ended');
     }
 
     const allApproved = revisions.every(
@@ -439,7 +455,7 @@ export class RfxService extends EntityCrudService<RFX> {
     );
 
     if (!allApproved)
-      throw new BadRequestException('all_revisions_must_be_approved');
+      throw new BadRequestException('all revisions must be approved');
   }
 
   private validateInvitation(rfx: RFX) {
@@ -448,7 +464,7 @@ export class RfxService extends EntityCrudService<RFX> {
     );
 
     if (!allItemsHaveInvitations)
-      throw new BadRequestException('item_not_open_or_do_not_have_invitation');
+      throw new BadRequestException('Item invitation has not ended');
   }
 
   private initiateWorkflow(rfx: RFX) {

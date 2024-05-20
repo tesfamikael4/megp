@@ -21,8 +21,8 @@ export class RfxBidContractConditionController extends ExtraCrudController<RfxBi
   options,
 ) {
   constructor(
-    private readonly RfxBidContractConditionService: RfxBidContractConditionService,
+    private readonly rfxBidContractConditionService: RfxBidContractConditionService,
   ) {
-    super(RfxBidContractConditionService);
+    super(rfxBidContractConditionService);
   }
 }

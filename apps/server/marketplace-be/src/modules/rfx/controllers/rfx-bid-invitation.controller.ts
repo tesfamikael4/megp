@@ -1,5 +1,9 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
-import { ExtraCrudController } from 'megp-shared-be';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  CollectionQuery,
+  CurrentUser,
+  ExtraCrudController,
+} from 'megp-shared-be';
 import { ApiTags } from '@nestjs/swagger';
 import { RfxBidInvitation } from 'src/entities/rfx-bid-invitation.entity';
 import { RfxBidInvitationService } from '../services/rfx-bid-invitation.service';
@@ -19,6 +23,30 @@ export class RfxBidInvitationController extends ExtraCrudController<RfxBidInvita
     private readonly rfxBidInvitationService: RfxBidInvitationService,
   ) {
     super(rfxBidInvitationService);
+  }
+
+  @Get('my-item-invitations/:rfxItemId')
+  async myItemInvitaitons(
+    @Param('rfxItemId') rfxItemId: string,
+    @CurrentUser() user: any,
+  ) {
+    return await this.rfxBidInvitationService.myRfxItemInvitations(
+      rfxItemId,
+      user,
+    );
+  }
+
+  @Get('my-rfx-items/:rfxId')
+  async myRfxItems(@Param('rfxId') rfxId: string, @CurrentUser() user: any) {
+    return await this.rfxBidInvitationService.myRfxDetail(rfxId, user);
+  }
+
+  @Get('my-invitations')
+  async myInvitations(
+    @Query() query: CollectionQuery,
+    @CurrentUser() user: any,
+  ) {
+    return await this.rfxBidInvitationService.myInvitations(query, user);
   }
 
   @Post('invite-selected/:rfxItemId')
