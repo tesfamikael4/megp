@@ -24,9 +24,24 @@ export class TechnicalResponsivenessAssessmentDetailController extends ExtraCrud
     super(technicalResponsivenessAssessmentDetailService);
   }
 
-  @Get('bidders-status/:lotId/:isTeam')
+  @Get('get-items-by-lotId/:lotId')
+  async getItemsByLotId(
+    @Param('lotId') lotId: string,
+    @Req() req,
+    @Query('q') q: string,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.technicalResponsivenessAssessmentDetailService.getItemsByLotId(
+      lotId,
+      query,
+      req,
+    );
+  }
+
+  @Get('bidders-status/:lotId/:itemId/:isTeam')
   async passedBidders(
     @Param('lotId') lotId: string,
+    @Param('itemId') itemId: string,
     @Param('isTeam') isTeam: string,
     @Req() req,
     @Query('q') q: string,
@@ -34,6 +49,7 @@ export class TechnicalResponsivenessAssessmentDetailController extends ExtraCrud
     const query = decodeCollectionQuery(q);
     return await this.technicalResponsivenessAssessmentDetailService.passedBidders(
       lotId,
+      itemId,
       isTeam,
       query,
       req,

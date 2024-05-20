@@ -13,6 +13,7 @@ import {
 } from 'src/shared/collection-query';
 import {
   BidOpeningChecklist,
+  EqcPreliminaryExamination,
   SpdOpeningChecklist,
   SpdPreliminaryEvaluation,
   Tender,
@@ -104,17 +105,9 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
           bidderName: true,
         },
       }),
-      manager.getRepository(SpdPreliminaryEvaluation).find({
+      manager.getRepository(EqcPreliminaryExamination).find({
         where: {
-          spd: {
-            tenderSpds: {
-              tender: {
-                lots: {
-                  id: lotId,
-                },
-              },
-            },
-          },
+          lotId,
         },
       }),
     ]);
@@ -214,12 +207,11 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
       manager.getRepository(Tender),
       query,
     )
-      .leftJoin('tenders.tenderMilestones', 'tenderMilestones')
+      .leftJoinAndSelect('tenders.tenderMilestones', 'tenderMilestones')
       .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true })
       .andWhere('tenderMilestones.milestoneNum >= :milestoneNum', {
         milestoneNum: 303,
-      })
-      .addSelect('tenderMilestones');
+      });
     const response = new DataResponseFormat<Tender>();
     if (query.count) {
       response.total = await dataQuery.getCount();
@@ -241,17 +233,9 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const [spdChecklist, checklists] = await Promise.all([
-      manager.getRepository(SpdPreliminaryEvaluation).find({
+      manager.getRepository(EqcPreliminaryExamination).find({
         where: {
-          spd: {
-            tenderSpds: {
-              tender: {
-                lots: {
-                  id: lotId,
-                },
-              },
-            },
-          },
+          lotId,
         },
       }),
       // Todo: check if the opener is the team member
@@ -661,17 +645,9 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
           },
         }),
 
-        manager.getRepository(SpdPreliminaryEvaluation).find({
+        manager.getRepository(EqcPreliminaryExamination).find({
           where: {
-            spd: {
-              tenderSpds: {
-                tender: {
-                  lots: {
-                    id: lotId,
-                  },
-                },
-              },
-            },
+            lotId,
           },
         }),
       ]);

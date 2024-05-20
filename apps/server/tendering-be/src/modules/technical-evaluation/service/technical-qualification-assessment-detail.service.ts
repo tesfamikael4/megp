@@ -42,7 +42,7 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
     // then checks if the opener has completed the spd compliance for each bidder.
     //Todo check if the opener is in the team
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const evaluatorId = 'bed33925-3a83-4cba-be4a-fd563a306c3b';
+    const evaluatorId = req.user.userId;
     const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
 
     // const evaluatorId = req.user.userId;
@@ -74,17 +74,9 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
           },
         },
       }),
-      manager.getRepository(SpdQualification).findAndCount({
+      manager.getRepository(EqcQualification).findAndCount({
         where: {
-          spd: {
-            tenderSpds: {
-              tender: {
-                lots: {
-                  id: lotId,
-                },
-              },
-            },
-          },
+          lotId,
         },
       }),
     ]);
