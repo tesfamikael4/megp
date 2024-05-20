@@ -10,11 +10,11 @@ export default function BiderDetail({
 }: {
   children: React.ReactNode;
 }) {
-  const { tenderId, lotId } = useParams();
+  const { tenderId, lotId, itemId } = useParams();
   return (
     <>
       <BidderOverView
-        basePath={`/evaluation/${tenderId}/${lotId}/responsiveness`}
+        basePath={`/evaluation/${tenderId}/${lotId}/responsiveness/${itemId}`}
         milestone="technicalResponsiveness"
       />
       <Flex gap={10} mt={10}>

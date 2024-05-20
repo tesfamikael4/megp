@@ -14,7 +14,7 @@ export const Checklist = () => {
     getChecklists({ lotId: lotId as string, bidderId: bidderId as string });
   }, []);
   const router = useRouter();
-  const { tenderId, lotId, bidderId } = useParams();
+  const { tenderId, lotId, bidderId, itemId } = useParams();
   const config: ExpandableTableConfig = {
     minHeight: 50,
     columns: [{ accessor: 'title', title: 'Name' }],
@@ -29,7 +29,7 @@ export const Checklist = () => {
                 className="cursor-pointer"
                 onClick={() =>
                   router.push(
-                    `/evaluation/${tenderId}/${lotId}/responsiveness/${bidderId}/${list.id}`,
+                    `/evaluation/${tenderId}/${lotId}/responsiveness/${itemId}/${bidderId}/${list.id}`,
                   )
                 }
               >

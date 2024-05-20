@@ -19,7 +19,7 @@ import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
 import { useEffect } from 'react';
-import { LotOverview } from '../../../_components/lot-overview';
+import { LotOverview } from '../../../../_components/lot-overview';
 import {
   useGetLotStatusQuery,
   useLazyGetPassedBiddersQuery,
@@ -28,7 +28,7 @@ import {
 } from '@/store/api/tendering/technical-responsiveness.api';
 export default function BidOpening() {
   const router = useRouter();
-  const { tenderId, lotId } = useParams();
+  const { tenderId, lotId, itemId } = useParams();
   const { data: lotStatus } = useGetLotStatusQuery(lotId as string);
   const [submit, { isLoading }] = useSubmitEvaluationMutation();
   const [getBidders, { data: bidders, isLoading: isBiddersLoading }] =
@@ -41,12 +41,8 @@ export default function BidOpening() {
     columns: [
       {
         accessor: 'bidderName',
-        title: 'Name',
         sortable: true,
         render: (record) => record.bidder.bidderName,
-      },
-      {
-        accessor: 'description',
       },
       {
         accessor: 'status',
@@ -68,7 +64,7 @@ export default function BidOpening() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/evaluation/${tenderId}/${lotId}/responsiveness/${record.bidder.bidderId}`,
+                `/evaluation/${tenderId}/${lotId}/responsiveness/${itemId}/${record.bidder.bidderId}`,
               );
             }}
           >
@@ -107,9 +103,11 @@ export default function BidOpening() {
   };
   return (
     <>
-      <LotOverview basePath={`/evaluation/${tenderId}`} />
+      <LotOverview
+        basePath={`/evaluation/${tenderId}/${lotId}/responsiveness`}
+      />
       <Section
-        title="Items List"
+        title="Bidders List"
         collapsible={false}
         className="mt-2"
         action={
@@ -119,7 +117,7 @@ export default function BidOpening() {
                 variant="outline"
                 onClick={() => {
                   router.push(
-                    `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness`,
+                    `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${itemId}`,
                   );
                 }}
                 disabled={!lotStatus?.canTeamAssess}
