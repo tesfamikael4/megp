@@ -5,7 +5,10 @@ import { TechnicalResponsivenessAssessmentDetail } from 'src/entities/technical-
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous } from 'src/shared/authorization';
 import { ApiTags } from '@nestjs/swagger';
-import { CompleteBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
+import {
+  CompleteBidderEvaluationDto,
+  CompleteResponsivenessBidderEvaluationDto,
+} from '../dto/technical-preliminary-assessment.dto';
 import { TechnicalResponsivenessAssessmentDetailService } from '../service/technical-responsiveness-assessment-detail.service';
 
 const options: ExtraCrudOptions = {
@@ -38,6 +41,7 @@ export class TechnicalResponsivenessAssessmentDetailController extends ExtraCrud
     );
   }
 
+  @AllowAnonymous()
   @Get('bidders-status/:lotId/:itemId/:isTeam')
   async passedBidders(
     @Param('lotId') lotId: string,
@@ -56,32 +60,39 @@ export class TechnicalResponsivenessAssessmentDetailController extends ExtraCrud
     );
   }
 
-  // @Get('checklist-status/:lotId/:bidderId/:isTeam')
-  // async checklistStatus(
-  //   @Param('lotId') lotId: string,
-  //   @Param('isTeam') isTeam: string,
-  //   @Param('bidderId') bidderId: string,
-  //   @Req() req,
-  // ) {
-  //   return await this.technicalResponsivenessAssessmentDetailService.checklistStatus(
-  //     lotId,
-  //     bidderId,
-  //     isTeam,
-  //     req,
-  //   );
-  // }
+  @Get('checklist-status/:lotId/:itemId/:bidderId/:isTeam')
+  async checklistStatus(
+    @Param('lotId') lotId: string,
+    @Param('itemId') itemId: string,
+    @Param('isTeam') isTeam: string,
+    @Param('bidderId') bidderId: string,
+    @Req() req,
+  ) {
+    return await this.technicalResponsivenessAssessmentDetailService.checklistStatus(
+      lotId,
+      itemId,
+      bidderId,
+      isTeam,
+      req,
+    );
+  }
 
-  @Get('can-complete/:lotId')
-  async canComplete(@Param('lotId') lotId: string, @Req() req) {
+  @Get('can-complete/:lotId/:itemId')
+  async canComplete(
+    @Param('lotId') lotId: string,
+    @Param('itemId') itemId: string,
+    @Req() req,
+  ) {
     return await this.technicalResponsivenessAssessmentDetailService.canComplete(
       lotId,
+      itemId,
       req,
     );
   }
 
   @Put('complete-bidder-evaluation')
   async completeBidderEvaluation(
-    @Body() itemData: CompleteBidderEvaluationDto,
+    @Body() itemData: CompleteResponsivenessBidderEvaluationDto,
     @Req() req,
   ) {
     return await this.technicalResponsivenessAssessmentDetailService.completeBidderEvaluation(
@@ -90,15 +101,17 @@ export class TechnicalResponsivenessAssessmentDetailController extends ExtraCrud
     );
   }
 
-  @Get('evaluator-report/:lotId/:bidderId/:isTeam')
+  @Get('evaluator-report/:lotId/:itemId/:bidderId/:isTeam')
   async evaluatorReport(
     @Param('bidderId') bidderId: string,
+    @Param('itemId') itemId: string,
     @Param('lotId') lotId: string,
     @Param('isTeam') isTeam: string,
     @Req() req: any,
   ) {
     return await this.technicalResponsivenessAssessmentDetailService.evaluatorReport(
       lotId,
+      itemId,
       bidderId,
       isTeam,
       req,

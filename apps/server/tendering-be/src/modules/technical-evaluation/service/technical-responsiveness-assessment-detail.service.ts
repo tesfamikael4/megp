@@ -24,7 +24,10 @@ import {
   SorTechnicalRequirement,
 } from 'src/entities';
 import { TeamMember } from 'src/entities/team-member.entity';
-import { CompleteBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
+import {
+  CompleteBidderEvaluationDto,
+  CompleteResponsivenessBidderEvaluationDto,
+} from '../dto/technical-preliminary-assessment.dto';
 import { TechnicalResponsivenessAssessment } from 'src/entities/technical-responsiveness-assessments.entity';
 import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
@@ -79,8 +82,6 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const evaluatorId = req.user.userId;
     const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
-
-    // const evaluatorId = req.user.userId;
 
     const [passed, spdChecklist] = await Promise.all([
       manager.getRepository(BiddersComparison).find({
@@ -199,61 +200,55 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
     // return bidders
   }
 
-  // async checklistStatus(
-  //   lotId: string,
-  //   bidderId: string,
-  //   isTeam: string,
-  //   req: any,
-  // ) {
-  //   const evaluatorId = req.user.userId;
-  //   const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
-  //   const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-  //   const [spdChecklist, checklists] = await Promise.all([
-  //     manager.getRepository(SpdResponsiveness).find({
-  //       where: {
-  //         spd: {
-  //           tenderSpds: {
-  //             tender: {
-  //               lots: {
-  //                 id: lotId,
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     }),
-  //     // Todo: check if the opener is the team member
-  //     this.technicalResponsivenessAssessmentDetailRepository.find({
-  //       where: {
-  //         technicalResponsivenessAssessment: {
-  //           bidRegistrationDetail: {
-  //             lotId,
-  //             bidRegistration: {
-  //               bidderId,
-  //             },
-  //           },
-  //           evaluatorId,
-  //         },
-  //       },
-  //       relations: {
-  //         technicalResponsivenessAssessment: true,
-  //       },
-  //     }),
-  //   ]);
-  //   const response = spdChecklist.map((spdChecklist) => ({
-  //     ...spdChecklist,
-  //     check: checklists.find(
-  //       (x) =>
-  //         x.spdResponsivenessId == spdChecklist.id &&
-  //         x.technicalResponsivenessAssessment.isTeamAssessment ==
-  //         isTeamAssessment,
-  //     )
-  //       ? true
-  //       : false,
-  //   }));
+  async checklistStatus(
+    lotId: string,
+    itemId: string,
+    bidderId: string,
+    isTeam: string,
+    req: any,
+  ) {
+    const evaluatorId = req.user.userId;
+    const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const [spdChecklist, checklists] = await Promise.all([
+      manager.getRepository(SorTechnicalRequirement).find({
+        where: {
+          itemId,
+        },
+      }),
+      // Todo: check if the opener is the team member
+      this.technicalResponsivenessAssessmentDetailRepository.find({
+        where: {
+          technicalResponsivenessAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+              technicalItems: ArrayContains([itemId]),
+              bidRegistration: {
+                bidderId,
+              },
+            },
+            evaluatorId,
+          },
+        },
+        relations: {
+          technicalResponsivenessAssessment: true,
+        },
+      }),
+    ]);
+    const response = spdChecklist.map((spdChecklist) => ({
+      ...spdChecklist,
+      check: checklists.find(
+        (x) =>
+          x.spdResponsivenessId == spdChecklist.id &&
+          x.technicalResponsivenessAssessment.isTeamAssessment ==
+            isTeamAssessment,
+      )
+        ? true
+        : false,
+    }));
 
-  //   return this.groupChecklist(response);
-  // }
+    return this.groupChecklist(response);
+  }
 
   async groupChecklist(items: any[]) {
     const grouped: { [key: string]: any[] } = {};
@@ -274,6 +269,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
 
   async canComplete(
     lotId: string,
+    itemId: string,
     req: any,
   ): Promise<{
     isTeamLead: {
@@ -366,6 +362,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
             technicalResponsivenessAssessment: {
               bidRegistrationDetail: {
                 lotId,
+                technicalItems: ArrayContains([itemId]),
               },
               evaluatorId,
               isTeamAssessment: true,
@@ -397,6 +394,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
         bidderId: itemData.bidderId,
         bidRegistrationDetails: {
           lotId: itemData.lotId,
+          technicalItems: ArrayContains([itemData.itemId]),
         },
       },
       relations: {
@@ -473,7 +471,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
   }
 
   async completeBidderEvaluation(
-    itemData: CompleteBidderEvaluationDto,
+    itemData: CompleteResponsivenessBidderEvaluationDto,
     req: any,
   ) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
@@ -486,6 +484,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
               bidderId: itemData.bidderId,
             },
             lotId: itemData.lotId,
+            technicalItems: ArrayContains([itemData.itemId]),
           },
           evaluatorId: req.user.userId,
           isTeamAssessment: itemData.isTeamLead,
@@ -511,6 +510,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
           technicalResponsivenessAssessment: {
             bidRegistrationDetail: {
               lotId: itemData.lotId,
+              technicalItems: ArrayContains([itemData.itemId]),
             },
             evaluatorId: req.user.userId,
           },
@@ -563,6 +563,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
             isTeamAssessment: true,
             bidRegistrationDetail: {
               lotId: itemData.lotId,
+              technicalItems: ArrayContains([itemData.itemId]),
             },
           },
         });
@@ -590,60 +591,54 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
 
   async evaluatorReport(
     lotId: string,
+    itemId: string,
     bidderId: string,
     isTeam: string,
     req: any,
   ): Promise<any> {
-    // const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
-    // const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    // const [technicalResponsivenessAssessmentDetail, spdChecklist] =
-    //   await Promise.all([
-    //     manager.getRepository(TechnicalResponsivenessAssessmentDetail).find({
-    //       where: {
-    //         technicalResponsivenessAssessment: {
-    //           bidRegistrationDetail: {
-    //             lotId: lotId,
-    //             bidRegistration: {
-    //               bidderId: bidderId,
-    //             },
-    //           },
-    //           evaluatorId: req.user.userId,
-    //           isTeamAssessment: isTeamAssessment,
-    //         },
-    //       },
-    //       relations: {
-    //         sorTechnicalRequirement: true,
-    //       },
-    //       select: {
-    //         id: true,
-    //         qualified: true,
-    //         spdResponsivenessId: true,
-    //         remark: true,
-    //         technicalResponsivenessAssessment: {
-    //           isTeamAssessment: true,
-    //         },
-    //       },
-    //     }),
-    //     manager.getRepository(SorTechnicalRequirement).find({
-    //       where: {
-    //         spd: {
-    //           tenderSpds: {
-    //             tender: {
-    //               lots: {
-    //                 id: lotId,
-    //               },
-    //             },
-    //           },
-    //         },
-    //       },
-    //     }),
-    //   ]);
-    // const response = spdChecklist.map((spdChecklist) => ({
-    //   ...spdChecklist,
-    //   check: technicalResponsivenessAssessmentDetail.find(
-    //     (x) => x.spdResponsivenessId == spdChecklist.id,
-    //   ),
-    // }));
-    // return response;
+    const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const [technicalResponsivenessAssessmentDetail, spdChecklist] =
+      await Promise.all([
+        manager.getRepository(TechnicalResponsivenessAssessmentDetail).find({
+          where: {
+            technicalResponsivenessAssessment: {
+              bidRegistrationDetail: {
+                lotId: lotId,
+                technicalItems: ArrayContains([lotId]),
+                bidRegistration: {
+                  bidderId: bidderId,
+                },
+              },
+              evaluatorId: req.user.userId,
+              isTeamAssessment: isTeamAssessment,
+            },
+          },
+          relations: {
+            sorTechnicalRequirement: true,
+          },
+          select: {
+            id: true,
+            qualified: true,
+            spdResponsivenessId: true,
+            remark: true,
+            technicalResponsivenessAssessment: {
+              isTeamAssessment: true,
+            },
+          },
+        }),
+        manager.getRepository(SorTechnicalRequirement).find({
+          where: {
+            itemId,
+          },
+        }),
+      ]);
+    const response = spdChecklist.map((spdChecklist) => ({
+      ...spdChecklist,
+      check: technicalResponsivenessAssessmentDetail.find(
+        (x) => x.spdResponsivenessId == spdChecklist.id,
+      ),
+    }));
+    return response;
   }
 }
