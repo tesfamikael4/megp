@@ -12,7 +12,7 @@ export const SpecificationTemplateSchema = z.object({
       key: z.string(),
       displayName: z.string(),
       category: z.string(),
-      order: z.number().min(0, { message: 'order is required' }),
+      order: z.number().optional(),
     }),
   ),
   deliveries: z.array(

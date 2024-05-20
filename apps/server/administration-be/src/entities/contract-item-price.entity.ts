@@ -19,7 +19,7 @@ export class ContractItemPrice extends Audit {
   @Column()
   unitPrice: number;
 
-  @Column({ type: 'point' })
+  @Column({ nullable: true })
   location: string;
 
   @Column()

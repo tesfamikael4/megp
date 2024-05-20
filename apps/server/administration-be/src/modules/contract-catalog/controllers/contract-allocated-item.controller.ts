@@ -10,7 +10,7 @@ import {
 } from '../dto/contract-allocated-item.dto';
 
 const options: ExtraCrudOptions = {
-  entityIdName: 'contractCatalogId',
+  entityIdName: 'contractBeneficiaryId',
   createDto: CreateContractAllocatedItemDto,
   updateDto: UpdateContractAllocatedItemDto,
 };

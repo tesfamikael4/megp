@@ -26,7 +26,7 @@ export class ContractAllocatedItem extends Audit {
   @Column()
   maximumQuantity: number;
 
-  @Column()
+  @Column({ default: 0 })
   utilizedQuantity: number;
 
   @Column({
