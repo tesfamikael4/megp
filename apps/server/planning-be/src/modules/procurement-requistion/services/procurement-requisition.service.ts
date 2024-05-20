@@ -7,13 +7,10 @@ import {
 } from '@nestjs/common';
 import {
   EntityManager,
-  LessThanOrEqual,
-  MoreThanOrEqual,
   Repository,
 } from 'typeorm';
 import {
   Budget,
-  BudgetYear,
   PostBudgetPlanActivity,
   ProcurementRequisition,
 } from 'src/entities';
@@ -106,6 +103,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       },
       relations: {
         postBudgetPlan: true,
+        budget: true,
         postBudgetPlanItems: true,
         postBudgetPlanTimelines: true,
         postProcurementMechanism: true,
@@ -137,8 +135,10 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       id: itemData.id,
       isPlanned: true,
       totalEstimatedAmount: activity.estimatedAmount,
-      userReference: `u${activity.procurementReference}`,
+      userReference: activity.userReference,
       postBudgetPlanId: activity.postBudgetPlan.id,
+      budgetYearId: activity.budget.budgetYearId,
+      budgetId: activity.budget.id,
       status: ProcurementRequisitionStatusEnum.DRAFT,
       organizationId: user.organization.id,
       organizationName: user.organization.name,
