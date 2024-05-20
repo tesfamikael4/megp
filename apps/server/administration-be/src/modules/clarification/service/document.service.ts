@@ -19,11 +19,13 @@ export class ClarificationDocumentService {
   }
 
   async generatePresignedPutUrl(fileInfo): Promise<string> {
-    const presignedUrl = await this.minioService.generatePresignedUploadUrl({
-      bucketName: fileInfo.bucketName,
-      contentType: fileInfo.contentType,
-      originalname: fileInfo.originalname,
-    });
+    const presignedUrl = await this.minioService.generatePresignedUploadUrl(
+      {
+        contentType: fileInfo.contentType,
+        originalname: fileInfo.originalname,
+      },
+      fileInfo.bucketName,
+    );
 
     return presignedUrl.presignedUrl;
   }
