@@ -178,9 +178,9 @@ export class ProcurementRequisition extends OrgAudit {
     const randomNumUser = () => Math.floor(100000 + Math.random() * 900000);
     this.userReference = this.userReference
       ? this.userReference
-      : (this.userReference = `REF-${randomNumUser()}`);
+      : (this.userReference = `uREF-${randomNumUser()}`);
     this.procurementReference = this.procurementReference
       ? this.procurementReference
-      : (this.procurementReference = `uREF-${randomNumUser()}`);
+      : (this.procurementReference = `REF-${randomNumUser()}`);
   }
 }
