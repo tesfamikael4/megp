@@ -32,6 +32,9 @@ export class ProductCatalog extends Audit {
   @Column({ type: 'jsonb' })
   specificationValues: any[];
 
+  @Column({ type: 'jsonb', nullable: true })
+  specifications: any[];
+
   @Column({ type: 'jsonb' })
   deliveryValues: any[];
 

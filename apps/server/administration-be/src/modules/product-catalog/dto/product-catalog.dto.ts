@@ -6,8 +6,9 @@ import { z } from 'zod';
 const CatalogSpecificationSchema = z.object({
   key: z.string(),
   label: z.string(),
-  value: z.string(),
+  value: z.any(),
   category: z.string().optional(),
+  type: z.string().optional()
 });
 
 export const ProductCatalogSchema = z.object({
@@ -27,6 +28,7 @@ export const ProductCatalogSchema = z.object({
     ProductCatalogStatus.Inactive,
   ]).optional(),
   specificationValues: z.array(CatalogSpecificationSchema),
+  specifications: z.any().optional(),
   deliveryValues: z.array(
     z.object({
       deliveryDate: z.any(),
