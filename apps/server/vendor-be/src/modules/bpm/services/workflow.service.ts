@@ -204,7 +204,7 @@ export class WorkflowService {
         ) {
           response = await this.vendorRegService.cancelApplication(wfInstance);
           await this.notificationService.sendCancelNotification(
-            wfInstance.userId,
+            workflowInstance.userId,
             workflowInstance.applicationNumber,
             bp.service.name,
           );
@@ -219,7 +219,7 @@ export class WorkflowService {
             ApplicationStatus.APPROVE.toLowerCase
           ) {
             await this.notificationService.sendCompletionNotification(
-              wfInstance.userId,
+              workflowInstance.userId,
               workflowInstance.applicationNumber,
               bp.service.name,
             );
@@ -256,7 +256,7 @@ export class WorkflowService {
         taskInfo.taskType = task.taskType;
         console.log(' taskInfo.taskType ', taskInfo.taskType);
         const notification = {
-          userId: user.id,
+          userId: workflowInstance.userId,
           applicationNumber: workflowInstance?.applicationNumber,
           serviceName: bp.service?.name,
         };
@@ -386,7 +386,7 @@ export class WorkflowService {
             command,
           );
           if (notification) {
-            this.notificationService.sendAdjustmentNotification(
+            await this.notificationService.sendAdjustmentNotification(
               notification.userId,
               notification.applicationNumber,
               notification.serviceName,
@@ -411,6 +411,13 @@ export class WorkflowService {
             stateMetadata['apiUrl'],
             command,
           );
+          if (notification) {
+            this.notificationService.sendAdjustmentNotification(
+              notification.userId,
+              notification.applicationNumber,
+              notification.serviceName,
+            );
+          }
           if (result) {
             const vendor = await this.vendorRegService.findOne(wfi.requestorId);
             if (vendor) {

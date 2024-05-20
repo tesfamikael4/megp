@@ -126,7 +126,7 @@ export class ApplicationExcutionController {
     const query = decodeCollectionQuery(q);
 
 
-    return await this.executeService.getCurruntTaskByServiceKey(
+    return await this.executeService.getCurrentTaskByServiceKey(
       serviceKey,
       query,
       user,
@@ -149,7 +149,7 @@ export class ApplicationExcutionController {
   @UseGuards(JwtGuard)
   @Get('get-currunt-task-detail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async fetchCurruntTaskDetail(@Param('instanceId') instanceId: string) {
+  async fetchCurrentTaskDetail(@Param('instanceId') instanceId: string) {
     const result = await this.executeService.getCurrentTaskDetail(instanceId);
     return result;
   }

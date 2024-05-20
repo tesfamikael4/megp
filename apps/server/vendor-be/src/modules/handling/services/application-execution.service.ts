@@ -32,7 +32,7 @@ export class ApplicationExcutionService {
     private readonly invoiceService: InvoiceService,
     private readonly ptService: PreferentailTreatmentService,
   ) { }
-  async getCurruntTaskByServiceKey(
+  async getCurrentTaskByServiceKey(
     serviceKey: string,
     query: CollectionQuery,
     user: any,
@@ -70,6 +70,7 @@ export class ApplicationExcutionService {
       relations: { service: true },
       where: { id: instanceId },
     });
+    if (!appData) throw new NotFoundException("item_not_found")
     const instance = await this.wiRepository.findOne({
       relations: {
         isrVendor: { businessAreas: { servicePrice: true } },
