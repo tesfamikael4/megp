@@ -76,15 +76,14 @@ export class TechnicalResponsivenessAssessmentDetailController extends ExtraCrud
     );
   }
 
-  @Get('can-complete/:lotId/:itemId')
+  @Get('can-complete/:lotId')
   async canComplete(
     @Param('lotId') lotId: string,
-    @Param('itemId') itemId: string,
+    // @Param('itemId') itemId: string,
     @Req() req,
   ) {
     return await this.technicalResponsivenessAssessmentDetailService.canComplete(
       lotId,
-      itemId,
       req,
     );
   }
