@@ -74,6 +74,7 @@ export default function BidOpening() {
         lotId: lotId as string,
         // isTeamLead: false,
         isTeamLead: true,
+        tenderId: tenderId as string,
       }).unwrap();
       notify('Success', 'Evaluation successfully completed');
     } catch (err) {

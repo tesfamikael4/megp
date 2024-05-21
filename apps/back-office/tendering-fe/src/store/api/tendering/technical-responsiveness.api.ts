@@ -102,12 +102,14 @@ export const technicalResponsiveness = createApi({
         lotId,
         bidderId,
         checklistId,
+        itemId,
       }: {
         lotId: string;
         bidderId: string;
         checklistId: string;
+        itemId: string;
       }) =>
-        `/technical-qualification-responsiveness-detail/members-report/${lotId}/${bidderId}/${checklistId}`,
+        `/technical-responsiveness-assessment-detail/members-report/${lotId}/${itemId}/${bidderId}/${checklistId}`,
     }),
     getItems: builder.query<any, any>({
       query: ({
