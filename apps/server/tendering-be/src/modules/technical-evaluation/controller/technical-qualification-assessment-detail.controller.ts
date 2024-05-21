@@ -96,4 +96,17 @@ export class TechnicalQualificationAssessmentDetailController extends ExtraCrudC
       req,
     );
   }
+
+  @Get('members-report/:lotId/:bidderId/:eqcQualificationId')
+  async membersReport(
+    @Param('lotId') lotId: string,
+    @Param('bidderId') bidderId: string,
+    @Param('eqcQualificationId') eqcQualificationId: string,
+  ) {
+    return await this.technicalQualificationAssessmentDetailService.membersReport(
+      eqcQualificationId,
+      bidderId,
+      lotId,
+    );
+  }
 }

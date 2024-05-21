@@ -123,4 +123,19 @@ export class TechnicalResponsivenessAssessmentDetailController extends ExtraCrud
       req,
     );
   }
+
+  @Get('members-report/:lotId/:itemId/:bidderId/:eqcEvaluationId')
+  async membersReport(
+    @Param('lotId') lotId: string,
+    @Param('itemId') itemId: string,
+    @Param('bidderId') bidderId: string,
+    @Param('eqcEvaluationId') eqcEvaluationId: string,
+  ) {
+    return await this.technicalResponsivenessAssessmentDetailService.membersReport(
+      eqcEvaluationId,
+      bidderId,
+      lotId,
+      itemId,
+    );
+  }
 }

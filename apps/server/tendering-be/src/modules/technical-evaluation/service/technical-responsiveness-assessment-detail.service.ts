@@ -130,6 +130,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       await this.technicalResponsivenessAssessmentDetailRepository.find({
         where: {
           technicalResponsivenessAssessment: {
+            itemId,
             bidRegistrationDetail: {
               lotId,
               technicalItems: ArrayContains([itemId]),
@@ -496,6 +497,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
             lotId: itemData.lotId,
             technicalItems: ArrayContains([itemData.itemId]),
           },
+          itemId: itemData.itemId,
           evaluatorId: req.user.userId,
           isTeamAssessment: itemData.isTeamLead,
         },
@@ -520,7 +522,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
           technicalResponsivenessAssessment: {
             bidRegistrationDetail: {
               lotId: itemData.lotId,
-              technicalItems: ArrayContains([itemData.itemId]),
+              // technicalItems: ArrayContains([itemData.itemId]),
             },
             evaluatorId: req.user.userId,
           },
@@ -560,8 +562,8 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       await manager.getRepository(TenderMilestone).insert({
         lotId: itemData.lotId,
         tenderId: itemData.tenderId,
-        milestoneNum: TenderMilestoneEnum.TechnicalResponsiveness,
-        milestoneTxt: 'TechnicalResponsiveness',
+        milestoneNum: TenderMilestoneEnum.TechnicalScoring,
+        milestoneTxt: 'TechnicalScoring',
         isCurrent: true,
       });
 
@@ -582,14 +584,14 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
         (list) => {
           return {
             bidRegistrationDetailId: list.bidRegistrationDetailId,
-            milestoneNum: TenderMilestoneEnum.TechnicalResponsiveness,
-            milestoneTxt: 'TechnicalResponsiveness',
+            milestoneNum: TenderMilestoneEnum.TechnicalScoring,
+            milestoneTxt: 'TechnicalScoring',
             bidderStatus:
-              list.qualified == EvaluationStatusEnum.COMPLY ? 304 : 303,
+              list.qualified == EvaluationStatusEnum.COMPLY ? 306 : 305,
             bidderStatusTxt:
               list.qualified == EvaluationStatusEnum.COMPLY
-                ? 'TechnicalResponsivenessSucceeded'
-                : 'TechnicalResponsivenessFailed',
+                ? 'TechnicalScoringSucceeded'
+                : 'TechnicalScoringFailed',
             passFail:
               list.qualified == EvaluationStatusEnum.COMPLY ? true : false,
           };
@@ -615,13 +617,14 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
             technicalResponsivenessAssessment: {
               bidRegistrationDetail: {
                 lotId: lotId,
-                technicalItems: ArrayContains([lotId]),
+                technicalItems: ArrayContains([itemId]),
                 bidRegistration: {
                   bidderId: bidderId,
                 },
               },
               evaluatorId: req.user.userId,
               isTeamAssessment: isTeamAssessment,
+              itemId,
             },
           },
           relations: {
@@ -650,5 +653,34 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       ),
     }));
     return response;
+  }
+
+  async membersReport(
+    sorTechnicalRequirementId: string,
+    bidderId: string,
+    lotId: string,
+    itemId: string,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const report = await manager
+      .getRepository(TechnicalResponsivenessAssessmentDetail)
+      .find({
+        where: {
+          sorTechnicalRequirementId,
+          technicalResponsivenessAssessment: {
+            bidRegistrationDetail: {
+              bidRegistration: {
+                bidderId,
+              },
+              lotId,
+            },
+            itemId,
+          },
+        },
+        relations: {
+          technicalResponsivenessAssessment: true,
+        },
+      });
+    return report;
   }
 }
