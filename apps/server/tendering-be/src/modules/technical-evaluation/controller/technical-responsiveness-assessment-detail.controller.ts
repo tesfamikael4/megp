@@ -41,7 +41,6 @@ export class TechnicalResponsivenessAssessmentDetailController extends ExtraCrud
     );
   }
 
-  @AllowAnonymous()
   @Get('bidders-status/:lotId/:itemId/:isTeam')
   async passedBidders(
     @Param('lotId') lotId: string,

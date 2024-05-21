@@ -239,7 +239,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       ...spdChecklist,
       check: checklists.find(
         (x) =>
-          x.spdResponsivenessId == spdChecklist.id &&
+          x.sorTechnicalRequirementId == spdChecklist.id &&
           x.technicalResponsivenessAssessment.isTeamAssessment ==
             isTeamAssessment,
       )
@@ -620,7 +620,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
           select: {
             id: true,
             qualified: true,
-            spdResponsivenessId: true,
+            sorTechnicalRequirementId: true,
             remark: true,
             technicalResponsivenessAssessment: {
               isTeamAssessment: true,
@@ -636,7 +636,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
     const response = spdChecklist.map((spdChecklist) => ({
       ...spdChecklist,
       check: technicalResponsivenessAssessmentDetail.find(
-        (x) => x.spdResponsivenessId == spdChecklist.id,
+        (x) => x.sorTechnicalRequirementId == spdChecklist.id,
       ),
     }));
     return response;
