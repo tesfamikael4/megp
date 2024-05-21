@@ -13,4 +13,8 @@ export class BriefecaseEntity extends Audit {
   attachmentId: string;
   @Column()
   userId: string;
+  @Column({ nullable: true })
+  description: string;
+  @Column({ nullable: true })
+  name: string
 }

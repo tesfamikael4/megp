@@ -471,7 +471,9 @@ export class FileService {
         mRATaxClearanceCertificate: 'mRATaxClearanceCertificate',
         previousPPDARegistrationCertificate:
           'previousPPDARegistrationCertificate',
-        mSMECertificate: 'mSMECertificate',
+        MSMECertificate: 'MSMECertificate',
+        ibmCertificate: 'ibmCertificate',
+        marginalizedCertificate: 'marginalizedCertificate',
       };
       if (resultMetadata[fname] !== '') {
         const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
