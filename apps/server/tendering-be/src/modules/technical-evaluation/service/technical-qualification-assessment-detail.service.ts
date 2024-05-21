@@ -603,4 +603,31 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
     }));
     return response;
   }
+
+  async membersReport(
+    eqcQualificationId: string,
+    bidderId: string,
+    lotId: string,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const report = await manager
+      .getRepository(TechnicalQualificationAssessmentDetail)
+      .find({
+        where: {
+          eqcQualificationId,
+          technicalQualificationAssessment: {
+            bidRegistrationDetail: {
+              bidRegistration: {
+                bidderId,
+              },
+              lotId,
+            },
+          },
+        },
+        relations: {
+          technicalQualificationAssessment: true,
+        },
+      });
+    return report;
+  }
 }

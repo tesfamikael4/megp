@@ -570,6 +570,9 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
             },
           },
         },
+        relations: {
+          technicalPreliminaryAssessment: true,
+        },
       });
     return report;
   }

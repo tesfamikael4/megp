@@ -82,7 +82,7 @@ export class TechnicalPreliminaryAssessmentDetailController extends ExtraCrudCon
     );
   }
 
-  @Get('members-report/:lotId/:bidderId/eqcEvaluationId')
+  @Get('members-report/:lotId/:bidderId/:eqcEvaluationId')
   async membersReport(
     @Param('lotId') lotId: string,
     @Param('bidderId') bidderId: string,
