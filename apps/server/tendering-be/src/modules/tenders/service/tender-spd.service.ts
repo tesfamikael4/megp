@@ -169,9 +169,9 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
       throw new NotFoundException(`not_found`);
     }
 
-    let document = tender.bds;
+    let document = tender.scc;
 
-    if (!tender.bds) {
+    if (!tender.scc) {
       document = await this.getDownloadUrl(tender.spdId, 'scc');
     }
 
