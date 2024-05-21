@@ -5,6 +5,7 @@ import {
   LoadingOverlay,
   NumberInput,
   Stack,
+  Text,
   TextInput,
 } from '@mantine/core';
 import { logger, notify } from '@megp/core-fe';
@@ -22,8 +23,14 @@ import { useParams } from 'next/navigation';
 export default function GeneralProvision() {
   const { id } = useParams();
   const ContractDatesForm: ZodType<Partial<GeneralProvisionForm>> = z.object({
-    contractDuration: z.number().min(1, { message: 'This field is required' }),
-    commencementDay: z.number().min(1, { message: 'This field is required' }),
+    contractDuration: z
+      .number()
+      .nonnegative()
+      .min(1, { message: 'This field is required' }),
+    commencementDay: z
+      .number()
+      .nonnegative()
+      .min(1, { message: 'This field is required' }),
     deliverySite: z.string().min(1, { message: 'This field is required' }),
   });
 
@@ -96,6 +103,8 @@ export default function GeneralProvision() {
               label="Contact Duration"
               max={31}
               name={name}
+              rightSection={<Text size="sm"> days </Text>}
+              rightSectionWidth={'60px'}
               value={value}
               className="w-1/2"
               onChange={(d) => onChange(parseInt(d as string))}

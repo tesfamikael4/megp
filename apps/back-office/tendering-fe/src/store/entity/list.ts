@@ -215,7 +215,17 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
+    entity: 'currencies',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api',
+  },
+  {
     entity: 'revision-approvals',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'currencies',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api',
   },
 ];

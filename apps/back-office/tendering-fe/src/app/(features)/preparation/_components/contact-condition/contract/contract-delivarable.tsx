@@ -18,6 +18,7 @@ import {
   useReadQuery,
   useUpdateMutation,
 } from '../../../_api/scc/contract-delivarable.api';
+import { DateTimePicker } from '@mantine/dates';
 
 const deliverableList = [
   {
@@ -42,8 +43,8 @@ export default function ContractDelivarable() {
         .array(z.string({ required_error: 'This field is required' }))
         .min(1, { message: 'This field is required ' }),
       deliverySchedule: z
-        .number()
-        .min(1, { message: 'This field is required' }),
+        .date()
+        .min(new Date(), { message: 'This field is required' }),
     });
   const {
     data: selected,
@@ -123,13 +124,14 @@ export default function ContractDelivarable() {
           name="deliverySchedule"
           control={control}
           render={({ field: { name, value, onChange } }) => (
-            <NumberInput
-              label="Delivery Schedule"
-              max={31}
+            <DateTimePicker
               name={name}
               value={value}
+              minDate={new Date()}
+              withAsterisk
               className="w-1/2"
-              onChange={(d) => onChange(parseInt(d as string))}
+              onChange={onChange}
+              label="Delivery Schedule"
               error={
                 errors['deliverySchedule']
                   ? errors['deliverySchedule']?.message?.toString()
