@@ -6,6 +6,7 @@ import * as Minio from 'minio';
 import { BriefecaseEntity } from 'src/entities/brifecase.entity';
 import { FileService } from 'src/modules/vendor-registration/services/file.service';
 import { Repository } from 'typeorm';
+import { BriefCaseDto } from '../dto/briefcase.dto';
 @Injectable()
 export class BriefcasesService {
     subdirectory: string;
@@ -24,7 +25,7 @@ export class BriefcasesService {
 
     }
 
-    async downloadMyBrifecase(userId: string, fileId: string) {
+    async downloadMyBriefcase(userId: string, fileId: string) {
         try {
             const fileaddress = `${userId}/brifecase/fileId`;
             this.minioClient.getObject(
@@ -49,14 +50,15 @@ export class BriefcasesService {
             throw error;
         }
     }
-    async uploadBrifecase(file: Express.Multer.File, userInfo: any) {
+    async uploadBriefcase(file: Express.Multer.File, briefcase: BriefCaseDto, user: any) {
         try {
-
-            const fileurl = await this.fileService.uploadDocuments(file, userInfo, this.subdirectory);
-            const brifecaseEntity = new BriefecaseEntity();
-            brifecaseEntity.userId = userInfo.id;
-            brifecaseEntity.attachmentId = fileurl;
-            this.briefcaseRepository.save(brifecaseEntity);
+            const fileURL = await this.fileService.uploadDocuments(file, user, this.subdirectory);
+            const briefcaseEntity = new BriefecaseEntity();
+            briefcaseEntity.userId = user.id;
+            briefcaseEntity.attachmentId = fileURL;
+            briefcaseEntity.name = briefcase.name;
+            briefcaseEntity.description = briefcase.description;
+            this.briefcaseRepository.save(briefcaseEntity);
         } catch (error) {
             console.log(error);
             throw error;

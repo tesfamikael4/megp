@@ -126,8 +126,9 @@ const InitialValueSchema = {
     generalReceipt_BankDepositSlip: '',
     mRATaxClearanceCertificate: '',
     previousPPDARegistrationCertificate: '',
-    mSMECertificate: '',
+    MSMECertificate: '',
     ibmCertificate: '',
+    marginalizedCertificate: ''
   },
   preferential: [
     {
