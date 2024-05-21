@@ -269,7 +269,6 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
 
   async canComplete(
     lotId: string,
-    itemId: string,
     req: any,
   ): Promise<{
     isTeamLead: {
@@ -362,7 +361,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
             technicalResponsivenessAssessment: {
               bidRegistrationDetail: {
                 lotId,
-                technicalItems: ArrayContains([itemId]),
+                // technicalItems: ArrayContains([itemId]),
               },
               evaluatorId,
               isTeamAssessment: true,
