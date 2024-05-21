@@ -44,6 +44,7 @@ export default function BidOpening() {
     columns: [
       {
         accessor: 'bidderName',
+        title: 'Bidder',
         sortable: true,
         render: (record) => record.bidder.bidderName,
       },
@@ -106,7 +107,10 @@ export default function BidOpening() {
   };
   return (
     <>
-      <LotOverview basePath={`/evaluation/${tenderId}/${lotId}`} />
+      <LotOverview
+        basePath={`/evaluation/${tenderId}/${lotId}`}
+        teamAssessment
+      />
       <Section
         title="Bidders List"
         collapsible={false}
@@ -169,7 +173,7 @@ const BidderDetail = ({ bidder }: any) => {
           columns: [
             {
               accessor: 'itbDescription',
-              title: 'Name',
+              title: 'Requirements',
             },
             {
               accessor: 'Assessment',

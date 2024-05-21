@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionIcon, Text } from '@mantine/core';
+import { ActionIcon } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -15,6 +15,11 @@ export default function BidOpening() {
     isLoading: isLoading,
     isSearchable: true,
     columns: [
+      {
+        accessor: 'number',
+        width: 70,
+        sortable: true,
+      },
       {
         accessor: 'name',
         width: 400,
