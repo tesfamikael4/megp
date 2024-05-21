@@ -35,4 +35,10 @@ export class SpecificationTemplatesController extends EntityCrudController<Speci
   ): Promise<SpecificationTemplate> {
     return this.specificationTemplateService.getByItem(itemMasterId);
   }
+  @Get('itemCode/:itemMasterCode')
+  async getByItemCode(
+    @Param('itemMasterCode') itemMasterCode: string,
+  ): Promise<SpecificationTemplate> {
+    return this.specificationTemplateService.getByItemCode(itemMasterCode);
+  }
 }

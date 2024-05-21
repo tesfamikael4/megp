@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsEnum, IsUUID, IsNumber, Min } from 'class-validator';
+import { IsEnum, IsUUID, IsNumber, Min } from 'class-validator';
 import { ContractItemStatus } from 'src/shared/enums/contract-catalog-enum';
 
 export class CreateContractAllocatedItemDto {

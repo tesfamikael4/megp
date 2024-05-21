@@ -16,6 +16,10 @@ export class SpecificationTemplate extends OrgAudit {
   id: string;
   @Column({ type: 'uuid' })
   itemMasterId: string;
+
+  @Column({ nullable: true })
+  itemMasterCode: string;
+
   @Column({ type: 'numeric', precision: 14, scale: 2, default: 0 })
   quantity: number;
 

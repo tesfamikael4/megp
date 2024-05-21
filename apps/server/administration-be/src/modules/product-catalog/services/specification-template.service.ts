@@ -30,6 +30,12 @@ export class SpecificationTemplatesService extends EntityCrudService<Specificati
     });
   }
 
+  async getByItemCode(itemMasterCode: any): Promise<any> {
+    return await this.productCatalogRepository.findOne({
+      where: { itemMasterCode },
+    });
+  }
+
   async create(data: SpecificationTemplateData, req: any): Promise<any> {
     SpecificationTemplateSchema.parse(data);
     if (req.user?.organization) {
