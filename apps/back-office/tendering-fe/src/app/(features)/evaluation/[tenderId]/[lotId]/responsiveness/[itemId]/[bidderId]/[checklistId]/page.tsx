@@ -17,7 +17,7 @@ export default function ChecklistDetail() {
     <Flex gap={10}>
       <Box className=" bg-white w-2/3">
         <Section
-          title={data?.itbDescription ?? ''}
+          title={data?.requirement ?? ''}
           collapsible={false}
           className="h-full overflow-scroll"
         >

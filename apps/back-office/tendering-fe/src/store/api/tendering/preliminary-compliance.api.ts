@@ -91,7 +91,7 @@ export const preliminaryComplianceApi = createApi({
     }),
 
     getSpdDetail: builder.query<any, any>({
-      query: (spdId) => `/spd-preliminary-evaluations/${spdId}`,
+      query: (eqcId) => `/eqc-preliminary-examinations/${eqcId}`,
     }),
 
     completeEvaluation: builder.mutation<any, any>({

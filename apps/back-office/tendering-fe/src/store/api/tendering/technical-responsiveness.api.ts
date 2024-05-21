@@ -1,5 +1,5 @@
 import { baseQuery } from '@/store/base-query';
-import { encodeCollectionQuery } from '@megp/entity';
+import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const technicalResponsiveness = createApi({
@@ -9,14 +9,14 @@ export const technicalResponsiveness = createApi({
   tagTypes: ['evaluation', 'bidAttribute', 'bidder'],
   endpoints: (builder) => ({
     getPassedBidders: builder.query<any, any>({
-      query: ({ lotId, collectionQuery, team = 'member' }) => {
+      query: ({ lotId, itemId, collectionQuery, team = 'member' }) => {
         let q = '';
         if (collectionQuery) {
           const query = encodeCollectionQuery(collectionQuery);
           q = `?q=${query}`;
         }
         return {
-          url: `/technical-qualification-assessment-detail/bidders-status/${lotId}/${team}${q}`,
+          url: `/technical-responsiveness-assessment-detail/bidders-status/${lotId}/${itemId}/${team}${q}`,
         };
       },
     }),
@@ -24,25 +24,27 @@ export const technicalResponsiveness = createApi({
       query: ({
         lotId,
         bidderId,
+        itemId,
         team = 'member',
       }: {
         lotId: string;
+        itemId: string;
         bidderId: string;
         team: string;
       }) => {
         return {
-          url: `/technical-qualification-assessment-detail/checklist-status/${lotId}/${bidderId}/${team}`,
+          url: `/technical-responsiveness-assessment-detail/checklist-status/${lotId}/${itemId}/${bidderId}/${team}`,
         };
       },
       providesTags: ['bidAttribute'],
     }),
 
     getSpdDetail: builder.query<any, any>({
-      query: (spdId) => `/spd-qualifications/${spdId}`,
+      query: (spdId) => `/sor-technical-requirements/${spdId}`,
     }),
     checkBidAttribute: builder.mutation<any, any>({
       query: (data) => ({
-        url: `/technical-qualification-assessment-detail`,
+        url: `/technical-responsiveness-assessment-detail`,
         method: 'POST',
         body: data,
       }),
@@ -58,7 +60,7 @@ export const technicalResponsiveness = createApi({
         bidderId: string;
         team: string;
       }) =>
-        `/technical-qualification-assessment-detail/evaluator-report/${lotId}/${bidderId}/${team}`,
+        `/technical-responsiveness-assessment-detail/evaluator-report/${lotId}/${bidderId}/${team}`,
     }),
     completeResponsivenessEvaluation: builder.mutation<any, any>({
       query: (data: {
@@ -67,7 +69,7 @@ export const technicalResponsiveness = createApi({
         isTeamLead: boolean;
       }) => {
         return {
-          url: `/technical-qualification-assessment-detail/complete-bidder-evaluation`,
+          url: `/technical-responsiveness-assessment-detail/complete-bidder-evaluation`,
           method: 'PUT',
           body: data,
         };
@@ -77,7 +79,7 @@ export const technicalResponsiveness = createApi({
     getLotStatus: builder.query<any, any>({
       query: (lotId) => {
         return {
-          url: `/technical-qualification-assessment-detail/can-complete/${lotId}`,
+          url: `/technical-responsiveness-assessment-detail/can-complete/${lotId}`,
           method: 'GET',
         };
       },
@@ -86,7 +88,7 @@ export const technicalResponsiveness = createApi({
     submitEvaluation: builder.mutation<any, any>({
       query: (data: { tenderId: string; isTeamLead: boolean }) => {
         return {
-          url: `/technical-qualification-assessment-detail/submit-checklist`,
+          url: `/technical-responsiveness-assessment-detail/submit-checklist`,
           method: 'PUT',
           body: data,
         };
@@ -103,7 +105,25 @@ export const technicalResponsiveness = createApi({
         bidderId: string;
         checklistId: string;
       }) =>
-        `/technical-qualification-assessment-detail/members-report/${lotId}/${bidderId}/${checklistId}`,
+        `/technical-qualification-responsiveness-detail/members-report/${lotId}/${bidderId}/${checklistId}`,
+    }),
+    getItems: builder.query<any, any>({
+      query: ({
+        lotId,
+        collectionQuery,
+      }: {
+        lotId: string;
+        collectionQuery?: CollectionQuery;
+      }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `/technical-responsiveness-assessment-detail/get-items-by-lotId/${lotId}${q}`,
+        };
+      },
     }),
   }),
 });
@@ -118,4 +138,5 @@ export const {
   useCompleteResponsivenessEvaluationMutation,
   useSubmitEvaluationMutation,
   useLazyGetMembersAssesmentResultQuery,
+  useLazyGetItemsQuery,
 } = technicalResponsiveness;

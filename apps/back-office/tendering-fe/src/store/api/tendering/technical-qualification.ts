@@ -38,7 +38,7 @@ export const technicalQualification = createApi({
     }),
 
     getSpdDetail: builder.query<any, any>({
-      query: (spdId) => `/spd-qualifications/${spdId}`,
+      query: (eqcId) => `/eqc-qualifications/${eqcId}`,
     }),
     checkBidAttribute: builder.mutation<any, any>({
       query: (data) => ({

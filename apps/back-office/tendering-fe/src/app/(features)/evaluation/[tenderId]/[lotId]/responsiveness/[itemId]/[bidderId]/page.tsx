@@ -13,7 +13,11 @@ export default function BiderDetail() {
   const { tenderId, lotId, bidderId, itemId } = useParams();
 
   useEffect(() => {
-    getChecklists({ lotId: lotId as string, bidderId: bidderId as string });
+    getChecklists({
+      lotId: lotId as string,
+      bidderId: bidderId as string,
+      itemId: itemId as string,
+    });
   }, []);
 
   useEffect(() => {
