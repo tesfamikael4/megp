@@ -291,8 +291,10 @@ export class BidResponseLotService {
         company_name: bidRegistrationDetail.bidRegistration.bidderName,
       });
 
-      const pdfBuffer =
-        await this.documentManipulatorService.convertDocxToPdf(docx);
+      const pdfBuffer = await this.documentManipulatorService.convertDocument(
+        docx,
+        '.pdf',
+      );
 
       const documentDocx = await this.minIOService.uploadBuffer(
         docx,

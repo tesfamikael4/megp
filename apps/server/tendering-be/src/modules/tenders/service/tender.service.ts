@@ -76,6 +76,17 @@ export class TenderService extends EntityCrudService<Tender> {
 
       const prResponse = prRequest.data;
 
+      if (prResponse.status !== 'APPROVED') {
+        throw new BadRequestException('pr_is_not_approved');
+      } else if (
+        !prResponse.procurementRequisitionTechnicalTeams ||
+        prResponse.procurementRequisitionTechnicalTeams.length < 1
+      ) {
+        throw new BadRequestException('pr_has_no_technical_team');
+      } else if (!prResponse.procurementMechanisms) {
+        throw new BadRequestException('pr_has_no_mechanism');
+      }
+
       const tenderPayload = {
         name: prResponse.name,
         procurementCategory: prResponse.procurementCategory ?? 'Goods',
@@ -468,8 +479,9 @@ export class TenderService extends EntityCrudService<Tender> {
         subject_of_procurement: tender.name,
       });
 
-    const pdfBuffer = await this.documentManipulatorService.convertDocxToPdf(
+    const pdfBuffer = await this.documentManipulatorService.convertDocument(
       invitationDocumentBuffer,
+      '.pdf',
     );
 
     const tenderInvitation = await this.minIOService.uploadBuffer(
