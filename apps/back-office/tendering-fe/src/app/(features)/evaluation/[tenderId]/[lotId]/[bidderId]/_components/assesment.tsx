@@ -27,7 +27,7 @@ export const ChecklistAssessment = () => {
   const onSubmit = async (data: any) => {
     const tempData = {
       ...data,
-      spdPreliminaryEvaluationId: checklistId,
+      eqcPreliminaryExaminationId: checklistId,
       lotId,
       bidderId,
       tenderId,

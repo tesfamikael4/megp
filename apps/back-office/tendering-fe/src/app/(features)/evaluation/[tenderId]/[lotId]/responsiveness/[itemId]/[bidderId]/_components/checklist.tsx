@@ -11,7 +11,11 @@ export const Checklist = () => {
     useLazyGetResponsivenessChecklistByLotIdQuery();
 
   useEffect(() => {
-    getChecklists({ lotId: lotId as string, bidderId: bidderId as string });
+    getChecklists({
+      lotId: lotId as string,
+      bidderId: bidderId as string,
+      itemId: itemId as string,
+    });
   }, []);
   const router = useRouter();
   const { tenderId, lotId, bidderId, itemId } = useParams();
@@ -40,7 +44,7 @@ export const Checklist = () => {
                       : 'font-semibold flex justify-between items-center'
                   }
                 >
-                  {list.itbDescription}
+                  {list.requirement}
 
                   {list.check ? (
                     <IconCircleCheck size={18} color="green" />

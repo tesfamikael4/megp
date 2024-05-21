@@ -5,10 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  EntityManager,
-  Repository,
-} from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import {
   Budget,
   PostBudgetPlanActivity,
