@@ -1,6 +1,7 @@
 'use client';
 import { useCompleteEvaluationMutation } from '@/store/api/tendering/preliminary-compliance.api';
 import { useCompleteQualificationEvaluationMutation } from '@/store/api/tendering/technical-qualification';
+import { useCompleteResponsivenessEvaluationMutation } from '@/store/api/tendering/technical-responsiveness.api';
 import { useLazyGetBidderDetailsQuery } from '@/store/api/tendering/tendering.api';
 import { Badge, Box, Button, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
@@ -18,7 +19,7 @@ export const BidderOverView = ({
     | 'technicalQualification'
     | 'technicalResponsiveness';
 }) => {
-  const { tenderId, lotId, bidderId } = useParams();
+  const { tenderId, lotId, bidderId, itemId } = useParams();
   const router = useRouter();
   const pathname = usePathname();
   const [getBidder, { data, isLoading }] = useLazyGetBidderDetailsQuery();
@@ -28,6 +29,10 @@ export const BidderOverView = ({
     completeQualificationEvaluation,
     { isLoading: isQualificationCompleting },
   ] = useCompleteQualificationEvaluationMutation();
+  const [
+    completeResponsivenessEvaluation,
+    { isLoading: isResponsivenessCompleting },
+  ] = useCompleteResponsivenessEvaluationMutation();
 
   useEffect(() => {
     getBidder({
@@ -49,6 +54,13 @@ export const BidderOverView = ({
         await completeQualificationEvaluation({
           lotId: lotId as string,
           bidderId: bidderId as string,
+          isTeamLead: pathname.includes('team-assessment'),
+        }).unwrap();
+      } else if (milestone == 'technicalResponsiveness') {
+        await completeResponsivenessEvaluation({
+          lotId: lotId as string,
+          bidderId: bidderId as string,
+          itemId: itemId as string,
           isTeamLead: pathname.includes('team-assessment'),
         }).unwrap();
       }
@@ -78,7 +90,11 @@ export const BidderOverView = ({
         action={
           <Button
             onClick={complete}
-            loading={isCompleting || isQualificationCompleting}
+            loading={
+              isCompleting ||
+              isQualificationCompleting ||
+              isResponsivenessCompleting
+            }
           >
             Complete
           </Button>
