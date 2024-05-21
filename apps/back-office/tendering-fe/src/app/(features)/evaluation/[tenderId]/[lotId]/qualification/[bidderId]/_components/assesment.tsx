@@ -40,7 +40,7 @@ export const ChecklistAssessment = () => {
     }
   };
   return (
-    <Section title="Bidder Checklist" collapsible={false} className="h-full">
+    <Section title="Compliance" collapsible={false} className="h-full">
       <Controller
         control={control}
         name="qualified"

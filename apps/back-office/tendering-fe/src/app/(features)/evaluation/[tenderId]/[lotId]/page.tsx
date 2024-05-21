@@ -25,7 +25,6 @@ import {
 } from '@/store/api/tendering/preliminary-compliance.api';
 import { modals } from '@mantine/modals';
 import { LotOverview } from '../../_components/lot-overview';
-import { useLazyGetOpeningAssessmentsQuery } from '@/store/api/tendering/tender-opening.api';
 import { useEffect } from 'react';
 export default function BidOpening() {
   const router = useRouter();
@@ -42,6 +41,7 @@ export default function BidOpening() {
     columns: [
       {
         accessor: 'bidderName',
+        title: 'Bidder',
         sortable: true,
         render: (record) => record.bidder.bidderName,
       },
@@ -169,7 +169,7 @@ const BidderDetail = ({ bidder }: any) => {
           columns: [
             {
               accessor: 'itbDescription',
-              title: 'Name',
+              title: 'Requirements',
             },
             {
               accessor: 'Assessment',

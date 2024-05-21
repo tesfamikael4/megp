@@ -1,16 +1,8 @@
 'use client';
 import { useLazyGetTenderDetailQuery } from '@/store/api/tendering/tendering.api';
-import {
-  ActionIcon,
-  Badge,
-  Box,
-  Flex,
-  LoadingOverlay,
-  Text,
-  Tooltip,
-} from '@mantine/core';
+import { Badge, Box, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { Section } from '@megp/core-fe';
-import { IconChevronLeft, IconEye } from '@tabler/icons-react';
+import { IconChevronLeft } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -34,7 +26,13 @@ export const TenderOverView = ({ basePath }: { basePath: string }) => {
             className="cursor-pointer"
           >
             <IconChevronLeft size={14} />
-            <Text className="font-semibold">{data?.name ?? ''}</Text>
+            <Text className="font-semibold text-lg">
+              Tender :
+              <Text span className="font-normal text-lg">
+                {' '}
+                {data?.name ?? ''}
+              </Text>
+            </Text>
           </Flex>
         }
         subTitle={data?.procurementReferenceNumber ?? ''}
@@ -48,7 +46,7 @@ export const TenderOverView = ({ basePath }: { basePath: string }) => {
                   Envelope :
                 </Text>
                 <Text fw={500} size="sm">
-                  Bid :
+                  Award Type :
                 </Text>
               </Box>
               <Box>

@@ -1,8 +1,13 @@
 'use client';
 import { useLazyGetQualificationChecklistByLotIdQuery } from '@/store/api/tendering/technical-qualification';
-import { Box, Table } from '@mantine/core';
+import { Box, Table, Tooltip } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
-import { IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';
+import {
+  IconAlertCircle,
+  IconCircleCheck,
+  IconProgress,
+  IconProgressAlert,
+} from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -21,7 +26,33 @@ export const Checklist = () => {
   const { tenderId, lotId, bidderId } = useParams();
   const config: ExpandableTableConfig = {
     minHeight: 50,
-    columns: [{ accessor: 'title', title: 'Name' }],
+    columns: [
+      { accessor: 'title', title: 'Name' },
+      {
+        accessor: '',
+        title: '',
+        render: (record) => {
+          const totalItems = record.checklist.length;
+          const checkedItems = record.checklist.filter(
+            (item) => item.check,
+          ).length;
+          const percentageChecked = (checkedItems / totalItems) * 100;
+          return percentageChecked == 0 ? (
+            <Tooltip label="Not Started Yet">
+              <IconProgressAlert size={18} color="gray" />
+            </Tooltip>
+          ) : percentageChecked != 100 ? (
+            <Tooltip label="Inprogress">
+              <IconProgress size={18} color="orange" />
+            </Tooltip>
+          ) : (
+            <Tooltip label="Completed">
+              <IconCircleCheck size={18} color="green" />
+            </Tooltip>
+          );
+        },
+      },
+    ],
     isExpandable: true,
     expandedRowContent: (record) => {
       return (
@@ -47,9 +78,13 @@ export const Checklist = () => {
                   {list.itbDescription}
 
                   {list.check ? (
-                    <IconCircleCheck size={18} color="green" />
+                    <Tooltip label="Evaluated">
+                      <IconCircleCheck size={18} color="green" />
+                    </Tooltip>
                   ) : (
-                    <IconAlertCircle size={18} color="red" />
+                    <Tooltip label="Not Evaluated Yet">
+                      <IconAlertCircle size={18} color="red" />
+                    </Tooltip>
                   )}
                 </Table.Td>
               </Table.Tr>
@@ -61,7 +96,7 @@ export const Checklist = () => {
   };
   return (
     <div>
-      <Section title="Bid Attributes" className="h-full" collapsible={false}>
+      <Section title="Requirements" className="h-full" collapsible={false}>
         <ExpandableTable config={config} data={checklistData ?? []} />
       </Section>
     </div>

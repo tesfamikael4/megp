@@ -41,6 +41,7 @@ export default function BidOpening() {
     columns: [
       {
         accessor: 'bidderName',
+        title: 'Bidder',
         sortable: true,
         render: (record) => record.bidder.bidderName,
       },
@@ -168,7 +169,7 @@ const BidderDetail = ({ bidder }: any) => {
           columns: [
             {
               accessor: 'itbDescription',
-              title: 'Name',
+              title: 'Requirements',
             },
             {
               accessor: 'Assessment',

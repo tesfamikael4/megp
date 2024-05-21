@@ -21,7 +21,7 @@ export const Checklist = () => {
   const { tenderId, lotId, bidderId } = useParams();
   return (
     <div>
-      <Section title="Bid Attributes" className="h-full" collapsible={false}>
+      <Section title="Requirement" className="h-full" collapsible={false}>
         <Table striped highlightOnHover withTableBorder withColumnBorders>
           <Table.Tr>
             <Table.Th>Name</Table.Th>
