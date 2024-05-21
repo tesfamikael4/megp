@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Lot } from '.';
+import { TechnicalScoringAssessmentDetail } from './technical-scoring-assessment-detail.entity';
 
 @Entity({ name: 'eqc_technical_scorings' })
 export class EqcTechnicalScoring extends Audit {
@@ -68,4 +69,12 @@ export class EqcTechnicalScoring extends Audit {
 
   @Column()
   isRequired: boolean;
+
+  @OneToMany(
+    () => TechnicalScoringAssessmentDetail,
+    (technicalScoringAssessmentDetail) =>
+      technicalScoringAssessmentDetail.eqcTechnicalScoring,
+  )
+  @JoinColumn()
+  technicalScoringAssessmentDetails: TechnicalScoringAssessmentDetail[];
 }
