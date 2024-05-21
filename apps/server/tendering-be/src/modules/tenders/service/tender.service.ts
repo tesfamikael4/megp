@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
@@ -326,10 +331,6 @@ export class TenderService extends EntityCrudService<Tender> {
 
     if (!tender) {
       throw new BadRequestException('tender_not_found');
-    } else if (!tender.spd.bds) {
-      throw new BadRequestException('bds_not_found');
-    } else if (!tender.spd.scc) {
-      throw new BadRequestException('scc_not_found');
     }
 
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
@@ -341,7 +342,17 @@ export class TenderService extends EntityCrudService<Tender> {
       throw new BadRequestException('spd_document_not_found');
     }
 
-    const bdsHtml = await this.downloadAndConvert(tender.spd.bds, {
+    let bds = tender.spd.bds;
+    let scc = tender.spd.scc;
+
+    if (!bds) {
+      bds = await this.getDownloadUrl(tender.spd.spdId, 'bds');
+    }
+    if (scc) {
+      scc = await this.getDownloadUrl(tender.spd.spdId, 'scc');
+    }
+
+    const bdsHtml = await this.downloadAndConvert(bds, {
       public_body: tender.organizationName,
       clarification_deadline_date: new Date(
         tender.bdsGeneral.clarificationDeadline,
@@ -358,7 +369,7 @@ export class TenderService extends EntityCrudService<Tender> {
       ).toLocaleTimeString(),
     });
 
-    const sccHtml = await this.downloadAndConvert(tender.spd.scc, {
+    const sccHtml = await this.downloadAndConvert(scc, {
       public_body: tender.organizationName,
       procurement_reference_no: tender.procurementReferenceNumber,
     });
@@ -582,5 +593,21 @@ export class TenderService extends EntityCrudService<Tender> {
         }
       });
     });
+  }
+
+  private async getDownloadUrl(spdId: string, type: string) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
+      spdId,
+      type,
+    });
+    if (!spdTemplate) {
+      throw new NotFoundException(`spd_not_found`);
+    } else if (!spdTemplate.documentDocx) {
+      throw new NotFoundException(`spd_document_not_found`);
+    }
+
+    return spdTemplate.documentDocx;
   }
 }
