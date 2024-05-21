@@ -55,7 +55,6 @@ export class TenderController extends EntityCrudController<Tender>(options) {
   }
 
   @Post('generate-tender-document')
-  @AllowAnonymous()
   async generateTenderDocument(@Body() itemData: GenerateTenderDocumentDto) {
     return this.tenderService.generateTenderDocument(itemData);
   }
