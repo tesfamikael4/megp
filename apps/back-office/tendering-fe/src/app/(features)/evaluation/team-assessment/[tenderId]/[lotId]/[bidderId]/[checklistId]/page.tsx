@@ -72,12 +72,18 @@ export default function ChecklistDetail() {
                   minHeight: 50,
                   columns: [
                     {
-                      accessor: 'openerName',
+                      accessor: 'evaluatorName',
+                      render: (record) => {
+                        return (
+                          record?.technicalPreliminaryAssessment
+                            ?.evaluatorName ?? ''
+                        );
+                      },
                     },
                     {
                       accessor: 'checked',
                       title: 'Assessment',
-                      render: (record) => record.check?.qualified ?? '',
+                      render: (record) => record?.qualified ?? '',
                     },
                   ],
                 }}
