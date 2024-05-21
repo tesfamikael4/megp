@@ -348,7 +348,7 @@ export class TenderService extends EntityCrudService<Tender> {
     if (!bds) {
       bds = await this.getDownloadUrl(tender.spd.spdId, 'bds');
     }
-    if (scc) {
+    if (!scc) {
       scc = await this.getDownloadUrl(tender.spd.spdId, 'scc');
     }
 
