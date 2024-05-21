@@ -2,11 +2,17 @@
 import { useLazyGetLotDetailQuery } from '@/store/api/tendering/tendering.api';
 import { Badge, Box, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { Section } from '@megp/core-fe';
-import { IconChevronLeft, IconEye } from '@tabler/icons-react';
+import { IconChevronLeft } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export const LotOverview = ({ basePath }: { basePath: string }) => {
+export const LotOverview = ({
+  basePath,
+  teamAssessment = false,
+}: {
+  basePath: string;
+  teamAssessment?: boolean;
+}) => {
   const { tenderId, lotId } = useParams();
   const router = useRouter();
   const [getLot, { data, isLoading }] = useLazyGetLotDetailQuery();
@@ -19,17 +25,25 @@ export const LotOverview = ({ basePath }: { basePath: string }) => {
       <LoadingOverlay visible={isLoading} />
       <Section
         title={
-          <Flex
-            justify="center"
-            align="center"
-            onClick={() => router.push(basePath)}
-            className="cursor-pointer"
-          >
-            <IconChevronLeft size={14} />
-            <Text className="font-semibold">{data?.name ?? ''}</Text>
+          <Flex justify="center" align="center" className="cursor-pointer">
+            <IconChevronLeft size={14} onClick={() => router.push(basePath)} />
+            <Text
+              className="font-semibold text-lg"
+              onClick={() => router.push(basePath)}
+            >
+              Lot :{' '}
+              <Text span className="font-normal text-lg">
+                {data?.lots?.[0]?.name ?? ''}
+              </Text>
+            </Text>
+            {teamAssessment && (
+              <Badge className="ml-5" size="xs">
+                Team Assessment
+              </Badge>
+            )}
           </Flex>
         }
-        subTitle={data?.procurementReferenceNumber ?? ''}
+        // subTitle={data?.procurementReferenceNumber ?? ''}
         collapsible={false}
       >
         <Flex gap={20}>
@@ -37,17 +51,17 @@ export const LotOverview = ({ basePath }: { basePath: string }) => {
             <Flex gap={5}>
               <Box>
                 <Text fw={500} size="sm">
-                  Lot :
+                  Tender :
                 </Text>
                 <Text fw={500} size="sm">
                   Envelope :
                 </Text>
                 <Text fw={500} size="sm">
-                  Bid :
+                  Award Type :
                 </Text>
               </Box>
               <Box>
-                {data?.lots?.[0]?.name && <p>{data?.lots?.[0]?.name}</p>}
+                <p>{data?.name}</p>
                 {data?.bdsSubmission?.envelopType && (
                   <Badge variant="outline" size="xs" color="gray">
                     {data?.bdsSubmission?.envelopType}

@@ -12,8 +12,10 @@ import { useEffect } from 'react';
 export const BidderOverView = ({
   basePath,
   milestone,
+  teamAssessment = false,
 }: {
   basePath: string;
+  teamAssessment?: boolean;
   milestone:
     | 'technicalCompliance'
     | 'technicalQualification'
@@ -75,17 +77,25 @@ export const BidderOverView = ({
       <LoadingOverlay visible={isLoading} />
       <Section
         title={
-          <Flex
-            justify="center"
-            align="center"
-            onClick={() => router.push(basePath)}
-            className="cursor-pointer"
-          >
-            <IconChevronLeft size={14} />
-            <Text className="font-semibold">{data?.name ?? ''}</Text>
+          <Flex justify="center" align="center" className="cursor-pointer">
+            <IconChevronLeft size={14} onClick={() => router.push(basePath)} />
+            <Text
+              className="font-semibold text-lg"
+              onClick={() => router.push(basePath)}
+            >
+              Bidder :
+              <Text span className="font-normal text-lg">
+                {' ' + data?.bidRegistrations?.[0]?.bidderName ?? ''}
+              </Text>
+            </Text>
+            {teamAssessment && (
+              <Badge className="ml-5" size="xs">
+                Team Assessment
+              </Badge>
+            )}
           </Flex>
         }
-        subTitle={data?.procurementReferenceNumber ?? ''}
+        // subTitle={data?.procurementReferenceNumber ?? ''}
         collapsible={false}
         action={
           <Button
@@ -105,17 +115,17 @@ export const BidderOverView = ({
             <Flex gap={5}>
               <Box>
                 <Text fw={500} size="sm">
-                  Lot :
+                  Tender :
                 </Text>
                 <Text fw={500} size="sm">
                   Envelope :
                 </Text>
                 <Text fw={500} size="sm">
-                  Bid :
+                  Award Type :
                 </Text>
               </Box>
               <Box>
-                {data?.lots?.[0]?.name && <p>{data?.lots?.[0]?.name}</p>}
+                <p>{data?.name ?? ''}</p>
                 {data?.bdsSubmission?.envelopType && (
                   <Badge variant="outline" size="xs" color="gray">
                     {data?.bdsSubmission?.envelopType}
@@ -135,7 +145,7 @@ export const BidderOverView = ({
             <Flex gap={5}>
               <Box>
                 <Text fw={500} size="sm">
-                  Bidder :
+                  Lot :
                 </Text>
                 <Text fw={500} size="sm">
                   Evaluation method :
@@ -145,9 +155,7 @@ export const BidderOverView = ({
                 </Text>
               </Box>
               <Box>
-                {data?.bidRegistrations?.[0]?.bidderName && (
-                  <p>{data?.bidRegistrations?.[0]?.bidderName}</p>
-                )}
+                {data?.lots?.[0]?.name && <p>{data?.lots?.[0]?.name}</p>}
                 <Text size="sm">
                   {data?.bdsEvaluation?.evaluationMethod && (
                     <Badge variant="outline" size="xs" color="gray">
