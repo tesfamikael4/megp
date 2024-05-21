@@ -43,7 +43,7 @@ export default function SpdQualification({
       },
       {
         accessor: 'formLink',
-        title: 'Document Requirement',
+        title: 'Form Link',
         width: 150,
       },
       {

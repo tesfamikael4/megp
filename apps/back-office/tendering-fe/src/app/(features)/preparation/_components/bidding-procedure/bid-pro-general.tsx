@@ -6,8 +6,9 @@ import {
   LoadingOverlay,
   NumberInput,
   Stack,
+  Text,
 } from '@mantine/core';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 import {
@@ -16,38 +17,41 @@ import {
   useUpdateMutation,
 } from '@/app/(features)/preparation/_api/tender/bid-pro-general.api';
 import { useParams } from 'next/navigation';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { DateInput } from '@mantine/dates';
 
 export default function BidProGeneral() {
   const { id } = useParams();
-  const generalSchema: ZodType<Partial<ITenderGeneral>> = z
-    .object({
-      jointVentureAllowed: z.boolean({
-        required_error: 'Joint Venture Allowed is required',
-      }),
-      maximumNumberOfMembers: z
-        .number()
-        .min(1, { message: 'This field is required' }),
-      subContractAllowed: z.boolean({
-        required_error: 'Sub-Contract Allowed is required',
-      }),
-      maximumPercentageContractingAllowed: z.number({
-        required_error: 'Maximum Percentage Contracting Allowed is required',
-      }),
-      clarificationDeadline: z.date(),
-      preBidConferenceRequired: z.boolean(),
-      preBidConferenceDate: z.date(),
-      siteVisitAllowed: z.boolean(),
-    })
-    .refine((data) => data.preBidConferenceRequired, {
-      message: 'prebid conference date is required',
-      path: ['preBidConferenceDate'],
-    });
+
+  const [isSubContractRequired, setISubContractequired] =
+    useState<boolean>(false);
+  const [isPreBidDateError, setIsPreBidDateError] = useState<boolean>(false);
+  const generalSchema: ZodType<Partial<ITenderGeneral>> = z.object({
+    jointVentureAllowed: z.boolean({
+      required_error: 'Joint Venture Allowed is required',
+    }),
+    maximumNumberOfMembers: z
+      .number()
+      .nonnegative()
+      .min(1, { message: 'This field is required' }),
+    subContractAllowed: z.boolean({
+      required_error: 'Sub-Contract Allowed is required',
+    }),
+    maximumPercentageContractingAllowed: z
+      .number()
+      .nonnegative()
+      .lte(100)
+      .optional(),
+    clarificationDeadline: z.date(),
+    preBidConferenceRequired: z.boolean(),
+    preBidConferenceDate: z.date().optional(),
+    siteVisitAllowed: z.boolean(),
+  });
   const {
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
     register,
     control,
@@ -55,34 +59,55 @@ export default function BidProGeneral() {
     resolver: zodResolver(generalSchema),
   });
 
+  const preBidDateRequired = watch('preBidConferenceRequired');
+  const preBidDate = watch('preBidConferenceDate');
+  const subContract = watch('subContractAllowed');
+  const maxPercentageAllowed = watch('maximumPercentageContractingAllowed');
+
   const { data: selected, isSuccess, isLoading } = useReadQuery(id?.toString());
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
 
   const onCreate = async (data) => {
-    try {
-      await create({
-        ...data,
-        tenderId: id,
-        spdId: id,
-      });
-      notify('Success', 'Bid Procurement General created successfully');
-    } catch (err) {
-      notify('Error', 'Error in creating bid procurement general');
+    if (
+      (preBidDateRequired && !preBidDate) ||
+      (subContract && !maxPercentageAllowed)
+    ) {
+      setIsPreBidDateError(preBidDateRequired && !preBidDate);
+      setISubContractequired(subContract && !maxPercentageAllowed);
+      return;
+    } else {
+      setIsPreBidDateError(false);
+      try {
+        await create({
+          ...data,
+          tenderId: id,
+          spdId: id,
+        });
+        notify('Success', 'Bid Procurement General created successfully');
+      } catch (err) {
+        notify('Error', 'Error in creating bid procurement general');
+      }
     }
   };
 
   const onUpdate = async (data) => {
-    try {
-      await update({
-        ...data,
-        tenderId: id,
-        id: id?.toString(),
-      });
-      notify('Success', 'Bid Procurement General updated successfully');
-    } catch {
-      notify('Error', 'Error in updating bid procurement general');
+    if (preBidDateRequired && !preBidDate) {
+      setIsPreBidDateError(true);
+      return;
+    } else {
+      setIsPreBidDateError(false);
+      try {
+        await update({
+          ...data,
+          tenderId: id,
+          id: id?.toString(),
+        });
+        notify('Success', 'Bid Procurement General updated successfully');
+      } catch {
+        notify('Error', 'Error in updating bid procurement general');
+      }
     }
   };
 
@@ -118,7 +143,7 @@ export default function BidProGeneral() {
           {...register('siteVisitAllowed')}
         />
       </Flex>
-      <div className="flex gap-3 items-center">
+      <Flex gap={'md'} className="flex gap-3 items-center">
         <Controller
           name="maximumNumberOfMembers"
           control={control}
@@ -156,60 +181,79 @@ export default function BidProGeneral() {
             />
           )}
         />
-      </div>
+      </Flex>
       <div className="flex gap-3 items-center">
         <Checkbox
           label="Pre Bid Conference Required"
           className="w-1/2"
           {...register('preBidConferenceRequired')}
         />
-        <Controller
-          name="preBidConferenceDate"
-          control={control}
-          render={({ field: { name, onChange, value } }) => (
-            <DateInput
-              name={name}
-              value={value}
-              className="w-1/2"
-              onChange={onChange}
-              label="Pre Bid Conference Date"
-              error={
-                errors['preBidConferenceDate']
-                  ? errors['preBidConferenceDate']?.message?.toString()
-                  : ''
-              }
-            />
-          )}
-        />
-      </div>
-      <div className="flex gap-3 items-center">
         <Checkbox
           label="Sub-Contract Allowed"
           className="w-1/2"
           {...register('subContractAllowed')}
         />
-        <Controller
-          name="maximumPercentageContractingAllowed"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <NumberInput
-              label="Maximum Percentage Sub-contacting Allowed"
-              name={name}
-              value={value}
-              className="w-1/2"
-              onChange={(d) => onChange(parseInt(d as string))}
-              error={
-                errors['maximumPercentageContractingAllowed']
-                  ? errors[
-                      'maximumPercentageContractingAllowed'
-                    ]?.message?.toString()
-                  : ''
-              }
-              withAsterisk
-            />
-          )}
-        />
       </div>
+      <Flex gap={'md'} className="w-full" align={'start'}>
+        {preBidDateRequired && (
+          <Flex className="w-1/2" direction={'column'} gap={'sm'}>
+            <Controller
+              name="preBidConferenceDate"
+              control={control}
+              render={({ field: { name, onChange, value } }) => (
+                <DateInput
+                  name={name}
+                  value={value}
+                  className="w-full"
+                  onChange={onChange}
+                  label="Pre Bid Conference Date"
+                  error={
+                    errors['preBidConferenceDate']
+                      ? errors['preBidConferenceDate']?.message?.toString()
+                      : ''
+                  }
+                />
+              )}
+            />
+            {isPreBidDateError && (
+              <Text className="text-red-500" size="sm">
+                Pre bid conference date is required
+              </Text>
+            )}
+          </Flex>
+        )}
+        {subContract && (
+          <Flex direction={'column'} gap={'sm'} className="w-1/2">
+            <Controller
+              name="maximumPercentageContractingAllowed"
+              control={control}
+              render={({ field: { name, value, onChange } }) => (
+                <NumberInput
+                  label="Maximum Percentage Sub-contacting Allowed"
+                  name={name}
+                  value={value}
+                  className="w-full"
+                  onChange={(d) => onChange(parseInt(d as string))}
+                  error={
+                    errors['maximumPercentageContractingAllowed']
+                      ? errors[
+                          'maximumPercentageContractingAllowed'
+                        ]?.message?.toString()
+                      : ''
+                  }
+                  withAsterisk
+                />
+              )}
+            />
+
+            {isSubContractRequired && (
+              <Text className="text-red-500" size="sm">
+                Maximum percentage sub contractig allowed is required
+              </Text>
+            )}
+          </Flex>
+        )}
+      </Flex>
 
       <EntityButton
         mode={selected ? 'detail' : 'new'}

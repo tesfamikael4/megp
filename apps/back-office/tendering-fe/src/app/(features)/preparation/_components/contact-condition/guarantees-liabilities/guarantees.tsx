@@ -20,6 +20,7 @@ import {
   useReadQuery,
   useUpdateMutation,
 } from '../../../_api/scc/guarantees';
+import { useListQuery } from '../../../_api/scc/curencies.api';
 
 const guarenteeFormData = [
   {
@@ -55,6 +56,8 @@ export default function Guarantees() {
     guaranteeRequired: z.boolean(),
     guaranteePercentage: z
       .number()
+      .nonnegative()
+      .lte(100)
       .min(1, { message: 'Guarantee Percentage is required ' }),
     currency: z.enum(['USD', 'Birr']),
     guaranteeForm: z
@@ -79,6 +82,14 @@ export default function Guarantees() {
     isLoading,
   } = useReadQuery(id?.toString());
 
+  const {
+    data: currencies,
+    isLoading: currencyLoading,
+    isSuccess,
+  } = useListQuery({
+    skip: 0,
+    take: 300,
+  });
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
 
@@ -131,7 +142,9 @@ export default function Guarantees() {
 
   return (
     <Stack>
-      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
+      <LoadingOverlay
+        visible={isLoading || isUpdating || isSaving || currencyLoading}
+      />
       <Flex gap="md">
         <Checkbox
           label="Guarantee Required"
@@ -180,7 +193,16 @@ export default function Guarantees() {
           withAsterisk
           label="Currency"
           className="w-1/2"
-          data={['USD', 'Birr']}
+          data={
+            isSuccess && currencies && currencies.items.length > 0
+              ? currencies.items.map((item: any) => {
+                  const value = { ...item };
+                  (value['value'] = item.abbreviation),
+                    (value['label'] = item.name);
+                  return value;
+                })
+              : []
+          }
           error={
             errors['currency'] ? errors['currency']?.message?.toString() : ''
           }

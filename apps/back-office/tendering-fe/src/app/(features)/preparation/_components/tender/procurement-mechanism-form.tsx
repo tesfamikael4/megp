@@ -27,7 +27,6 @@ export default function ProcurementMechanismForm() {
       invitationType: z.enum(['direct', 'limited', 'open']),
       stageType: z.enum(['single', 'multiple']),
       marketApproach: z.enum(['local', 'national', 'international']),
-      stage: z.number(),
     });
   const {
     data: selected,
@@ -45,7 +44,6 @@ export default function ProcurementMechanismForm() {
     resolver: zodResolver(ProcurementMechanismSchema),
   });
   const stageTypeValue = watch('stageType');
-  const stageValue = watch('stage');
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
 
@@ -54,7 +52,7 @@ export default function ProcurementMechanismForm() {
       await create({
         ...data,
         tenderId: id,
-        stage: stageTypeValue === 'single' ? 1 : data.stage,
+        stage: stageTypeValue === 'single' ? 1 : 2,
       });
       notify('Success', 'Procurement Mechanism created successfully');
     } catch (err) {
@@ -92,9 +90,6 @@ export default function ProcurementMechanismForm() {
     }
   }, [reset, selected, selectedSuccess]);
 
-  useEffect(() => {
-    logger.log(errors);
-  }, [errors]);
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
@@ -124,7 +119,10 @@ export default function ProcurementMechanismForm() {
               value={value}
               className="w-1/2"
               onChange={(d) => onChange(d)}
-              data={['single', 'multiple']}
+              data={[
+                { value: 'single', label: 'Single Stage' },
+                { value: 'multiple', label: 'Multiple Value' },
+              ]}
               error={
                 errors?.stageType ? errors?.stageType?.message?.toString() : ''
               }
@@ -146,32 +144,6 @@ export default function ProcurementMechanismForm() {
           }
           {...register('marketApproach')}
         />
-        <Flex direction={'column'} gap={'sm'} className="w-1/2">
-          <Controller
-            name="stage"
-            control={control}
-            render={({ field: { name, value, onChange } }) => (
-              <NumberInput
-                label="Stage"
-                name={name}
-                disabled={stageTypeValue === 'single'}
-                value={value}
-                min={1}
-                withAsterisk
-                className="w-full"
-                onChange={(d) => onChange(parseInt(d as string))}
-                error={
-                  errors['stage'] ? errors['stage']?.message?.toString() : ''
-                }
-              />
-            )}
-          />
-          {stageTypeValue === 'multiple' && stageValue === 0 && (
-            <Text className="text-red-500" size="xs">
-              Stage is required for multiple stage type
-            </Text>
-          )}
-        </Flex>
       </div>
 
       <EntityButton
