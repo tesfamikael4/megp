@@ -318,6 +318,9 @@ export class TenderService extends EntityCrudService<Tender> {
       },
       relations: {
         spd: true,
+        bdsGeneral: true,
+        bdsPreparation: true,
+        bdsSubmission: true,
       },
     });
 
@@ -338,9 +341,27 @@ export class TenderService extends EntityCrudService<Tender> {
       throw new BadRequestException('spd_document_not_found');
     }
 
-    const bdsHtml = await this.downloadAndConvert(tender.spd.bds);
+    const bdsHtml = await this.downloadAndConvert(tender.spd.bds, {
+      public_body: tender.organizationName,
+      clarification_deadline_date: new Date(
+        tender.bdsGeneral.clarificationDeadline,
+      ).toDateString(),
+      clarification_deadline_time: new Date(
+        tender.bdsGeneral.clarificationDeadline,
+      ).toLocaleTimeString(),
+      incoterm_edition: tender.bdsPreparation.incotermsEdition,
+      opening_date_date: new Date(
+        tender.bdsSubmission.openingDate,
+      ).toDateString(),
+      opening_date_time: new Date(
+        tender.bdsSubmission.openingDate,
+      ).toLocaleTimeString(),
+    });
 
-    const sccHtml = await this.downloadAndConvert(tender.spd.scc);
+    const sccHtml = await this.downloadAndConvert(tender.spd.scc, {
+      public_body: tender.organizationName,
+      procurement_reference_no: tender.procurementReferenceNumber,
+    });
 
     const fileReadable = await this.minIOService.downloadBuffer(
       spdTemplate.documentDocx,
@@ -478,12 +499,16 @@ export class TenderService extends EntityCrudService<Tender> {
     }
   }
 
-  private async downloadAndConvert(fileInfo: any) {
+  private async downloadAndConvert(fileInfo: any, data: any) {
     const fileReadable = await this.minIOService.downloadBuffer(fileInfo);
     const fileBuffer =
       await this.documentManipulatorService.streamToBuffer(fileReadable);
+
+    const populatedFileBuffer =
+      await this.documentManipulatorService.populateTemplate(fileBuffer, data);
+
     const html = await this.documentManipulatorService.convertDocxToHTMLString(
-      fileBuffer,
+      populatedFileBuffer,
       '.html',
     );
     return html;
