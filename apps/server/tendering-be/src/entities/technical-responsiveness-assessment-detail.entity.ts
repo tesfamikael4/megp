@@ -28,7 +28,7 @@ export class TechnicalResponsivenessAssessmentDetail extends OrgAudit {
   technicalResponsivenessAssessment: TechnicalResponsivenessAssessment;
 
   @Column('uuid')
-  spdResponsivenessId: string;
+  sorTechnicalRequirementId: string;
 
   @ManyToOne(
     () => SorTechnicalRequirement,
