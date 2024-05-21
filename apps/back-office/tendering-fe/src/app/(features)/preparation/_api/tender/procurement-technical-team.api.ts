@@ -8,7 +8,7 @@ const procurementTechnicalTeamApi =
 export const procurementTechnicalTeamSliceApi: typeof EntitySliceApi =
   createEntitySlice<ProcurementTechnicalTeam>(
     procurementTechnicalTeamApi,
-    'team-members',
+    'procurement-technical-teams',
   );
 
 export const {

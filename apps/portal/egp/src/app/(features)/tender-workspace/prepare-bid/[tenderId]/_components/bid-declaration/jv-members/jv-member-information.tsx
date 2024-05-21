@@ -131,7 +131,7 @@ const JvMemberInformation = () => {
         password: prepareBidContext?.password,
       });
     }
-  }, [prepareBidContext?.password, searchParams, triggerJv]);
+  }, [prepareBidContext, searchParams, triggerJv]);
 
   useEffect(() => {
     if (jvMemberVal) {
@@ -144,7 +144,7 @@ const JvMemberInformation = () => {
         value: jvMemberVal,
       });
     }
-  }, [jvMemberVal, prepareBidContext?.password, reset, searchParams]);
+  }, [jvMemberVal, prepareBidContext, reset, searchParams]);
   return (
     <>
       <Section
@@ -172,7 +172,7 @@ const JvMemberInformation = () => {
                   Bidder Legal Name
                 </Box>
                 <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                  {vendor.name}
+                  {member.name}
                 </Box>
               </Flex>
               <Flex className="border-b border-gray-400 cursor-pointer group">
@@ -180,7 +180,7 @@ const JvMemberInformation = () => {
                   Country registration
                 </Box>
                 <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                  {vendor.countryOfRegistration}
+                  {member.countryOfRegistration}
                 </Box>
               </Flex>
               <Flex className="border-b border-gray-400 cursor-pointer group">
@@ -188,7 +188,7 @@ const JvMemberInformation = () => {
                   Year of registration
                 </Box>
                 <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                  {vendor.registrationIssuedDate}
+                  {member.registrationIssuedDate}
                 </Box>
               </Flex>
               <Flex className="border-b border-gray-400 cursor-pointer group">
@@ -204,7 +204,7 @@ const JvMemberInformation = () => {
                         Physical address
                       </Box>
                       <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                        {vendor.physicalAddress}
+                        {member.physicalAddress}
                       </Box>
                     </Flex>
                     <Flex className="border-b border-gray-400 cursor-pointer group">
@@ -212,7 +212,7 @@ const JvMemberInformation = () => {
                         City
                       </Box>
                       <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                        {vendor.city}
+                        {member.city}
                       </Box>
                     </Flex>
                     <Flex className="border-b border-gray-400 cursor-pointer group">
@@ -220,7 +220,7 @@ const JvMemberInformation = () => {
                         Region/state
                       </Box>
                       <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                        {vendor.region}
+                        {member.region}
                       </Box>
                     </Flex>
                     <Flex className="border-b border-gray-400 cursor-pointer group">
@@ -228,7 +228,7 @@ const JvMemberInformation = () => {
                         Distinct
                       </Box>
                       <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                        {vendor.district}
+                        {member.district}
                       </Box>
                     </Flex>
                     <Flex className="border-b border-gray-400 cursor-pointer group">
@@ -236,7 +236,7 @@ const JvMemberInformation = () => {
                         Country
                       </Box>
                       <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                        {vendor.countryOfRegistration}
+                        {member.countryOfRegistration}
                       </Box>
                     </Flex>
                     <Flex className="border-b border-gray-400 cursor-pointer group">
@@ -250,7 +250,7 @@ const JvMemberInformation = () => {
                         Postal Code
                       </Box>
                       <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                        {vendor.postalAddress}
+                        {member.postalAddress}
                       </Box>
                     </Flex>
                     <Flex className="border-b border-gray-400 cursor-pointer group">
@@ -258,7 +258,7 @@ const JvMemberInformation = () => {
                         Email
                       </Box>
                       <Box className="w-3/4 p-2 group-hover:bg-slate-50">
-                        {vendor.primaryEmail}
+                        {member.primaryEmail}
                       </Box>
                     </Flex>
                   </Box>

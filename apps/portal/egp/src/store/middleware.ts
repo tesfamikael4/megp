@@ -17,7 +17,6 @@ import { getBookmarkApi } from '@/app/(features)/my-workspace/_api/bookmark.api'
 import { getItemsApi } from '@/app/(features)/vendor/_api/item.api';
 import { checkPasswordApi } from '@/app/(features)/vendor/_api/bid-response.api';
 import { bidApi } from './api/registered-bid/registered-bid.api';
-import { getBidFormApi } from '@/app/(features)/vendor/_api/bid-form';
 import { getTenderSpdApi } from '@/app/(features)/vendor/_api/tender-spd';
 import { publicVendorsApi } from '@/app/(features)/_api/vendors.api';
 import { getRegistrationApi } from '@/app/(features)/_api/registration.api';
@@ -30,6 +29,8 @@ import {
 } from '@/app/(features)/tender-workspace/_api/bid-attribute-datas';
 import { tenderResponseApi } from '@/app/(features)/tender-workspace/_api/tender-bid-response.api';
 import { lotResponseApi } from '@/app/(features)/tender-workspace/_api/lot-bid-response.api';
+import { getBidFormApi } from '@/app/(features)/tender-workspace/_api/bid-form';
+import { documentaryEvidenceResponseApi } from '@/app/(features)/tender-workspace/_api/documentary-evidence-bid-response.api';
 
 const middleware = [
   vendorRegistrationApi.middleware,
@@ -59,6 +60,7 @@ const middleware = [
   getBds.middleware,
   tenderResponseApi.middleware,
   lotResponseApi.middleware,
+  documentaryEvidenceResponseApi.middleware,
 ];
 
 export { middleware };

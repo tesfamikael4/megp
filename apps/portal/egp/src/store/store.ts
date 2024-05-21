@@ -18,7 +18,6 @@ import { getItemsApi } from '@/app/(features)/vendor/_api/item.api';
 import { checkPasswordApi } from '@/app/(features)/vendor/_api/bid-response.api';
 import { bidApi } from './api/registered-bid/registered-bid.api';
 import { getTenderSpdApi } from '@/app/(features)/vendor/_api/tender-spd';
-import { getBidFormApi } from '@/app/(features)/vendor/_api/bid-form';
 import { publicVendorsApi } from '@/app/(features)/_api/vendors.api';
 import { getRegistrationApi } from '@/app/(features)/_api/registration.api';
 import { ItemBidResponseApi } from '@/app/(features)/tender-workspace/_api/item-bid-response.api';
@@ -32,6 +31,8 @@ import {
 } from '@/app/(features)/tender-workspace/_api/bid-attribute-datas';
 import { tenderResponseApi } from '@/app/(features)/tender-workspace/_api/tender-bid-response.api';
 import { lotResponseApi } from '@/app/(features)/tender-workspace/_api/lot-bid-response.api';
+import { getBidFormApi } from '@/app/(features)/tender-workspace/_api/bid-form';
+import { documentaryEvidenceResponseApi } from '@/app/(features)/tender-workspace/_api/documentary-evidence-bid-response.api';
 
 export const store = configureStore({
   reducer: {
@@ -64,6 +65,8 @@ export const store = configureStore({
     [getBds.reducerPath]: getBds.reducer,
     [tenderResponseApi.reducerPath]: tenderResponseApi.reducer,
     [lotResponseApi.reducerPath]: lotResponseApi.reducer,
+    [documentaryEvidenceResponseApi.reducerPath]:
+      documentaryEvidenceResponseApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) => {
