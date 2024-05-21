@@ -17,6 +17,7 @@ import { preliminaryComplianceApi } from './api/tendering/preliminary-compliance
 import { tenderOpeningApi } from './api/tendering/tender-opening.api';
 import { technicalQualification } from './api/tendering/technical-qualification';
 import { technicalResponsiveness } from './api/tendering/technical-responsiveness.api';
+import { procurementRequisitionApi } from '@/app/(features)/preparation/_api/tender/procurement-requisition.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -40,6 +41,7 @@ export const store = configureStore({
     [sorBillOfMaterialBulkCreateApi.reducerPath]:
       sorBillOfMaterialBulkCreateApi.reducer,
     [bidDocumentApi.reducerPath]: bidDocumentApi.reducer,
+    [procurementRequisitionApi.reducerPath]: procurementRequisitionApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -62,6 +64,7 @@ export const store = configureStore({
       tenderOpeningApi.middleware,
       bidDocumentApi.middleware,
       iamApi.middleware,
+      procurementRequisitionApi.middleware,
     ]),
 });
 

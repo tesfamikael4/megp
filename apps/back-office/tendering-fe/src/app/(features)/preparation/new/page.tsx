@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Section, logger, notify } from '@megp/core-fe';
-import { useLazyListQuery } from '../_api/tender/procurement-requisition.api';
+import { useLazyGetApprovedPRQuery } from '../_api/tender/procurement-requisition.api';
 import { ActionIcon } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { ExpandableTable } from '../../_components/expandable-table';
@@ -11,14 +11,14 @@ import { useRouter } from 'next/navigation';
 
 export default function TenderingPage() {
   const router = useRouter();
-  const [trigger, { data, isLoading }] = useLazyListQuery();
+  const [trigger, { data, isLoading }] = useLazyGetApprovedPRQuery();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const onClickPRSelection = async (value: any) => {
     create({ prId: value.id })
       .unwrap()
       .then((result) => {
-        router.push(`/preparation/${result.data.id}`);
+        router.push(`/preparation/${result.id}?tab=configuration`);
       })
       .catch((err) => {
         notify('Error', err.data.message);

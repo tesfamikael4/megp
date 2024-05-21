@@ -1,27 +1,20 @@
 import { useLazyGetBdsPreparationQuery } from '@/app/(features)/tender-workspace/_api/bid-attribute-datas';
 import {
+  useSaveLotBidResponseMutation,
+  useLazyGetLotBidResponseQuery,
+} from '@/app/(features)/tender-workspace/_api/lot-bid-response.api';
+import {
   useLazyGetTenderBidResponseQuery,
   useSaveTenderBidResponseMutation,
 } from '@/app/(features)/tender-workspace/_api/tender-bid-response.api';
 import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 import { BiddersAuthorizedPerson } from '@/models/tender/bid-declaration/technical-bid-submission';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  LoadingOverlay,
-  Modal,
-  Stack,
-  TextInput,
-} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Box, Button, Flex, LoadingOverlay, TextInput } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
-import { EntityButton } from '@megp/entity';
-import { IconDeviceFloppy, IconPlus, IconX } from '@tabler/icons-react';
+import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useParams, useSearchParams } from 'next/navigation';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 
@@ -34,12 +27,13 @@ const TechnicalBidSubmissionSheet = () => {
     phone: z.string().min(1, { message: 'This field is required' }),
     position: z.string().min(1, { message: 'This field is required' }),
   });
+  const searchParams = useSearchParams();
   const { tenderId } = useParams();
   const [trigger, { data, isLoading }] = useLazyGetBdsPreparationQuery();
   const [
     triggerGetSubmissionSheet,
     { data: submissionSheet, isLoading: isSubmissionLoading },
-  ] = useLazyGetTenderBidResponseQuery();
+  ] = useLazyGetLotBidResponseQuery();
   const {
     handleSubmit,
     reset,
@@ -51,7 +45,7 @@ const TechnicalBidSubmissionSheet = () => {
   });
   const prepareBidContext = useContext(PrepareBidContext);
   const [saveChanges, { isLoading: isSaving }] =
-    useSaveTenderBidResponseMutation();
+    useSaveLotBidResponseMutation();
   useEffect(() => {
     if (submissionSheet !== undefined) {
       reset({
@@ -67,16 +61,22 @@ const TechnicalBidSubmissionSheet = () => {
     if (tenderId && prepareBidContext?.password) {
       trigger(tenderId.toString());
       triggerGetSubmissionSheet({
-        tenderId: tenderId,
+        lotId: searchParams.get('lot'),
         documentType: prepareBidContext?.documentType,
         key: 'technicalBidSubmissionSheet',
         password: prepareBidContext?.password,
       });
     }
-  }, [tenderId, trigger, triggerGetSubmissionSheet, prepareBidContext]);
+  }, [
+    tenderId,
+    trigger,
+    triggerGetSubmissionSheet,
+    prepareBidContext,
+    searchParams,
+  ]);
   const handleSaveChanges = (data) => {
     saveChanges({
-      tenderId: tenderId,
+      lotId: searchParams.get('lot'),
       key: 'technicalBidSubmissionSheet',
       documentType: prepareBidContext?.documentType,
       value: {

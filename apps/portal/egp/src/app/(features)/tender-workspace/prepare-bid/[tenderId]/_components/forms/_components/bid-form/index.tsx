@@ -17,21 +17,21 @@ import { IconUpload } from '@tabler/icons-react';
 import { FileViewer } from '@/app/(features)/_components/file-viewer';
 import { useGetBidFormFilesQuery } from '@/app/(features)/procurement-notice/_api/invitation-document.api';
 import { logger, notify } from '@megp/core-fe';
-import { useBidFormDetailQuery } from '@/app/(features)/vendor/_api/bid-form';
 import { useContext, useEffect, useState } from 'react';
 import {
-  useLazyDownloadFilesQuery,
+  useBidFormDetailQuery,
+  useLazyDownloadDocxFilesQuery,
+  useLazyDownloadPdfFilesQuery,
   usePreSignedUrlMutation,
 } from '@/app/(features)/tender-workspace/_api/bid-form';
 import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 
 export default function BidForm({ bidFormId }: { bidFormId: string }) {
   const [trigger, { data: url, isLoading: isBidFormLoading }] =
-    useLazyDownloadFilesQuery();
-  const { data: pdf, isLoading: isBidFormPdfLoading } =
-    useGetBidFormFilesQuery(bidFormId);
+    useLazyDownloadDocxFilesQuery();
+  const [triggerPdf, { data: pdf, isLoading: isBidFormPdfLoading }] =
+    useLazyDownloadPdfFilesQuery();
   const searchParams = useSearchParams();
-  const [file, setFile] = useState<File[]>();
   const [retrieveNewURL] = usePreSignedUrlMutation();
   const [isLoading, setIsLoading] = useState(false);
   const prepareBidContext = useContext(PrepareBidContext);
@@ -40,25 +40,33 @@ export default function BidForm({ bidFormId }: { bidFormId: string }) {
     searchParams.get('form'),
   );
 
-  const onSubmit = async (document) => {
+  const onSubmit = async (files) => {
     try {
       setIsLoading(true);
-      await upload(file as unknown as FileList, document.description);
+      await upload(files as unknown as FileList);
     } catch (error) {
       setIsLoading(false);
       logger.log(error);
     }
   };
   useEffect(() => {
-    trigger({
-      tenderId: tenderId,
-      bidFormId: bidFormId,
-      documentType: prepareBidContext?.documentType,
-      password: prepareBidContext?.password,
-    });
-  }, [bidFormId, prepareBidContext, tenderId, trigger]);
+    if (searchParams.get('lot') && prepareBidContext) {
+      trigger({
+        lotId: searchParams.get('lot'),
+        bidFormId: bidFormId,
+        documentType: prepareBidContext?.documentType,
+        password: prepareBidContext?.password,
+      });
+      triggerPdf({
+        lotId: searchParams.get('lot'),
+        bidFormId: bidFormId,
+        documentType: prepareBidContext?.documentType,
+        password: prepareBidContext?.password,
+      });
+    }
+  }, [bidFormId, prepareBidContext, searchParams, trigger, triggerPdf]);
 
-  const upload = async (files: FileList | null, description: string) => {
+  const upload = async (files: FileList | null) => {
     if (!files) {
       setIsLoading(false);
       notify('Error', 'No file selected');
@@ -74,13 +82,13 @@ export default function BidForm({ bidFormId }: { bidFormId: string }) {
             originalname: file.name,
             contentType: file.type,
           },
-          tenderId: tenderId,
+          lotId: searchParams.get('lot'),
           bidFormId: searchParams.get('form'),
           documentType: prepareBidContext?.documentType,
           key: 'Document',
           password: prepareBidContext?.password,
         }).unwrap();
-        await uploadFile(file, url.presignedUrl);
+        await uploadFile(file, url.presignedDownload);
       } catch (error) {
         setIsLoading(false);
         notify('Error', 'Something went wrong while uploading document');
@@ -119,7 +127,7 @@ export default function BidForm({ bidFormId }: { bidFormId: string }) {
             <Flex align={'end'} justify={{ base: 'center', sm: 'flex-end' }}>
               {logger.log(url)}
               {url && (
-                <a href={url.presignedUrl} download>
+                <a href={url.presignedUrl} download className="my-auto mx-2">
                   Download template
                 </a>
               )}
@@ -129,15 +137,8 @@ export default function BidForm({ bidFormId }: { bidFormId: string }) {
                   multiple
                   className="my-2"
                   leftSection={<IconUpload />}
-                  onChange={(files) => setFile(files)}
+                  onChange={(files) => onSubmit(files)}
                 />
-                <Button
-                  leftSection={<IconUpload size={18} />}
-                  onClick={onSubmit}
-                  loading={isLoading}
-                >
-                  Upload
-                </Button>
                 <Button variant="outline" onClick={close}>
                   Close
                 </Button>
@@ -148,7 +149,7 @@ export default function BidForm({ bidFormId }: { bidFormId: string }) {
             <Box className="">
               <LoadingOverlay visible={isLoading || isBidFormPdfLoading} />
               <FileViewer
-                url={pdf?.presignedDownload ?? ''}
+                url={pdf?.presignedUrl ?? ''}
                 filename={bidForm.title}
               />
             </Box>

@@ -10,14 +10,9 @@ export const getBidFormApi = createApi({
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   endpoints: (builder) => ({
     bidForms: builder.query<any, any>({
-      query: (args: { spdId: string; collectionQuery: CollectionQuery }) => {
-        let q = '';
-        if (args.collectionQuery) {
-          const query = encodeCollectionQuery(args.collectionQuery);
-          q = `?q=${query}`;
-        }
+      query: (lotId: string) => {
         return {
-          url: `/spd-bid-forms/list/${args.spdId}/${q}`,
+          url: `/bid-document-responses/get-responses/${lotId}`,
           method: 'GET',
         };
       },
@@ -55,13 +50,33 @@ export const getBidFormApi = createApi({
       }),
       providesTags: ['bid-form'],
     }),
-    downloadFiles: builder.query<any, any>({
+    downloadDocxFiles: builder.query<any, any>({
       query: (data: GetBidResponse) => ({
-        url: `bid-document-responses/download-response`,
+        url: `bid-document-responses/download-response-docx`,
         method: 'POST',
         body: data,
       }),
       providesTags: ['bid-form'],
+    }),
+    downloadPdfFiles: builder.query<any, any>({
+      query: (data: GetBidResponse) => ({
+        url: `bid-document-responses/download-response-pdf`,
+        method: 'POST',
+        body: data,
+      }),
+      providesTags: ['bid-form'],
+    }),
+    generate: builder.mutation<any, any>({
+      query: (data: {
+        tenderId: string;
+        documentType: string;
+        password: string;
+      }) => ({
+        url: `/bid-responses/generate-bid-declaration`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['bid-form'],
     }),
   }),
 });
@@ -71,6 +86,8 @@ export const {
   useBidFormDetailQuery,
   useUploadMutation,
   useGetFilesQuery,
-  useLazyDownloadFilesQuery,
+  useLazyDownloadDocxFilesQuery,
+  useLazyDownloadPdfFilesQuery,
   usePreSignedUrlMutation,
+  useGenerateMutation,
 } = getBidFormApi;

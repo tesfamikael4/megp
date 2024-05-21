@@ -213,7 +213,7 @@ export default function SpdDetailPage() {
                     );
                   }}
                 >
-                  Opening Minutes
+                  Opening Checklists
                 </Text>
               </div>
             </div>
