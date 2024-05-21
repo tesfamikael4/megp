@@ -132,6 +132,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
           technicalResponsivenessAssessment: {
             bidRegistrationDetail: {
               lotId,
+              technicalItems: ArrayContains([itemId]),
               bidRegistration: {
                 bidderId: In(
                   passed.map(
@@ -154,6 +155,14 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       });
 
     for (const bidder of passed) {
+      const test = checklists.filter(
+        (x) =>
+          x.technicalResponsivenessAssessment.bidRegistrationDetail
+            .bidRegistration.bidderId ==
+            bidder.bidRegistrationDetail.bidRegistration.bidderId &&
+          x.technicalResponsivenessAssessment.isTeamAssessment ==
+            isTeamAssessment,
+      );
       if (checklists.length == 0) {
         response.items.push({
           bidder: bidder.bidRegistrationDetail.bidRegistration,
@@ -420,6 +429,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
         where: {
           bidRegistrationDetailId,
           isTeamAssessment: itemData.isTeamAssessment,
+          itemId: itemData.itemId,
         },
       });
 
@@ -432,6 +442,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
           evaluatorName: req.user.firstName + ' ' + req.user.lastName,
           isTeamAssessment: itemData.isTeamAssessment,
           submit: false,
+          itemId: itemData.itemId,
           // technicalResponsivenessAssessmentDetail: [itemD]
         });
 

@@ -38,6 +38,9 @@ export class TechnicalResponsivenessAssessment {
   @Column('uuid')
   evaluatorId: string;
 
+  @Column('uuid')
+  itemId: string;
+
   // @ManyToOne(
   //   () => TeamMember,
   //   (teamMember) => teamMember.technicalPreliminaryAssessment,
