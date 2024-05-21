@@ -54,13 +54,15 @@ export const technicalResponsiveness = createApi({
       query: ({
         lotId,
         bidderId,
+        itemId,
         team = 'member',
       }: {
         lotId: string;
         bidderId: string;
+        itemId: string;
         team: string;
       }) =>
-        `/technical-responsiveness-assessment-detail/evaluator-report/${lotId}/${bidderId}/${team}`,
+        `/technical-responsiveness-assessment-detail/evaluator-report/${lotId}/${itemId}/${bidderId}/${team}`,
     }),
     completeResponsivenessEvaluation: builder.mutation<any, any>({
       query: (data: {

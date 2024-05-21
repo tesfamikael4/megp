@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  ActionIcon,
-  Box,
-  Badge,
-  Group,
-  Button,
-  Text,
-  LoadingOverlay,
-} from '@mantine/core';
+import { ActionIcon, Group, Button, Text } from '@mantine/core';
 import {
   ExpandableTable,
   ExpandableTableConfig,
@@ -18,11 +10,9 @@ import {
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
-import { useEffect } from 'react';
 import {
   useGetLotStatusQuery,
-  useLazyGetPassedBiddersQuery,
-  useLazyGetResponsivenessAssessmentsQuery,
+  useLazyGetItemsQuery,
   useSubmitEvaluationMutation,
 } from '@/store/api/tendering/technical-responsiveness.api';
 import { LotOverview } from '@/app/(features)/evaluation/_components/lot-overview';
@@ -31,31 +21,20 @@ export default function BidOpening() {
   const { tenderId, lotId } = useParams();
   const { data: lotStatus } = useGetLotStatusQuery(lotId as string);
   const [submit, { isLoading }] = useSubmitEvaluationMutation();
-  const [getBidders, { data: bidders, isLoading: isBiddersLoading }] =
-    useLazyGetPassedBiddersQuery();
+  const [getItems, { data: items, isLoading: isItemsLoading }] =
+    useLazyGetItemsQuery();
   const config: ExpandableTableConfig = {
     isSearchable: true,
-    isExpandable: true,
-    isLoading: isBiddersLoading,
-    expandedRowContent: (record) => <BidderDetail bidder={record} />,
+    isLoading: isItemsLoading,
     columns: [
       {
-        accessor: 'bidderName',
+        accessor: 'name',
         sortable: true,
-        render: (record) => record.bidder.bidderName,
       },
       {
-        accessor: 'status',
-        width: 150,
-        render: (record) => {
-          const color = record.status === 'completed' ? 'green' : 'yellow';
-          return (
-            <Badge color={color} size="sm">
-              {record.status}
-            </Badge>
-          );
-        },
+        accessor: 'description',
       },
+
       {
         accessor: '',
         render: (record) => (
@@ -64,7 +43,7 @@ export default function BidOpening() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${record.bidder.bidderId}`,
+                `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${record.id}`,
               );
             }}
           >
@@ -93,8 +72,8 @@ export default function BidOpening() {
     try {
       await submit({
         lotId: lotId as string,
+        // isTeamLead: false,
         isTeamLead: true,
-        tenderId: tenderId as string,
       }).unwrap();
       notify('Success', 'Evaluation successfully completed');
     } catch (err) {
@@ -103,9 +82,11 @@ export default function BidOpening() {
   };
   return (
     <>
-      <LotOverview basePath={`/evaluation/${tenderId}`} />
+      <LotOverview
+        basePath={`/evaluation/${tenderId}/${lotId}/responsiveness`}
+      />
       <Section
-        title="Bidders List"
+        title="Items List"
         collapsible={false}
         className="mt-2"
         action={
@@ -114,7 +95,9 @@ export default function BidOpening() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  router.push(`/evaluation/${tenderId}/${lotId}/qualification`);
+                  router.push(
+                    `/evaluation/${tenderId}/${lotId}/responsiveness`,
+                  );
                 }}
                 disabled={!lotStatus?.canTeamAssess}
               >
@@ -133,54 +116,13 @@ export default function BidOpening() {
       >
         <ExpandableTable
           config={config}
-          data={bidders?.items ?? []}
-          total={bidders?.total ?? 0}
+          data={items?.items ?? []}
+          total={items?.total ?? 0}
           onRequestChange={(request) => {
-            getBidders({ lotId, collectionQuery: request, team: 'teamLeader' });
+            getItems({ lotId, collectionQuery: request });
           }}
         />
       </Section>
     </>
   );
 }
-
-const BidderDetail = ({ bidder }: any) => {
-  const { lotId } = useParams();
-
-  const [getChecklists, { data, isLoading }] =
-    useLazyGetResponsivenessAssessmentsQuery();
-
-  useEffect(() => {
-    getChecklists({
-      lotId: lotId as string,
-      bidderId: bidder.bidder.bidderId,
-      team: 'teamLeader',
-    });
-  }, []);
-
-  return (
-    <Box className="bg-white p-5" pos="relative">
-      <LoadingOverlay visible={isLoading} />
-      <ExpandableTable
-        config={{
-          minHeight: 100,
-          columns: [
-            {
-              accessor: 'itbDescription',
-              title: 'Name',
-            },
-            {
-              accessor: 'Assessment',
-              width: 200,
-              render: (record) =>
-                record.check?.qualified
-                  ? record?.check?.qualified
-                  : 'Not Evaluated Yet',
-            },
-          ],
-        }}
-        data={data ?? []}
-      />
-    </Box>
-  );
-};
