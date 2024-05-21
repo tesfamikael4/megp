@@ -36,8 +36,8 @@ export class FppaVendorsController extends EntityCrudController<FppaVendor>(
   }
 
   @Post('bulk-save')
-  async createFppa(@Body() dto: FppaDataValidation): Promise<FppaVendor[]> {
-    return this.fppaVendorService.createBulkyData(dto);
+  async createFppa(@Body() dto: CreateFppaVendorDto[]) {
+    return this.fppaVendorService.createBulk(dto);
   }
 
   @Get(':tin')
