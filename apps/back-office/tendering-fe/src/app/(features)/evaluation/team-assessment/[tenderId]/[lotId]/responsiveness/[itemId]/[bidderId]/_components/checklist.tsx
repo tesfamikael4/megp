@@ -14,14 +14,33 @@ export const Checklist = () => {
     getChecklists({
       lotId: lotId as string,
       bidderId: bidderId as string,
+      itemId: itemId as string,
       team: 'teamLeader',
     });
   }, []);
   const router = useRouter();
-  const { tenderId, lotId, bidderId } = useParams();
+  const { tenderId, lotId, bidderId, itemId } = useParams();
   const config: ExpandableTableConfig = {
     minHeight: 50,
-    columns: [{ accessor: 'title', title: 'Name' }],
+    columns: [
+      { accessor: 'title', title: 'Name' },
+      {
+        accessor: '',
+        title: '',
+        render: (record) => {
+          const totalItems = record.checklist.length;
+          const checkedItems = record.checklist.filter(
+            (item) => item.check,
+          ).length;
+          const percentageChecked = (checkedItems / totalItems) * 100;
+          return (
+            <p className="text-xs font-semibold border-2  h-7 w-7 rounded-full flex justify-center items-center">
+              {percentageChecked}
+            </p>
+          );
+        },
+      },
+    ],
     isExpandable: true,
     expandedRowContent: (record) => {
       return (
@@ -33,7 +52,7 @@ export const Checklist = () => {
                 className="cursor-pointer"
                 onClick={() =>
                   router.push(
-                    `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${bidderId}/${list.id}`,
+                    `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${itemId}/${bidderId}/${list.id}`,
                   )
                 }
               >
@@ -44,7 +63,7 @@ export const Checklist = () => {
                       : 'font-semibold flex justify-between items-center'
                   }
                 >
-                  {list.itbDescription}
+                  {list.requirement}
 
                   {list.check ? (
                     <IconCircleCheck size={18} color="green" />

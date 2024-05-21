@@ -10,17 +10,21 @@ export default function BiderDetail() {
   const router = useRouter();
   const [getChecklists, { data: checklistData, isSuccess }] =
     useLazyGetResponsivenessChecklistByLotIdQuery();
-  const { tenderId, lotId, bidderId } = useParams();
+  const { tenderId, lotId, bidderId, itemId } = useParams();
 
   useEffect(() => {
-    getChecklists({ lotId: lotId as string, bidderId: bidderId as string });
+    getChecklists({
+      lotId: lotId as string,
+      bidderId: bidderId as string,
+      itemId: itemId as string,
+    });
   }, []);
 
   useEffect(() => {
     logger.log({ checklistData });
     if (checklistData && checklistData?.length > 0) {
       router.push(
-        `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${bidderId}/${checklistData[0].checklist?.[0]?.id}`,
+        `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${itemId}/${bidderId}/${checklistData[0].checklist?.[0]?.id}`,
       );
     }
   }, [bidderId, checklistData, isSuccess, lotId, router, tenderId]);

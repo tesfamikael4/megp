@@ -21,7 +21,7 @@ export const ChecklistAssessment = () => {
     formState: { errors },
     control,
   } = useForm<any>({ resolver: zodResolver(checklistSchema) });
-  const { lotId, bidderId, tenderId, checklistId } = useParams();
+  const { lotId, bidderId, tenderId, checklistId, itemId } = useParams();
   const [checkBidAttribute, { isLoading }] = useCheckBidAttributeMutation();
 
   const onSubmit = async (data: any) => {
@@ -31,6 +31,7 @@ export const ChecklistAssessment = () => {
       lotId,
       bidderId,
       tenderId,
+      itemId,
       isTeamAssessment: true,
     };
     try {
@@ -59,6 +60,10 @@ export const ChecklistAssessment = () => {
             ]}
             withAsterisk
             onChange={onChange}
+            // onChange={(val) => {
+            //   if (val === 'true') onChange(true);
+            //   else if (val === 'false') onChange(false);
+            // }}
             error={errors.qualified?.message?.toString()}
           />
         )}

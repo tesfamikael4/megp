@@ -47,7 +47,7 @@ export default function BidOpening() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/evaluation/${tenderId}/${lotId}/responsiveness/${itemId}/${record.bidder.bidderId}`,
+                `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${itemId}/${record.bidder.bidderId}`,
               );
             }}
           >
@@ -62,7 +62,7 @@ export default function BidOpening() {
   return (
     <>
       <ItemsOverview
-        basePath={`/evaluation/${tenderId}/${lotId}/responsiveness`}
+        basePath={`/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness`}
       />
       <Section title="Bidders List" collapsible={false} className="mt-2">
         <ExpandableTable
@@ -70,7 +70,12 @@ export default function BidOpening() {
           data={bidders?.items ?? []}
           total={bidders?.total ?? 0}
           onRequestChange={(request) => {
-            getBidders({ lotId, itemId, collectionQuery: request });
+            getBidders({
+              lotId,
+              itemId,
+              collectionQuery: request,
+              team: 'teamLeader',
+            });
           }}
         />
       </Section>
@@ -89,6 +94,7 @@ const BidderDetail = ({ bidder }: any) => {
       lotId: lotId as string,
       bidderId: bidder.bidder.bidderId,
       itemId: itemId as string,
+      team: 'teamLeader',
     });
   }, []);
 
