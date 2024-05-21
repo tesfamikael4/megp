@@ -1,7 +1,8 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ProductCatalogsService } from '../services/product-catalog.service';
 import {
   ApiExtraModels,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -11,6 +12,7 @@ import { ProductCatalog } from '@entities';
 import { EntityCrudController } from '@generic-controllers';
 import { AllowAnonymous, ApiKeyGuard } from 'src/shared/authorization';
 import { ProductCatalogApprovalStatus } from 'src/shared/enums/product-catalog-enum';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: EntityCrudOptions = {};
 @Controller('product-catalogs')
@@ -28,8 +30,25 @@ export class ProductCatalogsController extends EntityCrudController<ProductCatal
   approveCatalog(id: string, approvalStatus: ProductCatalogApprovalStatus, req?: any) {
     return this.productCatalogService.approveCatalog(id, approvalStatus, req);
   }
-  //for Market place
 
+  @Get('with-images/:id')
+  async getWithImage(@Param('id') id?: string) {
+    return await this.productCatalogService.getWithImage(id);
+  }
+
+  @Get('with-images')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getWithImages(@Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.productCatalogService.getWithImages(query);
+  }
+
+  //for Market place
   @Post('details')
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)

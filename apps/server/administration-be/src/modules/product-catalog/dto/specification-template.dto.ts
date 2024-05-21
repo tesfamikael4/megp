@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const SpecificationTemplateSchema = z.object({
   itemMasterId: z.string(),
+  itemMasterCode: z.string(),
   quantity: z.number().positive().default(1),
   properties: z.array(
     z.object({

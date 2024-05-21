@@ -19,9 +19,11 @@ import { ContractBeneficiariesService } from './services/contract-beneficiary.se
 import { ContractItemPricesService } from './services/contract-item-price.service';
 import { ContractItemsService } from './services/contract-item.service';
 import { ProductCatalogsService } from '../product-catalog/services/product-catalog.service';
+import { MinIOModule } from 'src/shared/min-io';
 
 @Module({
   imports: [
+    MinIOModule,
     TypeOrmModule.forFeature([
       ContractCatalog,
       ContractItem,

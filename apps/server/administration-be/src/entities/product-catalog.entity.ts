@@ -20,6 +20,10 @@ import {
 export class ProductCatalog extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: true })
+  description: string;
+
   @Column({ type: 'uuid' })
   itemMasterId: string;
 
