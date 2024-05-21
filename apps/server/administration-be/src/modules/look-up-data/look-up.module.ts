@@ -30,6 +30,9 @@ import { ItemSubCategory } from 'src/entities/item-sub-category.entity';
 import { Donor } from 'src/entities/donor.entity';
 import { DonorService } from './service/donor.service';
 import { DonorController } from './controller/donor.controller';
+import { Tax } from 'src/entities';
+import { TaxService } from './service/tax.service';
+import { TaxController } from './controller/tax.controller';
 
 @Module({
   imports: [
@@ -44,6 +47,7 @@ import { DonorController } from './controller/donor.controller';
       Tag,
       ItemSubCategory,
       Donor,
+      Tax,
     ]),
   ],
   providers: [
@@ -57,6 +61,7 @@ import { DonorController } from './controller/donor.controller';
     TagService,
     ItemSubCategoryService,
     DonorService,
+    TaxService,
   ],
   controllers: [
     ItemCategoriesController,
@@ -69,6 +74,7 @@ import { DonorController } from './controller/donor.controller';
     TagController,
     ItemSubCategoryController,
     DonorController,
+    TaxController,
   ],
 })
 export class lookUpDataModule {}
