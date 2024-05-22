@@ -5,7 +5,6 @@ import {
   Stack,
   TextInput,
   LoadingOverlay,
-  keys,
   NumberInput,
   Flex,
   Checkbox,
@@ -18,16 +17,17 @@ import { Section, logger, notify } from '@megp/core-fe';
 import {
   useCreateCatalogMutation,
   useLazyGetTemplateQuery,
+  useLazyReadCatalogQuery,
   useUpdateCatalogMutation,
 } from '../_api/catalog.api';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { IconArrowLeft } from '@tabler/icons-react';
 import { Controller, useForm } from 'react-hook-form';
-import { ZodType, late, z } from 'zod';
+import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UploadImage } from './image-upload';
-import { DateInput } from '@mantine/dates';
+import { IconChevronLeft } from '@tabler/icons-react';
+import { useLazyReadItemQuery } from '@/store/api/item-master/item-master.api';
 
 export default function CatalogForm({ mode }: any) {
   const { itemId, id } = useParams();
@@ -37,10 +37,11 @@ export default function CatalogForm({ mode }: any) {
 
   const [createCatalog, { isLoading: isSaving }] = useCreateCatalogMutation();
   const [updateCatalog, { isLoading: isUpdating }] = useUpdateCatalogMutation();
+  const [trigger, { data: catalog }] = useLazyReadCatalogQuery();
+  const [triggerReadItem, { data: itemMaster }] = useLazyReadItemQuery();
 
   const ValidationSchema = (data: any[]) => {
     const loc: { [key: string]: ZodType<any> } = {};
-
     data?.forEach((item: any) => {
       const nameToValidate = item.displayName?.toLowerCase().replace(' ', '');
       if (item.dataType === 'number') {
@@ -94,7 +95,6 @@ export default function CatalogForm({ mode }: any) {
   const productCatalogSchema = templateSchema.extend({
     quantity: z.number().optional(),
     location: z.string().optional(),
-    deliveryDate: z.date().optional(),
     deliverDays: z.number().optional(),
   });
 
@@ -102,6 +102,8 @@ export default function CatalogForm({ mode }: any) {
     handleSubmit,
     formState: { errors },
     control,
+    reset,
+    setValue,
   } = useForm({
     resolver: zodResolver(productCatalogSchema),
   });
@@ -109,12 +111,12 @@ export default function CatalogForm({ mode }: any) {
   //action
   const onCreate = async (data) => {
     try {
-      await createCatalog({
+      const res = await createCatalog({
         itemMasterId: itemId.toString(),
+        itemMasterCode: itemMaster?.itemCode,
         specificationTemplateId: template.id.toString(),
         deliveryValues: [
           {
-            deliveryDate: data.deliveryDate,
             location: data.location,
             deliverDays: data.deliverDays,
           },
@@ -126,14 +128,23 @@ export default function CatalogForm({ mode }: any) {
           return {
             key: item.key,
             value: data[nameToValidate],
-            lable: item.displayName,
+            label: item.displayName,
             category: item.category,
+            type: typeof data[nameToValidate],
           };
         }),
+        specifications: template.properties.reduce((acc, item) => {
+          const nameToValidate = item.displayName
+            .toLowerCase()
+            .replace(/\s+/g, '');
+          acc[nameToValidate] = data[nameToValidate];
+          return acc;
+        }, {}),
         quantity: data.quantity,
+        description: itemMaster?.description,
       }).unwrap();
       notify('Success', 'Catalog created successfully');
-      router.push(`catalog-manager/${itemId}/${id}`);
+      router.push(`product/${res?.id}`);
     } catch {
       notify('Error', 'Error in creating');
     }
@@ -143,6 +154,7 @@ export default function CatalogForm({ mode }: any) {
     try {
       await updateCatalog({
         itemMasterId: itemId.toString(),
+        itemMasterCode: itemMaster?.itemCode,
         specificationTemplateId: template.id.toString(),
         deliveryValues: [
           {
@@ -162,6 +174,14 @@ export default function CatalogForm({ mode }: any) {
             category: item.category,
           };
         }),
+
+        specifications: template.properties.reduce((acc, item) => {
+          const nameToValidate = item.displayName
+            .toLowerCase()
+            .replace(/\s+/g, '');
+          acc[nameToValidate] = data[nameToValidate];
+          return acc;
+        }, {}),
         quantity: data.quantity,
       }).unwrap();
       notify('Success', 'Catalog updated successfully');
@@ -175,16 +195,39 @@ export default function CatalogForm({ mode }: any) {
   };
 
   useEffect(() => {
+    id !== undefined && trigger(id?.toString());
+  }, [id]);
+
+  useEffect(() => {
     getTemplate(itemId.toString());
   }, [itemId]);
+
+  useEffect(() => {
+    if (catalog) {
+      catalog?.specificationValues.map((item) =>
+        setValue(`${item?.label}`, item?.value),
+      );
+
+      reset({
+        quantity: catalog?.quantity,
+        location: catalog?.deliveryValues?.location,
+        deliverDays: catalog?.deliveryDays,
+      });
+    }
+  }, [catalog, reset]);
+
+  useEffect(() => {
+    triggerReadItem(itemId.toString());
+  }, [itemId, trigger]);
 
   return (
     <>
       <Section
         collapsible={false}
+        action={<Button>View Detail</Button>}
         title={
           <Flex dir="row">
-            <IconArrowLeft
+            <IconChevronLeft
               size={30}
               className="mr-6"
               onClick={() => router.push('/my-workspace/catalog-manager')}
@@ -194,9 +237,9 @@ export default function CatalogForm({ mode }: any) {
         }
       >
         <LoadingOverlay visible={templateLoading} />
-        <Box mih={'100vh'}>
-          <Flex gap={'sm'} align={'flex-start'}>
-            <Stack className="w-full">
+        <Box mih={'100vh'} className="w-full">
+          <Stack className="w-full ml-2">
+            <Flex wrap={'wrap'} gap={'xl'}>
               {template?.properties?.map((item, index) => {
                 const nameToValidate = item.displayName
                   .toLowerCase()
@@ -206,8 +249,9 @@ export default function CatalogForm({ mode }: any) {
                     key={index}
                     name={nameToValidate}
                     control={control}
-                    render={({ field: { name, value, onChange } }) => (
+                    render={({ field: { value, onChange } }) => (
                       <TextInput
+                        className="w-2/5 "
                         label={item?.displayName}
                         value={value}
                         onChange={onChange}
@@ -227,6 +271,7 @@ export default function CatalogForm({ mode }: any) {
                     render={({ field: { value, onChange } }) => (
                       <NumberInput
                         label={item?.displayName}
+                        className="w-2/5  "
                         value={value}
                         onChange={onChange}
                         placeholder={item?.displayName}
@@ -244,6 +289,7 @@ export default function CatalogForm({ mode }: any) {
                     control={control}
                     render={({ field: { name, value, onChange } }) => (
                       <Checkbox
+                        className="w-2/5 mt-auto"
                         label={item?.displayName}
                         name={name}
                         value={value}
@@ -263,6 +309,7 @@ export default function CatalogForm({ mode }: any) {
                     render={({ field: { value, onChange } }) => (
                       <Select
                         name="name"
+                        className="w-2/5 "
                         label={item?.displayName}
                         value={value}
                         data={
@@ -290,6 +337,7 @@ export default function CatalogForm({ mode }: any) {
                     render={({ field: { value, onChange } }) => (
                       <MultiSelect
                         name="name"
+                        className="w-2/5 "
                         label={item?.displayName}
                         value={value}
                         data={
@@ -318,6 +366,7 @@ export default function CatalogForm({ mode }: any) {
                     control={control}
                     render={({ field: { name, value, onChange } }) => (
                       <NumberInput
+                        className="w-2/5 "
                         label={'Quantity'}
                         value={value}
                         onChange={onChange}
@@ -325,19 +374,25 @@ export default function CatalogForm({ mode }: any) {
                       />
                     )}
                   />
-                  <TextInput label={'Location'} name="location" />
                   <Controller
-                    name={'deliveryDate'}
+                    name={'location'}
                     control={control}
-                    render={({ field: { name, value, onChange } }) => (
-                      <DateInput
-                        label={'Delivery Date'}
-                        value={value}
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        label={'Location'}
+                        name="location"
                         onChange={onChange}
-                        error={errors?.deliveryDate?.message?.toString() ?? ''}
+                        value={value}
+                        className="w-2/5 "
+                        error={errors?.location?.message?.toString() ?? ''}
+                        data={[
+                          { value: 'location1', label: 'Location 1' },
+                          { value: 'location2', label: 'Location 2' },
+                        ]}
                       />
                     )}
                   />
+
                   <Controller
                     name={'deliverDays'}
                     control={control}
@@ -345,6 +400,7 @@ export default function CatalogForm({ mode }: any) {
                       <NumberInput
                         label={'Delivery Days'}
                         value={value}
+                        className="w-2/5 "
                         onChange={onChange}
                         error={errors?.deliverDays?.message?.toString() ?? ''}
                       />
@@ -352,25 +408,24 @@ export default function CatalogForm({ mode }: any) {
                   />
                 </>
               )}
-              {template?.properties?.length > 0 && (
-                <Group className="ml-auto">
-                  {mode == 'new' ? (
-                    <Button onClick={handleSubmit(onCreate, onError)}>
-                      Save
-                    </Button>
-                  ) : (
-                    <Button onClick={handleSubmit(onUpdate, onError)}>
-                      Update
-                    </Button>
-                  )}
-                </Group>
-              )}
-            </Stack>
-
-            <Group className=" w-full mt-5 ">
-              <UploadImage />
-            </Group>
-          </Flex>
+            </Flex>
+            {template?.properties?.length > 0 && (
+              <Group className="">
+                {mode == 'new' ? (
+                  <Button onClick={handleSubmit(onCreate, onError)}>
+                    Save
+                  </Button>
+                ) : (
+                  <Button onClick={handleSubmit(onUpdate, onError)}>
+                    Update
+                  </Button>
+                )}
+              </Group>
+            )}
+          </Stack>
+          <Group className=" w-2/5 mt-5 ">
+            <UploadImage />
+          </Group>
         </Box>
       </Section>
     </>

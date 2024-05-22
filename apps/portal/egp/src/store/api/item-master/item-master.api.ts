@@ -42,6 +42,7 @@ export const itemMasterApi = createApi({
 
 export const {
   useReadItemQuery,
+  useLazyReadItemQuery,
   useGetItemsQuery,
   useLazyGetItemsQuery,
   useGetClassificationsQuery,
