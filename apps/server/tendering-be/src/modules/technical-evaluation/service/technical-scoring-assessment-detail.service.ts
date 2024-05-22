@@ -20,6 +20,7 @@ import { REQUEST } from '@nestjs/core';
 import {
   BidRegistration,
   BidRegistrationDetail,
+  EqcTechnicalScoring,
   Item,
   SorTechnicalRequirement,
 } from 'src/entities';
@@ -68,7 +69,6 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
   }
   async passedBidders(
     lotId: string,
-    itemId: string,
     isTeam: string,
     query: CollectionQuery,
     req: any,
@@ -80,7 +80,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
     const evaluatorId = req.user.userId;
     const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
 
-    const [passed, spdChecklist] = await Promise.all([
+    const [passed, eqcChecklist] = await Promise.all([
       manager.getRepository(BiddersComparison).find({
         where: {
           bidRegistrationDetail: {
@@ -107,9 +107,9 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
           },
         },
       }),
-      manager.getRepository(SorTechnicalRequirement).findAndCount({
+      manager.getRepository(EqcTechnicalScoring).findAndCount({
         where: {
-          itemId,
+          lotId,
         },
       }),
     ]);
@@ -163,7 +163,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
           status: 'not started',
         });
       } else if (
-        spdChecklist[1] ===
+        eqcChecklist[1] ===
         checklists.filter(
           (x) =>
             x.technicalScoringAssessment.bidRegistrationDetail.bidRegistration
