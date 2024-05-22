@@ -1,10 +1,17 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { SpecificationTemplatesService } from '../services/specification-template.service';
-import { ApiBody, ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiExtraModels,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { DataResponseFormat } from '@api-data';
 import { SpecificationTemplate } from '@entities';
 import { EntityCrudController } from '@generic-controllers';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: EntityCrudOptions = {};
 @Controller('specification-templates')
@@ -27,6 +34,18 @@ export class SpecificationTemplatesController extends EntityCrudController<Speci
     @Req() req?: any,
   ): Promise<SpecificationTemplate> {
     return this.specificationTemplateService.copy(data, req);
+  }
+
+  @Get('unused-item-masters')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getItems(@Query('q') q: string): Promise<SpecificationTemplate> {
+    const query = decodeCollectionQuery(q);
+    return this.specificationTemplateService.getItems(query);
   }
 
   @Get('item/:itemMasterId')

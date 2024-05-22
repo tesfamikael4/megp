@@ -7,16 +7,20 @@ import {
   SpecificationTemplateData,
   SpecificationTemplateSchema,
 } from '../dto/specification-template.dto';
+import { CollectionQuery, FilterOperators } from 'src/shared/collection-query';
+import { ItemMasterService } from 'src/modules/item-master/services/item-master.service';
 @Injectable()
 export class SpecificationTemplatesService extends EntityCrudService<SpecificationTemplate> {
   constructor(
     @InjectRepository(SpecificationTemplate)
-    private readonly productCatalogRepository: Repository<SpecificationTemplate>,
+    private readonly specificationTemplateRepository: Repository<SpecificationTemplate>,
+
+    private readonly itemMasterRepository: ItemMasterService,
   ) {
-    super(productCatalogRepository);
+    super(specificationTemplateRepository);
   }
   async copy(data: any, req: any): Promise<any> {
-    const template = await this.productCatalogRepository.findOne({
+    const template = await this.specificationTemplateRepository.findOne({
       where: { itemMasterId: data.itemMasterId },
     });
     delete template.id;
@@ -24,14 +28,30 @@ export class SpecificationTemplatesService extends EntityCrudService<Specificati
     template.itemMasterId = data.newItemMasterId;
     return await this.create(template, req);
   }
+  async getItems(query: CollectionQuery): Promise<any> {
+    const ids = await this.specificationTemplateRepository.find({
+      select: ['itemMasterId'],
+    });
+    const flatIds = ids.map((id) => id.itemMasterId);
+    if (flatIds.length > 0) {
+      query.where.push([
+        {
+          column: 'id',
+          value: flatIds,
+          operator: FilterOperators.NotIn,
+        },
+      ]);
+    }
+    return await this.itemMasterRepository.findAll(query);
+  }
   async getByItem(itemMasterId: any): Promise<any> {
-    return await this.productCatalogRepository.findOne({
+    return await this.specificationTemplateRepository.findOne({
       where: { itemMasterId },
     });
   }
 
   async getByItemCode(itemMasterCode: any): Promise<any> {
-    return await this.productCatalogRepository.findOne({
+    return await this.specificationTemplateRepository.findOne({
       where: { itemMasterCode },
     });
   }
@@ -42,11 +62,11 @@ export class SpecificationTemplatesService extends EntityCrudService<Specificati
       data.organizationId = req.user.organization.id;
       data.organizationName = req.user.organization.name;
     }
-    const productCatalog = this.productCatalogRepository.create(data);
-    return await this.productCatalogRepository.save(productCatalog);
+    const productCatalog = this.specificationTemplateRepository.create(data);
+    return await this.specificationTemplateRepository.save(productCatalog);
   }
   update(id: string, data: any): Promise<SpecificationTemplate> {
     SpecificationTemplateSchema.parse(data);
-    return this.productCatalogRepository.save({ id, ...data });
+    return this.specificationTemplateRepository.save({ id, ...data });
   }
 }

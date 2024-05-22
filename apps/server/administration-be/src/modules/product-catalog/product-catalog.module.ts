@@ -12,10 +12,12 @@ import { SpecificationTemplatesService } from './services/specification-template
 import { ProductCatalogImageService } from './services/product-catalog-image.service';
 import { MinIOModule } from 'src/shared/min-io';
 import { ProductCatalogImageController } from './controllers/product-catalog-image.controller';
+import { ItemMasterModule } from '../item-master/item-master.module';
 
 @Module({
   imports: [
     MinIOModule,
+    ItemMasterModule,
     TypeOrmModule.forFeature([
       ProductCatalog,
       SpecificationTemplate,

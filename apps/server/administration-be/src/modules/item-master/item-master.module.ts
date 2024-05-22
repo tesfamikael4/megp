@@ -41,5 +41,6 @@ import { ClassificationService } from '../classification/services/classification
     ExtraItemTagController,
     ItemMetaDataController,
   ],
+  exports: [ItemMasterService],
 })
 export class ItemMasterModule {}
