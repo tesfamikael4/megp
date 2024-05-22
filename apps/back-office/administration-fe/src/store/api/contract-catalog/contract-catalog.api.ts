@@ -10,6 +10,7 @@ export const contractCatalogApi = createApi({
     'ContractItem',
     'ContractItemPrice',
     'specificationTemplate',
+    'ContractAllocatedItem',
   ],
   baseQuery: baseQuery(
     process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
@@ -108,6 +109,35 @@ export const contractCatalogApi = createApi({
         return { url: `item-masters/${id}`, method: 'GET' };
       },
     }),
+    createAllocatedItem: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `contract-allocated-items`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['ContractAllocatedItem'],
+    }),
+    readAllocatedItem: builder.query<any, string>({
+      query: (id) => ({
+        url: `contract-allocated-items/${id}`,
+      }),
+      providesTags: ['ContractAllocatedItem'],
+    }),
+    updateAllocatedItem: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `contract-allocated-items`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['ContractAllocatedItem'],
+    }),
+    deleteAllocatedItem: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `contract-allocated-items/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['ContractAllocatedItem'],
+    }),
   }),
 });
 
@@ -132,4 +162,10 @@ export const {
 
   useReadItemMasterQuery,
   useLazyReadItemMasterQuery,
+
+  useCreateAllocatedItemMutation,
+  useUpdateAllocatedItemMutation,
+  useReadAllocatedItemQuery,
+  useLazyReadAllocatedItemQuery,
+  useDeleteAllocatedItemMutation,
 } = contractCatalogApi;

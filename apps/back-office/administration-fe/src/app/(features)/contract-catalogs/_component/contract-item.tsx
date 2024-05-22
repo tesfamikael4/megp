@@ -57,7 +57,6 @@ export default function ContractItem() {
     const castedData = {
       description: item.description,
       specification: item.specification,
-
       itemCode: item.itemCode,
       itemMasterId: item.id,
     };
