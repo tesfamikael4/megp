@@ -7,10 +7,12 @@ import {
   LoadingOverlay,
   NumberInput,
   Flex,
+  Text,
   Checkbox,
   Select,
   MultiSelect,
   Button,
+  Divider,
 } from '@mantine/core';
 
 import { Section, logger, notify } from '@megp/core-fe';
@@ -19,9 +21,12 @@ import {
   useLazyGetTemplateQuery,
   useLazyReadCatalogQuery,
   useUpdateCatalogMutation,
+  useDeleteCatalogMutation,
+  useGetRegionsQuery,
+  useLazyGetDistrictsQuery,
 } from '../_api/catalog.api';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,11 +39,15 @@ export default function CatalogForm({ mode }: any) {
   const router = useRouter();
   const [getTemplate, { data: template, isLoading: templateLoading }] =
     useLazyGetTemplateQuery();
+  const [triggerDistrict, { data: districts }] = useLazyGetDistrictsQuery();
 
   const [createCatalog, { isLoading: isSaving }] = useCreateCatalogMutation();
   const [updateCatalog, { isLoading: isUpdating }] = useUpdateCatalogMutation();
+  const [deleteCatalog, { isLoading: isDeleting }] = useDeleteCatalogMutation();
   const [trigger, { data: catalog }] = useLazyReadCatalogQuery();
   const [triggerReadItem, { data: itemMaster }] = useLazyReadItemQuery();
+  const [selectedRegion, setSelectedRegion] = useState<any>();
+  const { data: regions } = useGetRegionsQuery(undefined);
 
   const ValidationSchema = (data: any[]) => {
     const loc: { [key: string]: ZodType<any> } = {};
@@ -153,6 +162,7 @@ export default function CatalogForm({ mode }: any) {
   const onUpdate = async (data) => {
     try {
       await updateCatalog({
+        id: id.toString(),
         itemMasterId: itemId.toString(),
         itemMasterCode: itemMaster?.itemCode,
         specificationTemplateId: template.id.toString(),
@@ -170,7 +180,7 @@ export default function CatalogForm({ mode }: any) {
           return {
             key: item.key,
             value: data[nameToValidate],
-            lable: item.displayName,
+            label: item.displayName,
             category: item.category,
           };
         }),
@@ -190,6 +200,15 @@ export default function CatalogForm({ mode }: any) {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await deleteCatalog(id.toString()).unwrap();
+      notify('Success', 'Catalog deleted successfully');
+      router.push('/my-workspace/catalog-manager');
+    } catch {
+      notify('Error', 'Error in deleting');
+    }
+  };
   const onError = (err) => {
     logger.log(err);
   };
@@ -203,41 +222,36 @@ export default function CatalogForm({ mode }: any) {
   }, [itemId]);
 
   useEffect(() => {
-    if (catalog) {
-      catalog?.specificationValues.map((item) =>
-        setValue(`${item?.label}`, item?.value),
-      );
+    if (id && catalog) {
+      const temp = {};
+      catalog?.specificationValues?.map((item) => {
+        const nameToValidate = item?.label?.toLowerCase().replace(' ', '');
+        temp[nameToValidate] = item?.value;
+      });
+      logger.log({ temp });
 
       reset({
+        ...temp,
         quantity: catalog?.quantity,
         location: catalog?.deliveryValues?.location,
-        deliverDays: catalog?.deliveryDays,
+        deliverDays: catalog?.deliveryValues?.deliverDays,
       });
     }
-  }, [catalog, reset]);
+  }, [catalog, reset, id]);
 
   useEffect(() => {
     triggerReadItem(itemId.toString());
   }, [itemId, trigger]);
 
-  return (
-    <>
-      <Section
-        collapsible={false}
-        action={<Button>View Detail</Button>}
-        title={
-          <Flex dir="row">
-            <IconChevronLeft
-              size={30}
-              className="mr-6"
-              onClick={() => router.push('/my-workspace/catalog-manager')}
-            />
-            Item Specification
-          </Flex>
-        }
-      >
+  useEffect(() => {
+    selectedRegion !== undefined && triggerDistrict(selectedRegion);
+  }, [selectedRegion, triggerDistrict]);
+
+  const catalogForm = () => {
+    return (
+      <>
         <LoadingOverlay visible={templateLoading} />
-        <Box mih={'100vh'} className="w-full">
+        <Box mih={'80vh'} className="w-full">
           <Stack className="w-full ml-2">
             <Flex wrap={'wrap'} gap={'xl'}>
               {template?.properties?.map((item, index) => {
@@ -257,6 +271,7 @@ export default function CatalogForm({ mode }: any) {
                         onChange={onChange}
                         placeholder={item?.displayName}
                         required={item?.validation?.min}
+                        rightSection={item?.uom ? item?.uom : ''}
                         error={
                           errors?.[nameToValidate]?.message?.toString() ?? ''
                         }
@@ -273,6 +288,7 @@ export default function CatalogForm({ mode }: any) {
                         label={item?.displayName}
                         className="w-2/5  "
                         value={value}
+                        rightSection={item?.uom ? item?.uom : ''}
                         onChange={onChange}
                         placeholder={item?.displayName}
                         required={item?.validation?.min}
@@ -312,6 +328,7 @@ export default function CatalogForm({ mode }: any) {
                         className="w-2/5 "
                         label={item?.displayName}
                         value={value}
+                        rightSection={item?.uom ? item?.uom : ''}
                         data={
                           item?.validation?.enum?.map((i) => {
                             return {
@@ -338,6 +355,7 @@ export default function CatalogForm({ mode }: any) {
                       <MultiSelect
                         name="name"
                         className="w-2/5 "
+                        rightSection={item?.uom ? item?.uom : ''}
                         label={item?.displayName}
                         value={value}
                         data={
@@ -374,21 +392,46 @@ export default function CatalogForm({ mode }: any) {
                       />
                     )}
                   />
+
                   <Controller
-                    name={'location'}
+                    name="region"
                     control={control}
-                    render={({ field: { value, onChange } }) => (
+                    render={() => (
                       <Select
-                        label={'Location'}
-                        name="location"
-                        onChange={onChange}
-                        value={value}
+                        defaultValue="MW"
+                        required
+                        label={'Region'}
                         className="w-2/5 "
-                        error={errors?.location?.message?.toString() ?? ''}
-                        data={[
-                          { value: 'location1', label: 'Location 1' },
-                          { value: 'location2', label: 'Location 2' },
-                        ]}
+                        value={selectedRegion}
+                        onChange={(value) => setSelectedRegion(value)}
+                        data={
+                          regions?.items?.map((item) => ({
+                            label: item.name,
+                            value: item.id,
+                          })) || []
+                        }
+                        maxDropdownHeight={400}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="location"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <Select
+                        defaultValue="MW"
+                        required
+                        label={'District'}
+                        className="w-2/5 "
+                        value={value}
+                        onChange={onChange}
+                        data={
+                          districts?.items?.map((item) => ({
+                            label: item.name,
+                            value: item.id,
+                          })) || []
+                        }
+                        maxDropdownHeight={400}
                       />
                     )}
                   />
@@ -410,24 +453,68 @@ export default function CatalogForm({ mode }: any) {
               )}
             </Flex>
             {template?.properties?.length > 0 && (
-              <Group className="">
+              <Group className="ml-auto  mt-6">
                 {mode == 'new' ? (
                   <Button onClick={handleSubmit(onCreate, onError)}>
                     Save
                   </Button>
                 ) : (
-                  <Button onClick={handleSubmit(onUpdate, onError)}>
-                    Update
-                  </Button>
+                  <>
+                    {' '}
+                    <Button onClick={handleSubmit(onUpdate, onError)}>
+                      Update
+                    </Button>
+                    <Button mr={'md'} color="red" onClick={handleDelete}>
+                      Delete
+                    </Button>
+                  </>
                 )}
               </Group>
             )}
           </Stack>
-          <Group className=" w-2/5 mt-5 ">
+          {/* <Group className=" w-2/5 mt-5 ">
             <UploadImage />
-          </Group>
+          </Group> */}
         </Box>
-      </Section>
+      </>
+    );
+  };
+
+  return (
+    <>
+      {mode == 'new' ? (
+        <Section
+          collapsible={false}
+          title={
+            <Flex dir="row">
+              <IconChevronLeft
+                size={30}
+                className="mr-6"
+                onClick={() => router.push('/my-workspace/catalog-manager')}
+              />
+              Item Specification
+            </Flex>
+          }
+        >
+          {catalogForm()}
+        </Section>
+      ) : (
+        <Flex direction={'column'}>
+          <Flex dir="row">
+            <IconChevronLeft
+              size={30}
+              className="mr-2"
+              onClick={() => router.push('/my-workspace/catalog-manager')}
+            />
+            <Text fw={'bold'}>Item Specification</Text>
+          </Flex>
+          <Divider my={'sm'} />
+          <Group>
+            <Text>{itemMaster?.description}</Text>
+          </Group>
+          <Box mt={'md'}> {catalogForm()} </Box>
+        </Flex>
+      )}
     </>
   );
 }

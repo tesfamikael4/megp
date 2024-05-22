@@ -48,6 +48,13 @@ export const getCatalogApi = createApi({
       }),
       invalidatesTags: ['catalog'],
     }),
+    deleteCatalog: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `product-catalogs/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['catalog'],
+    }),
     readCatalog: builder.query<any, string>({
       query: (id: string) => ({
         url: `product-catalogs/${id}`,
@@ -94,6 +101,13 @@ export const getCatalogApi = createApi({
       }),
       providesTags: ['files'],
     }),
+
+    getRegions: builder.query<any, any>({
+      query: () => 'regions',
+    }),
+    getDistricts: builder.query<any, string>({
+      query: (id: string) => `districts/list/${id}`,
+    }),
   }),
 });
 
@@ -108,6 +122,7 @@ export const {
   useUpdateCatalogMutation,
   useReadCatalogQuery,
   useLazyReadCatalogQuery,
+  useDeleteCatalogMutation,
 
   // Images
 
@@ -117,4 +132,9 @@ export const {
   useLazyDownloadFilesQuery,
   usePreSignedUrlMutation,
   useDeleteFileMutation,
+
+  useGetDistrictsQuery,
+  useLazyGetDistrictsQuery,
+  useGetRegionsQuery,
+  useLazyGetRegionsQuery,
 } = getCatalogApi;

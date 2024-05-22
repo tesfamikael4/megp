@@ -38,6 +38,7 @@ export default function ProductCard({ data }) {
       withBorder
       key={data.id}
       className={`w-full`}
+      h={290}
     >
       <Card.Section>
         <Image
