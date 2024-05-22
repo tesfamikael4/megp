@@ -1,3 +1,4 @@
+'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Box,
@@ -13,7 +14,7 @@ import {
 } from '@mantine/core';
 import { logger } from '@megp/core-fe';
 import { IconCirclePlus } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 import { v4 } from 'uuid';
@@ -35,11 +36,17 @@ interface Specification {
 export function Popup({
   close,
   add,
+  mode,
+  index,
+  updatedItems,
 }: {
   setFormState?: any;
   close;
   add: any;
   id?: string;
+  mode?: string;
+  index?: number;
+  updatedItems?: any;
 }) {
   const itemSchema: ZodType<Specification> = z.object({
     dataType: z.string().min(1, { message: 'This is required' }),
@@ -59,14 +66,15 @@ export function Popup({
     formState: { errors },
     watch,
     register,
+    reset,
   } = useForm<Partial<Specification>>({
     resolver: zodResolver(itemSchema),
   });
   const type = watch('dataType');
   const [defaultValue, setDefaultValue] = useState<any>();
+  const [data, setData] = useState<any>();
 
   const onCreate = (data: Partial<Specification>) => {
-    logger.log(data, 'gen');
     const newData = {
       ...data,
       key: v4(),
@@ -89,12 +97,32 @@ export function Popup({
           : defaultValue,
     };
 
-    add(newData);
+    mode == 'new' ? add(newData) : add(index, newData);
+
     close();
   };
   const onError = (error: any) => {
     logger.error(error);
   };
+
+  useEffect(() => {
+    if (mode == 'detail' && updatedItems && index !== undefined) {
+      const item = updatedItems[index];
+      setData(item);
+    }
+  }, [index, updatedItems]);
+
+  logger.log(data, 'hu');
+
+  useEffect(() => {
+    reset({
+      ...data,
+      isRequired: data?.validation?.isRequired,
+      selectFrom: data?.validation?.enum,
+      spec: data?.category,
+    });
+  }, [data]);
+
   return (
     <Box>
       <Stack>
@@ -249,7 +277,6 @@ export function Popup({
           defaultValue=""
           render={({ field: { onChange, name, value } }) => (
             <Select
-              name={name}
               value={value}
               onChange={onChange}
               data={catagory}
