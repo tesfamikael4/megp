@@ -43,7 +43,7 @@ export default function ProductCard({ data }) {
       <Card.Section>
         <Image
           src={data?.presignedUrl}
-          className="h-48"
+          className="h-48 mt-2"
           fit="cover"
           alt="product image"
         />
