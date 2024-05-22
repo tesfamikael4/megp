@@ -1,3 +1,16 @@
+# Dockerfile
+FROM ubuntu:latest AS libreoffice
+
+# Install LibreOffice dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    libreoffice \
+    libreoffice-writer \
+    libreoffice-calc \
+    libreoffice-impress \
+    && apt-get clean
+
+
 FROM node:20-alpine AS base
 # This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update both files!
@@ -43,19 +56,12 @@ RUN yarn turbo run build --filter=tendering-be...
 
 FROM base AS runner
 
-RUN apk add libreoffice
-
-# Install Python3 and create virtual environment
-RUN apk add --no-cache python3 py3-pip && \
-    python3 -m venv /venv
-
-# Activate virtual environment
-ENV PATH="/venv/bin:$PATH"
-
-# Install docx2pdf inside the virtual environment
-RUN pip install --no-cache-dir docx2pdf
-
 RUN apk update
+
+# Install LibreOffice from the previous stage
+COPY --from=libreoffice /usr/lib/libreoffice /usr/lib/libreoffice
+COPY --from=libreoffice /usr/bin/libreoffice* /usr/bin/
+COPY --from=libreoffice /usr/share/libreoffice /usr/share/libreoffice
 
 WORKDIR /
 
