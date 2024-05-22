@@ -51,12 +51,8 @@ export class TechnicalScoringAssessment {
   @Column({ type: 'boolean', default: false })
   isTeamAssessment: boolean;
 
-  @Column({
-    type: 'enum',
-    enum: EvaluationStatusEnum,
-    default: EvaluationStatusEnum.NOT_DONE,
-  })
-  qualified: string;
+  @Column()
+  totalPoints: number;
 
   @Column({ type: 'boolean' })
   submit: boolean;

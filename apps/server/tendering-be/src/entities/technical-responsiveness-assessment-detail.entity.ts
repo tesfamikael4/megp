@@ -10,7 +10,7 @@ import { OrgAudit } from 'src/shared/entities';
 import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { SorTechnicalRequirement } from './sor-technical-requirement.entity';
 
-@Entity()
+@Entity({ name: 'technical_responsiveness_assessment_details' })
 export class TechnicalResponsivenessAssessmentDetail extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
