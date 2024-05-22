@@ -7,7 +7,7 @@ FROM base AS builder
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 RUN apk update
-
+RUN apk update
 # Set working directory
 WORKDIR /app
 RUN yarn global add turbo pnpm
@@ -23,13 +23,12 @@ WORKDIR /app
 # Install pnpm
 RUN yarn global add pnpm
  
-
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/out/pnpm-lock.yaml  ./pnpm-lock.yaml 
-#COPY --from=builder /app/node_modules ./node_modules
+ 
 RUN pnpm install
 
 # Build the project
@@ -39,14 +38,12 @@ COPY turbo.json turbo.json
 # Uncomment and use build args to enable remote caching
 # ARG TURBO_TEAM
 # ENV TURBO_TEAM=$TURBO_TEAM
+ 
 
-# ARG TURBO_TOKEN
-# ENV TURBO_TOKEN=$TURBO_TOKEN
-
-# Set environment variables with default values
 ARG VERSION_ARG
 ENV NEXT_PUBLIC_VERSION=$VERSION_ARG
 
+ENV NEXT_PUBLIC_IAM_API="/marketplace/api"
 
 
 RUN pnpm turbo run build --filter=marketplace-fe...
@@ -69,21 +66,6 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/marketplace-fe
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/marketplace-fe/public ./apps/back-office/marketplace-fe/public
 
 
-# Set environment variables with default values
-#ENV ENV_AUTH_API ""
-#ENV ENV_API_BASE_PATH ""
-#ENV ENV_WEBSITE_DOMAIN ""
-#ENV ENV_WEBSITE_BASE_PATH ""
-
-
-ENV ENV_AUTH_API="AUTH_API"
-ENV ENV_API_BASE_PATH="API_BASE_PATH"
-ENV ENV_WEBSITE_DOMAIN="WEBSITE_DOMAIN"
-ENV ENV_WEBSITE_BASE_PATH="WEBSITE_BASE_PATH"
-#ENV ENV_PUBLIC_VENDOR_API="PUB_VENDOR_API"
-ENV ENV_RECAPTCHA_SITE_KEY ""
-
-EXPOSE 5544
 
 # Specify the command to run your application, passing the environment variables
 CMD ["node", "apps/back-office/marketplace-fe/server.js"]
