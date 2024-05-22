@@ -1,16 +1,3 @@
-# Dockerfile
-FROM ubuntu:latest AS libreoffice
-
-# Install LibreOffice dependencies
-RUN apt-get update && \
-    apt-get install -y \
-    libreoffice \
-    libreoffice-writer \
-    libreoffice-calc \
-    libreoffice-impress \
-    && apt-get clean
-
-
 FROM node:20-alpine AS base
 # This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update both files!
@@ -58,10 +45,10 @@ FROM base AS runner
 
 RUN apk update
 
-# Install LibreOffice from the previous stage
-COPY --from=libreoffice /usr/lib/libreoffice /usr/lib/libreoffice
-COPY --from=libreoffice /usr/bin/libreoffice* /usr/bin/
-COPY --from=libreoffice /usr/share/libreoffice /usr/share/libreoffice
+RUN apk add libreoffice
+RUN apk add libreoffice-common
+
+RUN apk update
 
 WORKDIR /
 
