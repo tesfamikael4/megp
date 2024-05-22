@@ -62,7 +62,7 @@ export default function CatalogForm({ mode }: any) {
         }
       } else if (
         item.dataType === 'string' ||
-        item.validation.type == 'singleSelect'
+        item.dataType == 'singleSelect'
       ) {
         if (item.validation.isRequired) {
           return (loc[nameToValidate] = z
@@ -316,7 +316,7 @@ export default function CatalogForm({ mode }: any) {
                       />
                     )}
                   />
-                ) : item.validation.type == 'singleSelect' ? (
+                ) : item.dataType == 'singleSelect' ? (
                   <Controller
                     key={index}
                     name={nameToValidate}
