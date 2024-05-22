@@ -9,8 +9,12 @@ export default function ReadSpec() {
       <Section collapsible={false}>
         <Box mih={'80vh'}>
           <Flex gap={'sm'}>
-            <ViewImage />
-            <CatalogForm mode={'detail'} />
+            <Box className="w-1/3">
+              <ViewImage />
+            </Box>
+            <Box className="w-2/3">
+              <CatalogForm mode={'detail'} />
+            </Box>
           </Flex>
         </Box>
       </Section>

@@ -30,7 +30,6 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UploadImage } from './image-upload';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useLazyReadItemQuery } from '@/store/api/item-master/item-master.api';
 
@@ -166,13 +165,15 @@ export default function CatalogForm({ mode }: any) {
         itemMasterId: itemId.toString(),
         itemMasterCode: itemMaster?.itemCode,
         specificationTemplateId: template.id.toString(),
-        deliveryValues: [
-          {
-            deliveryDate: data.deliveryDate,
-            location: data.location,
-            deliverDays: data.deliverDays,
-          },
-        ],
+        deliveryValues:
+          data.location || data.deliverDays
+            ? [
+                {
+                  location: data?.location,
+                  deliverDays: data?.deliverDays,
+                },
+              ]
+            : [],
         specificationValues: template.properties.map((item) => {
           const nameToValidate = item.displayName
             .toLowerCase()
@@ -228,7 +229,6 @@ export default function CatalogForm({ mode }: any) {
         const nameToValidate = item?.label?.toLowerCase().replace(' ', '');
         temp[nameToValidate] = item?.value;
       });
-      logger.log({ temp });
 
       reset({
         ...temp,
@@ -251,9 +251,9 @@ export default function CatalogForm({ mode }: any) {
     return (
       <>
         <LoadingOverlay visible={templateLoading} />
-        <Box mih={'80vh'} className="w-full">
-          <Stack className="w-full ml-2">
-            <Flex wrap={'wrap'} gap={'xl'}>
+        <Box mih={'80vh'} className="w-full mr-2">
+          <Stack className="w-full ">
+            <Box className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {template?.properties?.map((item, index) => {
                 const nameToValidate = item.displayName
                   .toLowerCase()
@@ -265,12 +265,12 @@ export default function CatalogForm({ mode }: any) {
                     control={control}
                     render={({ field: { value, onChange } }) => (
                       <TextInput
-                        className="w-2/5 "
+                        className="w-full"
                         label={item?.displayName}
                         value={value}
                         onChange={onChange}
                         placeholder={item?.displayName}
-                        required={item?.validation?.min}
+                        required={item?.validation?.isRequired}
                         rightSection={item?.uom ? item?.uom : ''}
                         error={
                           errors?.[nameToValidate]?.message?.toString() ?? ''
@@ -286,12 +286,11 @@ export default function CatalogForm({ mode }: any) {
                     render={({ field: { value, onChange } }) => (
                       <NumberInput
                         label={item?.displayName}
-                        className="w-2/5  "
                         value={value}
                         rightSection={item?.uom ? item?.uom : ''}
                         onChange={onChange}
                         placeholder={item?.displayName}
-                        required={item?.validation?.min}
+                        required={item?.validation?.isRequired}
                         error={
                           errors?.[nameToValidate]?.message?.toString() ?? ''
                         }
@@ -305,7 +304,7 @@ export default function CatalogForm({ mode }: any) {
                     control={control}
                     render={({ field: { name, value, onChange } }) => (
                       <Checkbox
-                        className="w-2/5 mt-auto"
+                        className=" mt-auto"
                         label={item?.displayName}
                         name={name}
                         value={value}
@@ -325,7 +324,6 @@ export default function CatalogForm({ mode }: any) {
                     render={({ field: { value, onChange } }) => (
                       <Select
                         name="name"
-                        className="w-2/5 "
                         label={item?.displayName}
                         value={value}
                         rightSection={item?.uom ? item?.uom : ''}
@@ -354,7 +352,6 @@ export default function CatalogForm({ mode }: any) {
                     render={({ field: { value, onChange } }) => (
                       <MultiSelect
                         name="name"
-                        className="w-2/5 "
                         rightSection={item?.uom ? item?.uom : ''}
                         label={item?.displayName}
                         value={value}
@@ -384,7 +381,7 @@ export default function CatalogForm({ mode }: any) {
                     control={control}
                     render={({ field: { name, value, onChange } }) => (
                       <NumberInput
-                        className="w-2/5 "
+                        name="name"
                         label={'Quantity'}
                         value={value}
                         onChange={onChange}
@@ -401,7 +398,6 @@ export default function CatalogForm({ mode }: any) {
                         defaultValue="MW"
                         required
                         label={'Region'}
-                        className="w-2/5 "
                         value={selectedRegion}
                         onChange={(value) => setSelectedRegion(value)}
                         data={
@@ -422,7 +418,6 @@ export default function CatalogForm({ mode }: any) {
                         defaultValue="MW"
                         required
                         label={'District'}
-                        className="w-2/5 "
                         value={value}
                         onChange={onChange}
                         data={
@@ -443,7 +438,6 @@ export default function CatalogForm({ mode }: any) {
                       <NumberInput
                         label={'Delivery Days'}
                         value={value}
-                        className="w-2/5 "
                         onChange={onChange}
                         error={errors?.deliverDays?.message?.toString() ?? ''}
                       />
@@ -451,20 +445,31 @@ export default function CatalogForm({ mode }: any) {
                   />
                 </>
               )}
-            </Flex>
+            </Box>
             {template?.properties?.length > 0 && (
               <Group className="ml-auto  mt-6">
                 {mode == 'new' ? (
-                  <Button onClick={handleSubmit(onCreate, onError)}>
+                  <Button
+                    onClick={handleSubmit(onCreate, onError)}
+                    loading={isSaving}
+                  >
                     Save
                   </Button>
                 ) : (
                   <>
                     {' '}
-                    <Button onClick={handleSubmit(onUpdate, onError)}>
+                    <Button
+                      onClick={handleSubmit(onUpdate, onError)}
+                      loading={isUpdating}
+                    >
                       Update
                     </Button>
-                    <Button mr={'md'} color="red" onClick={handleDelete}>
+                    <Button
+                      mr={'md'}
+                      color="red"
+                      onClick={handleDelete}
+                      loading={isDeleting}
+                    >
                       Delete
                     </Button>
                   </>
@@ -472,9 +477,6 @@ export default function CatalogForm({ mode }: any) {
               </Group>
             )}
           </Stack>
-          {/* <Group className=" w-2/5 mt-5 ">
-            <UploadImage />
-          </Group> */}
         </Box>
       </>
     );
