@@ -6,20 +6,18 @@ import {
   LoadingOverlay,
   MultiSelect,
   NumberInput,
-  Select,
   Stack,
   Switch,
   TextInput,
 } from '@mantine/core';
 import { logger } from '@megp/core-fe';
 import { IconDeviceFloppy } from '@tabler/icons-react';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
   useCreateMutation,
   useLazyListByIdQuery,
-  useListByIdQuery,
   useUpdateMutation,
 } from '../../_api/rfx/contract-conditions.api';
 import { useParams } from 'next/navigation';
