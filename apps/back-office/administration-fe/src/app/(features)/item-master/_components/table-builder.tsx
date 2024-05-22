@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Popup } from './template-modal';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { IconCirclePlus } from '@tabler/icons-react';
 import {
   useCopyTemplateMutation,
@@ -15,12 +15,14 @@ import {
 import { useParams } from 'next/navigation';
 import ItemSelector from './Item-selector';
 import { DraggableTable } from './dragable';
+import { useLazyReadQuery } from '../_api/item-master.api';
 
 export function Builder() {
   const [opened, { open, close }] = useDisclosure(false);
   const [copyModalOpend, { open: openCopyModal, close: closeCopyModal }] =
     useDisclosure(false);
   const [updatedItems, setUpdatedItems] = useState<any[]>([]);
+  const [readItem, { data: item }] = useLazyReadQuery();
 
   const { id } = useParams();
 
@@ -45,11 +47,13 @@ export function Builder() {
     try {
       const result = await createTemplate({
         itemMasterId: id,
+        itemMasterCode: item?.itemCode,
         quantity: 10,
         properties: updatedItems?.map((field: any) => {
           return {
             key: field.key,
             dataType: field?.dataType,
+            order: 0,
             validation: {
               type: field?.dataType,
               min: field?.min,
@@ -62,7 +66,6 @@ export function Builder() {
             defaultValue: field?.defaultValue,
             displayName: field?.displayName,
             category: 'Basic specification',
-            order: field.order,
           };
         }),
         deliveries: [],
@@ -78,11 +81,13 @@ export function Builder() {
       const result = await update({
         id: data?.id,
         itemMasterId: id,
+        itemMasterCode: item?.itemCode,
         quantity: 10,
         properties: updatedItems.map((field: any) => {
           return {
             key: field.key,
             dataType: field?.dataType,
+            order: 0,
             validation: {
               type: field?.dataType,
               min: field?.min,
@@ -144,6 +149,10 @@ export function Builder() {
       setUpdatedItems(fields);
     }
   }, [fields, isSuccess]);
+
+  useEffect(() => {
+    readItem(id?.toString());
+  }, [id, readItem]);
 
   return (
     <>

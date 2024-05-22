@@ -113,13 +113,6 @@ export const DraggableTable = ({
                                   </Menu.Target>
                                   <Menu.Dropdown>
                                     <Menu.Item
-                                      leftSection={<IconPencil size={15} />}
-                                      onClick={open}
-                                    >
-                                      Edit
-                                    </Menu.Item>
-
-                                    <Menu.Item
                                       color="red"
                                       leftSection={<IconX size={15} />}
                                       onClick={() => remove(item.key)}

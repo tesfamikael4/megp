@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
-import { useCreateMutation } from '../_api/contract.api';
+import { useCreateAllocatedItemMutation } from '@/store/api/contract-catalog/contract-catalog.api';
 import { useDisclosure } from '@mantine/hooks';
 import SelectOrganization from './select-organization';
 import { Section, notify } from '@megp/core-fe';
@@ -42,24 +42,24 @@ export default function ContractAllocatedItem({
   } = useForm({
     resolver: zodResolver(AllocateditemSchema),
   });
-  const router = useRouter();
+  // const router = useRouter();
 
   const [opened, { open, close }] = useDisclosure();
   const [selectedOrg, setSelectedOrg] = useState<any[]>([]);
   const [triggerItem, { data: item }] = useLazyReadItemMasterQuery();
 
-  const [create] = useCreateMutation();
+  const [create] = useCreateAllocatedItemMutation();
 
   const onCreate = async (data) => {
     try {
-      const result = await create({
+      await create({
         ...data,
         contractItemId: selectedOrg[0]?.id,
         itemMasterId: selectedOrg[0]?.itemMasterId,
         contractBeneficiaryId: beneficiary.id,
       }).unwrap();
 
-      router.push(`/contract-catalogs/${result?.id}`);
+      // router.push(`/contract-catalogs/${result?.id}`);
       notify('Success', 'Contract catalog Created successfully');
     } catch (error) {
       const errorMessage =
