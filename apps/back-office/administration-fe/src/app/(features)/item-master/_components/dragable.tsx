@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Box, Group, ActionIcon, Menu, Flex, Table } from '@mantine/core';
+import { Group, ActionIcon, Menu, Flex, Table } from '@mantine/core';
 import { IconDotsVertical, IconPencil, IconX } from '@tabler/icons-react';
-import { logger } from '@megp/core-fe';
 
 export const DraggableTable = ({
   data,
@@ -46,7 +45,6 @@ export const DraggableTable = ({
     });
     setUpdatedItems(_items);
   }, []);
-  logger.log(items);
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -115,7 +113,7 @@ export const DraggableTable = ({
                                     <Menu.Item
                                       color="red"
                                       leftSection={<IconX size={15} />}
-                                      onClick={() => remove(item.key)}
+                                      onClick={() => remove(index)}
                                     >
                                       Remove
                                     </Menu.Item>

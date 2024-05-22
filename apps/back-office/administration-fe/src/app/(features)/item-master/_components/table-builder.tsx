@@ -96,6 +96,7 @@ export function Builder() {
               enum: field?.selectFrom,
             },
             measurement: field?.measurement,
+            uom: field?.uom,
             defaultValue: field?.defaultValue,
             displayName: field?.displayName,
             category: 'Basic specification',
