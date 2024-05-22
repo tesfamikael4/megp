@@ -48,6 +48,25 @@ RUN apk update
 RUN apk add libreoffice
 RUN apk add libreoffice-common
 
+# Install necessary Alpine packages for LibreOffice to work
+RUN apk add --no-cache \
+    libxinerama \
+    libxrender \
+    ttf-dejavu \
+    fontconfig \
+    bash \
+    msttcorefonts-installer && \
+    update-ms-fonts && \
+    fc-cache -f
+
+# Install additional fonts to prevent text rendering issues
+RUN apk add --no-cache \
+    ttf-dejavu \
+    ttf-freefont \
+    ttf-liberation \
+    ttf-linux-libertine \
+    ttf-ubuntu-font-family
+
 RUN apk update
 
 WORKDIR /
