@@ -25,6 +25,29 @@ import { usePrivilege } from '../../_context/privilege-context';
 import { getNationalityValues } from '../mockup/nationality';
 import style from './basic.module.scss';
 
+const errorMessages = {
+  'no tin number issued date found': 'TIN number issued date is missing.',
+  'no registration number found': 'Registration number is missing.',
+  'no registration number issued date found':
+    'Registration number issued date is missing.',
+  invalid_tin_number: 'The provided TIN number is invalid.',
+  'incorrect tin number issued date':
+    'The TIN number issued date is incorrect.',
+  mbrs_fetch_error: 'Error fetching data from MBRS.',
+  you_are_not_registered_on_mbrs: 'You are not registered on MBRS.',
+  incorrect_registration_date: 'The registration issued date is incorrect.',
+};
+const errorMappingwithZod = {
+  'no tin number issued date found': 'tinNumber',
+  'no registration number found': 'registrationNumber',
+  'no registration number issued date found': 'registrationIssuedDate',
+  invalid_tin_number: 'tinNumber',
+  'incorrect tin number issued date': 'tinIssuedDate',
+  mbrs_fetch_error: 'Error fetching data from MBRS.',
+  you_are_not_registered_on_mbrs: 'You are not registered on MBRS.',
+  incorrect_registration_date: 'registrationIssuedDate',
+};
+
 type FormData = {
   name: string;
   countryOfRegistration: string;
@@ -122,14 +145,18 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
       NotificationService.requestErrorNotification(createValues.data?.message);
     }
     if (createValues.isError) {
-      if (
-        (createValues.error as any).data?.message ===
-        'you_are_not_registered_on_mbrs'
-      )
+      if (errorMessages[(createValues.error as any).data?.message]) {
         NotificationService.requestErrorNotification(
-          "You don't have a valid Business Registration Number. Please Check again",
+          errorMessages[(createValues.error as any).data?.message],
         );
-      else NotificationService.requestErrorNotification('Error on Request');
+        const errorKey =
+          errorMappingwithZod[(createValues.error as any).data?.message];
+
+        if (errorKey)
+          setError(errorKey, {
+            message: errorMessages[(createValues.error as any).data?.message],
+          });
+      } else NotificationService.requestErrorNotification('Error on Request');
     }
 
     return () => {};

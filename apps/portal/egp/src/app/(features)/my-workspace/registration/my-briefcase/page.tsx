@@ -90,7 +90,11 @@ function Page() {
             <Text fw={500} fz={14} c="#464665">
               No documents have been added!
             </Text>
-            {vendor && <Button variant="outline">Add Documents</Button>}
+            {vendor && (
+              <Button variant="outline" onClick={open}>
+                Add Documents
+              </Button>
+            )}
           </Flex>
         }
         headerBorder

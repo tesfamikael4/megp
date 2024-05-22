@@ -1,6 +1,6 @@
 'use cleint';
 
-import { Button, FileInput, Flex, Modal } from '@mantine/core';
+import { Button, FileInput, Flex, Modal, Textarea } from '@mantine/core';
 import React, { useState } from 'react';
 import { useUploadToBriefcaseMutation } from '../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
@@ -46,6 +46,7 @@ const UploadModal = ({
         // value={file}
         onChange={(file) => setFile(file)}
       />
+      <Textarea label="File Description" mt={'sm'} />
       <Flex justify={'flex-end'} mt={'md'}>
         <Button disabled={!file} onClick={handleUploadFile}>
           Upload
