@@ -11,6 +11,7 @@ import {
   Text,
   TextInput,
   Image,
+  Flex,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
@@ -73,14 +74,15 @@ export const UploadImage = ({
   }, [opened]);
 
   const Action = ({ data }: any) => {
-    const [opened, { open, close }] = useDisclosure(false);
+    const [openedViewModal, { open: openViewModal, close: closeViewModal }] =
+      useDisclosure(false);
     const openDeleteModal = () => {
       modals.openConfirmModal({
-        title: `Delete Document`,
+        title: `Delete Image`,
         centered: true,
         children: (
           <Text size="sm">
-            {`Are you sure you want to delete this Document `}
+            {`Are you sure you want to delete this Image? `}
           </Text>
         ),
         labels: { confirm: 'Yes', cancel: 'No' },
@@ -128,7 +130,7 @@ export const UploadImage = ({
             <Menu.Item
               leftSection={<IconEye size={15} />}
               onClick={() => {
-                open();
+                openViewModal();
               }}
             >
               View
@@ -152,8 +154,8 @@ export const UploadImage = ({
         </Menu>
 
         <Modal
-          opened={opened}
-          onClose={close}
+          opened={openedViewModal}
+          onClose={closeViewModal}
           title={data.fileName}
           size="xl"
           pos="relative"
@@ -244,7 +246,7 @@ export const UploadImage = ({
       }
     >
       <Box className="pt-2">
-        <FileInput onClick={open} />
+        {/* <FileInput onClick={open} /> */}
 
         {productDocuments?.items.map((item, index) => (
           <>
@@ -256,9 +258,14 @@ export const UploadImage = ({
             /> */}
             {/* <FilePriview data={item} /> */}
             <Card key={index}>
-              {item.fileInfo.originalname}
+              <Flex>
+                {item.fileInfo.originalname}{' '}
+                <Group className="ml-auto">
+                  <Action data={item} />
+                </Group>
+              </Flex>
 
-              <Menu shadow="md">
+              {/* <Menu shadow="md">
                 <Menu.Target>
                   <IconDotsVertical
                     className="ml-auto text-gray-500"
@@ -292,7 +299,7 @@ export const UploadImage = ({
                     Delete
                   </Menu.Item>
                 </Menu.Dropdown>
-              </Menu>
+              </Menu> */}
             </Card>
             {/* <Modal
               opened={opened}
@@ -348,7 +355,7 @@ export const UploadImage = ({
 };
 
 const FilePriview = ({ data }: { data: any }) => {
-  const [dowloadPrFile, { data: prUrl, isLoading: isPrLoading }] =
+  const [dowloadPrFile, { data: url, isLoading: isPrLoading }] =
     useLazyDownloadFilesQuery();
 
   useEffect(() => {
@@ -356,7 +363,8 @@ const FilePriview = ({ data }: { data: any }) => {
   }, [data]);
   return (
     <Box>
-      <FileViewer url={prUrl?.presignedUrl ?? ''} filename={data.fileName} />
+      {/* <FileViewer url={prUrl?.presignedUrl ?? ''} filename={data.fileName} /> */}
+      <Image src={url?.presignedUrl} />
     </Box>
   );
 };

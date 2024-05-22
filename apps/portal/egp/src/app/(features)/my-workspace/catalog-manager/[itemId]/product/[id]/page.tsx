@@ -1,9 +1,8 @@
-import CatalogForm from '../../../component/catalog-form';
-
+import ReadSpec from '../../../component/read-spec';
 export default function NewCatalog() {
   return (
     <>
-      <CatalogForm mode={'detail'} />
+      <ReadSpec />
     </>
   );
 }
