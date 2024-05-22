@@ -50,7 +50,6 @@ export class TechnicalScoringAssessmentDetailController extends ExtraCrudControl
     const query = decodeCollectionQuery(q);
     return await this.technicalScoringAssessmentDetailService.passedBidders(
       lotId,
-      itemId,
       isTeam,
       query,
       req,
@@ -122,18 +121,9 @@ export class TechnicalScoringAssessmentDetailController extends ExtraCrudControl
   //   );
   // }
 
-  @Get('members-report/:lotId/:itemId/:bidderId/:eqcEvaluationId')
-  async membersReport(
-    @Param('lotId') lotId: string,
-    @Param('itemId') itemId: string,
-    @Param('bidderId') bidderId: string,
-    @Param('eqcEvaluationId') eqcEvaluationId: string,
-  ) {
-    return await this.technicalScoringAssessmentDetailService.membersReport(
-      eqcEvaluationId,
-      bidderId,
-      lotId,
-      itemId,
-    );
-  }
+  // @Get('members-report/:lotId/:itemId/:bidderId/:eqcEvaluationId')
+  // async membersReport(
+  //   @Param('lotId') lotId: string,
+  //   );
+  // }
 }
