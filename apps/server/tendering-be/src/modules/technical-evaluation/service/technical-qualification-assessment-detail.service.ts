@@ -551,7 +551,7 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
     const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
 
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const [technicalQualificationAssessmentDetail, spdChecklist] =
+    const [technicalQualificationAssessmentDetail, eqcQualification] =
       await Promise.all([
         manager.getRepository(TechnicalQualificationAssessmentDetail).find({
           where: {
@@ -580,25 +580,17 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
           },
         }),
 
-        manager.getRepository(SpdQualification).find({
+        manager.getRepository(EqcQualification).find({
           where: {
-            spd: {
-              tenderSpds: {
-                tender: {
-                  lots: {
-                    id: lotId,
-                  },
-                },
-              },
-            },
+            lotId,
           },
         }),
       ]);
 
-    const response = spdChecklist.map((spdChecklist) => ({
-      ...spdChecklist,
+    const response = eqcQualification.map((eqcQualification) => ({
+      ...eqcQualification,
       check: technicalQualificationAssessmentDetail.find(
-        (x) => x.eqcQualificationId == spdChecklist.id,
+        (x) => x.eqcQualificationId == eqcQualification.id,
       ),
     }));
     return response;

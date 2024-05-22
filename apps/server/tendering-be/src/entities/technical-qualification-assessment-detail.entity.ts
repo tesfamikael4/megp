@@ -11,7 +11,7 @@ import { SpdQualification } from './spd-qualification.entity';
 import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { EqcQualification } from './eqc-qualification.entity';
 
-@Entity()
+@Entity({ name: 'technical_qualification_assessment_details' })
 export class TechnicalQualificationAssessmentDetail extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

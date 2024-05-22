@@ -4,6 +4,9 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  Tree,
+  TreeChildren,
+  TreeParent,
 } from 'typeorm';
 import { TechnicalScoringAssessment } from './technical-scoring-assessments.entity';
 import { OrgAudit } from 'src/shared/entities';
@@ -11,7 +14,8 @@ import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { SorTechnicalRequirement } from './sor-technical-requirement.entity';
 import { EqcTechnicalScoring } from './eqc-technical-scoring.entity';
 
-@Entity()
+@Tree('closure-table')
+@Entity({ name: 'technical_scoring_assessments_details' })
 export class TechnicalScoringAssessmentDetail extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -39,13 +43,21 @@ export class TechnicalScoringAssessmentDetail extends OrgAudit {
   @JoinColumn({ name: 'eqcTechnicalScoringId' })
   eqcTechnicalScoring: EqcTechnicalScoring;
 
-  @Column({
-    type: 'enum',
-    enum: EvaluationStatusEnum,
-    default: EvaluationStatusEnum.NOT_DONE,
-  })
-  qualified: string;
-
   @Column({ nullable: true })
   remark: string;
+
+  @Column({ type: 'int' })
+  pointsAwarded: number;
+
+  @Column({ type: 'int' })
+  maxPoints: number;
+
+  @Column({ type: 'uuid', nullable: true })
+  parentId: string;
+
+  @TreeChildren()
+  children: TechnicalScoringAssessmentDetail[];
+
+  @TreeParent()
+  parent: TechnicalScoringAssessmentDetail;
 }

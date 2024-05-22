@@ -6,10 +6,14 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Tree,
+  TreeParent,
+  TreeChildren,
 } from 'typeorm';
 import { Lot } from '.';
 import { TechnicalScoringAssessmentDetail } from './technical-scoring-assessment-detail.entity';
 
+@Tree('closure-table')
 @Entity({ name: 'eqc_technical_scorings' })
 export class EqcTechnicalScoring extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -25,18 +29,11 @@ export class EqcTechnicalScoring extends Audit {
   @Column({ type: 'uuid', nullable: true })
   parentId: string;
 
-  @ManyToOne(
-    () => EqcTechnicalScoring,
-    (technicalScoring) => technicalScoring.children,
-  )
-  @JoinColumn()
-  parent: EqcTechnicalScoring;
-
-  @OneToMany(
-    () => EqcTechnicalScoring,
-    (technicalScoring) => technicalScoring.parent,
-  )
+  @TreeChildren()
   children: EqcTechnicalScoring[];
+
+  @TreeParent()
+  parent: EqcTechnicalScoring[];
 
   @Column()
   requirement: string;
