@@ -12,7 +12,17 @@ import { addSpacesToCamelCase } from '../../vendor/(workspace)/registration/_com
 import { useGetVendorsQuery, useLazyGetVendorsQuery } from '../../_api/reports';
 import { usePathname, useRouter } from 'next/navigation';
 
-const Entity = ({ children }: { children: React.ReactNode }) => {
+const Entity = ({
+  children,
+  list,
+  isLoading,
+  onRequestChange,
+}: {
+  children: React.ReactElement;
+  list: { items: any[]; total: number };
+  isLoading: boolean;
+  onRequestChange: (query: CollectionQuery) => void;
+}) => {
   const pathname = usePathname();
   const router = useRouter();
   const config: EntityConfig<unknown> = useMemo(() => {
@@ -64,28 +74,13 @@ const Entity = ({ children }: { children: React.ReactNode }) => {
       ],
     };
   }, [router]);
-  const [trigger, { data: list, isLoading }] = useLazyGetVendorsQuery();
   const mode = pathname == '/vendors' ? 'list' : 'detail';
-
-  const onRequestChange = useCallback(
-    (request: CollectionQuery) => {
-      trigger(request);
-    },
-    [trigger],
-  );
-
-  useEffect(() => {
-    onRequestChange({
-      take: 20,
-      skip: 0,
-    });
-  }, [onRequestChange]);
 
   if (isLoading) <LoadingOverlay />;
   else if (!list) <Box>No Data Message</Box>;
   else
     return (
-      <Box py={20}>
+      <Box>
         <EntityLayout
           config={config}
           data={list.items ?? []}

@@ -170,7 +170,6 @@ export default function SupportingDocuments() {
         }),
       );
       request({});
-      // NotificationService.successNotification('Files Uploaded Successfully!');
       router.push('review');
     } catch (error) {
       NotificationService.requestErrorNotification(
