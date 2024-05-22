@@ -143,12 +143,7 @@ export class WorkflowService {
         serviceBp.service.name,
       );
     }
-    const vendor = await this.vendorRegService.findOne(wfinstance.requestorId);
-    if (vendor) {
-      vendor.canRequest = false;
-      await this.vendorRegService.update(vendor.id, vendor);
-    }
-
+    await this.vendorRegService.permitForOtherServiceRequest(wfinstance.requestorId);
     return response;
   }
   async changeWorkflowInstanceStatus(status: string, instanceId: string) {
@@ -235,13 +230,7 @@ export class WorkflowService {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
           workflowInstance.taskHandler = null;
-          const vendor = await this.vendorRegService.findOne(
-            wfInstance.requestorId,
-          );
-          if (vendor) {
-            vendor.canRequest = true;
-            await this.vendorRegService.update(vendor.id, vendor);
-          }
+          await this.vendorRegService.permitForOtherServiceRequest(workflowInstance.requestorId);
         } else {
           throw new Error('Unable to update vender status');
         }
@@ -394,11 +383,7 @@ export class WorkflowService {
           }
 
           if (result) {
-            const vendor = await this.vendorRegService.findOne(wfi.requestorId);
-            if (vendor) {
-              vendor.canRequest = true;
-              await this.vendorRegService.update(vendor.id, vendor);
-            }
+            this.vendorRegService.permitForOtherServiceRequest(wfi.requestorId);
           }
         }
         break;
@@ -419,11 +404,7 @@ export class WorkflowService {
             );
           }
           if (result) {
-            const vendor = await this.vendorRegService.findOne(wfi.requestorId);
-            if (vendor) {
-              vendor.canRequest = true;
-              await this.vendorRegService.update(vendor.id, vendor);
-            }
+            await this.vendorRegService.permitForOtherServiceRequest(wfi.requestorId);
           }
         }
         break;
@@ -462,11 +443,7 @@ export class WorkflowService {
           }
 
           if (result) {
-            const vendor = await this.vendorRegService.findOne(wfi.requestorId);
-            if (vendor) {
-              vendor.canRequest = true;
-              await this.vendorRegService.update(vendor.id, vendor);
-            }
+            await this.vendorRegService.permitForOtherServiceRequest(wfi.requestorId);
           }
         }
         break;
@@ -680,6 +657,10 @@ export class WorkflowService {
   getInstance(id: string) {
     return this.workflowInstanceRepository.findOne({ where: { id: id } });
   }
+  getRequestedAppByVendorId(requestorId: string) {
+    return this.workflowInstanceRepository.findOne({ relations: { service: true }, where: { requestorId: requestorId, status: ApplicationStatus.INPROGRESS } });
+  }
+
 
   getStateMetaData(meta) {
     return Object.keys(meta).reduce((acc, key) => {

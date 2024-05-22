@@ -10,13 +10,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
+import { CurrentUser } from 'src/shared/authorization';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BriefcasesService } from '../services/briefcases.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BriefCaseDto } from '../dto/briefcase.dto';
-import { Allow } from 'class-validator';
 
 @Controller('briefcases')
 @ApiTags('briefcases')

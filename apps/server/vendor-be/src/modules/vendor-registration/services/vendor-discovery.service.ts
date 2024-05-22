@@ -130,12 +130,12 @@ export class VendorDiscoveryService {
     const priceRanges = vendorData.isrVendor?.businessAreas.map(
       (item) => item.servicePrice,
     );
-    const bussinessAreas = this.utilService.formatingBusinessArea(
+    const bussinessAreas = this.utilService.formatBusinessArea(
       priceRanges,
       vendorData.isrVendor?.businessAreas,
     );
     const ceretficate = await this.baService.getCerteficate(vendorData.id);
-    const preferentails = await this.ptService.getMyPreferetialTreatments(
+    const preferentails = await this.ptService.getMyPreferentialTreatments(
       vendorData.userId,
     );
     const vendor = {

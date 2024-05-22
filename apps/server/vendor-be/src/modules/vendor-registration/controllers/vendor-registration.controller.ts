@@ -37,14 +37,31 @@ export class VendorRegistrationsController {
   constructor(private readonly regService: VendorRegistrationsService) { }
   @Get('get-isr-vendors')
   async getVendors() {
+
     return await this.regService.getIsrVendors();
   }
-
+  /*
+  fetch all approved vendor detail by use id
+  */
   @Get('get-vendor-by-userId')
-  async getVendorByuserId(@CurrentUser() userInfo: any) {
+  async getVendorByUserId(@CurrentUser() user: any) {
+    user.id = "1dcda690-2447-43ca-898d-95b5ed4c5b0c";
     // return await this.regService.getVendorByUserId(userInfo.id);
-    return await this.regService.getVendorByUserId(userInfo.id);
+    return await this.regService.vendorDetailByUserId(user.id);
   }
+  /*
+  fetch a vendor Initial service Requestor details information before the vendor approved
+  */
+  @Get('get-isr-vendor-by-userId')
+  async getIsrVendorByUserId(
+    @CurrentUser() userInfo: any,
+    @Query('flag') flag: string,
+  ) {
+    return await this.regService.getIsrVendorByUserId(userInfo.id);
+  }
+
+
+
   @Get('get-application-status-by-userId')
   async getApplicationStatus(@CurrentUser() userInfo: any) {
     // return await this.regService.getVendorByUserId(userInfo.id);
@@ -54,13 +71,7 @@ export class VendorRegistrationsController {
   async trackApplication(@CurrentUser() user: any) {
     return await this.regService.trackApplication(user);
   }
-  @Get('get-isr-vendor-by-userId')
-  async getIsrVendorByuserId(
-    @CurrentUser() userInfo: any,
-    @Query('flag') flag: string,
-  ) {
-    return await this.regService.getIsrVendorByUserId(userInfo.id, flag);
-  }
+  //
 
   @Get('get-isr-vendor-by-userId/:status')
   async getApplicationsByUserIdAndStatus(
@@ -123,7 +134,7 @@ export class VendorRegistrationsController {
   }
 
   @Post('submit-vendor-registration-request')
-  async submitNewRegistratinRequest(
+  async submitNewRegistrationRequest(
     @Body() data: InsertAllDataDto,
     @CurrentUser() userInfo: any,
   ) {
