@@ -3,7 +3,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   JoinColumn,
-  OneToOne,
   ManyToOne,
   OneToMany,
 } from 'typeorm';
@@ -59,7 +58,7 @@ export class ProductCatalog extends Audit {
   })
   approvalStatus: string;
 
-  @OneToOne(() => ItemMaster, {
+  @ManyToOne(() => ItemMaster, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
   })
