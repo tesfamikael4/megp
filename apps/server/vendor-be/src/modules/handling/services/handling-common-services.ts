@@ -145,7 +145,7 @@ export class HandlingCommonService {
     return keys;
   }
 
-  getPreferencialServices() {
+  getPreferentialServices() {
     return [
       ServiceKeyEnum.IBM,
       ServiceKeyEnum.MEDIUM,
@@ -231,7 +231,7 @@ export class HandlingCommonService {
     } = object;
     return rest;
   }
-  formatingBusinessArea(priceRanges: ServicePrice[], abis: any[]) {
+  formatBusinessArea(priceRanges: ServicePrice[], abis: any[]) {
     const formattedAreaOfBi = [];
     for (const price of priceRanges) {
       for (const bi of abis) {

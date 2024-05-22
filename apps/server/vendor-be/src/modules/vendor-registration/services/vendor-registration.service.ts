@@ -8,7 +8,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { In, Not, Repository } from 'typeorm';
+import { In, Not, QueryBuilder, Repository } from 'typeorm';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import {
   VendorInitiationDto,
@@ -16,11 +16,13 @@ import {
 } from '../dto/vendor-initiation.dto';
 import { EntityCrudService } from 'src/shared/service';
 import {
+  BpServiceEntity,
   BusinessAreaEntity,
   InvoiceEntity,
   IsrVendorsEntity,
   ServicePrice,
   VendorsEntity,
+  WorkflowInstanceEntity,
 } from '@entities';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import {
@@ -31,7 +33,7 @@ import {
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { InvoiceService } from './invoice.service';
-import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import { CollectionQuery, FilterOperators, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import axios from 'axios';
 import { FppaDataDto, MbrsDataDto, NCICDataDto } from '../dto/mbrsData.dto';
@@ -373,7 +375,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           subDirectory,
         );
       }
-      const approvedPTs = await this.ptService.getMyPreferetialTreatments(user.id);
+      const approvedPTs = await this.ptService.getMyPreferentialTreatments(user.id);
       const paymentReceipt = {
         transactionNumber: paymentReceiptDto?.transactionNumber,
         invoiceId: paymentReceiptDto?.invoiceIds,
@@ -907,7 +909,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           );
         } else if (
           this.commonService
-            .getPreferencialServices()
+            .getPreferentialServices()
             .some((item) => item == service.key)
         ) {
           await this.setPreferentialSatus(
@@ -1298,6 +1300,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     try {
       const result = await this.isrVendorsRepository.save(vendorsEntity);
       if (result) {
+
         return { vendorId: result.id };
       }
     } catch (error) {
@@ -1419,29 +1422,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       services: vendorEntity.businessAreas,
     };
   }
-  async getVendorByUserId(userId: string): Promise<any> {
-    try {
-      const vendorEntity = await this.vendorRepository.findOne({
-        where: { userId: userId, status: In(this.updateVendorEnums) },
-        relations: {
-          vendorAccounts: { bank: true },
-          beneficialOwnershipShareholders: true,
-          areasOfBusinessInterest: true,
-          isrVendor: { businessAreas: true },
-        },
-      });
-      if (!vendorEntity) return null;
 
-      const { isrVendor, ...vendor } = vendorEntity;
-      const { businessAreas } = isrVendor;
-
-      const vendorEntityRes = { vendor, businessAreas };
-      return vendorEntityRes;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
   async getIsrVendorByVendorId(vendorId: string): Promise<any> {
     try {
       const vendorEntity = await this.isrVendorsRepository.findOne({
@@ -1486,18 +1467,122 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
+
+  async vendorDetailByUserId(userId: string) {
+    const vendorEntity: any = await this.vendorRepository
+      .createQueryBuilder('vendor')
+      .innerJoinAndMapMany(
+        'vendor.businessAreas',
+        BusinessAreaEntity,
+        'businessAreas',
+        'businessAreas.vendorId=vendor.Id',
+      )
+      .leftJoinAndSelect('vendor.vendorAccounts', 'accountDetail')
+      .leftJoinAndSelect('vendor.beneficialOwnershipShareholders', 'beneficialOwnershipShareholders')
+      .leftJoinAndSelect('vendor.areasOfBusinessInterest', 'businessInterest')
+      //  .where('vendor.userId =:userId and wfInstance.status=:status', { userId: userId, status: ApplicationStatus.INPROGRESS })
+      .orWhere('vendor.userId =:userId', { userId: userId })
+      .getOne();
+    if (!vendorEntity)
+      throw new NotFoundException("vendor_not_found");
+    const requestedApplication = await this.workflowService.getRequestedAppByVendorId(vendorEntity.id);
+    //formatting the response
+    const formattedData: any = {};
+    formattedData.basic = {
+      name: vendorEntity.name,
+      countryOfRegistration: vendorEntity.countryOfRegistration,
+      tinNumber: vendorEntity.tinNumber, registrationNumber: vendorEntity.registrationNumber,
+      businessRegistrationNumber: vendorEntity.businessRegistrationNumber,
+      registrationIssuedDate: vendorEntity.registrationIssuedDate,
+      formOfEntity: vendorEntity.formOfEntity
+    };
+    formattedData.address = { ...vendorEntity.metaData.address };
+    formattedData.contactPersons = [...vendorEntity.metaData.contactPersons];
+    formattedData.businessSizeAndOwnership = { ...vendorEntity.metaData.businessSizeAndOwnership };
+    formattedData.supportingDocuments = { ...vendorEntity.metaData.supportingDocuments };
+    formattedData.paymentReceipt = { ...vendorEntity.metaData.paymentReceipt }
+    formattedData.beneficialOwnershipShareholders = [...vendorEntity.beneficialOwnershipShareholders];
+    formattedData.bankAccountDetails = [...vendorEntity.vendorAccounts];
+    formattedData.areasOfBusinessInterest = [...vendorEntity.areasOfBusinessInterest];
+    formattedData.lineOfBusiness = [...vendorEntity.lineOfBusiness];
+    formattedData.application = { ...requestedApplication }
+
+    if (vendorEntity?.areasOfBusinessInterest) {
+      const pricesIds = vendorEntity?.areasOfBusinessInterest.map(
+        (item: any) => item.priceRange,
+      );
+      const priceRanges =
+        await this.pricingService.findPriceRangeByIds(pricesIds);
+      formattedData.areasOfBusinessInterestView = this.commonService.formatBusinessArea(priceRanges, vendorEntity?.areasOfBusinessInterest)
+    }
+
+    // getting the preferential treatments  if any
+    const keys = this.commonService.getPreferentialServices();
+    const ptResult = await this.ptService.getPreferentialTreatments(
+      keys,
+      userId
+    );
+
+
+    const certificate = await this.baService.getCerteficate(
+      vendorEntity.id,
+    );
+    formattedData.certificate = certificate?.certificateUrl;
+    formattedData.preferential = [...ptResult];
+    const service = vendorEntity.businessAreas.find(
+      (item: BusinessAreaEntity) =>
+        item.status == ApplicationStatus.PENDING &&
+        item.priceRangeId != null,
+    );
+    if (service) {
+      const invoice = this.invoiceService.getInvoiceByUser(
+        userId,
+        service.serviceId,
+      );
+      formattedData.invoice = invoice;
+    }
+
+    return formattedData;
+
+  }
+
+  //will be removed 
+  async getVendorByUserId(userId: string): Promise<any> {
+    try {
+      const vendorEntity = await this.vendorRepository.findOne({
+        where: { userId: userId, status: In(this.updateVendorEnums) },
+        relations: {
+          vendorAccounts: { bank: true },
+          beneficialOwnershipShareholders: true,
+          areasOfBusinessInterest: true,
+          isrVendor: { businessAreas: true },
+        },
+      });
+      if (!vendorEntity) return null;
+
+      const { isrVendor, ...vendor } = vendorEntity;
+      const { businessAreas } = isrVendor;
+
+      const vendorEntityRes = { vendor, businessAreas };
+      return vendorEntityRes;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
   async getIsrVendorByUserId(
-    userId: string,
-    flag: string = null,
+    userId: string
   ): Promise<any> {
     try {
       const vendorEntity: any = await this.isrVendorsRepository.findOne({
-        relations: { businessAreas: true },
+        relations: { businessAreas: true, instances: { service: true }, },
         where: {
           userId: userId,
           status: In(this.updateVendorEnums),
         },
       });
+
       if (vendorEntity?.areasOfBusinessInterest) {
         const formattedAreaOfBi = [];
         const pricesIds = vendorEntity?.areasOfBusinessInterest.map(
@@ -1523,17 +1608,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       }
 
       // getting the preferential treatments  if any
-      const keys = this.commonService.getPreferencialServices();
-      const ptResult = await this.ptService.getPreferetialTreatments(
+      const keys = this.commonService.getPreferentialServices();
+      const ptResult = await this.ptService.getPreferentialTreatments(
         keys,
         userId,
       );
 
       if (vendorEntity) {
-        const certeficate = await this.baService.getCerteficate(
+        const certificate = await this.baService.getCerteficate(
           vendorEntity.id,
         );
-        vendorEntity.certificate = certeficate?.certificateUrl;
+        vendorEntity.certificate = certificate?.certificateUrl;
         vendorEntity.preferential = [...ptResult];
         const service = vendorEntity.businessAreas.find(
           (item: BusinessAreaEntity) =>
@@ -1547,6 +1632,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           );
           vendorEntity.invoice = invoice;
         }
+        vendorEntity.service = this.workflowService.getRequestedAppByVendorId(vendorEntity.id);
+
       }
 
       return vendorEntity;
@@ -1554,6 +1641,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
+
+
 
   async trackApplication(user: any): Promise<any> {
     const apps = [];
@@ -2007,7 +2096,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
     rest.areasOfBusinessInterest = bussinessAreas;
     const certificate = await this.baService.getCerteficate(vendorData.id);
-    const preferentails = await this.ptService.getMyPreferetialTreatments(
+    const preferentails = await this.ptService.getMyPreferentialTreatments(
       vendorData.userId,
     );
 
@@ -2374,7 +2463,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
         const ceretficate = await this.baService.getCerteficate(vendor.id);
         const preferentails =
-          await this.ptService.getMyPreferetialTreatments(userId);
+          await this.ptService.getMyPreferentialTreatments(userId);
 
         const response = {
           ...vendorEntity,
@@ -2453,7 +2542,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             status: In([ApplicationStatus.ADJUSTMENT, ApplicationStatus.DRAFT]),
           },
         });
-        const approvedPTs = await this.ptService.getMyPreferetialTreatments(user.id);
+        const approvedPTs = await this.ptService.getMyPreferentialTreatments(user.id);
         let profileInfoEntity = new ProfileInfoEntity();
         if (updateInfo?.status == ApplicationStatus.ADJUSTMENT) {
           updateInfo.status = ApplicationStatus.SUBMITTED;

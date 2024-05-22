@@ -43,14 +43,14 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   ) {
     super(ptRepository);
   }
-  async getPreferetialTreatments(keys: string[], userId: string) {
+  async getPreferentialTreatments(keys: string[], userId: string) {
     const result = await this.ptRepository.find({
       relations: { service: true },
       where: { service: { key: In(keys) }, userId: userId },
     });
     return result;
   }
-  async getPreferetialTreatmentsByUserId(serviceId: string, userId: string) {
+  async getPreferentialTreatmentsByUserId(serviceId: string, userId: string) {
     const result = await this.ptRepository.find({
       relations: { service: true },
       where: {
@@ -63,7 +63,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     });
     return result;
   }
-  async getMyPreferetialTreatments(userId: string) {
+  async getMyPreferentialTreatments(userId: string) {
     const result = await this.ptRepository.find({
       relations: { service: true },
       where: {
@@ -227,7 +227,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           wfi.serviceId = dto.serviceId;
           const { serviceId, id, ...preferential } = entity;
           const ptServices = await this.ptRepository.find({
-            where: { status: ApplicationStatus.APPROVED, userId: user.id, service: { key: In(this.commonService.getPreferencialServices()) } },
+            where: { status: ApplicationStatus.APPROVED, userId: user.id, service: { key: In(this.commonService.getPreferentialServices()) } },
             relations: { service: true }
           })
           data.preferential = [...ptServices];

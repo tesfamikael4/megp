@@ -31,12 +31,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  async getBusinessAreaWithPrice(id: string): Promise<BusinessAreaEntity> {
-    return this.businessAreaRepository.findOne({
-      where: { id: id },
-      relations: { servicePrice: true },
-    });
-  }
+
   async getCerteficate(vendorId: string): Promise<BusinessAreaEntity> {
     const bas = await this.businessAreaRepository.find({
       where: {
@@ -49,18 +44,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     if (bas.length) return bas[0];
     return null;
   }
-  async getPreferentials(vendorId: string): Promise<BusinessAreaEntity[]> {
-    const bas = await this.businessAreaRepository.find({
-      where: {
-        vendorId: vendorId,
-        status: ApplicationStatus.APPROVED,
-        BpService: { key: In(this.commonService.getPreferencialServices()) },
-      },
-      order: { updatedAt: 'DESC' },
-    });
 
-    return bas;
-  }
   async getBusinessUpgradesOrRenewal(
     categories: string[],
     serviceKey: string,
@@ -135,18 +119,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     });
   }
 
-  async getBusinessAreaByInstanceIds(
-    instanceIds: string[],
-  ): Promise<BusinessAreaEntity[]> {
-    return this.businessAreaRepository.find({
-      where: {
-        instanceId: In(instanceIds),
-        status: ApplicationStatus.PENDING,
-        //  invoice: { paymentStatus: PaymentStatus.PENDING },
-      },
-      //relations: { invoice: true },
-    });
-  }
+
   async getUserInprogressBusinessAreaByServiceId(
     serviceId: string,
     userId: string,
@@ -233,18 +206,6 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       relations: { BpService: true },
     });
     return businessArea;
-  }
-  async getPTByServiceId(
-    serviceId: string,
-    userId: string,
-  ): Promise<BusinessAreaEntity> {
-    return this.businessAreaRepository.findOne({
-      where: {
-        serviceId: serviceId,
-        status: ApplicationStatus.APPROVED,
-        isrVendor: { userId: userId },
-      },
-    });
   }
 
   async saveAll(businessArea: BusinessAreaEntity[]) {

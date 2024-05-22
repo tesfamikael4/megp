@@ -136,7 +136,7 @@ export class ApplicationExcutionService {
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
 
-    const preferentials = await this.ptService.getPreferetialTreatmentsByUserId(
+    const preferentials = await this.ptService.getPreferentialTreatmentsByUserId(
       appData.serviceId,
       appData.userId,
     );
