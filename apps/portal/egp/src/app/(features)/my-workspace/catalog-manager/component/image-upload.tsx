@@ -10,6 +10,7 @@ import {
   Modal,
   Text,
   TextInput,
+  Image,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
@@ -46,7 +47,7 @@ export const UploadImage = ({
 
   const [deletePrFile, { isLoading: isPrDeleting }] = useDeleteFileMutation();
 
-  const { data: PrDocuments } = useGetFilesQuery(id);
+  const { data: productDocuments } = useGetFilesQuery(id);
 
   const [dowloadPrFile, { isLoading: isPrDownloading }] =
     useLazyDownloadFilesQuery();
@@ -189,11 +190,11 @@ export const UploadImage = ({
             originalname: file.name,
             contentType: file.type,
           },
-          procurementRequisitionId: id,
+          productCatalogId: id,
           title: name,
         }).unwrap();
 
-        await uploadFile(file, url?.presignedUrl.presignedUrl);
+        await uploadFile(file, url?.presignedUrl);
       } catch (error) {
         setIsLoading(false);
         notify('Error', 'Something went wrong while uploading document');
@@ -216,10 +217,19 @@ export const UploadImage = ({
       throw error;
     }
   };
+  logger.log(productDocuments);
 
+  const handleClick = async (data) => {
+    try {
+      await deletePrFile(data?.id).unwrap();
+      notify('Success', 'Image deleted successfully');
+    } catch (err) {
+      notify('Error', 'Something went wrong while deleting image');
+    }
+  };
   return (
     <Section
-      title="Documents"
+      title="Images"
       collapsible={false}
       action={
         <Group justify="end">
@@ -235,39 +245,67 @@ export const UploadImage = ({
     >
       <Box className="pt-2">
         <FileInput onClick={open} />
-        {PrDocuments?.items.map((item) => {
-          <Card>
-            {item.fileInfo.originalname}
 
-            <Menu shadow="md">
-              <Menu.Target>
-                <IconDotsVertical className="ml-auto text-gray-500" size={16} />
-              </Menu.Target>
+        {productDocuments?.items.map((item, index) => (
+          <>
+            {/* <Image
+              src={
+                'https://files.megp.peragosystems.com/megp/cf003f97-6e80-423a-bc45-6414d9c3e599.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=Szzt6Zo5yEJCfa7ay5sy%2F20240521%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240521T082352Z&X-Amz-Expires=120&X-Amz-SignedHeaders=host&X-Amz-Signature=deb002541a718dcd2b1d10be986f5712e08c9428b9066f9d3fa6defe5e0b89ca'
+              }
+              alt={item.fileInfo.originalname}
+            /> */}
+            {/* <FilePriview data={item} /> */}
+            <Card key={index}>
+              {item.fileInfo.originalname}
 
-              <Menu.Dropdown>
-                <Menu.Item
-                  leftSection={<IconEye size={15} />}
-                  onClick={() => {
-                    open();
-                  }}
-                >
-                  View
-                </Menu.Item>
-                <Menu.Item
-                  leftSection={<IconDownload size={15} />}
-                  // onClick={handleDownload}
-                  disabled={isPrDownloading}
-                >
-                  Download
-                </Menu.Item>
-                <Menu.Divider />
-                <Menu.Item color="red" leftSection={<IconTrash size={15} />}>
-                  Delete
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          </Card>;
-        })}
+              <Menu shadow="md">
+                <Menu.Target>
+                  <IconDotsVertical
+                    className="ml-auto text-gray-500"
+                    size={16}
+                  />
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  <Menu.Item
+                    leftSection={<IconEye size={15} />}
+                    onClick={() => {
+                      open();
+                    }}
+                  >
+                    View
+                  </Menu.Item>
+                  <Menu.Item
+                    leftSection={<IconDownload size={15} />}
+                    // onClick={handleDownload}
+                    disabled={isPrDownloading}
+                  >
+                    Download
+                  </Menu.Item>
+                  <Menu.Divider />
+                  <Menu.Item
+                    color="red"
+                    leftSection={
+                      <IconTrash size={15} onClick={() => handleClick(item)} />
+                    }
+                  >
+                    Delete
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </Card>
+            {/* <Modal
+              opened={opened}
+              onClose={close}
+              title={item?.title}
+              size="xl"
+              pos="relative"
+            >
+              <FilePriview data={item} />
+            </Modal> */}
+          </>
+        ))}
+
         <Modal
           title={<Box fw={'bold'}>Upload New Image</Box>}
           opened={opened}
@@ -317,8 +355,8 @@ const FilePriview = ({ data }: { data: any }) => {
     dowloadPrFile(data.id);
   }, [data]);
   return (
-    <>
+    <Box>
       <FileViewer url={prUrl?.presignedUrl ?? ''} filename={data.fileName} />
-    </>
+    </Box>
   );
 };

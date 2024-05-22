@@ -1,5 +1,6 @@
 import { baseQuery } from '@/store/base-query';
 import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
+import { listenerCancelled } from '@reduxjs/toolkit/dist/listenerMiddleware/exceptions';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const getCatalogApi = createApi({
@@ -18,12 +19,13 @@ export const getCatalogApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/product-catalogs/${q}`,
+          url: `/product-catalogs/with-images/${q}`,
           method: 'GET',
         };
       },
       providesTags: ['catalog'],
     }),
+
     getTemplate: builder.query<any, string>({
       query: (id) => ({
         url: `specification-templates/item/${id}`,
@@ -46,7 +48,13 @@ export const getCatalogApi = createApi({
       }),
       invalidatesTags: ['catalog'],
     }),
-
+    readCatalog: builder.query<any, string>({
+      query: (id: string) => ({
+        url: `product-catalogs/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['catalog'],
+    }),
     // images
     upload: builder.mutation<any, any>({
       query: (data) => ({
@@ -98,11 +106,14 @@ export const {
   // catalog
   useCreateCatalogMutation,
   useUpdateCatalogMutation,
+  useReadCatalogQuery,
+  useLazyReadCatalogQuery,
 
   // Images
 
   useUploadMutation,
   useGetFilesQuery,
+  useLazyGetFilesQuery,
   useLazyDownloadFilesQuery,
   usePreSignedUrlMutation,
   useDeleteFileMutation,

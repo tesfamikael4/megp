@@ -1,8 +1,8 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useLazyListCatalogsQuery } from './_api/catalog.api';
-import { Section, logger } from '@megp/core-fe';
-import { Box, Button, Flex } from '@mantine/core';
+import { Section } from '@megp/core-fe';
+import { Box, Button, Flex, Group } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import ItemSelector from './component/Item-selector-copy';
@@ -19,12 +19,10 @@ export default function CatalogList() {
     route.push(`/my-workspace/catalog-manager/${data.id}/new`);
     close();
   };
-  const router = useRouter();
 
   useEffect(() => {
     getCatalog(undefined);
   }, []);
-  logger.log(list);
 
   return (
     <>
@@ -38,12 +36,13 @@ export default function CatalogList() {
           </Button>
         }
       >
-        <Box mih={'100vh'}>
-          <Flex gap={20}>
-            {list?.items?.map((item, index) => (
-              <ProductCard key={index} data={item} />
-            ))}
-          </Flex>
+        <Box
+          mih={'100vh'}
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4"
+        >
+          {list?.items?.map((item, index) => (
+            <ProductCard data={item} key={index} />
+          ))}
         </Box>
       </Section>
 
