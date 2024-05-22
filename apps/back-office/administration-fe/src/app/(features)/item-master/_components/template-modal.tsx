@@ -26,7 +26,7 @@ interface Specification {
   defaultValue?: string | number | boolean | unknown;
   min?: number;
   max?: number;
-  uom?: string[] | undefined;
+  uom?: string | undefined;
   isRequired?: boolean;
   spec?: string;
   selectFrom?: any[];
@@ -48,7 +48,7 @@ export function Popup({
     isRequired: z.boolean().default(false),
     min: z.number().optional(),
     max: z.number().optional(),
-    uom: z.any().optional().default([]),
+    uom: z.string().optional(),
     spec: z.string().optional(),
     selectFrom: z.array(z.any()).optional().default([]),
   });
@@ -66,6 +66,7 @@ export function Popup({
   const [defaultValue, setDefaultValue] = useState<any>();
 
   const onCreate = (data: Partial<Specification>) => {
+    logger.log(data, 'gen');
     const newData = {
       ...data,
       key: v4(),
@@ -114,8 +115,8 @@ export function Popup({
         <Controller
           name="uom"
           control={control}
-          render={({ field: { onChange, name, value } }) => (
-            <TagsInput
+          render={({ field: { onChange, value } }) => (
+            <TextInput
               value={value}
               label="unit Of Measurement "
               {...register('uom')}
