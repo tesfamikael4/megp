@@ -6,7 +6,7 @@ import {
   useLazyGetClassificationsQuery,
   useLazyGetItemMasterQuery,
 } from '@/store/api/administration/administration.api';
-import { DetailItem } from './deatil-item';
+import { DetailItem } from './detail-item';
 import { ExpandableTable, MantineTree, TreeConfig } from '@megp/core-fe';
 
 interface ItemSelectorProps {
