@@ -208,7 +208,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
   }
 
   async vendorRegistrationCompleted(payload: VendorRegistrationCompletedEvent) {
-    const account = await this.accountService.getAccountByEmail(payload.email);
+    const account = await this.accountService.getAccountById(payload.accountId);
 
     const organizationDto = {
       id: payload.id,

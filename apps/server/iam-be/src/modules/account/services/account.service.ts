@@ -476,6 +476,18 @@ export class AccountsService {
     return account;
   }
 
+  async getAccountById(id: string) {
+    const account: Account = await this.repository.findOne({
+      where: { id },
+    });
+
+    if (!account) {
+      throw new HttpException('account_does_not_exists', HttpStatus.NOT_FOUND);
+    }
+
+    return account;
+  }
+
   async createBackOfficeAccount(input: any) {
     if (!input.email) {
       return await this.createNewAccount(input, AccountStatusEnum.PENDING);
