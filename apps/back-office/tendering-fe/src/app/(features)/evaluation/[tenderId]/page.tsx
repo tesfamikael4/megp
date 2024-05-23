@@ -46,7 +46,7 @@ export default function BidOpening() {
                 (milestone) => milestone.isCurrent,
               )?.[0]?.milestoneTxt;
               if (currentStage === 'TechnicalCompliance')
-                router.push(`/evaluation/${tenderId}/${record.id}`);
+                router.push(`/evaluation/${tenderId}/${record.id}/preliminary`);
               else if (currentStage === 'TechnicalQualification')
                 router.push(
                   `/evaluation/${tenderId}/${record.id}/qualification`,

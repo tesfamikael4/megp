@@ -34,7 +34,7 @@ export const preliminaryComplianceApi = createApi({
         };
       },
     }),
-    getPreliminaryChecklistByLotId: builder.query<any, any>({
+    getPreliminaryRequirementsByLotId: builder.query<any, any>({
       query: ({
         lotId,
         bidderId,
@@ -50,7 +50,7 @@ export const preliminaryComplianceApi = createApi({
       },
       providesTags: ['bidAttribute'],
     }),
-    checkBidAttribute: builder.mutation<any, any>({
+    createPreliminaryComplianceAssessment: builder.mutation<any, any>({
       query: (data) => ({
         url: `/technical-preliminary-assessment-detail`,
         method: 'POST',
@@ -58,7 +58,7 @@ export const preliminaryComplianceApi = createApi({
       }),
       invalidatesTags: ['bidAttribute'],
     }),
-    getLotStatus: builder.query<any, any>({
+    getCanPreliminaryComplete: builder.query<any, any>({
       query: (lotId) => {
         return {
           url: `/technical-preliminary-assessment-detail/can-complete/${lotId}`,
@@ -67,7 +67,7 @@ export const preliminaryComplianceApi = createApi({
       },
       providesTags: ['evaluation', 'bidder'],
     }),
-    submitEvaluation: builder.mutation<any, any>({
+    submitPreliminaryEvaluation: builder.mutation<any, any>({
       query: (data: { tenderId: string; isTeamLead: boolean }) => {
         return {
           url: `/technical-preliminary-assessment-detail/submit-checklist`,
@@ -77,20 +77,20 @@ export const preliminaryComplianceApi = createApi({
       },
       invalidatesTags: ['evaluation'],
     }),
-    getMembersAssesmentResult: builder.query<any, any>({
+    getPreliminaryMembersAssesmentResult: builder.query<any, any>({
       query: ({
         lotId,
         bidderId,
-        checklistId,
+        requirementId,
       }: {
         lotId: string;
         bidderId: string;
-        checklistId: string;
+        requirementId: string;
       }) =>
-        `/technical-preliminary-assessment-detail/members-report/${lotId}/${bidderId}/${checklistId}`,
+        `/technical-preliminary-assessment-detail/members-report/${lotId}/${bidderId}/${requirementId}`,
     }),
 
-    getSpdDetail: builder.query<any, any>({
+    getEqcPreliminaryExamination: builder.query<any, any>({
       query: (eqcId) => `/eqc-preliminary-examinations/${eqcId}`,
     }),
 
@@ -127,12 +127,12 @@ export const preliminaryComplianceApi = createApi({
 export const {
   useLazyGetOpenedTendersQuery,
   useLazyGetPassedBiddersQuery,
-  useLazyGetPreliminaryChecklistByLotIdQuery,
-  useCheckBidAttributeMutation,
-  useGetLotStatusQuery,
-  useSubmitEvaluationMutation,
-  useLazyGetMembersAssesmentResultQuery,
-  useLazyGetSpdDetailQuery,
+  useLazyGetPreliminaryRequirementsByLotIdQuery,
+  useCreatePreliminaryComplianceAssessmentMutation,
+  useLazyGetCanPreliminaryCompleteQuery,
+  useSubmitPreliminaryEvaluationMutation,
+  useLazyGetPreliminaryMembersAssesmentResultQuery,
+  useLazyGetEqcPreliminaryExaminationQuery,
   useCompleteEvaluationMutation,
   useLazyGetComplianceAssessmentsQuery,
 } = preliminaryComplianceApi;

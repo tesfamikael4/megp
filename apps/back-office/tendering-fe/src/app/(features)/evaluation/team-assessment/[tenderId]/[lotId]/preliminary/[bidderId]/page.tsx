@@ -1,6 +1,6 @@
 'use client';
 
-import { useLazyGetPreliminaryChecklistByLotIdQuery } from '@/store/api/tendering/preliminary-compliance.api';
+import { useLazyGetPreliminaryRequirementsByLotIdQuery } from '@/store/api/tendering/preliminary-compliance.api';
 import { Box, Loader } from '@mantine/core';
 import { logger } from '@megp/core-fe';
 import { useParams, useRouter } from 'next/navigation';
@@ -8,12 +8,12 @@ import { useEffect } from 'react';
 
 export default function BiderDetail() {
   const router = useRouter();
-  const [getChecklists, { data: checklistData, isSuccess }] =
-    useLazyGetPreliminaryChecklistByLotIdQuery();
+  const [getRequirements, { data: requirementData, isSuccess }] =
+    useLazyGetPreliminaryRequirementsByLotIdQuery();
   const { tenderId, lotId, bidderId } = useParams();
 
   useEffect(() => {
-    getChecklists({
+    getRequirements({
       lotId: lotId as string,
       bidderId: bidderId as string,
       team: 'teamLeader',
@@ -21,13 +21,13 @@ export default function BiderDetail() {
   }, []);
 
   useEffect(() => {
-    logger.log({ checklistData });
-    if (checklistData && checklistData?.length > 0) {
+    logger.log({ requirementData });
+    if (requirementData && requirementData?.length > 0) {
       router.push(
-        `/evaluation/team-assessment/${tenderId}/${lotId}/${bidderId}/${checklistData[0].id}`,
+        `/evaluation/team-assessment/${tenderId}/${lotId}/preliminary/${bidderId}/${requirementData[0].id}`,
       );
     }
-  }, [bidderId, checklistData, isSuccess, lotId, router, tenderId]);
+  }, [bidderId, requirementData, isSuccess, lotId, router, tenderId]);
   return (
     <Box className="flex justify-center items-center h-full">
       <Loader />
