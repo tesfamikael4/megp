@@ -19,6 +19,19 @@ export const administrationApi = createApi({
         return { url: `item-masters${q}`, method: 'GET' };
       },
     }),
+    getItemMasterWithTemplate: builder.query<any, any>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `specification-templates/item-masters/used${q}`,
+          method: 'GET',
+        };
+      },
+    }),
     getMeasurements: builder.query<any, null>({
       query: () => 'measurements',
     }),
@@ -66,6 +79,10 @@ export const administrationApi = createApi({
 export const {
   useGetItemMasterQuery,
   useLazyGetItemMasterQuery,
+
+  useGetItemMasterWithTemplateQuery,
+  useLazyGetItemMasterWithTemplateQuery,
+
   useLazyGetUnitOfMeasurementsQuery,
   useGetClassificationsQuery,
   useLazyGetClassificationsQuery,

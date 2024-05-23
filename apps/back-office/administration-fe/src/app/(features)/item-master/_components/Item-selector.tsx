@@ -4,7 +4,7 @@ import { IconBinaryTree, IconColumns } from '@tabler/icons-react';
 import {
   useGetClassificationsQuery,
   useLazyGetClassificationsQuery,
-  useLazyGetItemMasterQuery,
+  useLazyGetItemMasterWithTemplateQuery,
 } from '@/store/api/administration/administration.api';
 import { DetailItem } from './detail-item';
 import { ExpandableTable, MantineTree, TreeConfig } from '@megp/core-fe';
@@ -24,7 +24,8 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
   );
 
   //rtk queries
-  const [getItemMaster, { data: list }] = useLazyGetItemMasterQuery();
+  const [getItemMaster, { data: list }] =
+    useLazyGetItemMasterWithTemplateQuery();
   const { data: classifications } = useGetClassificationsQuery({
     where: [
       [

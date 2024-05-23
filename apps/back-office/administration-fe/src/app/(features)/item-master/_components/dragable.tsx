@@ -1,7 +1,20 @@
 import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Group, ActionIcon, Menu, Flex, Table, MenuItem } from '@mantine/core';
-import { IconDotsVertical, IconPencil, IconX } from '@tabler/icons-react';
+import {
+  Group,
+  ActionIcon,
+  Menu,
+  Box,
+  Table,
+  MenuItem,
+  Text,
+} from '@mantine/core';
+import {
+  IconCirclePlus,
+  IconDotsVertical,
+  IconPencil,
+  IconX,
+} from '@tabler/icons-react';
 
 export const DraggableTable = ({
   data,
@@ -49,99 +62,111 @@ export const DraggableTable = ({
   }, []);
   return (
     <>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <Table
-              withTableBorder
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-            >
-              <Table.Thead bg={'#DDDCEE'}>
-                <Table.Tr>
-                  <Table.Th>Display Name</Table.Th>
-                  <Table.Th>Input Type</Table.Th>
-                  <Table.Th>
-                    <Group justify="end">Actions</Group>
-                  </Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {items?.map((item, index) => {
-                  return (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <Table.Tr
-                          // justify="space-between"
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={getItemStyle(
-                            snapshot.isDragging,
-                            provided.draggableProps.style,
-                          )}
-                          // className="border"
-                        >
-                          <Table.Td>{item.displayName}</Table.Td>
-                          <Table.Td>
-                            {item.dataType === 'string'
-                              ? 'Text input'
-                              : item.dataType === 'number'
-                                ? 'Number'
-                                : item.dataType === 'singleSelect'
-                                  ? 'Single Select'
-                                  : item.dataType === 'multiSelect'
-                                    ? 'Multiple Select'
-                                    : 'Checkbox'}
-                          </Table.Td>
-                          <Table.Td>
-                            {' '}
-                            <Group>
-                              <ActionIcon
-                                color="primary"
-                                variant="subtle"
-                                className="ml-auto"
-                              >
-                                <Menu shadow="md" width={200}>
-                                  <Menu.Target>
-                                    <IconDotsVertical size={18} />
-                                  </Menu.Target>
-                                  <Menu.Dropdown>
-                                    <MenuItem
-                                      leftSection={<IconPencil size={15} />}
-                                      onClick={() => handleEdit(index)}
-                                    >
-                                      Edit
-                                    </MenuItem>
-                                    <Menu.Item
-                                      color="red"
-                                      leftSection={<IconX size={15} />}
-                                      onClick={() => remove(index)}
-                                    >
-                                      Remove
-                                    </Menu.Item>
-                                  </Menu.Dropdown>
-                                </Menu>
-                              </ActionIcon>
-                            </Group>
-                          </Table.Td>
-                        </Table.Tr>
-                      )}
-                    </Draggable>
-                  );
-                })}
-              </Table.Tbody>
+      {items?.length == 0 ? (
+        <Box mih={'20vh'} className=" grid place-items-center ">
+          <Group>
+            <IconCirclePlus size={20} />{' '}
+            <Text fw={'bold'}>Add Specification Template</Text>
+          </Group>
+        </Box>
+      ) : (
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <Table
+                withTableBorder
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={getListStyle(snapshot.isDraggingOver)}
+              >
+                <Table.Thead bg={'#DDDCEE'}>
+                  <Table.Tr>
+                    <Table.Th>Display Name</Table.Th>
+                    <Table.Th>Input Type</Table.Th>
+                    <Table.Th>
+                      <Group justify="end">Actions</Group>
+                    </Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
 
-              {provided.placeholder}
-            </Table>
-          )}
-        </Droppable>
-      </DragDropContext>
+                {
+                  <Table.Tbody>
+                    {items?.map((item, index) => {
+                      return (
+                        <Draggable
+                          key={item.id}
+                          draggableId={item.id}
+                          index={index}
+                        >
+                          {(provided, snapshot) => (
+                            <Table.Tr
+                              // justify="space-between"
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={getItemStyle(
+                                snapshot.isDragging,
+                                provided.draggableProps.style,
+                              )}
+                              // className="border"
+                            >
+                              <Table.Td>{item.displayName}</Table.Td>
+                              <Table.Td>
+                                {item.dataType === 'string'
+                                  ? 'Text input'
+                                  : item.dataType === 'number'
+                                    ? 'Number'
+                                    : item.dataType === 'singleSelect'
+                                      ? 'Single Select'
+                                      : item.dataType === 'multiSelect'
+                                        ? 'Multiple Select'
+                                        : 'Checkbox'}
+                              </Table.Td>
+                              <Table.Td>
+                                {' '}
+                                <Group>
+                                  <ActionIcon
+                                    color="primary"
+                                    variant="subtle"
+                                    className="ml-auto"
+                                  >
+                                    <Menu shadow="md" width={200}>
+                                      <Menu.Target>
+                                        <IconDotsVertical size={18} />
+                                      </Menu.Target>
+                                      <Menu.Dropdown>
+                                        <MenuItem
+                                          leftSection={<IconPencil size={15} />}
+                                          onClick={() => handleEdit(index)}
+                                        >
+                                          Edit
+                                        </MenuItem>
+                                        <Menu.Item
+                                          color="red"
+                                          leftSection={<IconX size={15} />}
+                                          onClick={() => remove(index)}
+                                        >
+                                          Remove
+                                        </Menu.Item>
+                                      </Menu.Dropdown>
+                                    </Menu>
+                                  </ActionIcon>
+                                </Group>
+                              </Table.Td>
+                            </Table.Tr>
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                  </Table.Tbody>
+                }
+
+                {provided.placeholder}
+              </Table>
+            )}
+          </Droppable>
+        </DragDropContext>
+      )}
     </>
   );
 };
