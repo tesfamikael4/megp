@@ -2,9 +2,9 @@
 FROM ubuntu:latest as libreoffice-build
 
 # Install dependencies for LibreOffice
-RUN apt-get update && \
-    apt-get install -y libreoffice && \
-    apt-get clean
+RUN apt-get update 
+RUN apt-get install -y libreoffice
+RUN apt-get clean
 
 FROM node:20-alpine AS base
 # This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
@@ -57,23 +57,14 @@ COPY --from=libreoffice-build /usr/bin/libreoffice* /usr/bin/
 COPY --from=libreoffice-build /usr/share/libreoffice /usr/share/libreoffice
 
 # Install necessary Alpine packages for LibreOffice to work
-RUN apk add --no-cache \
-    libxinerama \
-    libxrender \
-    ttf-dejavu \
-    fontconfig \
-    bash \
-    msttcorefonts-installer && \
-    update-ms-fonts && \
-    fc-cache -f
+RUN apk add libxinerama 
+RUN apk add libxrender 
+RUN apk add ttf-dejavu 
+RUN apk add fontconfig 
+RUN apk add bash 
+RUN apk add msttcorefonts-installer 
+RUN apk add fc-cache -f
 
-# Install additional fonts to prevent text rendering issues
-RUN apk add --no-cache \
-    ttf-dejavu \
-    ttf-freefont \
-    ttf-liberation \
-    ttf-linux-libertine \
-    ttf-ubuntu-font-family
 
 WORKDIR /
 
