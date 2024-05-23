@@ -12,6 +12,7 @@ import {
   TextInput,
   Image,
   Flex,
+  LoadingOverlay,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
@@ -31,9 +32,9 @@ import {
   useLazyDownloadFilesQuery,
   useUploadMutation,
   useDeleteFileMutation,
+  useDownloadFilesQuery,
 } from '../_api/catalog.api';
 import { useParams } from 'next/navigation';
-import { FileViewer } from '../../_components/file-viewer';
 
 export const UploadImage = ({
   disableFields = false,
@@ -123,15 +124,16 @@ export const UploadImage = ({
       <>
         <Menu shadow="md">
           <Menu.Target>
-            <IconDotsVertical className="ml-auto text-gray-500" size={16} />
+            <IconDotsVertical
+              className="ml-auto text-gray-500 cursor-pointer"
+              size={16}
+            />
           </Menu.Target>
 
           <Menu.Dropdown>
             <Menu.Item
               leftSection={<IconEye size={15} />}
-              onClick={() => {
-                openViewModal();
-              }}
+              onClick={openViewModal}
             >
               View
             </Menu.Item>
@@ -157,10 +159,11 @@ export const UploadImage = ({
           opened={openedViewModal}
           onClose={closeViewModal}
           title={data.fileName}
-          size="xl"
-          pos="relative"
+          size="lg"
         >
-          <FilePriview data={data} />
+          <Box className="flex justify-center align-middle">
+            <FilePriview data={data} />
+          </Box>
         </Modal>
       </>
     );
@@ -219,7 +222,6 @@ export const UploadImage = ({
       throw error;
     }
   };
-  logger.log(productDocuments);
 
   const handleClick = async (data) => {
     try {
@@ -246,17 +248,8 @@ export const UploadImage = ({
       }
     >
       <Box className="pt-2">
-        {/* <FileInput onClick={open} /> */}
-
         {productDocuments?.items.map((item, index) => (
           <>
-            {/* <Image
-              src={
-                'https://files.megp.peragosystems.com/megp/cf003f97-6e80-423a-bc45-6414d9c3e599.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=Szzt6Zo5yEJCfa7ay5sy%2F20240521%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240521T082352Z&X-Amz-Expires=120&X-Amz-SignedHeaders=host&X-Amz-Signature=deb002541a718dcd2b1d10be986f5712e08c9428b9066f9d3fa6defe5e0b89ca'
-              }
-              alt={item.fileInfo.originalname}
-            /> */}
-            {/* <FilePriview data={item} /> */}
             <Card key={index}>
               <Flex>
                 {item.fileInfo.originalname}{' '}
@@ -264,52 +257,7 @@ export const UploadImage = ({
                   <Action data={item} />
                 </Group>
               </Flex>
-
-              {/* <Menu shadow="md">
-                <Menu.Target>
-                  <IconDotsVertical
-                    className="ml-auto text-gray-500"
-                    size={16}
-                  />
-                </Menu.Target>
-
-                <Menu.Dropdown>
-                  <Menu.Item
-                    leftSection={<IconEye size={15} />}
-                    onClick={() => {
-                      open();
-                    }}
-                  >
-                    View
-                  </Menu.Item>
-                  <Menu.Item
-                    leftSection={<IconDownload size={15} />}
-                    // onClick={handleDownload}
-                    disabled={isPrDownloading}
-                  >
-                    Download
-                  </Menu.Item>
-                  <Menu.Divider />
-                  <Menu.Item
-                    color="red"
-                    leftSection={
-                      <IconTrash size={15} onClick={() => handleClick(item)} />
-                    }
-                  >
-                    Delete
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu> */}
             </Card>
-            {/* <Modal
-              opened={opened}
-              onClose={close}
-              title={item?.title}
-              size="xl"
-              pos="relative"
-            >
-              <FilePriview data={item} />
-            </Modal> */}
           </>
         ))}
 
@@ -355,15 +303,12 @@ export const UploadImage = ({
 };
 
 const FilePriview = ({ data }: { data: any }) => {
-  const [dowloadPrFile, { data: url, isLoading: isPrLoading }] =
-    useLazyDownloadFilesQuery();
+  const { data: url, isLoading: isLoading } = useDownloadFilesQuery(data?.id);
+  // const [dataUrl, setDataUrl] = useState<string>();
 
-  useEffect(() => {
-    dowloadPrFile(data.id);
-  }, [data]);
   return (
-    <Box>
-      {/* <FileViewer url={prUrl?.presignedUrl ?? ''} filename={data.fileName} /> */}
+    <Box className="w-1/2  " mih={'50vh'}>
+      <LoadingOverlay visible={isLoading} />
       <Image src={url?.presignedUrl} />
     </Box>
   );

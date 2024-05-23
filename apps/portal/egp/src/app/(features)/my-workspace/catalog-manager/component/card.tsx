@@ -14,9 +14,8 @@ import {
   Badge,
   Button,
 } from '@mantine/core';
-import { IconDotsVertical, IconPencil } from '@tabler/icons-react';
+import { IconPencil } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-
 import {
   useLazyDownloadFilesQuery,
   useLazyGetFilesQuery,
@@ -50,9 +49,9 @@ export default function ProductCard({ data }) {
       </Card.Section>
       <Group justify="space-between" mt="sm" mb="xs">
         <Text fw={500}>{data?.name}</Text>
-        <Badge color="pink">
+        <Badge color="#1D8E3F" size="md">
           <Group
-            className="ml-auto"
+            className="ml-auto cursor-pointer"
             onClick={() => {
               route.push(
                 `catalog-manager/${data.itemMasterId}/product/${data.id}`,
