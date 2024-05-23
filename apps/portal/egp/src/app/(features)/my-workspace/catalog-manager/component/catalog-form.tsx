@@ -101,8 +101,11 @@ export default function CatalogForm({ mode }: any) {
 
   const templateSchema = z.object(ValidationSchema(template?.properties));
   const productCatalogSchema = templateSchema.extend({
-    quantity: z.number().optional(),
-    location: z.string().optional(),
+    quantity: z.coerce.number({
+      required_error: 'This field is required',
+      invalid_type_error: 'This field is required ',
+    }),
+    location: z.coerce.string().optional(),
     deliverDays: z.number().optional(),
   });
 
@@ -171,6 +174,7 @@ export default function CatalogForm({ mode }: any) {
                 {
                   location: data?.location,
                   deliverDays: data?.deliverDays,
+                  regions: selectedRegion,
                 },
               ]
             : [],
@@ -233,11 +237,14 @@ export default function CatalogForm({ mode }: any) {
       reset({
         ...temp,
         quantity: catalog?.quantity,
-        location: catalog?.deliveryValues?.location,
-        deliverDays: catalog?.deliveryValues?.deliverDays,
+        location: catalog?.deliveryValues?.[0]?.location,
+        deliverDays: catalog?.deliveryValues?.[0]?.deliverDays,
       });
+      setSelectedRegion(catalog?.deliveryValues?.[0]?.region);
     }
+    logger.log(catalog?.deliveryValues?.[0]?.region);
   }, [catalog, reset, id]);
+  logger.log(selectedRegion);
 
   useEffect(() => {
     triggerReadItem(itemId.toString());
@@ -379,9 +386,9 @@ export default function CatalogForm({ mode }: any) {
                   <Controller
                     name={'quantity'}
                     control={control}
-                    render={({ field: { name, value, onChange } }) => (
+                    render={({ field: { value, onChange } }) => (
                       <NumberInput
-                        name="name"
+                        // name="name"
                         label={'Quantity'}
                         value={value}
                         onChange={onChange}
@@ -395,7 +402,6 @@ export default function CatalogForm({ mode }: any) {
                     control={control}
                     render={() => (
                       <Select
-                        defaultValue="MW"
                         required
                         label={'Region'}
                         value={selectedRegion}
@@ -415,7 +421,6 @@ export default function CatalogForm({ mode }: any) {
                     control={control}
                     render={({ field: { onChange, value } }) => (
                       <Select
-                        defaultValue="MW"
                         required
                         label={'District'}
                         value={value}
@@ -423,7 +428,7 @@ export default function CatalogForm({ mode }: any) {
                         data={
                           districts?.items?.map((item) => ({
                             label: item.name,
-                            value: item.id,
+                            value: item?.id,
                           })) || []
                         }
                         maxDropdownHeight={400}
@@ -434,7 +439,7 @@ export default function CatalogForm({ mode }: any) {
                   <Controller
                     name={'deliverDays'}
                     control={control}
-                    render={({ field: { name, value, onChange } }) => (
+                    render={({ field: { value, onChange } }) => (
                       <NumberInput
                         label={'Delivery Days'}
                         value={value}

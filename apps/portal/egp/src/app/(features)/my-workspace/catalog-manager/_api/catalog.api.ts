@@ -130,6 +130,7 @@ export const {
   useGetFilesQuery,
   useLazyGetFilesQuery,
   useLazyDownloadFilesQuery,
+  useDownloadFilesQuery,
   usePreSignedUrlMutation,
   useDeleteFileMutation,
 

@@ -2,18 +2,30 @@
 import { useRouter } from 'next/navigation';
 import { useLazyListCatalogsQuery } from './_api/catalog.api';
 import { Section } from '@megp/core-fe';
-import { Box, Button, Flex, Group } from '@mantine/core';
+import { Box, Button, Flex, Group, Pagination } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import ItemSelector from './component/Item-selector-copy';
 import ProductCard from './component/card';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
+  if (totalItems <= 0 || itemsPerPage <= 0) {
+    return 0;
+  }
+  return Math.ceil(totalItems / itemsPerPage);
+}
+
+const perPage = 8;
+
 export default function CatalogList() {
   const [opened, { open, close }] = useDisclosure(false);
 
   const route = useRouter();
   const [getCatalog, { data: list, isLoading, isError }] =
     useLazyListCatalogsQuery();
+  const [page, setPage] = useState(1);
+  const totalPages = calculateTotalPages(list?.count ?? 0, perPage);
 
   const handleDone = (data) => {
     route.push(`/my-workspace/catalog-manager/${data.id}/new`);
@@ -21,8 +33,9 @@ export default function CatalogList() {
   };
 
   useEffect(() => {
-    getCatalog(undefined);
-  }, []);
+    const from = (page - 1) * perPage;
+    getCatalog({ skip: from, take: perPage });
+  }, [getCatalog, page]);
 
   return (
     <>
@@ -31,7 +44,6 @@ export default function CatalogList() {
         collapsible={false}
         action={
           <Button onClick={open}>
-            {' '}
             <IconPlus size={14} /> Add
           </Button>
         }
@@ -44,6 +56,16 @@ export default function CatalogList() {
             <ProductCard data={item} key={index} />
           ))}
         </Box>
+        <Group className="ml-auto mb-6">
+          <Pagination
+            className="ml-auto"
+            onChange={setPage}
+            size="sm"
+            total={totalPages}
+            value={page}
+            withEdges
+          />
+        </Group>
       </Section>
 
       <ItemSelector onDone={handleDone} opened={opened} close={close} />
