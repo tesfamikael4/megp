@@ -1,11 +1,3 @@
-# First stage: Build LibreOffice in an Ubuntu container
-FROM ubuntu:latest as libreoffice-build
-
-# Install dependencies for LibreOffice
-RUN apt-get update 
-RUN apt-get install -y libreoffice
-RUN apt-get clean
-
 FROM node:20-alpine AS base
 # This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update both files!
@@ -51,20 +43,12 @@ RUN yarn turbo run build --filter=tendering-be...
 
 FROM base AS runner
 
-# Copy LibreOffice files from the first stage
-COPY --from=libreoffice-build /usr/lib/libreoffice /usr/lib/libreoffice
-COPY --from=libreoffice-build /usr/bin/libreoffice* /usr/bin/
-COPY --from=libreoffice-build /usr/share/libreoffice /usr/share/libreoffice
+RUN apk update
 
-# Install necessary Alpine packages for LibreOffice to work
-RUN apk add libxinerama 
-RUN apk add libxrender 
-RUN apk add ttf-dejavu 
-RUN apk add fontconfig 
-RUN apk add bash 
-RUN apk add msttcorefonts-installer 
-RUN apk add fc-cache -f
+RUN apk add libreoffice
+RUN apk add libreoffice-common
 
+RUN apk update
 
 WORKDIR /
 
