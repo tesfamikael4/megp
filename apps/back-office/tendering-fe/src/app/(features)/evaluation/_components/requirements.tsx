@@ -2,6 +2,7 @@
 
 import { useLazyGetPreliminaryRequirementsByLotIdQuery } from '@/store/api/tendering/preliminary-compliance.api';
 import { useLazyGetQualificationRequirementsByLotIdQuery } from '@/store/api/tendering/technical-qualification';
+import { useLazyGetResponsivenessRequirementsByLotIdQuery } from '@/store/api/tendering/technical-responsiveness.api';
 import { Box, Table, Tooltip } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import {
@@ -27,6 +28,8 @@ export const Requirements = ({
     useLazyGetPreliminaryRequirementsByLotIdQuery();
   const [getQualificationRequirements, { data: qualificationRequirements }] =
     useLazyGetQualificationRequirementsByLotIdQuery();
+  const [getResponsivenessRequirements, { data: responsivenessRequirements }] =
+    useLazyGetResponsivenessRequirementsByLotIdQuery();
 
   useEffect(() => {
     if (milestone === 'technicalCompliance') {
@@ -41,10 +44,17 @@ export const Requirements = ({
         bidderId: bidderId as string,
         team: teamAssessment ? 'teamLeader' : 'member',
       });
+    } else if (milestone === 'technicalResponsiveness') {
+      getResponsivenessRequirements({
+        lotId: lotId as string,
+        bidderId: bidderId as string,
+        itemId: itemId as string,
+        team: teamAssessment ? 'teamLeader' : 'member',
+      });
     }
   }, []);
   const router = useRouter();
-  const { tenderId, lotId, bidderId } = useParams();
+  const { tenderId, lotId, bidderId, itemId } = useParams();
   const config: ExpandableTableConfig = {
     minHeight: 50,
     columns: [
@@ -77,6 +87,10 @@ export const Requirements = ({
     ],
     isExpandable: true,
     expandedRowContent: (record) => {
+      const titleKey =
+        milestone === 'technicalQualification'
+          ? 'itbDescription'
+          : 'requirement';
       return (
         <Box className="pl-5  bg-white">
           <Table striped highlightOnHover withColumnBorders>
@@ -86,10 +100,23 @@ export const Requirements = ({
                 className="cursor-pointer"
                 onClick={() => {
                   let url = '';
-                  if (teamAssessment) {
+                  if (milestone == 'technicalQualification' && teamAssessment) {
                     url = `/evaluation/team-assessment/${tenderId}/${lotId}/qualification/${bidderId}/${list.id}`;
-                  } else if (!teamAssessment) {
+                  } else if (
+                    milestone === 'technicalQualification' &&
+                    !teamAssessment
+                  ) {
                     url = `/evaluation/${tenderId}/${lotId}/qualification/${bidderId}/${list.id}`;
+                  } else if (
+                    milestone === 'technicalResponsiveness' &&
+                    teamAssessment
+                  ) {
+                    url = `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${itemId}/${bidderId}/${list.id}`;
+                  } else if (
+                    milestone === 'technicalResponsiveness' &&
+                    !teamAssessment
+                  ) {
+                    url = `/evaluation/${tenderId}/${lotId}/responsiveness/${itemId}/${bidderId}/${list.id}`;
                   }
                   router.push(url);
                 }}
@@ -101,7 +128,7 @@ export const Requirements = ({
                       : 'font-semibold flex justify-between items-center'
                   }
                 >
-                  {list.itbDescription}
+                  {list[titleKey]}
 
                   {list.check ? (
                     <Tooltip label="Evaluated">
@@ -122,7 +149,7 @@ export const Requirements = ({
   };
   return (
     <div>
-      <Section title="Requirements1" className="h-full" collapsible={false}>
+      <Section title="Requirements" className="h-full" collapsible={false}>
         {milestone === 'technicalCompliance' && (
           <Table striped highlightOnHover withTableBorder withColumnBorders>
             <Table.Tr>
@@ -164,10 +191,15 @@ export const Requirements = ({
           </Table>
         )}
 
-        {milestone === 'technicalQualification' && (
+        {(milestone === 'technicalQualification' ||
+          milestone === 'technicalResponsiveness') && (
           <ExpandableTable
             config={config}
-            data={qualificationRequirements ?? []}
+            data={
+              milestone === 'technicalQualification'
+                ? qualificationRequirements
+                : responsivenessRequirements ?? []
+            }
           />
         )}
       </Section>

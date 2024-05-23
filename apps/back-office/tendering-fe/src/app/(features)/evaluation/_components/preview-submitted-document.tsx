@@ -8,6 +8,10 @@ import {
   useLazyGetEqcQualificationQuery,
   useLazyGetQualificationMembersAssesmentQuery,
 } from '@/store/api/tendering/technical-qualification';
+import {
+  useLazyGetResponsivenessMembersAssessmentResultQuery,
+  useLazyGetSorTechnicalRequirementsQuery,
+} from '@/store/api/tendering/technical-responsiveness.api';
 import { ActionIcon, Box, LoadingOverlay, Text } from '@mantine/core';
 import { ExpandableTable, Section, logger } from '@megp/core-fe';
 import { IconFile, IconUsers } from '@tabler/icons-react';
@@ -33,10 +37,16 @@ export const PreviewDocument = ({
     getQualificationTeamAssessment,
     { isLoading: isQualificationTeamAssessmentLoading },
   ] = useLazyGetQualificationMembersAssesmentQuery();
+  const [
+    getResponsivenessTeamAssessment,
+    { isLoading: isResponsivenessTeamAssessmentLoading },
+  ] = useLazyGetResponsivenessMembersAssessmentResultQuery();
   const { lotId, bidderId, requirementId } = useParams();
   const [getEqcPreliminaryExamination] =
     useLazyGetEqcPreliminaryExaminationQuery();
   const [getEqcQualification] = useLazyGetEqcQualificationQuery();
+  const [getSorTechnicalRequirement] =
+    useLazyGetSorTechnicalRequirementsQuery();
   const [title, setTitle] = useState('');
   const [teamMembersAssessment, setTeamMembersAssessment] = useState([]);
 
@@ -68,6 +78,19 @@ export const PreviewDocument = ({
           remark: e.remark === '' ? 'N/A' : e.remark,
         }));
         setTeamMembersAssessment(temp);
+      } else if (milestone === 'technicalResponsiveness') {
+        const res = await getResponsivenessTeamAssessment({
+          lotId,
+          bidderId,
+          requirementId,
+        }).unwrap();
+
+        const temp = res.map((e) => ({
+          name: e.technicalResponsivenessAssessment.evaluatorName,
+          assessment: e.qualified,
+          remark: e.remark === '' ? 'N/A' : e.remark,
+        }));
+        setTeamMembersAssessment(temp);
       }
     } catch {
       logger.log('err');
@@ -79,10 +102,12 @@ export const PreviewDocument = ({
       if (milestone === 'technicalCompliance') {
         const res = await getEqcPreliminaryExamination(requirementId).unwrap();
         setTitle(res.itbDescription);
-      }
-      if (milestone === 'technicalQualification') {
+      } else if (milestone === 'technicalQualification') {
         const res = await getEqcQualification(requirementId).unwrap();
         setTitle(res.itbDescription);
+      } else if (milestone === 'technicalResponsiveness') {
+        const res = await getSorTechnicalRequirement(requirementId).unwrap();
+        setTitle(res.requirement);
       }
     } catch (err) {
       logger.log({ err });
@@ -129,7 +154,11 @@ export const PreviewDocument = ({
       ) : (
         <Box pos="relative">
           <LoadingOverlay
-            visible={isLoading || isQualificationTeamAssessmentLoading}
+            visible={
+              isLoading ||
+              isQualificationTeamAssessmentLoading ||
+              isResponsivenessTeamAssessmentLoading
+            }
           />
           <Text className="text-center my-2 font-semibold">
             Team Members Assessment
