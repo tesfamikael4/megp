@@ -185,10 +185,10 @@ export const rfxPdf = async ({ rfx }: any) => {
                     accessor: 'documentTitle',
                   },
                   {
-                    accessor: 'required',
+                    accessor: 'description',
                   },
                 ],
-                data: rfx?.rfxBidQualifications,
+                data: rfx?.rfxDocumentaryEvidences,
               }}
             />
           </View>
@@ -200,10 +200,10 @@ export const rfxPdf = async ({ rfx }: any) => {
               config={{
                 columns: [
                   {
-                    accessor: 'username',
+                    accessor: 'userName',
                   },
                 ],
-                data: rfx?.rfxBidQualifications,
+                data: rfx?.rfxProcurementTechnicalTeams,
               }}
             />
           </View>
@@ -258,6 +258,11 @@ export const rfxPdf = async ({ rfx }: any) => {
 };
 
 const styles = StyleSheet.create({
+  section: {
+    margin: 10,
+    padding: 10,
+    flexGrow: 1,
+  },
   page: {
     backgroundColor: '#ffffff',
     maxWidth: '100%',
@@ -333,7 +338,7 @@ const ReactPdfTable = ({ data }: any) => {
             <Text style={styles.row1}>
               <Text style={styles.bold}>{row.key}</Text>
             </Text>
-            <Text style={styles.row2}>{row.value}</Text>
+            <Text style={styles.row2}>{`${row.value}` || ''}</Text>
           </View>
         ))}
       </View>

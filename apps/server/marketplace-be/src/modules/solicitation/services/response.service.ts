@@ -17,6 +17,8 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
   constructor(
     @InjectRepository(SolResponse)
     private readonly solResponseRepository: Repository<SolResponse>,
+    @InjectRepository(SolRegistration)
+    private readonly solRegistrationRepository: Repository<SolRegistration>,
     @Inject(REQUEST) private readonly request: Request,
     private readonly encryptionHelperService: EncryptionHelperService,
     private readonly minIoService: MinIOService,
@@ -86,5 +88,45 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
 
     await this.solResponseRepository.upsert(item, ['key', 'vendorId', 'rfxId']);
     return preSignedResponse;
+  }
+
+  async reviewResonses(rfxId: string, vendorId: string) {
+    // Check Viewing Response is allowed - Date Validation
+
+    const solRegistration = await this.solRegistrationRepository.findOne({
+      where: {
+        rfxId,
+        vendorId,
+      },
+      relations: {
+        responses: true,
+      },
+    });
+
+    if (!solRegistration)
+      throw new BadRequestException('Registration Not Found');
+
+    const isPasswordValid = this.encryptionHelperService.checkPasswordValidity(
+      solRegistration,
+      '123456',
+    );
+
+    if (!isPasswordValid) throw new BadRequestException('invalid password');
+
+    const fileInfos = [];
+
+    for (const resp of solRegistration.responses) {
+      const fileInfo = this.encryptionHelperService.decryptedData(
+        resp.value,
+        '123456',
+        solRegistration.salt,
+      );
+      const x = JSON.parse(fileInfo);
+      const presignedUrl =
+        await this.minIoService.generatePresignedDownloadUrl(x);
+      fileInfos.push({ key: resp.key, presignedUrl });
+    }
+
+    return fileInfos;
   }
 }

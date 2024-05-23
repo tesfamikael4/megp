@@ -25,6 +25,15 @@ export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
   }
 
   async create(itemData: CreateBookmarkDto, req: any): Promise<any> {
+    const exists = await this.solBookmarkRepository.exists({
+      where: {
+        rfxId: itemData.rfxId,
+        vendorId: req.user?.organization.id,
+      },
+    });
+
+    if (exists) throw new BadRequestException('RFQ Already Bookmarked');
+
     const rfx = await this.rfxRepository.findOne({
       where: {
         id: itemData.rfxId,
@@ -50,7 +59,7 @@ export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
     if (now >= deadline)
       throw new BadRequestException('Rfx Submission Deadline Passed');
 
-    itemData.vendorId = req.user?.id;
+    itemData.vendorId = req.user?.organization.id;
     const register = this.solBookmarkRepository.create(itemData);
 
     await this.solBookmarkRepository.upsert(register, {

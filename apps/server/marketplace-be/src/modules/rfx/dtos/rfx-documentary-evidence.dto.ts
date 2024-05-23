@@ -21,6 +21,11 @@ export class CreateRfxDocumetaryEvidenceDto {
   documentTitle: string;
 
   @ApiProperty()
+  @IsString()
+  @IsOptional()
+  description: string;
+
+  @ApiProperty()
   @IsNumber()
   @IsOptional()
   order: number;

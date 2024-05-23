@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   CollectionQuery,
   CurrentUser,
@@ -25,19 +33,62 @@ export class RfxBidInvitationController extends ExtraCrudController<RfxBidInvita
     super(rfxBidInvitationService);
   }
 
-  @Get('my-item-invitations/:rfxItemId')
-  async myItemInvitaitons(
-    @Param('rfxItemId') rfxItemId: string,
+  @Patch('accpet-invitation/:rfxInvitationId')
+  async acceptInvitation(
+    @Param('rfxInvitationId') rfxInvitationId: string,
     @CurrentUser() user: any,
   ) {
-    return await this.rfxBidInvitationService.myRfxItemInvitations(
+    return await this.rfxBidInvitationService.acceptInvitation(
+      rfxInvitationId,
+      user,
+    );
+  }
+
+  @Get('my-rfx-invitations/:rfxId')
+  async myRfxInvitations(
+    @Query() query: CollectionQuery,
+    @Param('rfxId') rfxId: string,
+    @CurrentUser() user: any,
+  ) {
+    return await this.rfxBidInvitationService.myRfxInvitations(
+      rfxId,
+      query,
+      user,
+    );
+  }
+
+  @Get('my-item-invitations/:rfxItemId')
+  async myItemInvitations(
+    @Param('rfxItemId') rfxItemId: string,
+    @CurrentUser() user: any,
+    @Query() query: CollectionQuery,
+  ) {
+    return await this.rfxBidInvitationService.myItemInvitations(
+      query,
       rfxItemId,
       user,
     );
   }
 
+  @Get('my-item-detail/:rfxItemId')
+  async myItemDetails(
+    @Param('rfxItemId') rfxItemId: string,
+    @CurrentUser() user: any,
+  ) {
+    return await this.rfxBidInvitationService.myRfxItemDetail(rfxItemId, user);
+  }
+
   @Get('my-rfx-items/:rfxId')
-  async myRfxItems(@Param('rfxId') rfxId: string, @CurrentUser() user: any) {
+  async myRfxItems(
+    @Param('rfxId') rfxId: string,
+    @Query() query: CollectionQuery,
+    @CurrentUser() user: any,
+  ) {
+    return await this.rfxBidInvitationService.myRfxItems(query, rfxId, user);
+  }
+
+  @Get('my-rfx-detail/:rfxId')
+  async myRfxDetails(@Param('rfxId') rfxId: string, @CurrentUser() user: any) {
     return await this.rfxBidInvitationService.myRfxDetail(rfxId, user);
   }
 

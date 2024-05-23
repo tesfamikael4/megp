@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   ExtraCrudOptions,
@@ -10,7 +10,7 @@ import { SolOffer } from 'src/entities';
 import { CreateOfferDto, UpdateOferDto } from '../dtos/offer.dto';
 
 const options: ExtraCrudOptions = {
-  entityIdName: 'rfxItemId',
+  entityIdName: 'invitationId',
   createDto: CreateOfferDto,
   updateDto: UpdateOferDto,
 };
@@ -24,7 +24,7 @@ export class SolOfferController extends ExtraCrudController<SolOffer>(options) {
   }
 
   @Post()
-  async create(itemData: CreateOfferDto, @CurrentUser() user: any) {
+  async create(@Body() itemData: CreateOfferDto, @CurrentUser() user: any) {
     itemData.vendorId = user?.id;
     return await this.solOfferService.create(itemData, user);
   }

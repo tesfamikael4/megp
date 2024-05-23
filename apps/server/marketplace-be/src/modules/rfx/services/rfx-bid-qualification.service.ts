@@ -1,17 +1,20 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ExtraCrudService } from 'megp-shared-be';
+import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import { RFX, RfxBidQualification } from 'src/entities';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import {
   CreateRfxBidQualificationDto,
   UpdateRfxBidQualificationDto,
 } from '../dtos/rfx-qualification.dto';
 import { RfxService } from './rfx.service';
+import { ERfxStatus } from 'src/utils/enums';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class RfxBidQualificationService extends ExtraCrudService<RfxBidQualification> {
@@ -20,6 +23,7 @@ export class RfxBidQualificationService extends ExtraCrudService<RfxBidQualifica
     private readonly rfxBidQualificationRepository: Repository<RfxBidQualification>,
     @InjectRepository(RFX)
     private readonly rfxRepository: Repository<RFX>,
+    @Inject(REQUEST) private readonly request: Request,
     private readonly rfxService: RfxService,
   ) {
     super(rfxBidQualificationRepository);
@@ -50,6 +54,8 @@ export class RfxBidQualificationService extends ExtraCrudService<RfxBidQualifica
   }
 
   async update(id: string, itemData: UpdateRfxBidQualificationDto) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
     const rfxBidQuali = await this.rfxBidQualificationRepository.findOne({
       where: {
         id,
@@ -70,8 +76,7 @@ export class RfxBidQualificationService extends ExtraCrudService<RfxBidQualifica
     if (!rfxBidQuali)
       throw new NotFoundException('no rfx bid qualification found');
 
-    const isUpdatable = await this.rfxService.isUpdatable(rfxBidQuali.rfx);
-    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
+    await this.rfxService.isUpdatable(rfxBidQuali.rfx);
 
     const rfxDocUpdate = this.rfxBidQualificationRepository.create(itemData);
     await this.rfxBidQualificationRepository.update(id, itemData);

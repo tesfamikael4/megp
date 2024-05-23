@@ -7,6 +7,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { RFXItem } from './rfx-items.entity';
 import { RfxProcurementMechanism } from './rfx-procurement-mechanism.entity';
@@ -24,6 +25,7 @@ import { SolResponse } from './sol-response.entity';
 import { SolBookmark } from './sol-bookmark.entity';
 
 @Entity({ name: 'rfxs' })
+// @Unique('"reviewDeadline" > CURRENT_TIMESTAMP')
 export class RFX extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

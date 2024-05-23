@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { RFXItem } from './rfx-items.entity';
 import { EInvitationStatus } from 'src/utils/enums/rfx.enum';
+import { SolOffer } from './sol-offer.entity';
 
 @Entity({ name: 'rfx_bid_invitations' })
 export class RfxBidInvitation extends Audit {
@@ -41,6 +43,9 @@ export class RfxBidInvitation extends Audit {
     default: EInvitationStatus.DRAFT,
   })
   status: EInvitationStatus;
+
+  @OneToMany(() => SolOffer, (offer) => offer.invitation)
+  offers: SolOffer[];
 
   @ManyToOne(() => RFXItem, (item) => item.bidInvitations)
   @JoinColumn({ name: 'rfxItemId' })

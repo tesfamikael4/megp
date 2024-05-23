@@ -12,7 +12,7 @@ export class ProductCatalogueDto {
 
   @ApiProperty()
   @IsObject()
-  specificationValues: any;
+  specifications: any;
 
   @ApiProperty()
   @IsObject()
