@@ -21,14 +21,17 @@ export function Builder() {
   const [opened, { open, close }] = useDisclosure(false);
   const [copyModalOpend, { open: openCopyModal, close: closeCopyModal }] =
     useDisclosure(false);
+  const [openedForEdit, { open: openForEdit, close: closeForEdit }] =
+    useDisclosure(false);
   const [updatedItems, setUpdatedItems] = useState<any[]>([]);
   const [readItem, { data: item }] = useLazyReadQuery();
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   const { id } = useParams();
 
   const [trigger, { data, isSuccess, isLoading }] = useLazyGetTemplateQuery();
   const [createTemplate] = useCreateTemplateMutation();
-  const [update] = useUpdateTemplateMutation();
+  const [updateTemplate] = useUpdateTemplateMutation();
   const [copy] = useCopyTemplateMutation();
   const [onRemove] = useDeleteTemplateMutation();
 
@@ -38,7 +41,7 @@ export function Builder() {
     },
   });
 
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, append, remove, replace, update } = useFieldArray({
     name: 'specTemp',
     control,
   });
@@ -78,7 +81,7 @@ export function Builder() {
   };
   const onUpdate = async () => {
     try {
-      const result = await update({
+      const result = await updateTemplate({
         id: data?.id,
         itemMasterId: id,
         itemMasterCode: item?.itemCode,
@@ -154,6 +157,10 @@ export function Builder() {
   useEffect(() => {
     readItem(id?.toString());
   }, [id, readItem]);
+  const handleEdit = (index) => {
+    openForEdit();
+    setSelectedIndex(index);
+  };
 
   return (
     <>
@@ -178,6 +185,7 @@ export function Builder() {
           remove={remove}
           setUpdatedItems={setUpdatedItems}
           open={open}
+          handleEdit={handleEdit}
         />
         <Group mt={'lg'}>
           {isSuccess && updatedItems?.length > 0 ? (
@@ -199,7 +207,22 @@ export function Builder() {
           title={<Group fw={'bold'}>Add Specification Template Form</Group>}
           size={'lg'}
         >
-          <Popup close={close} add={append} />
+          <Popup close={close} add={append} mode="new" />
+        </Modal>
+
+        <Modal
+          opened={openedForEdit}
+          onClose={closeForEdit}
+          title={<Group fw={'bold'}>Add Specification Template Form</Group>}
+          size={'lg'}
+        >
+          <Popup
+            close={closeForEdit}
+            add={update}
+            mode={'detail'}
+            updatedItems={updatedItems}
+            index={selectedIndex}
+          />
         </Modal>
 
         <ItemSelector

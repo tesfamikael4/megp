@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Group, ActionIcon, Menu, Flex, Table } from '@mantine/core';
+import { Group, ActionIcon, Menu, Flex, Table, MenuItem } from '@mantine/core';
 import { IconDotsVertical, IconPencil, IconX } from '@tabler/icons-react';
 
 export const DraggableTable = ({
@@ -8,11 +8,13 @@ export const DraggableTable = ({
   remove,
   setUpdatedItems,
   open,
+  handleEdit,
 }: {
   data;
   remove;
   setUpdatedItems;
   open;
+  handleEdit;
 }) => {
   const [items, setItems] = useState(data);
   useEffect(() => {
@@ -110,6 +112,12 @@ export const DraggableTable = ({
                                     <IconDotsVertical size={18} />
                                   </Menu.Target>
                                   <Menu.Dropdown>
+                                    <MenuItem
+                                      leftSection={<IconPencil size={15} />}
+                                      onClick={() => handleEdit(index)}
+                                    >
+                                      Edit
+                                    </MenuItem>
                                     <Menu.Item
                                       color="red"
                                       leftSection={<IconX size={15} />}
