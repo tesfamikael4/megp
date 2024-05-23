@@ -135,6 +135,7 @@ export default function TenderDetailPage() {
       .unwrap()
       .then(() => {
         triggerDetail(id.toString());
+        router.push(pathname + '?' + createQueryString('tab', 'document'));
         notify('Success', 'Tendering Updated successfully');
       })
       .catch((error) => {
@@ -222,9 +223,6 @@ export default function TenderDetailPage() {
                             ? 'PUBLISHED'
                             : 'SUBMITTED',
                       });
-                      router.push(
-                        pathname + '?' + createQueryString('tab', 'document'),
-                      );
                     }}
                   >
                     {selected?.status === 'DRAFT'
