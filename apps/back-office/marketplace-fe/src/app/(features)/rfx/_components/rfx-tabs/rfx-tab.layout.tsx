@@ -43,6 +43,7 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
         color: 'green',
         message: 'RFQ Submitted Successfully',
       });
+      router.push('/revision');
     } catch (err: any) {
       notifications.show({
         title: 'Error',
