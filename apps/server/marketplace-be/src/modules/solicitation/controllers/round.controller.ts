@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions, ExtraCrudController } from 'megp-shared-be';
 import { SolRoundService } from '../services/round.service';
@@ -17,5 +17,10 @@ const options: ExtraCrudOptions = {
 export class SolRoundController extends ExtraCrudController<SolRound>(options) {
   constructor(private readonly solRemarkService: SolRoundService) {
     super(solRemarkService);
+  }
+
+  @Get('current-round/:rfxId')
+  async getCurrentRound(@Param('rfxId') rfxId: string) {
+    return this.solRemarkService.getCurrentRound(rfxId);
   }
 }

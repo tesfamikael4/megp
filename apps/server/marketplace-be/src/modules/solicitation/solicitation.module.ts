@@ -24,6 +24,7 @@ import { SolBookmarkService } from './services/bookmark.service';
 import { SolResponseController } from './controllers/response.controller';
 import { SolResponseService } from './services/response.service';
 import { MinIOModule } from 'megp-shared-be';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { MinIOModule } from 'megp-shared-be';
       RFX,
       RFXItem,
     ]),
+    ScheduleModule.forRoot(),
     MinIOModule,
   ],
   controllers: [

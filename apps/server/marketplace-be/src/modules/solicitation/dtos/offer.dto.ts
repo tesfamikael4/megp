@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsUUID } from 'class-validator';
-import { ESolBookmarkStatus } from 'src/utils/enums/sol.enum';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateOfferDto {
   @ApiProperty()
@@ -9,16 +14,19 @@ export class CreateOfferDto {
   rfxItemId: string;
 
   @ApiProperty()
+  @IsNotEmpty()
   @IsUUID()
+  invitationId: string;
+
   roundId: string;
 
   @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  price: number;
+  @IsString()
+  price: string;
 
-  @IsOptional()
   vendorId: string;
+
+  registrationId: string;
 }
 
 export class UpdateOferDto extends CreateOfferDto {

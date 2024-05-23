@@ -23,9 +23,6 @@ export class RFXItem extends Audit {
   id: string;
 
   @Column()
-  prId: string;
-
-  @Column()
   rfxId: string;
 
   @Column({ default: false })

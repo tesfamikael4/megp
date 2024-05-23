@@ -14,10 +14,15 @@ import {
   QueryConstructor,
 } from 'megp-shared-be';
 import { RFX, RFXItem, RfxBidInvitation } from 'src/entities';
-import { EntityManager, Repository, In } from 'typeorm';
+import { EntityManager, Repository, In, SelectQueryBuilder } from 'typeorm';
 import { CreateRfxBidInvitationDto } from '../dtos/rfx-bid-invitaiton.dto';
 import { ProductCatalogueDto } from '../dtos/product-catalogue.dto';
-import { ERfxItemStatus, ERfxStatus } from 'src/utils/enums';
+import {
+  EInvitationStatus,
+  ERfxItemStatus,
+  ERfxStatus,
+  ESolRegistrationStatus,
+} from 'src/utils/enums';
 import { REQUEST } from '@nestjs/core';
 import { ProductCatalogue } from 'src/utils/mock/product-catalogues';
 
@@ -28,9 +33,119 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     private readonly rfxBidInvitationRepository: Repository<RfxBidInvitation>,
     @InjectRepository(RFXItem)
     private readonly rfxItemRepository: Repository<RFXItem>,
+    @InjectRepository(RFX)
+    private readonly rfxRepository: Repository<RFX>,
     @Inject(REQUEST) private readonly request: Request,
   ) {
     super(rfxBidInvitationRepository);
+  }
+  async myItemInvitations(
+    query: CollectionQuery,
+    rfxItemId: string,
+    user: any,
+  ) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const dataQuery = QueryConstructor.constructQuery<RfxBidInvitation>(
+      entityManager.getRepository(RfxBidInvitation),
+      query,
+    )
+      .leftJoin('rfx_bid_invitations.rfxItem', 'rfxItems')
+      .where('rfxItems.id = :rfxItemId', { rfxItemId })
+      .andWhere('rfxItems.status = :status', {
+        status: ERfxItemStatus.APPROVED,
+      })
+      .andWhere('rfx_bid_invitations.vendorId = :vendorId', {
+        vendorId: user.organization.id,
+      });
+
+    return await this.giveQueryResponse<RfxBidInvitation>(query, dataQuery);
+  }
+
+  async myRfxItemDetail(rfxItemId: string, user: any) {
+    const rfxItem = await this.rfxItemRepository.findOne({
+      where: {
+        id: rfxItemId,
+        bidInvitations: {
+          vendorId: user.organization.id,
+        },
+      },
+    });
+
+    if (!rfxItem) throw new NotFoundException('Rfx item not found');
+
+    return rfxItem;
+  }
+
+  async myRfxItems(query: CollectionQuery, rfxId: string, user: any) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const dataQuery = QueryConstructor.constructQuery<RFXItem>(
+      entityManager.getRepository(RFXItem),
+      query,
+    )
+      .leftJoin('rfx_items.rfx', 'rfxs')
+      .where('rfxs.id = :rfxId', { rfxId })
+      .andWhere('rfxs.status = :status', { status: ERfxStatus.APPROVED })
+      .leftJoin('rfx_items.bidInvitations', 'bidInvitation')
+      .andWhere('bidInvitation.vendorId = :vendorId', {
+        vendorId: user.organization.id,
+      });
+
+    return await this.giveQueryResponse<RFXItem>(query, dataQuery);
+  }
+
+  async myRfxDetail(rfxId: string, user: any) {
+    const rfx = await this.rfxRepository.findOne({
+      where: {
+        id: rfxId,
+        status: ERfxStatus.APPROVED,
+        items: {
+          bidInvitations: {
+            vendorId: user.organization.id,
+          },
+        },
+      },
+      relations: {
+        rfxBidProcedure: true,
+      },
+    });
+
+    if (!rfx) throw new NotFoundException('Rfx not found');
+
+    return rfx;
+  }
+
+  async giveQueryResponse<T>(
+    query: CollectionQuery,
+    dataQuery: SelectQueryBuilder<T>,
+  ) {
+    const response = new DataResponseFormat<T>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
+  async myInvitations(query: CollectionQuery, user: any) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const dataQuery = QueryConstructor.constructQuery<RFX>(
+      entityManager.getRepository(RFX),
+      query,
+    )
+      .where('rfxs.status = :status', { status: ERfxStatus.APPROVED })
+      .leftJoinAndSelect('rfxs.items', 'rfxItems')
+      .leftJoinAndSelect('rfxItems.bidInvitations', 'bidInvitation')
+      .andWhere('bidInvitation.vendorId = :vendorId', {
+        vendorId: user.organization.id,
+      });
+
+    return await this.giveQueryResponse<RFX>(query, dataQuery);
   }
 
   async myRfxItemInvitations(rfxItemId: string, user: any) {
@@ -50,47 +165,6 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     return myInvitations;
   }
 
-  async myRfxDetail(rfxId: string, user: any) {
-    const rfxItems = await this.rfxItemRepository.find({
-      where: {
-        rfxId,
-        status: ERfxItemStatus.APPROVED,
-        bidInvitations: {
-          vendorId: user.organization.id,
-        },
-      },
-    });
-
-    if (rfxItems.length == 0) throw new NotFoundException('RFQ Item not found');
-
-    return rfxItems;
-  }
-
-  async myInvitations(query: CollectionQuery, user: any) {
-    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-
-    const dataQuery = QueryConstructor.constructQuery<RFX>(
-      entityManager.getRepository(RFX),
-      query,
-    )
-      .where('rfxs.status = :status', { status: ERfxStatus.APPROVED })
-      .leftJoinAndSelect('rfxs.items', 'rfxItems')
-      .leftJoinAndSelect('rfxItems.bidInvitations', 'bidInvitation')
-      .andWhere('bidInvitation.vendorId = :vendorId', {
-        vendorId: user.organization.id,
-      });
-
-    // Select Open RFXes
-    const response = new DataResponseFormat<RFX>();
-    if (query.count) {
-      response.total = await dataQuery.getCount();
-    } else {
-      const [result, total] = await dataQuery.getManyAndCount();
-      response.total = total;
-      response.items = result;
-    }
-    return response;
-  }
   async inviteSelected(rfxItemId: string, itemData: CreateRfxBidInvitationDto) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
@@ -151,7 +225,6 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     const rfxItem = await this.rfxItemRepository.findOne({
       where: {
         id: rfxItemId,
-        status: In([ERfxItemStatus.DRAFT, ERfxItemStatus.INVITATION_PREPARED]),
       },
       select: {
         id: true,
@@ -160,6 +233,9 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     });
 
     if (!rfxItem) throw new BadRequestException('no rfx item found');
+
+    if (rfxItem.status !== ERfxItemStatus.INVITATION_PREPARED)
+      throw new BadRequestException('item has not invitation prepared');
 
     await Promise.all([
       this.rfxBidInvitationRepository.delete({
@@ -203,11 +279,92 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     return true;
   }
 
+  async acceptInvitation(rfxBidInvitationId: string, user: any) {
+    const rfxBidInvitation = await this.rfxBidInvitationRepository.findOne({
+      where: {
+        id: rfxBidInvitationId,
+        rfxItem: {
+          status: ERfxItemStatus.APPROVED,
+          rfx: {
+            solRegistrations: {
+              vendorId: user.organization.id,
+              status: ESolRegistrationStatus.REGISTERED,
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!rfxBidInvitation)
+      throw new NotFoundException('RFQ bid invitation not found');
+
+    await this.rfxBidInvitationRepository.update(rfxBidInvitationId, {
+      status: EInvitationStatus.ACCEPTED,
+    });
+
+    return rfxBidInvitation;
+  }
+
+  async withdrawInvitation(rfxBidInvitationId: string, user: any) {
+    const rfxBidInvitation = await this.rfxBidInvitationRepository.findOne({
+      where: {
+        id: rfxBidInvitationId,
+        rfxItem: {
+          status: ERfxItemStatus.APPROVED,
+          rfx: {
+            solRegistrations: {
+              vendorId: user.organization.id,
+              status: ESolRegistrationStatus.REGISTERED,
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!rfxBidInvitation)
+      throw new NotFoundException('RFQ bid invitation not found');
+
+    await this.rfxBidInvitationRepository.update(rfxBidInvitationId, {
+      status: EInvitationStatus.WITHDRAWN,
+    });
+
+    return rfxBidInvitation;
+  }
+
+  async myRfxInvitations(rfxId: string, query: CollectionQuery, user: any) {
+    const dataQuery = QueryConstructor.constructQuery<RfxBidInvitation>(
+      this.rfxBidInvitationRepository,
+      query,
+    )
+      .where('rfx_bid_invitations.vendorId = :vendorId', {
+        vendorId: user.organization.id,
+      })
+      .leftJoinAndSelect('rfx_bid_invitations.rfxItem', 'rfxItems')
+      .leftJoin('rfxItems.rfx', 'rfxs')
+      .andWhere('rfxs.id = :rfxId', { rfxId })
+      .andWhere('rfxs.status = :status', { status: ERfxStatus.APPROVED });
+
+    const response = new DataResponseFormat<RfxBidInvitation>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
   private async getRefinedProductCatalogues(
     productCatalogueIds: string[],
   ): Promise<any[]> {
     try {
-      return ProductCatalogue;
+      // return ProductCatalogue;
       const ADMINISTRATION_CATALOGUE_ENDPOINT =
         process.env.ADMINISTRATION_CATALOGUE_ENDPOINT ??
         'https://dev-bo.megp.peragosystems.com/administration/api/product-catalogs/details';
@@ -253,8 +410,7 @@ export class RfxBidInvitationService extends ExtraCrudService<RfxBidInvitation> 
     const rfxBidInvitation = new RfxBidInvitation();
 
     rfxBidInvitation.rfxItemId = rfxItemId;
-    rfxBidInvitation.catalogueSpecificationValues =
-      catalogue.specificationValues;
+    rfxBidInvitation.catalogueSpecificationValues = catalogue.specifications;
     rfxBidInvitation.catalogueDeliveryValues = catalogue.deliveryValues;
     rfxBidInvitation.productCatalogueId = catalogue.id;
     rfxBidInvitation.vendorMetadata = catalogue.vendor;

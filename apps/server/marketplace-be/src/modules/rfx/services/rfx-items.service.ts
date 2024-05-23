@@ -43,6 +43,41 @@ export class RFXItemService extends ExtraCrudService<RFXItem> {
     });
   }
 
+  async findAll(
+    entityId: string,
+    query: CollectionQuery,
+    extraCrudOptions: ExtraCrudOptions,
+    req?: any,
+  ) {
+    const entityIdName = extraCrudOptions.entityIdName;
+
+    query.where.push([
+      {
+        column: entityIdName,
+        value: entityId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<RFXItem>(
+      this.repositoryRFXItem,
+      query,
+    ).loadRelationCountAndMap(
+      'rfx_items.invitationCount',
+      'rfx_items.bidInvitations',
+    );
+
+    const response = new DataResponseFormat<RFXItem>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
   async submit(id: string) {
     const rfxItem = await this.repositoryRFXItem.findOne({
       where: {

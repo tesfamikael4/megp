@@ -59,16 +59,19 @@ export class RfxService extends EntityCrudService<RFX> {
         throw new Error('PR already used in an RFX');
       }
 
-      const PR_ENDPOINT =
-        process.env.PR_ENDPOINT ??
-        'https://dev-bo.megp.peragosystems.com/planning/api/procurement-requisitions/get-procurement-requisition/';
+      const PR_BASE_ENDPOINT =
+        process.env.PR_BASE_ENDPOINT ??
+        'https://dev-bo.megp.peragosystems.com/planning/api/';
 
-      const prRequest = await axios.get(PR_ENDPOINT + prId, {
-        headers: {
-          'X-API-KEY':
-            process.env.API_KEY || '25bc1622e5fb42cca3d3e62e90a3a20f',
+      const prRequest = await axios.get(
+        `${PR_BASE_ENDPOINT}procurement-requisitions/get-procurement-requisition/${prId}`,
+        {
+          headers: {
+            'X-API-KEY':
+              process.env.API_KEY ?? '25bc1622e5fb42cca3d3e62e90a3a20f',
+          },
         },
-      });
+      );
 
       const prResponse = prRequest.data;
 
@@ -150,14 +153,20 @@ export class RfxService extends EntityCrudService<RFX> {
         item.unitOfMeasure = iterator?.uom;
         item.estimatedPrice = Number(iterator?.unitPrice);
         item.estimatedPriceCurrency = iterator?.currency;
-        item.prId = itemData.prId;
         items.push(item);
       }
       await manager.getRepository(RFXItem).insert(items);
 
-      // await axios.post('', {
-
-      // })
+      await axios.post(
+        `${PR_BASE_ENDPOINT}procurement-requisitions/update-procurement-requisition-is-used/${prId}`,
+        {},
+        {
+          headers: {
+            'X-API-KEY':
+              process.env.API_KEY ?? '25bc1622e5fb42cca3d3e62e90a3a20f',
+          },
+        },
+      );
 
       return rfx;
     } catch (error) {
@@ -196,9 +205,11 @@ export class RfxService extends EntityCrudService<RFX> {
     if (rfx.status != ERfxStatus.TEAM_REVIEWAL)
       throw new BadRequestException('rfx not on reviewal');
 
-    await this.validateRfxOnSubmit(rfx);
+    this.validateRfxOnSubmit(rfx);
 
+  for(let i = 0; i <= 4; i++){
     this.initiateWorkflow(rfx);
+  }
 
     rfx.status = ERfxStatus.SUBMITTED;
 
@@ -224,7 +235,9 @@ export class RfxService extends EntityCrudService<RFX> {
 
     await this.updateRfxChildrenStatus(rfx.id, status);
     if (status == 'APPROVED')
-      await this.solRoundServuce.scheduleRounds(rfx.rfxBidProcedure);
+      await this.solRoundServuce.createZeroSolicitationRound(
+        rfx.rfxBidProcedure,
+      );
   }
 
   async submitForReview(rfxId: string, payload: UpdateRFXDto) {
@@ -232,10 +245,10 @@ export class RfxService extends EntityCrudService<RFX> {
 
     const rfx = await this.getCompleteRfx(rfxId);
 
-    // if (rfx.status != ERfxStatus.DRAFT && rfx.status != ERfxStatus.ADJUSTEDMENT)
-    //   throw new BadRequestException('rfx_not_draft_or_adjustment');
+    if (rfx.status != ERfxStatus.DRAFT && rfx.status != ERfxStatus.ADJUSTEDMENT)
+      throw new BadRequestException('rfx not draft or adjustment');
 
-    await this.validateRfxOnSubmit(rfx);
+    this.validateRfxOnReview(rfx);
 
     const doc = await this.generateReviewDocument(rfx);
 
@@ -244,6 +257,7 @@ export class RfxService extends EntityCrudService<RFX> {
         status: ERfxStatus.TEAM_REVIEWAL,
         reviewDeadline: payload.reviewDeadline,
       }),
+      // TODO: Analysis ?
       entityManager.getRepository(RfxRevisionApproval).delete({
         rfxId,
       }),
@@ -252,26 +266,36 @@ export class RfxService extends EntityCrudService<RFX> {
     return doc;
   }
 
-  async isUpdatable(rfx: RFX): Promise<boolean> {
-    if (rfx.status == ERfxStatus.DRAFT) return true;
+  async isUpdatable(rfx: RFX): Promise<any> {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    let canUpdate = false;
+
+    if (rfx.status == ERfxStatus.DRAFT) canUpdate = true;
 
     if (
       rfx.status == ERfxStatus.TEAM_REVIEWAL &&
       rfx.revisionApprovals?.length == 0
     )
-      return true;
+      canUpdate = true;
 
     const now = new Date(Date.now());
 
     if (
       rfx.status == ERfxStatus.TEAM_REVIEWAL &&
       now > new Date(rfx.reviewDeadline)
-    )
-      return true;
+    ) {
+      canUpdate = true;
+      entityManager.getRepository(RFX).update(rfx.id, {
+        status: ERfxStatus.ADJUSTEDMENT,
+      });
+    }
 
-    if (rfx.status == ERfxStatus.ADJUSTEDMENT) return true;
+    if (rfx.status == ERfxStatus.ADJUSTEDMENT) canUpdate = true;
 
-    return false;
+    if (!canUpdate) {
+      throw new BadRequestException('rfx not updatable');
+    }
+    return canUpdate;
   }
 
   async isAdjustable(rfx: RFX): Promise<boolean> {
@@ -344,6 +368,20 @@ export class RfxService extends EntityCrudService<RFX> {
     return doc;
   }
 
+  async findOne(id: any, req?: any): Promise<RFX | undefined> {
+    const rfx = await this.rfxRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        rfxProcurementMechanism: true,
+      },
+    });
+    if (!rfx) throw new BadRequestException('RFQ not found');
+
+    return rfx;
+  }
+
   private async getCompleteRfx(rfxId: string) {
     const rfx = await this.rfxRepository.findOne({
       where: {
@@ -374,54 +412,57 @@ export class RfxService extends EntityCrudService<RFX> {
   }
 
   private async updateRfxChildrenStatus(rfxId: string, status: any) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      queryRunner.manager.connection.transaction(async (entityManager) => {
-        const [, , rfxItems] = await Promise.all([
-          entityManager.getRepository(RFX).update(rfxId, {
-            status,
-          }),
-          entityManager.getRepository(RFXItem).update(
-            { rfxId },
-            {
-              status,
-            },
-          ),
-          entityManager.getRepository(RFXItem).find({
-            where: {
-              rfxId: rfxId,
-            },
-            select: {
-              id: true,
-            },
-          }),
-        ]);
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-        const rfxItemIds = rfxItems.map((item) => item.id);
+    const [, , rfxItems] = await Promise.all([
+      entityManager.getRepository(RFX).update(rfxId, {
+        status,
+      }),
+      entityManager.getRepository(RFXItem).update(
+        { rfxId },
+        {
+          status,
+        },
+      ),
+      entityManager.getRepository(RFXItem).find({
+        where: {
+          rfxId: rfxId,
+        },
+        select: {
+          id: true,
+        },
+      }),
+    ]);
 
-        await entityManager.getRepository(RfxBidInvitation).update(
-          {
-            rfxItemId: In(rfxItemIds),
-          },
-          {
-            status,
-          },
-        );
-      });
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+    const rfxItemIds = rfxItems.map((item) => item.id);
+
+    await entityManager.getRepository(RfxBidInvitation).update(
+      {
+        rfxItemId: In(rfxItemIds),
+      },
+      {
+        status,
+      },
+    );
   }
 
-  private async validateRfxOnSubmit(rfx: RFX) {
-    if (!rfx.rfxBidQualifications) {
-      throw new BadRequestException('rfx bid qualification not found');
-    }
+  private validateRfxOnSubmit(rfx: RFX) {
+    this.validateRfxOnReview(rfx);
+    this.validateRfxReviewal(rfx);
+
+    if (rfx.status != ERfxStatus.TEAM_REVIEWAL)
+      throw new BadRequestException('rfx not on reviewal');
+
+    const now = new Date(Date.now());
+    const deadline = new Date(rfx.reviewDeadline);
+    if (rfx.status != ERfxStatus.TEAM_REVIEWAL && now < deadline)
+      throw new BadRequestException('rfx review deadline has not ended');
+  }
+
+  private validateRfxOnReview(rfx: RFX) {
+    // if (!rfx.rfxBidQualifications) {
+    //   throw new BadRequestException('rfx bid qualification not found');
+    // }
     if (!rfx.rfxProcurementTechnicalTeams) {
       throw new BadRequestException('rfx procurement technical team not found');
     }
@@ -435,19 +476,18 @@ export class RfxService extends EntityCrudService<RFX> {
       throw new BadRequestException('rfx procurement mechanism not found');
     }
 
-    await this.validateRfxReviewal(rfx);
     this.validateInvitation(rfx);
 
     return true;
   }
 
-  private async validateRfxReviewal(rfx: RFX) {
+  private validateRfxReviewal(rfx: RFX) {
     const now = new Date(Date.now());
     const revisions = rfx.revisionApprovals;
 
     if (now < new Date(rfx.reviewDeadline)) {
-      if (revisions.length != 2)
-        throw new BadRequestException('reviewal not ended');
+      // if (revisions.length != 2)
+      //   throw new BadRequestException('reviewal not ended');
     }
 
     const allApproved = revisions.every(
@@ -472,7 +512,7 @@ export class RfxService extends EntityCrudService<RFX> {
       itemName: rfx.name,
       id: rfx.id,
       organizationId: rfx.organizationId,
-      name: 'marketPlace',
+      name: 'rfxApproval',
     };
 
     this.rfxRmqClient.emit('initiate-workflow', rfxPayload);

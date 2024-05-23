@@ -67,9 +67,7 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
 
     if (!rfxBidProcedure) throw new BadRequestException('rfx not found');
 
-    const isUpdatable = await this.rfxService.isUpdatable(rfxBidProcedure.rfx);
-
-    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
+    await this.rfxService.isUpdatable(rfxBidProcedure.rfx);
 
     const rfxDocUpdate = this.rfxBidProcedureRepository.create(itemData);
     await this.rfxBidProcedureRepository.update(id, itemData);

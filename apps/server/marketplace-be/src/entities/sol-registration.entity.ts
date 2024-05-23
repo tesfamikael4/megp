@@ -11,6 +11,7 @@ import {
 import { RFX } from './rfx.entity';
 import { ESolRegistrationStatus } from 'src/utils/enums/sol.enum';
 import { SolResponse } from './sol-response.entity';
+import { SolOffer } from './sol-offer.entity';
 
 @Entity({ name: 'sol_registration' })
 @Unique(['rfxId', 'vendorId'])
@@ -44,6 +45,9 @@ export class SolRegistration extends Audit {
   })
   status: string;
 
+  // @OneToMany(() => SolOffer, offers => offers.registration)
+  // offers: SolOffer[]
+
   @OneToMany(() => SolResponse, (response) => response.registration)
-  responses: SolResponse;
+  responses: SolResponse[];
 }

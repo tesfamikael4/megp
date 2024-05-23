@@ -1,7 +1,12 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
-import { RFX, SolBookmark, SolRegistration } from 'src/entities';
+import {
+  RFX,
+  RfxBidInvitation,
+  SolBookmark,
+  SolRegistration,
+} from 'src/entities';
 import { EntityManager, Repository } from 'typeorm';
 import { EncryptionHelperService } from './encryption-helper.service';
 import { REQUEST } from '@nestjs/core';

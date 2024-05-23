@@ -13,11 +13,9 @@ export class RoundDto {
   @IsNumber()
   round: number;
 
-  @ApiProperty()
-  start: string;
+  start: Date;
 
-  @ApiProperty()
-  end: string;
+  end: Date;
 }
 export class CreateRoundDto extends RoundDto {
   @ApiProperty()

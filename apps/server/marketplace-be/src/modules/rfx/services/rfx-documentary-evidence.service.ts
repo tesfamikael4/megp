@@ -40,9 +40,7 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
 
     if (!rfx) throw new NotFoundException('no rfx found');
 
-    const isUpdatable = await this.rfxService.isUpdatable(rfx);
-
-    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
+    await this.rfxService.isUpdatable(rfx);
 
     const rfxBidQualification =
       this.rfxDocumentaryEvidenceRepository.create(itemData);
@@ -68,8 +66,7 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
       },
     });
 
-    const isUpdatable = await this.rfxService.isUpdatable(rfxDocEvidence.rfx);
-    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
+    await this.rfxService.isUpdatable(rfxDocEvidence.rfx);
 
     const rfxDocUpdate = this.rfxDocumentaryEvidenceRepository.create(itemData);
     await this.rfxDocumentaryEvidenceRepository.update(id, itemData);

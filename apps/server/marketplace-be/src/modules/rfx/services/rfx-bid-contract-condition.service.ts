@@ -56,7 +56,7 @@ export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContr
     itemData: UpdateRfxBidContractConditionDTO,
     req?: any,
   ) {
-    const rfxBidProcedure =
+    const rfxContractCondition =
       await this.rfxBidContractConditionRepository.findOne({
         where: {
           id,
@@ -74,12 +74,10 @@ export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContr
         },
       });
 
-    if (!rfxBidProcedure)
+    if (!rfxContractCondition)
       throw new BadRequestException('rfx bid condition not found');
 
-    const isUpdatable = await this.rfxService.isUpdatable(rfxBidProcedure.rfx);
-
-    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
+    await this.rfxService.isUpdatable(rfxContractCondition.rfx);
 
     const rfxConditionUpdate =
       this.rfxBidContractConditionRepository.create(itemData);

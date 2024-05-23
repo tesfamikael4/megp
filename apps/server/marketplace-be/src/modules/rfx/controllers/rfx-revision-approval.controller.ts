@@ -7,9 +7,15 @@ import {
 } from 'megp-shared-be';
 import { RfxRevisionApproval } from 'src/entities';
 import { RfxRevisionApprovalService } from '../services/rfx-revision-approval.service';
+import {
+  CreateRevisionApprovalDto,
+  UpdateRevisionApprovalDto,
+} from '../dtos/rfx-revision-approval.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxId',
+  createDto: CreateRevisionApprovalDto,
+  updateDto: UpdateRevisionApprovalDto,
 };
 
 @ApiBearerAuth()

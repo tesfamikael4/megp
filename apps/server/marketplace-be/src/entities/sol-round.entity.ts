@@ -6,11 +6,14 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { RFX } from './rfx.entity';
 import { SolOffer } from './sol-offer.entity';
+import { ESolRoundStatus } from 'src/utils/enums';
 
 @Entity({ name: 'sol_rounds' })
+@Unique(['rfxId', 'round'])
 export class SolRound extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -30,6 +33,13 @@ export class SolRound extends Audit {
 
   @Column({ type: 'timestamp' })
   end: Date;
+
+  @Column({
+    type: 'enum',
+    enum: ESolRoundStatus,
+    default: ESolRoundStatus.PENDING,
+  })
+  status: ESolRoundStatus;
 
   @OneToMany(() => SolOffer, (offer) => offer.round)
   offers: SolOffer[];

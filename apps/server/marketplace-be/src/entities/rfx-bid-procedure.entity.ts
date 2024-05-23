@@ -50,8 +50,8 @@ export class RfxBidProcedure extends Audit {
   @Column({ nullable: true })
   minimumBidDecrementPercentage: number;
 
-  @Column()
-  roundDuration: number; // in minutes
+  @Column({ nullable: true })
+  roundDuration: number; // in minutesye
 
   @Column({ nullable: true })
   idleTime: number; // in minutes

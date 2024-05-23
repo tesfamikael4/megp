@@ -1,9 +1,10 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   ExtraCrudOptions,
   ExtraCrudController,
   CurrentUser,
+  AllowAnonymous,
 } from 'megp-shared-be';
 import { SolResponse } from 'src/entities';
 import { SolResponseService } from '../services/response.service';
@@ -26,5 +27,14 @@ export class SolResponseController extends ExtraCrudController<SolResponse>(
 ) {
   constructor(private readonly rfxRepsonseItemService: SolResponseService) {
     super(rfxRepsonseItemService);
+  }
+
+  @Get('responses/:rfxId/:vendorId')
+  @AllowAnonymous()
+  async reviewResonses(
+    @Param('rfxId') rfxId: string,
+    @Param('vendorId') vendorId: string,
+  ) {
+    return this.rfxRepsonseItemService.reviewResonses(rfxId, vendorId);
   }
 }

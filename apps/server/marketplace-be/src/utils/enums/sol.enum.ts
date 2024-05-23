@@ -8,3 +8,15 @@ export enum ESolRegistrationStatus {
   REGISTERED = 'REGISTERED',
   SUBMITTED = 'SUBMITTED',
 }
+
+export enum ESolOfferStatus {
+  PENDING = 'PENDING',
+  WINNER = 'WINNER',
+  NEXT = 'NEXT',
+}
+
+export enum ESolRoundStatus {
+  PENDING = 'PENDING',
+  STARTED = 'STARTED',
+  COMPLETED = 'COMPLETED',
+}
