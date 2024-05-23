@@ -12,15 +12,20 @@ import {
   Button,
   Paper,
   Divider,
+  LoadingOverlay,
 } from '@mantine/core';
 
 import { logger } from '@megp/core-fe';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Data as template } from './sample-data';
 import { DocumentFormDetail } from './document/document-form-detail';
+import {
+  useGetRegionsQuery,
+  useLazyGetDistrictsQuery,
+  useLazyGetItemTemplateQuery,
+} from '@/store/api/rfx/item.api';
 
 export default function CatalogForm({
   data,
@@ -28,11 +33,13 @@ export default function CatalogForm({
   onSave,
   loading,
   disabled,
+  itemCode,
 }: any) {
-  //   const { itemId, id } = useParams();
-
-  //   const [getTemplate, { data: template, isLoading: templateLoading }] =
-  //     useLazyGetTemplateQuery();
+  const [getItemTemplate, { data: template, isLoading: isGettingTemplate }] =
+    useLazyGetItemTemplateQuery();
+  const [selectedRegion, setSelectedRegion] = useState<any>();
+  const { data: regions } = useGetRegionsQuery(undefined);
+  const [triggerDistrict, { data: districts }] = useLazyGetDistrictsQuery();
 
   const ValidationSchema = (data: any[]) => {
     const loc: { [key: string]: ZodType<any> } = {};
@@ -49,7 +56,7 @@ export default function CatalogForm({
         }
       } else if (
         item.dataType === 'string' ||
-        item.validation.type == 'singleSelect'
+        item.dataType == 'singleSelect'
       ) {
         if (item.validation.isRequired) {
           return (loc[nameToValidate] = z
@@ -104,20 +111,37 @@ export default function CatalogForm({
     logger.log(err);
   };
 
-  //   useEffect(() => {
-  //     getTemplate(itemId.toString());
-  //   }, [itemId]);
-
   useEffect(() => {
     reset(data);
   }, [data]);
+
+  useEffect(() => {
+    if (data) {
+      reset({
+        ...data,
+        quantity: data?.quantity,
+        location: data?.location,
+        deliverDays: data?.deliverDays,
+      });
+    }
+  }, [data, reset]);
+
+  useEffect(() => {
+    if (itemCode) {
+      getItemTemplate({ id: itemCode });
+    }
+  }, [itemCode]);
+
+  useEffect(() => {
+    selectedRegion !== undefined && triggerDistrict(selectedRegion);
+  }, [selectedRegion, triggerDistrict]);
 
   return (
     <>
       <Stack>
         <Paper withBorder className="p-4">
-          {/* <LoadingOverlay visible={templateLoading} /> */}
           <Box>
+            <LoadingOverlay visible={isGettingTemplate} />
             <Flex gap={'sm'} align={'flex-start'}>
               <Stack className="w-full">
                 {template?.properties?.map((item, index) => {
@@ -178,7 +202,7 @@ export default function CatalogForm({
                         />
                       )}
                     />
-                  ) : item.validation.type == 'singleSelect' ? (
+                  ) : item.dataType == 'singleSelect' ? (
                     <Controller
                       key={index}
                       name={nameToValidate}
@@ -235,19 +259,74 @@ export default function CatalogForm({
                   ) : null;
                 })}
                 {template?.properties?.length > 0 && (
-                  <Controller
-                    name={'quantity'}
-                    control={control}
-                    render={({ field: { name, value, onChange } }) => (
-                      <NumberInput
-                        label={'Quantity'}
-                        value={value}
-                        onChange={onChange}
-                        // required={item?.validation?.min}
-                        error={errors?.quantity?.message?.toString() ?? ''}
-                      />
-                    )}
-                  />
+                  <Stack>
+                    <Controller
+                      name={'quantity'}
+                      control={control}
+                      render={({ field: { name, value, onChange } }) => (
+                        <NumberInput
+                          label={'Quantity'}
+                          value={value}
+                          onChange={onChange}
+                          // required={item?.validation?.min}
+                          error={errors?.quantity?.message?.toString() ?? ''}
+                        />
+                      )}
+                    />
+                    <Controller
+                      name="region"
+                      control={control}
+                      render={() => (
+                        <Select
+                          defaultValue="MW"
+                          required
+                          label={'Region'}
+                          value={selectedRegion}
+                          onChange={(value) => setSelectedRegion(value)}
+                          data={
+                            regions?.items?.map((item) => ({
+                              label: item.name,
+                              value: item.id,
+                            })) || []
+                          }
+                          maxDropdownHeight={400}
+                        />
+                      )}
+                    />
+                    <Controller
+                      name="location"
+                      control={control}
+                      render={({ field: { onChange, value } }) => (
+                        <Select
+                          defaultValue="MW"
+                          required
+                          label={'District'}
+                          value={value}
+                          onChange={onChange}
+                          data={
+                            districts?.items?.map((item) => ({
+                              label: item.name,
+                              value: item.id,
+                            })) || []
+                          }
+                          maxDropdownHeight={400}
+                        />
+                      )}
+                    />
+
+                    <Controller
+                      name={'deliverDays'}
+                      control={control}
+                      render={({ field: { name, value, onChange } }) => (
+                        <NumberInput
+                          label={'Delivery Days'}
+                          value={value}
+                          onChange={onChange}
+                          error={errors?.deliverDays?.message?.toString() ?? ''}
+                        />
+                      )}
+                    />
+                  </Stack>
                 )}
                 <Divider
                   labelPosition="center"

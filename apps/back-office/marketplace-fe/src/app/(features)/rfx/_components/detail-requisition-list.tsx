@@ -3,7 +3,7 @@ import { DataTable } from 'mantine-datatable';
 
 import { useCreateMutation } from '../_api/rfx/rfx.api';
 import { useRouter } from 'next/navigation';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import ProcurmentMechanism from './procurment-mechanism.component';
 
 export const DetailRequisition = ({ requisition }: { requisition: any }) => {
@@ -40,9 +40,10 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
   const onClickPRSelection = async () => {
     try {
       const result = await convert({ prId: requisition?.id }).unwrap();
-      router.push(`/rfx/${result.data.id}/configuration`);
+      if (result) router.push(`/rfx/${result?.id}/configuration`);
+      notify('Success', 'Converted to RFQ successfully.');
     } catch (err) {
-      notify('Error', err?.data?.message ?? 'Error while creating RFX');
+      notify('Error', err?.data?.message ?? 'Error while creating RFQ.');
     }
   };
 

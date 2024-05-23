@@ -21,6 +21,7 @@ import { ZodType, z } from 'zod';
 
 const schema = z.object({
   documentTitle: z.string(),
+  description: z.string(),
 });
 
 type documentaryEvidenceSchema = z.infer<typeof schema>;
@@ -28,8 +29,13 @@ type documentaryEvidenceSchema = z.infer<typeof schema>;
 interface DocumentaryFormProps {
   mode: 'new' | 'detail';
   close: () => void;
+  count: any;
 }
-export default function DocumentaryForm({ mode, close }: DocumentaryFormProps) {
+export default function DocumentaryForm({
+  mode,
+  close,
+  count,
+}: DocumentaryFormProps) {
   const {
     handleSubmit,
     formState: { errors },
@@ -46,6 +52,7 @@ export default function DocumentaryForm({ mode, close }: DocumentaryFormProps) {
     await create({
       ...data,
       rfxId: id.toString(),
+      order: count + 1,
     })
       .unwrap()
       .then(() => {
@@ -82,6 +89,11 @@ export default function DocumentaryForm({ mode, close }: DocumentaryFormProps) {
           <TextInput
             label="Title"
             {...register('documentTitle')}
+            className="w-full"
+          />
+          <TextInput
+            label="Description"
+            {...register('description')}
             className="w-full"
           />
         </Stack>

@@ -2,8 +2,8 @@ import { baseQuery } from '@/store/base-query';
 import { encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-export const rfxApi = createApi({
-  reducerPath: 'rfxApi',
+export const rfxOtherApi = createApi({
+  reducerPath: 'rfxOtherApi',
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api/'),
   endpoints: (builder) => ({
@@ -26,6 +26,12 @@ export const rfxApi = createApi({
         }
         return { url: `rfxs${q}` };
       },
+    }),
+    getItemTemplate: builder.query<any, { id: string }>({
+      query: (data) => ({
+        url: `documents/getDocumentByItemId/${data.id}`,
+        method: 'GET',
+      }),
     }),
     generatePdf: builder.mutation<any, { id: string }>({
       query: (data) => ({
@@ -96,4 +102,4 @@ export const {
   useCancelInvitationMutation,
   useMakeOpenInvitationMutation,
   useRevisionApprovalsMutation,
-} = rfxApi;
+} = rfxOtherApi;

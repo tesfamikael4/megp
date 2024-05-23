@@ -7,7 +7,7 @@ import DocumentaryEvidence from './documentery-evidence/documentary-evidence';
 export default function EvaluationCriteria() {
   return (
     <Stack className="w-full">
-      <Qualification />
+      {/* <Qualification /> */}
       <DocumentaryEvidence />
     </Stack>
   );

@@ -36,6 +36,10 @@ import {
 import { useLazyReadQuery } from '../../_api/rfx/items.api';
 import Invitation from '../invitation/invitation.component';
 import { IconArrowBack, IconBan, IconTrash } from '@tabler/icons-react';
+import {
+  useLazyGetItemTemplateQuery,
+  useLazyGetProductCataloguesQuery,
+} from '@/store/api/rfx/item.api';
 
 function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
   if (totalItems <= 0 || itemsPerPage <= 0) {
@@ -50,13 +54,13 @@ export default function ItemCatalogue() {
   const [
     getCatalogueItems,
     { data: catalogueItems, isLoading: isGettingCatalogue },
-  ] = useLazyListQuery();
+  ] = useLazyGetProductCataloguesQuery();
 
   const router = useRouter();
   const { id } = useParams();
 
   const [page, setPage] = useState(1);
-  const totalPages = calculateTotalPages(catalogueItems?.total ?? 0, perPage);
+  const totalPages = calculateTotalPages(catalogueItems?.count ?? 0, perPage);
   const { itemId } = useParams();
   const [opened, { open, close }] = useDisclosure(false);
   const [noOfSuppliers, setNoOfSuppliers] = useState<string | number>();
@@ -101,9 +105,12 @@ export default function ItemCatalogue() {
         return [
           [
             {
-              column: `specificationValues->>${key}`,
-              operator: '=',
-              value: val,
+              column:
+                key == 'quantity'
+                  ? `quantity`
+                  : `specifications->>${key.replace(/\s/g, '')}`,
+              operator: typeof value === 'number' ? '>=' : '=',
+              value: val ?? '',
             },
           ],
         ];
@@ -122,25 +129,81 @@ export default function ItemCatalogue() {
           direction: 'DESC',
         },
       ],
-      where: [
-        // [
-        //   {
-        //     column: `specificationValues->>key`,
-        //     operator: '=',
-        //     value: '343',
-        //   },
-        // ],
-        // [
-        //   {
-        //     column: `specification->>batteryLife`,
-        //     operator: '=',
-        //     value: 'Up to 9 hours',
-        //   },
-        // ],
-      ],
-      // where: where,
+      // where: [
+      //   [
+      //     {
+      //       column: 'specifications->>ram',
+      //       operator: '=',
+      //       value: 500,
+      //     },
+      //   ],
+      //   [
+      //     {
+      //       column: 'specifications->>size',
+      //       operator: '=',
+      //       value: '40',
+      //     },
+      //   ],
+      //   [
+      //     {
+      //       column: 'specifications->>model',
+      //       operator: '=',
+      //       value: 'X123',
+      //     },
+      //   ],
+      //   // [
+      //   //   {
+      //   //     column: 'specifications->>quantity',
+      //   //     operator: '=',
+      //   //     value: 62,
+      //   //   },
+      //   // ],
+      //   // [
+      //   //   {
+      //   //     column: 'specifications->>5gnetwork',
+      //   //     operator: '=',
+      //   //     value: false,
+      //   //   },
+      //   // ],
+      //   [
+      //     {
+      //       column: 'specifications->>processor',
+      //       operator: '=',
+      //       value: 'Intel Core i7-10700',
+      //     },
+      //   ],
+      //   [
+      //     {
+      //       column: 'specifications->>memorysize',
+      //       operator: '=',
+      //       value: 16,
+      //     },
+      //   ],
+      //   [
+      //     {
+      //       column: 'specifications->>batterylife',
+      //       operator: '=',
+      //       value: '12',
+      //     },
+      //   ],
+      //   [
+      //     {
+      //       column: 'specifications->>processormodel',
+      //       operator: '=',
+      //       value: 'Core i7-11800H',
+      //     },
+      //   ],
+      //   [
+      //     {
+      //       column: 'specifications->>operatingsystem',
+      //       operator: '=',
+      //       value: 'Windows 10',
+      //     },
+      //   ],
+      // ],
+      where: where,
     });
-  }, [technicalRequirments]);
+  }, [technicalRequirments, isCancelSuccess]);
 
   const onSave = async (data: any) => {
     try {
@@ -282,6 +345,7 @@ export default function ItemCatalogue() {
           onSave={onSave}
           data={technicalRequirments?.items?.[0]?.technicalSpecification}
           disabled={selected?.status == 'INVITATION_PREPARED'}
+          itemCode={selected?.itemCode}
         />
       </Stack>
       {!technicalRequirments?.items?.[0]?.technicalSpecification && (
@@ -290,6 +354,12 @@ export default function ItemCatalogue() {
           products.
         </Box>
       )}
+      {technicalRequirments?.items?.[0]?.technicalSpecification &&
+        catalogueItems?.items?.length == 0 && (
+          <Box className="min-h-full flex items-center justify-center mx-auto">
+            No product found for the given specifications.
+          </Box>
+        )}
       {selected?.isOpen && (
         <Stack className="min-h-full flex items-center justify-center mx-auto">
           <Button
@@ -333,7 +403,8 @@ export default function ItemCatalogue() {
       )}
       {technicalRequirments?.items?.[0]?.technicalSpecification &&
         !selected?.isOpen &&
-        selected?.status !== 'INVITATION_PREPARED' && (
+        selected?.status !== 'INVITATION_PREPARED' &&
+        catalogueItems?.items?.length != 0 && (
           <Flex className="gap-4 w-3/4">
             <Paper className="p-4">
               <Stack>
@@ -385,7 +456,7 @@ export default function ItemCatalogue() {
                     >
                       <Card.Section>
                         <Image
-                          src={item?.specificationValues?.url?.[0]}
+                          src={item?.presignedUrl}
                           className="h-48"
                           fit="cover"
                           alt="Image Url"
@@ -406,14 +477,17 @@ export default function ItemCatalogue() {
                             }}
                           />
                         )}
-                        <Text fw={500}>{item?.name}</Text>
+                        <Text fw={500}>{item?.description}</Text>
                         <Badge color="pink">On Sale</Badge>
                       </Group>
                       <Box className="h-fit mb-3">
                         <Text size="sm" c="dimmed" lineClamp={4}>
-                          {Object.entries(item?.specificationValues || {})
+                          {Object.entries(item?.specifications || {})
                             .filter(([key]) => key !== 'url')
-                            .map(([key, value]) => `${key}: ${value} `)
+                            .map(
+                              ([key, value]) =>
+                                `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value} `,
+                            )
                             .join(', ')}
                         </Text>
                       </Box>
