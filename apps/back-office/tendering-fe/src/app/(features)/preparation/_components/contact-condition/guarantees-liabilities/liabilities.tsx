@@ -162,6 +162,8 @@ export default function Liabilities() {
         mode={selected ? 'detail' : 'new'}
         onCreate={handleSubmit(onCreate)}
         onUpdate={handleSubmit(onUpdate)}
+        isSaving={isSaving}
+        isUpdating={isUpdating}
         onReset={reset}
       />
     </Stack>

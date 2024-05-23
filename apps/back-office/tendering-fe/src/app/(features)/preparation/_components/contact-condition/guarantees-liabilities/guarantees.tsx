@@ -59,7 +59,7 @@ export default function Guarantees() {
       .nonnegative()
       .lte(100)
       .min(1, { message: 'Guarantee Percentage is required ' }),
-    currency: z.enum(['USD', 'Birr']),
+    currency: z.string({ required_error: 'Currency is required' }),
     guaranteeForm: z
       .array(
         z.enum([

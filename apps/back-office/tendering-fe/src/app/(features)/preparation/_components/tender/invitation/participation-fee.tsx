@@ -18,6 +18,7 @@ import {
 import { EntityButton } from '@megp/entity';
 import { notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
+import { useListQuery } from '../../../_api/scc/curencies.api';
 
 export default function ParticipationFee() {
   const { id } = useParams();
@@ -53,7 +54,10 @@ export default function ParticipationFee() {
       notify('Error', 'Error in creating bid award');
     }
   };
-
+  const { data: currencies, isLoading: currencyLoading } = useListQuery({
+    skip: 0,
+    take: 300,
+  });
   const onUpdate = async (data) => {
     try {
       await update({
@@ -79,7 +83,9 @@ export default function ParticipationFee() {
 
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
+      <LoadingOverlay
+        visible={isLoading || isUpdating || isSaving || currencyLoading}
+      />
       <div className="flex gap-3">
         <Controller
           name="amount"
@@ -111,7 +117,16 @@ export default function ParticipationFee() {
               value={value}
               onChange={(d) => onChange(d)}
               label="Currency"
-              data={['USD', 'GBP', 'EUR']}
+              data={
+                currencies && currencies.items.length > 0
+                  ? currencies.items.map((item: any) => {
+                      const value = { ...item };
+                      (value['value'] = item.abbreviation),
+                        (value['label'] = item.name);
+                      return value;
+                    })
+                  : []
+              }
               error={
                 errors['currency']
                   ? errors['currency']?.message?.toString()

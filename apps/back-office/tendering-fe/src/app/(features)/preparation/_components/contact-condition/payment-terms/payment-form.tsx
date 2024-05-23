@@ -20,25 +20,7 @@ import {
   useReadQuery,
   useUpdateMutation,
 } from '../../../_api/scc/payment-terms';
-
-const currencyList = [
-  {
-    id: '2',
-    name: 'USD',
-  },
-  {
-    id: '3',
-    name: 'Euro',
-  },
-  {
-    id: '4',
-    name: 'Pound',
-  },
-  {
-    id: '5',
-    name: 'Birr',
-  },
-];
+import { useListQuery } from '../../../_api/scc/curencies.api';
 
 export default function PaymentForm() {
   const { id } = useParams();
@@ -83,7 +65,10 @@ export default function PaymentForm() {
   } = useForm({
     resolver: zodResolver(PaymentTermsform),
   });
-
+  const { data: currencies, isLoading: currencyLoading } = useListQuery({
+    skip: 0,
+    take: 300,
+  });
   const isAdvanceAllowed: boolean = watch('advancePaymentAllowed');
   const paymentLimit = watch('advancePaymentLimit');
 
@@ -151,7 +136,9 @@ export default function PaymentForm() {
 
   return (
     <Stack>
-      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
+      <LoadingOverlay
+        visible={isLoading || isUpdating || isSaving || currencyLoading}
+      />
       <Flex gap="md">
         <Controller
           name="contractCurrency"
@@ -164,10 +151,16 @@ export default function PaymentForm() {
               onChange={onChange}
               className="w-1/2"
               withAsterisk
-              data={currencyList?.map((tag) => ({
-                value: tag.id,
-                label: tag.name,
-              }))}
+              data={
+                currencies && currencies.items.length > 0
+                  ? currencies.items.map((item: any) => {
+                      const value = { ...item };
+                      (value['value'] = item.abbreviation),
+                        (value['label'] = item.name);
+                      return value;
+                    })
+                  : []
+              }
               searchable
               clearable
               error={errors.contractCurrency?.message as string | undefined}

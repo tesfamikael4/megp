@@ -43,8 +43,8 @@ export default function ContractDelivarable() {
         .array(z.string({ required_error: 'This field is required' }))
         .min(1, { message: 'This field is required ' }),
       deliverySchedule: z
-        .date()
-        .min(new Date(), { message: 'This field is required' }),
+        .number()
+        .min(1, { message: 'This field is required' }),
     });
   const {
     data: selected,
@@ -124,14 +124,13 @@ export default function ContractDelivarable() {
           name="deliverySchedule"
           control={control}
           render={({ field: { name, value, onChange } }) => (
-            <DateTimePicker
+            <NumberInput
+              label="Delivery Schedule"
+              max={31}
               name={name}
               value={value}
-              minDate={new Date()}
-              withAsterisk
               className="w-1/2"
-              onChange={onChange}
-              label="Delivery Schedule"
+              onChange={(d) => onChange(parseInt(d as string))}
               error={
                 errors['deliverySchedule']
                   ? errors['deliverySchedule']?.message?.toString()
