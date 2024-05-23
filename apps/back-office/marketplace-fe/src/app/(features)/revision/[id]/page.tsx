@@ -17,8 +17,10 @@ export default function WorkflowPage() {
   const { data, isLoading: isGettingPresigned } = useGetPreSignedQuery({
     id: id.toString(),
   });
-  const [handleApprove, { isLoading: isSubmitting }] =
+  const [handleApprove, { isLoading: isApproving }] =
     useHandleApprovalMutation();
+  const [handleSubmit, { isLoading: isSubmitting }] =
+    useSubmitForApprovalMutation();
   const [fileUrl, setFileUrl] = useState<string>('');
   const router = useRouter();
 
@@ -45,9 +47,8 @@ export default function WorkflowPage() {
           status: 'ADJUST',
         }).unwrap());
       mode == 'APPROVED' &&
-        (await handleApprove({
-          rfxId: id as string,
-          status: 'APPROVED',
+        (await handleSubmit({
+          id: id as string,
         }).unwrap());
       router.push('/rfx');
       notifications.show({
@@ -77,7 +78,7 @@ export default function WorkflowPage() {
         </Button>
         <Button
           className=""
-          loading={isSubmitting}
+          loading={isApproving}
           onClick={async () => await handleSubmitForApproval('APPROVED')}
         >
           Submit for approval
