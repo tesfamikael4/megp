@@ -49,14 +49,22 @@ export default function RFXPage() {
     isExpandable: true,
     isSearchable: true,
     isLoading: isLoading,
-    primaryColumn: 'title',
+    primaryColumn: 'name',
     expandedRowContent: (requisition) => {
       return <DetailRequisition requisition={requisition} />;
     },
   };
 
   const onRequestChange = (request: any) => {
-    trigger(request);
+    trigger({
+      ...request,
+      orderBy: [
+        {
+          column: 'createdAt',
+          direction: 'DESC',
+        },
+      ],
+    });
   };
   return (
     <>
