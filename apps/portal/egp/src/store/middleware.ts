@@ -31,6 +31,8 @@ import { tenderResponseApi } from '@/app/(features)/tender-workspace/_api/tender
 import { lotResponseApi } from '@/app/(features)/tender-workspace/_api/lot-bid-response.api';
 import { getBidFormApi } from '@/app/(features)/tender-workspace/_api/bid-form';
 import { documentaryEvidenceResponseApi } from '@/app/(features)/tender-workspace/_api/documentary-evidence-bid-response.api';
+import { getInvitationsApi } from '@/app/(features)/my-workspace/_api/invitation-registration.api';
+import { invitationItemsApi } from '@/app/(features)/invitations-workspace/_api/items.api';
 
 const middleware = [
   vendorRegistrationApi.middleware,
@@ -61,6 +63,8 @@ const middleware = [
   tenderResponseApi.middleware,
   lotResponseApi.middleware,
   documentaryEvidenceResponseApi.middleware,
+  getInvitationsApi.middleware,
+  invitationItemsApi.middleware,
 ];
 
 export { middleware };

@@ -1,10 +1,10 @@
 import {
-  IconAward,
   IconBookmark,
   IconBriefcase,
   IconCoins,
   IconGavel,
   IconListDetails,
+  IconMail,
   IconUserCog,
 } from '@tabler/icons-react';
 import { MenuLinks } from '../models';
@@ -29,6 +29,11 @@ export const managementLinks: MenuLinks.SidebarLinks[] = [
     label: 'My Tenders',
     icon: IconGavel,
     link: '/my-workspace/my-tenders',
+  },
+  {
+    label: 'My Invitations',
+    icon: IconMail,
+    link: '/my-workspace/my-invitations',
   },
   {
     label: 'Vendor Service',
