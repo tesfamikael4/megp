@@ -1,36 +1,19 @@
 'use client';
 
-import {
-  ActionIcon,
-  Box,
-  Badge,
-  Group,
-  Button,
-  Text,
-  LoadingOverlay,
-} from '@mantine/core';
-import {
-  ExpandableTable,
-  ExpandableTableConfig,
-  Section,
-  notify,
-} from '@megp/core-fe';
+import { ActionIcon, Box, Badge, LoadingOverlay } from '@mantine/core';
+import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { modals } from '@mantine/modals';
 import { useEffect } from 'react';
 import { LotOverview } from '../../../_components/lot-overview';
 import {
-  useGetLotStatusQuery,
   useLazyGetPassedBiddersQuery,
   useLazyGetQualificationAssessmentsQuery,
-  useSubmitEvaluationMutation,
 } from '@/store/api/tendering/technical-qualification';
 export default function BidOpening() {
   const router = useRouter();
   const { tenderId, lotId } = useParams();
-  const { data: lotStatus } = useGetLotStatusQuery(lotId as string);
-  const [submit, { isLoading }] = useSubmitEvaluationMutation();
+
   const [getBidders, { data: bidders, isLoading: isBiddersLoading }] =
     useLazyGetPassedBiddersQuery();
   const config: ExpandableTableConfig = {
@@ -77,63 +60,13 @@ export default function BidOpening() {
     ],
   };
 
-  const onSubmit = () => {
-    modals.openConfirmModal({
-      centered: true,
-      title: 'Please confirm your action',
-      children: (
-        <Text size="sm">Are you sure you want to complete the evaluation?</Text>
-      ),
-      labels: { confirm: 'Confirm', cancel: 'Cancel' },
-      onConfirm: confirm,
-      confirmProps: { color: 'green' },
-    });
-  };
-
-  const confirm = async () => {
-    try {
-      await submit({
-        lotId: lotId as string,
-        isTeamLead: false,
-        //  isTeamLead: true,
-      }).unwrap();
-      notify('Success', 'Evaluation successfully completed');
-    } catch (err) {
-      notify('Error', 'Something went wrong');
-    }
-  };
   return (
     <>
-      <LotOverview basePath={`/evaluation/${tenderId}`} />
-      <Section
-        title="Bidders List"
-        collapsible={false}
-        className="mt-2"
-        action={
-          <Group gap="md">
-            {lotStatus?.isTeamLead?.isTeam && (
-              <Button
-                variant="outline"
-                onClick={() => {
-                  router.push(
-                    `/evaluation/team-assessment/${tenderId}/${lotId}/qualification`,
-                  );
-                }}
-                disabled={!lotStatus?.canTeamAssess}
-              >
-                Team Assessment
-              </Button>
-            )}
-            <Button
-              onClick={onSubmit}
-              loading={isLoading}
-              disabled={lotStatus?.hasCompleted ?? true}
-            >
-              Complete
-            </Button>
-          </Group>
-        }
-      >
+      <LotOverview
+        basePath={`/evaluation/${tenderId}`}
+        milestone="technicalQualification"
+      />
+      <Section title="Bidders List" collapsible={false} className="mt-2">
         <ExpandableTable
           config={config}
           data={bidders?.items ?? []}

@@ -103,7 +103,10 @@ export default function BidOpening() {
   };
   return (
     <>
-      <LotOverview basePath={`/evaluation/${tenderId}`} />
+      <LotOverview
+        basePath={`/evaluation/${tenderId}`}
+        milestone="technicalResponsiveness"
+      />
       <Section
         title="Items List"
         collapsible={false}

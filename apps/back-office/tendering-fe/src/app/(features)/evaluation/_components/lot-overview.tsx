@@ -1,25 +1,110 @@
 'use client';
+import {
+  useLazyGetCanPreliminaryCompleteQuery,
+  useSubmitPreliminaryEvaluationMutation,
+} from '@/store/api/tendering/preliminary-compliance.api';
+import {
+  useLazyGetCanQualificationCompleteQuery,
+  useSubmitQualificationEvaluationMutation,
+} from '@/store/api/tendering/technical-qualification';
 import { useLazyGetLotDetailQuery } from '@/store/api/tendering/tendering.api';
-import { Badge, Box, Flex, LoadingOverlay, Text } from '@mantine/core';
-import { Section } from '@megp/core-fe';
+import {
+  Badge,
+  Box,
+  Button,
+  Flex,
+  Group,
+  LoadingOverlay,
+  Text,
+} from '@mantine/core';
+import { modals } from '@mantine/modals';
+import { Section, notify } from '@megp/core-fe';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export const LotOverview = ({
   basePath,
   teamAssessment = false,
+  milestone,
 }: {
   basePath: string;
   teamAssessment?: boolean;
+  milestone:
+    | 'technicalCompliance'
+    | 'technicalQualification'
+    | 'technicalResponsiveness';
 }) => {
   const { tenderId, lotId } = useParams();
   const router = useRouter();
-  const [getLot, { data, isLoading }] = useLazyGetLotDetailQuery();
 
+  const [getLot, { data, isLoading }] = useLazyGetLotDetailQuery();
+  const [submitPreliminary, { isLoading: isPreliminaryLoading }] =
+    useSubmitPreliminaryEvaluationMutation();
+  const [submitQualification, { isLoading: isQualificationLoading }] =
+    useSubmitQualificationEvaluationMutation();
+  const [getCanPreliminaryComplete, { data: preliminaryCanSubmitData }] =
+    useLazyGetCanPreliminaryCompleteQuery();
+  const [getCanQualificationComplete, { data: qualificationCanSubmitData }] =
+    useLazyGetCanQualificationCompleteQuery();
+
+  const [lotStatus, setLotStatus] = useState<any>();
+
+  //helpers
+  const onSubmit = () => {
+    modals.openConfirmModal({
+      centered: true,
+      title: 'Please confirm your action',
+      children: (
+        <Text size="sm">Are you sure you want to complete the evaluation?</Text>
+      ),
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: confirm,
+      confirmProps: { color: 'green' },
+    });
+  };
+
+  const confirm = async () => {
+    try {
+      if (milestone === 'technicalCompliance') {
+        await submitPreliminary({
+          lotId: lotId as string,
+          tenderId: tenderId as string,
+          isTeamLead: teamAssessment,
+        }).unwrap();
+      }
+      if (milestone === 'technicalQualification') {
+        await submitQualification({
+          lotId: lotId as string,
+          tenderId: tenderId as string,
+          isTeamLead: teamAssessment,
+        }).unwrap();
+      }
+      notify('Success', 'Evaluation successfully completed');
+    } catch (err) {
+      notify('Error', 'Something went wrong');
+    }
+  };
+
+  const getLotStatus = async () => {
+    try {
+      if (milestone === 'technicalCompliance') {
+        const res = await getCanPreliminaryComplete(lotId as string).unwrap();
+        setLotStatus(res);
+      } else if (milestone === 'technicalQualification') {
+        const res = await getCanQualificationComplete(lotId as string).unwrap();
+        setLotStatus(res);
+      }
+    } catch {
+      notify('Error', 'Net Err');
+    }
+  };
+
+  //use effects
   useEffect(() => {
     getLot({ tenderId: tenderId as string, lotId: lotId as string });
-  }, [tenderId]);
+    getLotStatus();
+  }, [tenderId, preliminaryCanSubmitData, qualificationCanSubmitData]);
   return (
     <Box pos="relative">
       <LoadingOverlay visible={isLoading} />
@@ -45,6 +130,47 @@ export const LotOverview = ({
         }
         // subTitle={data?.procurementReferenceNumber ?? ''}
         collapsible={false}
+        action={
+          <Group gap="md">
+            {lotStatus?.isTeamLead?.isTeam && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  let url = '';
+                  if (milestone === 'technicalCompliance' && teamAssessment)
+                    url = `/evaluation/${tenderId}/${lotId}/preliminary`;
+                  else if (
+                    milestone === 'technicalCompliance' &&
+                    !teamAssessment
+                  )
+                    url = `/evaluation/team-assessment/${tenderId}/${lotId}/preliminary`;
+                  else if (
+                    milestone === 'technicalQualification' &&
+                    teamAssessment
+                  )
+                    url = `/evaluation/${tenderId}/${lotId}/qualification`;
+                  else if (
+                    milestone === 'technicalQualification' &&
+                    !teamAssessment
+                  )
+                    url = `/evaluation/team-assessment/${tenderId}/${lotId}/qualification`;
+
+                  router.push(url);
+                }}
+                disabled={!lotStatus?.canTeamAssess}
+              >
+                {teamAssessment ? 'Personal Assessment' : 'Team Assessment'}
+              </Button>
+            )}
+            <Button
+              onClick={onSubmit}
+              loading={isPreliminaryLoading || isQualificationLoading}
+              disabled={lotStatus?.hasCompleted ?? true}
+            >
+              Complete
+            </Button>
+          </Group>
+        }
       >
         <Flex gap={20}>
           <Box className="w-full">

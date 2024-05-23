@@ -85,6 +85,7 @@ export default function BidOpening() {
     <>
       <LotOverview
         basePath={`/evaluation/${tenderId}/${lotId}/responsiveness`}
+        milestone="technicalResponsiveness"
       />
       <Section
         title="Items List"

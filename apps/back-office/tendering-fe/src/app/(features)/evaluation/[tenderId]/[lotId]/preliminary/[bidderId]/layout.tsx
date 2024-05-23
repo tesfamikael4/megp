@@ -1,9 +1,9 @@
 'use client';
 
+import { BidderOverView } from '@/app/(features)/evaluation/_components/bidder-overview';
+import { Requirements } from '@/app/(features)/evaluation/_components/requirements';
 import { Box, Flex } from '@mantine/core';
-import { Checklist } from './_components/checklist';
 import { useParams } from 'next/navigation';
-import { BidderOverView } from '../../../_components/bidder-overview';
 
 export default function BiderDetail({
   children,
@@ -14,12 +14,12 @@ export default function BiderDetail({
   return (
     <>
       <BidderOverView
-        basePath={`/evaluation/${tenderId}/${lotId}`}
+        basePath={`/evaluation/${tenderId}/${lotId}/preliminary`}
         milestone="technicalCompliance"
       />
       <Flex gap={10} mt={10}>
         <Box className=" bg-white w-1/4">
-          <Checklist />
+          <Requirements milestone="technicalCompliance" />
         </Box>
         <Box className="w-3/4">{children}</Box>
       </Flex>

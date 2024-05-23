@@ -20,7 +20,7 @@ export const technicalQualification = createApi({
         };
       },
     }),
-    getQualificationChecklistByLotId: builder.query<any, any>({
+    getQualificationRequirementsByLotId: builder.query<any, any>({
       query: ({
         lotId,
         bidderId,
@@ -37,10 +37,10 @@ export const technicalQualification = createApi({
       providesTags: ['bidAttribute'],
     }),
 
-    getSpdDetail: builder.query<any, any>({
+    getEqcQualification: builder.query<any, any>({
       query: (eqcId) => `/eqc-qualifications/${eqcId}`,
     }),
-    checkBidAttribute: builder.mutation<any, any>({
+    createTechnicalQualificationAssessment: builder.mutation<any, any>({
       query: (data) => ({
         url: `/technical-qualification-assessment-detail`,
         method: 'POST',
@@ -74,7 +74,7 @@ export const technicalQualification = createApi({
       },
       invalidatesTags: ['evaluation', 'bidder'],
     }),
-    getLotStatus: builder.query<any, any>({
+    getCanQualificationComplete: builder.query<any, any>({
       query: (lotId) => {
         return {
           url: `/technical-qualification-assessment-detail/can-complete/${lotId}`,
@@ -83,7 +83,7 @@ export const technicalQualification = createApi({
       },
       providesTags: ['evaluation', 'bidder'],
     }),
-    submitEvaluation: builder.mutation<any, any>({
+    submitQualificationEvaluation: builder.mutation<any, any>({
       query: (data: { tenderId: string; isTeamLead: boolean }) => {
         return {
           url: `/technical-qualification-assessment-detail/submit-checklist`,
@@ -94,29 +94,29 @@ export const technicalQualification = createApi({
       invalidatesTags: ['evaluation'],
     }),
 
-    getMembersAssesmentResult: builder.query<any, any>({
+    getQualificationMembersAssesment: builder.query<any, any>({
       query: ({
         lotId,
         bidderId,
-        checklistId,
+        requirementId,
       }: {
         lotId: string;
         bidderId: string;
-        checklistId: string;
+        requirementId: string;
       }) =>
-        `/technical-qualification-assessment-detail/members-report/${lotId}/${bidderId}/${checklistId}`,
+        `/technical-qualification-assessment-detail/members-report/${lotId}/${bidderId}/${requirementId}`,
     }),
   }),
 });
 
 export const {
   useLazyGetPassedBiddersQuery,
-  useLazyGetQualificationChecklistByLotIdQuery,
-  useLazyGetSpdDetailQuery,
-  useCheckBidAttributeMutation,
-  useGetLotStatusQuery,
+  useLazyGetQualificationRequirementsByLotIdQuery,
+  useLazyGetEqcQualificationQuery,
+  useCreateTechnicalQualificationAssessmentMutation,
+  useLazyGetCanQualificationCompleteQuery,
   useLazyGetQualificationAssessmentsQuery,
   useCompleteQualificationEvaluationMutation,
-  useSubmitEvaluationMutation,
-  useLazyGetMembersAssesmentResultQuery,
+  useSubmitQualificationEvaluationMutation,
+  useLazyGetQualificationMembersAssesmentQuery,
 } = technicalQualification;
