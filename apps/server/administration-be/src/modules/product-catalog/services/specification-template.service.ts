@@ -28,20 +28,29 @@ export class SpecificationTemplatesService extends EntityCrudService<Specificati
     template.itemMasterId = data.newItemMasterId;
     return await this.create(template, req);
   }
-  async getItems(query: CollectionQuery): Promise<any> {
+  async getItems(status: string, query: CollectionQuery): Promise<any> {
     const ids = await this.specificationTemplateRepository.find({
       select: ['itemMasterId'],
     });
     const flatIds = ids.map((id) => id.itemMasterId);
     if (flatIds.length > 0) {
-      query.where.push([
-        {
-          column: 'id',
-          value: flatIds,
-          operator: FilterOperators.NotIn,
-        },
-      ]);
-    }
+      const filterOperator =
+        status === 'used'
+          ? FilterOperators.In
+          : status === 'unused'
+            ? FilterOperators.NotIn
+            : null;
+      if (filterOperator) {
+        query.where.push([
+          {
+            column: 'id',
+            value: flatIds,
+            operator: filterOperator,
+          },
+        ]);
+      }
+    } //else return all items
+
     return await this.itemMasterRepository.findAll(query);
   }
   async getByItem(itemMasterId: any): Promise<any> {

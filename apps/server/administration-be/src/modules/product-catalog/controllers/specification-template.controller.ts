@@ -36,16 +36,19 @@ export class SpecificationTemplatesController extends EntityCrudController<Speci
     return this.specificationTemplateService.copy(data, req);
   }
 
-  @Get('unused-item-masters')
+  @Get('item-masters/:status')
   @ApiQuery({
     name: 'q',
     type: String,
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
-  async getItems(@Query('q') q: string): Promise<SpecificationTemplate> {
+  async getItems(
+    @Param('status') status: string,
+    @Query('q') q: string,
+  ): Promise<SpecificationTemplate> {
     const query = decodeCollectionQuery(q);
-    return this.specificationTemplateService.getItems(query);
+    return this.specificationTemplateService.getItems(status, query);
   }
 
   @Get('item/:itemMasterId')
