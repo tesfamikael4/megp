@@ -1,12 +1,13 @@
 'use client';
 
 import { PDFHighlighter } from '../../_components/pdf-highlighter';
-import { useParams } from 'next/navigation';
-import { Button, LoadingOverlay, Stack } from '@mantine/core';
+import { useParams, useRouter } from 'next/navigation';
+import { Button, Flex, LoadingOverlay, Stack } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { logger } from '@megp/core-fe';
 import {
   useGetPreSignedQuery,
+  useHandleApprovalMutation,
   useSubmitForApprovalMutation,
 } from '@/store/api/rfx/rfx.api';
 import { notifications } from '@mantine/notifications';
@@ -16,9 +17,10 @@ export default function WorkflowPage() {
   const { data, isLoading: isGettingPresigned } = useGetPreSignedQuery({
     id: id.toString(),
   });
-  const [submitForApproval, { isLoading: isSubmitting }] =
-    useSubmitForApprovalMutation();
+  const [handleApprove, { isLoading: isSubmitting }] =
+    useHandleApprovalMutation();
   const [fileUrl, setFileUrl] = useState<string>('');
+  const router = useRouter();
 
   useEffect(() => {
     const getFile = async () => {
@@ -35,11 +37,19 @@ export default function WorkflowPage() {
     if (data) getFile();
   }, [data]);
 
-  const handleSubmitForApproval = async () => {
+  const handleSubmitForApproval = async (mode: string) => {
     try {
-      await submitForApproval({
-        id: id as string,
-      }).unwrap();
+      mode == 'ADJUST' &&
+        (await handleApprove({
+          rfxId: id as string,
+          status: 'ADJUST',
+        }).unwrap());
+      mode == 'APPROVED' &&
+        (await handleApprove({
+          rfxId: id as string,
+          status: 'APPROVED',
+        }).unwrap());
+      router.push('/rfx');
       notifications.show({
         title: 'Success',
         message: 'Submitted for approval successfully',
@@ -57,13 +67,22 @@ export default function WorkflowPage() {
   return (
     <Stack className="min-h-screen">
       <LoadingOverlay visible={isGettingPresigned} className="m-auto" />
-      <Button
-        className="ml-auto"
-        loading={isSubmitting}
-        onClick={handleSubmitForApproval}
-      >
-        Submit for approval
-      </Button>
+      <Flex className="ml-auto gap-4">
+        <Button
+          className="bg-yellow-500"
+          loading={isSubmitting}
+          onClick={async () => await handleSubmitForApproval('ADJUST')}
+        >
+          Adjust
+        </Button>
+        <Button
+          className=""
+          loading={isSubmitting}
+          onClick={async () => await handleSubmitForApproval('APPROVED')}
+        >
+          Submit for approval
+        </Button>
+      </Flex>
       {true && (
         <PDFHighlighter
           title={data?.document.fileInfo.originalname}

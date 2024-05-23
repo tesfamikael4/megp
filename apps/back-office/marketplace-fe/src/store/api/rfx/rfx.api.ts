@@ -5,7 +5,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 export const rfxOtherApi = createApi({
   reducerPath: 'rfxOtherApi',
   refetchOnFocus: true,
-  baseQuery: baseQuery(process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api/'),
+  baseQuery: baseQuery(process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api/'),
   endpoints: (builder) => ({
     getCatalogueItems: builder.query<any, any>({
       query: (collectionQuery) => {
@@ -62,6 +62,13 @@ export const rfxOtherApi = createApi({
         method: 'POST',
       }),
     }),
+    handleApproval: builder.mutation<any, { rfxId: string; status: string }>({
+      query: (data) => ({
+        url: `rfx-revision-approvals`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
     inviteSelected: builder.mutation<any, any>({
       query: (data) => ({
         url: `rfx-bid-invitations/invite-selected/${data.id}`,
@@ -102,4 +109,5 @@ export const {
   useCancelInvitationMutation,
   useMakeOpenInvitationMutation,
   useRevisionApprovalsMutation,
+  useHandleApprovalMutation,
 } = rfxOtherApi;

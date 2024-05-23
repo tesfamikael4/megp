@@ -3,7 +3,7 @@ import { EntityStoreConfig } from '@megp/entity';
 export const ENTITY_LIST: EntityStoreConfig[] = [
   {
     entity: 'item-masters',
-    baseUrl: process.env.NEXT_PUBLIC_MARKET_PLACE_API ?? '/MARKET_PLACE/api/',
+    baseUrl: process.env.NEXT_PUBLIC_MARKET_PLACE_API ?? '/marketplace/api/',
   },
   {
     entity: 'procurement-requisition-items',
@@ -19,52 +19,52 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'rfxs',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
     entity: 'rfx-procurement-technical-teams',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
     entity: 'rfx-items',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
     entity: 'product-catalogs',
-    baseUrl: process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/marketplace/api',
   },
   {
     entity: 'sor-documents',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
     entity: 'rfx-bid-qualifications',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
     entity: 'qualification',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
     entity: 'rfx-documentary-evidences',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
 
   {
     entity: 'rfx-technical-requirements',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
     entity: 'rfx-bid-contract-conditions',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
     entity: 'rfx-bid-procedures',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
     entity: 'rfx-bid-invitations',
-    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/rfx/api',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
     entity: 'notes',
