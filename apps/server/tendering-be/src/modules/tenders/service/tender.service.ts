@@ -599,7 +599,7 @@ export class TenderService extends EntityCrudService<Tender> {
 
     tender.lots.forEach((lot) => {
       lotRelations.forEach((relation) => {
-        if (isEmpty(tender[relation])) {
+        if (isEmpty(lot[relation])) {
           throw new BadRequestException(`${lot.name} ${relation} not found`);
         }
       });
