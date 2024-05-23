@@ -16,6 +16,7 @@ export default function BiderDetail({
       <BidderOverView
         basePath={`/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${itemId}`}
         milestone="technicalResponsiveness"
+        teamAssessment
       />
       <Flex gap={10} mt={10}>
         <Box className=" bg-white w-1/4">
