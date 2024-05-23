@@ -3,10 +3,10 @@ import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
 // get base tender api
-const tenderApi = entityApi.entitySliceApi['rfxs'];
+const rfxApi = entityApi.entitySliceApi['rfxs'];
 
-export const tenderSliceApi: typeof EntitySliceApi = createEntitySlice<Tender>(
-  tenderApi,
+export const rfxSliceApi: typeof EntitySliceApi = createEntitySlice<Tender>(
+  rfxApi,
   'rfxs',
 );
 
@@ -19,4 +19,4 @@ export const {
   useCreateMutation,
   useUpdateMutation,
   useDeleteMutation,
-} = tenderSliceApi;
+} = rfxSliceApi;

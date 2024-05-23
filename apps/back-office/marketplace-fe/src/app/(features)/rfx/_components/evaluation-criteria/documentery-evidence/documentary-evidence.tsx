@@ -36,6 +36,10 @@ export default function DocumentaryEvidence() {
         sortable: true,
       },
       {
+        accessor: 'description',
+        sortable: true,
+      },
+      {
         accessor: 'documentTitle',
         title: 'Action',
         render: (value) => <Action documentaryEvidence={value} />,
@@ -130,8 +134,7 @@ export default function DocumentaryEvidence() {
   return (
     <Section
       title="Documentary Evidence"
-      collapsible={true}
-      defaultCollapsed={true}
+      collapsible={false}
       action={
         <Button onClick={open}>
           <IconPlus size={14} /> Add
@@ -153,7 +156,7 @@ export default function DocumentaryEvidence() {
           <IconX onClick={close} />
         </div>
         <Divider mt={'md'} mb={'md'} />
-        <DocumentaryForm mode={mode} close={close} />
+        <DocumentaryForm mode={mode} close={close} count={data?.total} />
       </Modal>
     </Section>
   );

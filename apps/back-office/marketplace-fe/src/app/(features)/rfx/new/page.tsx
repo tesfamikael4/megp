@@ -75,7 +75,7 @@ export default function RFXPage() {
       >
         <div className="w-5/6 xl:w-3/4 flex flex-col items-start">
           <p className="text-sm">
-            To create a rfx you should select a procurement requisition first
+            To create a RFQ you should select a procurement requisition first
           </p>
         </div>
         <ExpandableTable

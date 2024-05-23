@@ -58,7 +58,7 @@ export function Items({
       {
         accessor: 'Products Matched',
         hidden: viewMode == 'detail',
-        render: (value) => <>{value?.invitationsCount ?? '-'}</>,
+        render: (value) => <>{value?.invitationCount ?? '-'}</>,
       },
       {
         accessor: 'id',

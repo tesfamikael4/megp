@@ -12,7 +12,7 @@ export default function RFXConfiguration() {
     <Stack className="w-full">
       <RFXDetailCard />
       <Section title="Procurment Mechanism" defaultCollapsed>
-        <ProcurmentMechanism id={id.toString()} />
+        <ProcurmentMechanism id={id.toString()} mode={'rfq'} />
       </Section>
     </Stack>
   );
