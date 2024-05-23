@@ -7,6 +7,10 @@ import {
   useLazyGetCanQualificationCompleteQuery,
   useSubmitQualificationEvaluationMutation,
 } from '@/store/api/tendering/technical-qualification';
+import {
+  useLazyGetCanResponsivenessCompleteQuery,
+  useSubmitResponsivenessEvaluationMutation,
+} from '@/store/api/tendering/technical-responsiveness.api';
 import { useLazyGetLotDetailQuery } from '@/store/api/tendering/tendering.api';
 import {
   Badge,
@@ -43,10 +47,14 @@ export const LotOverview = ({
     useSubmitPreliminaryEvaluationMutation();
   const [submitQualification, { isLoading: isQualificationLoading }] =
     useSubmitQualificationEvaluationMutation();
+  const [submitResponsiveness, { isLoading: isResponsivenessLoading }] =
+    useSubmitResponsivenessEvaluationMutation();
   const [getCanPreliminaryComplete, { data: preliminaryCanSubmitData }] =
     useLazyGetCanPreliminaryCompleteQuery();
   const [getCanQualificationComplete, { data: qualificationCanSubmitData }] =
     useLazyGetCanQualificationCompleteQuery();
+  const [getCanResponsivenessComplete, { data: responsivenessCanSubmitData }] =
+    useLazyGetCanResponsivenessCompleteQuery();
 
   const [lotStatus, setLotStatus] = useState<any>();
 
@@ -72,9 +80,14 @@ export const LotOverview = ({
           tenderId: tenderId as string,
           isTeamLead: teamAssessment,
         }).unwrap();
-      }
-      if (milestone === 'technicalQualification') {
+      } else if (milestone === 'technicalQualification') {
         await submitQualification({
+          lotId: lotId as string,
+          tenderId: tenderId as string,
+          isTeamLead: teamAssessment,
+        }).unwrap();
+      } else if (milestone === 'technicalResponsiveness') {
+        await submitResponsiveness({
           lotId: lotId as string,
           tenderId: tenderId as string,
           isTeamLead: teamAssessment,
@@ -94,6 +107,11 @@ export const LotOverview = ({
       } else if (milestone === 'technicalQualification') {
         const res = await getCanQualificationComplete(lotId as string).unwrap();
         setLotStatus(res);
+      } else if (milestone === 'technicalResponsiveness') {
+        const res = await getCanResponsivenessComplete(
+          lotId as string,
+        ).unwrap();
+        setLotStatus(res);
       }
     } catch {
       notify('Error', 'Net Err');
@@ -104,7 +122,12 @@ export const LotOverview = ({
   useEffect(() => {
     getLot({ tenderId: tenderId as string, lotId: lotId as string });
     getLotStatus();
-  }, [tenderId, preliminaryCanSubmitData, qualificationCanSubmitData]);
+  }, [
+    tenderId,
+    preliminaryCanSubmitData,
+    qualificationCanSubmitData,
+    responsivenessCanSubmitData,
+  ]);
   return (
     <Box pos="relative">
       <LoadingOverlay visible={isLoading} />
@@ -154,6 +177,16 @@ export const LotOverview = ({
                     !teamAssessment
                   )
                     url = `/evaluation/team-assessment/${tenderId}/${lotId}/qualification`;
+                  else if (
+                    milestone === 'technicalResponsiveness' &&
+                    teamAssessment
+                  )
+                    url = `/evaluation/${tenderId}/${lotId}/responsiveness`;
+                  else if (
+                    milestone === 'technicalResponsiveness' &&
+                    !teamAssessment
+                  )
+                    url = `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness`;
 
                   router.push(url);
                 }}
@@ -164,7 +197,11 @@ export const LotOverview = ({
             )}
             <Button
               onClick={onSubmit}
-              loading={isPreliminaryLoading || isQualificationLoading}
+              loading={
+                isPreliminaryLoading ||
+                isQualificationLoading ||
+                isResponsivenessLoading
+              }
               disabled={lotStatus?.hasCompleted ?? true}
             >
               Complete

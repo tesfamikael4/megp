@@ -1,36 +1,14 @@
 'use client';
 
-import {
-  ActionIcon,
-  Box,
-  Badge,
-  Group,
-  Button,
-  Text,
-  LoadingOverlay,
-} from '@mantine/core';
-import {
-  ExpandableTable,
-  ExpandableTableConfig,
-  Section,
-  notify,
-} from '@megp/core-fe';
-import { IconChevronRight } from '@tabler/icons-react';
+import { ActionIcon, Tooltip } from '@mantine/core';
+import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
+import { IconChevronRight, IconUsers } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { modals } from '@mantine/modals';
-import { useEffect } from 'react';
 import { LotOverview } from '../../../_components/lot-overview';
-import {
-  useGetLotStatusQuery,
-  useLazyGetItemsQuery,
-  useLazyGetResponsivenessAssessmentsQuery,
-  useSubmitEvaluationMutation,
-} from '@/store/api/tendering/technical-responsiveness.api';
+import { useLazyGetItemsQuery } from '@/store/api/tendering/technical-responsiveness.api';
 export default function BidOpening() {
   const router = useRouter();
   const { tenderId, lotId } = useParams();
-  const { data: lotStatus } = useGetLotStatusQuery(lotId as string);
-  const [submit, { isLoading }] = useSubmitEvaluationMutation();
   const [getItems, { data: items, isLoading: isItemsLoading }] =
     useLazyGetItemsQuery();
   const config: ExpandableTableConfig = {
@@ -44,18 +22,6 @@ export default function BidOpening() {
       {
         accessor: 'description',
       },
-      // {
-      //   accessor: 'status',
-      //   width: 150,
-      //   render: (record) => {
-      //     const color = record.status === 'completed' ? 'green' : 'yellow';
-      //     return (
-      //       <Badge color={color} size="sm">
-      //         {record.status}
-      //       </Badge>
-      //     );
-      //   },
-      // },
       {
         accessor: '',
         render: (record) => (
@@ -75,32 +41,6 @@ export default function BidOpening() {
       },
     ],
   };
-
-  const onSubmit = () => {
-    modals.openConfirmModal({
-      centered: true,
-      title: 'Please confirm your action',
-      children: (
-        <Text size="sm">Are you sure you want to complete the evaluation?</Text>
-      ),
-      labels: { confirm: 'Confirm', cancel: 'Cancel' },
-      onConfirm: confirm,
-      confirmProps: { color: 'green' },
-    });
-  };
-
-  const confirm = async () => {
-    try {
-      await submit({
-        lotId: lotId as string,
-        isTeamLead: false,
-        //  isTeamLead: true,
-      }).unwrap();
-      notify('Success', 'Evaluation successfully completed');
-    } catch (err) {
-      notify('Error', 'Something went wrong');
-    }
-  };
   return (
     <>
       <LotOverview
@@ -112,28 +52,11 @@ export default function BidOpening() {
         collapsible={false}
         className="mt-2"
         action={
-          <Group gap="md">
-            {lotStatus?.isTeamLead?.isTeam && (
-              <Button
-                variant="outline"
-                onClick={() => {
-                  router.push(
-                    `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness`,
-                  );
-                }}
-                disabled={!lotStatus?.canTeamAssess}
-              >
-                Team Assessment
-              </Button>
-            )}
-            <Button
-              onClick={onSubmit}
-              loading={isLoading}
-              disabled={lotStatus?.hasCompleted ?? true}
-            >
-              Complete
-            </Button>
-          </Group>
+          <Tooltip label="Bidders List">
+            <ActionIcon variant="subtle" color="gray">
+              <IconUsers size={14} />
+            </ActionIcon>
+          </Tooltip>
         }
       >
         <ExpandableTable

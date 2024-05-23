@@ -20,7 +20,7 @@ export const technicalResponsiveness = createApi({
         };
       },
     }),
-    getResponsivenessChecklistByLotId: builder.query<any, any>({
+    getResponsivenessRequirementsByLotId: builder.query<any, any>({
       query: ({
         lotId,
         bidderId,
@@ -39,10 +39,10 @@ export const technicalResponsiveness = createApi({
       providesTags: ['bidAttribute'],
     }),
 
-    getSpdDetail: builder.query<any, any>({
+    getSorTechnicalRequirements: builder.query<any, any>({
       query: (spdId) => `/sor-technical-requirements/${spdId}`,
     }),
-    checkBidAttribute: builder.mutation<any, any>({
+    createTechnicalResponsivenessAssessment: builder.mutation<any, any>({
       query: (data) => ({
         url: `/technical-responsiveness-assessment-detail`,
         method: 'POST',
@@ -78,7 +78,7 @@ export const technicalResponsiveness = createApi({
       },
       invalidatesTags: ['evaluation', 'bidder'],
     }),
-    getLotStatus: builder.query<any, any>({
+    getCanResponsivenessComplete: builder.query<any, any>({
       query: (lotId) => {
         return {
           url: `/technical-responsiveness-assessment-detail/can-complete/${lotId}`,
@@ -87,7 +87,7 @@ export const technicalResponsiveness = createApi({
       },
       providesTags: ['evaluation', 'bidder'],
     }),
-    submitEvaluation: builder.mutation<any, any>({
+    submitResponsivenessEvaluation: builder.mutation<any, any>({
       query: (data: { tenderId: string; isTeamLead: boolean }) => {
         return {
           url: `/technical-responsiveness-assessment-detail/submit-checklist`,
@@ -97,19 +97,19 @@ export const technicalResponsiveness = createApi({
       },
       invalidatesTags: ['evaluation'],
     }),
-    getMembersAssesmentResult: builder.query<any, any>({
+    getResponsivenessMembersAssessmentResult: builder.query<any, any>({
       query: ({
         lotId,
         bidderId,
-        checklistId,
+        requirementId,
         itemId,
       }: {
         lotId: string;
         bidderId: string;
-        checklistId: string;
+        requirementId: string;
         itemId: string;
       }) =>
-        `/technical-responsiveness-assessment-detail/members-report/${lotId}/${itemId}/${bidderId}/${checklistId}`,
+        `/technical-responsiveness-assessment-detail/members-report/${lotId}/${itemId}/${bidderId}/${requirementId}`,
     }),
     getItems: builder.query<any, any>({
       query: ({
@@ -134,13 +134,13 @@ export const technicalResponsiveness = createApi({
 
 export const {
   useLazyGetPassedBiddersQuery,
-  useLazyGetResponsivenessChecklistByLotIdQuery,
-  useLazyGetSpdDetailQuery,
-  useCheckBidAttributeMutation,
-  useGetLotStatusQuery,
+  useLazyGetResponsivenessRequirementsByLotIdQuery,
+  useLazyGetSorTechnicalRequirementsQuery,
+  useCreateTechnicalResponsivenessAssessmentMutation,
+  useLazyGetCanResponsivenessCompleteQuery,
   useLazyGetResponsivenessAssessmentsQuery,
   useCompleteResponsivenessEvaluationMutation,
-  useSubmitEvaluationMutation,
-  useLazyGetMembersAssesmentResultQuery,
+  useSubmitResponsivenessEvaluationMutation,
+  useLazyGetResponsivenessMembersAssessmentResultQuery,
   useLazyGetItemsQuery,
 } = technicalResponsiveness;

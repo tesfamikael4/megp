@@ -1,6 +1,7 @@
 'use client';
 import { useCreatePreliminaryComplianceAssessmentMutation } from '@/store/api/tendering/preliminary-compliance.api';
 import { useCreateTechnicalQualificationAssessmentMutation } from '@/store/api/tendering/technical-qualification';
+import { useCreateTechnicalResponsivenessAssessmentMutation } from '@/store/api/tendering/technical-responsiveness.api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Group, Select, Textarea } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
@@ -31,13 +32,17 @@ export const ComplianceAssessment = ({
     formState: { errors },
     control,
   } = useForm<any>({ resolver: zodResolver(checklistSchema) });
-  const { lotId, bidderId, tenderId, requirementId } = useParams();
+  const { lotId, bidderId, tenderId, requirementId, itemId } = useParams();
   const [createPreliminaryCompliance, { isLoading }] =
     useCreatePreliminaryComplianceAssessmentMutation();
   const [
     createTechnicalQualificationAssessment,
     { isLoading: isQualificationAssessmentCreating },
   ] = useCreateTechnicalQualificationAssessmentMutation();
+  const [
+    createTechnicalResponsivenessAssessment,
+    { isLoading: isResponsivenessAssessmentCreating },
+  ] = useCreateTechnicalResponsivenessAssessmentMutation();
 
   const onSubmit = async (data: any) => {
     try {
@@ -61,6 +66,16 @@ export const ComplianceAssessment = ({
           isTeamAssessment: teamAssessment,
         };
         await createTechnicalQualificationAssessment(castedData).unwrap();
+      } else if (milestone === 'technicalResponsiveness') {
+        const castedData = {
+          ...data,
+          sorTechnicalRequirementId: requirementId,
+          lotId,
+          bidderId,
+          tenderId,
+          itemId,
+        };
+        await createTechnicalResponsivenessAssessment(castedData).unwrap();
       }
       notify('Success', 'Assessment saved successfully');
     } catch (err) {
@@ -68,7 +83,7 @@ export const ComplianceAssessment = ({
     }
   };
   return (
-    <Section title="Compliance1" collapsible={false} className="h-full">
+    <Section title="Compliance" collapsible={false} className="h-full">
       <Controller
         control={control}
         name="qualified"
@@ -97,7 +112,11 @@ export const ComplianceAssessment = ({
       <Group justify="end" mt={10}>
         <Button
           onClick={handleSubmit(onSubmit)}
-          loading={isLoading || isQualificationAssessmentCreating}
+          loading={
+            isLoading ||
+            isQualificationAssessmentCreating ||
+            isResponsivenessAssessmentCreating
+          }
         >
           Save
         </Button>
