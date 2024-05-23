@@ -33,6 +33,8 @@ import { tenderResponseApi } from '@/app/(features)/tender-workspace/_api/tender
 import { lotResponseApi } from '@/app/(features)/tender-workspace/_api/lot-bid-response.api';
 import { getBidFormApi } from '@/app/(features)/tender-workspace/_api/bid-form';
 import { documentaryEvidenceResponseApi } from '@/app/(features)/tender-workspace/_api/documentary-evidence-bid-response.api';
+import { getInvitationsApi } from '@/app/(features)/my-workspace/_api/invitation-registration.api';
+import { invitationItemsApi } from '@/app/(features)/invitations-workspace/_api/items.api';
 
 export const store = configureStore({
   reducer: {
@@ -67,6 +69,8 @@ export const store = configureStore({
     [lotResponseApi.reducerPath]: lotResponseApi.reducer,
     [documentaryEvidenceResponseApi.reducerPath]:
       documentaryEvidenceResponseApi.reducer,
+    [getInvitationsApi.reducerPath]: getInvitationsApi.reducer,
+    [invitationItemsApi.reducerPath]: invitationItemsApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) => {

@@ -20,7 +20,16 @@ export const checkPasswordApi = createApi({
       }),
       invalidatesTags: ['bid-response'],
     }),
+    checkRFXPassword: builder.mutation<any, any>({
+      query: (data: { rfxId: string; password: string }) => ({
+        url: `rfx-bid-responses/check-password`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['bid-response'],
+    }),
   }),
 });
 
-export const { useCheckPasswordMutation } = checkPasswordApi;
+export const { useCheckPasswordMutation, useCheckRFXPasswordMutation } =
+  checkPasswordApi;
