@@ -479,9 +479,8 @@ export class TenderService extends EntityCrudService<Tender> {
         subject_of_procurement: tender.name,
       });
 
-    const pdfBuffer = await this.documentManipulatorService.convertDocument(
+    const pdfBuffer = await this.documentManipulatorService.convertDocxToPdf(
       invitationDocumentBuffer,
-      '.pdf',
     );
 
     const tenderInvitation = await this.minIOService.uploadBuffer(

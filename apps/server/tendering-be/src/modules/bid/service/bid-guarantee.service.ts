@@ -178,10 +178,8 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
         public_body: guarantee.bidderName,
       });
 
-      const pdfBuffer = await this.documentManipulatorService.convertDocument(
-        docx,
-        '.pdf',
-      );
+      const pdfBuffer =
+        await this.documentManipulatorService.convertDocxToPdf(docx);
 
       updateGuaranteeStatusDto.document = await this.minIOService.uploadBuffer(
         pdfBuffer,
