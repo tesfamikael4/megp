@@ -326,9 +326,18 @@ export class BidResponseItemService {
     ];
 
     if (itemId.length < 1) {
+      const [result, total] = await manager.getRepository(Item).findAndCount({
+        where: {
+          lotId: inputDto.lotId,
+        },
+        relations: {
+          bidResponseItems: true,
+        },
+      });
+
       return {
-        total: 0,
-        items: [],
+        total,
+        items: result,
       };
     }
 
@@ -394,9 +403,18 @@ export class BidResponseItemService {
     ];
 
     if (itemId.length < 1) {
+      const [result, total] = await manager.getRepository(Item).findAndCount({
+        where: {
+          lotId: inputDto.lotId,
+        },
+        relations: {
+          bidResponseItems: true,
+        },
+      });
+
       return {
-        total: 0,
-        items: [],
+        total,
+        items: result,
       };
     }
 
