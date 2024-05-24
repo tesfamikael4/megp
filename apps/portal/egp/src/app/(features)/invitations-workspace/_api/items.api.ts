@@ -19,7 +19,7 @@ export const invitationItemsApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/rfx-bid-invitations/my-rfx-items/${id}${q}`,
+          url: `/rfx-product-invitations/my-rfx-items/${id}${q}`,
           method: 'GET',
         };
       },
@@ -28,7 +28,7 @@ export const invitationItemsApi = createApi({
     rfxDetail: builder.query<any, any>({
       query: (id: string) => {
         return {
-          url: `/rfx-bid-invitations/rfx-detail/${id}`,
+          url: `/rfx-product-invitations/rfx-detail/${id}`,
           method: 'GET',
         };
       },
@@ -45,7 +45,7 @@ export const invitationItemsApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/rfx-bid-invitations/my-rfx-invitations/${id}${q}`,
+          url: `/rfx-product-invitations/my-rfx-invitations/${id}${q}`,
           method: 'GET',
         };
       },
