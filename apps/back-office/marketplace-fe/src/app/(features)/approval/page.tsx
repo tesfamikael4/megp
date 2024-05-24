@@ -19,7 +19,7 @@ export default function Revision() {
         [
           {
             column: 'status',
-            value: 'TEAM_REVIEWAL',
+            value: 'SUBMITTED',
             operator: '=',
           },
         ],
