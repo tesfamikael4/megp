@@ -47,7 +47,7 @@ export class Tender extends Audit {
   @Column({ nullable: true })
   procurementReferenceNumber: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: 'numeric', default: 0 })
   budgetAmount: number;
 
   @Column()
@@ -59,7 +59,7 @@ export class Tender extends Audit {
   @Column()
   prId: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: 'numeric', default: 0 })
   marketEstimate: number;
 
   @Column()

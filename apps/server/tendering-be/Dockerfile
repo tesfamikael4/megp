@@ -1,3 +1,11 @@
+# First stage: Build LibreOffice in an Ubuntu container
+FROM ubuntu:latest as libreoffice-build
+
+# Install dependencies for LibreOffice
+RUN apt-get update && \
+    apt-get install -y libreoffice && \
+    apt-get clean
+    
 FROM node:20-alpine AS base
 # This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update both files!

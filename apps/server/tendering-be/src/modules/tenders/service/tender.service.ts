@@ -378,6 +378,8 @@ export class TenderService extends EntityCrudService<Tender> {
       opening_date_time: new Date(
         tender.bdsSubmission.openingDate,
       ).toLocaleTimeString(),
+      date: new Date(tender.bdsSubmission.openingDate).toDateString(),
+      time: new Date(tender.bdsSubmission.openingDate).toLocaleTimeString(),
     });
 
     const sccHtml = await this.downloadAndConvert(scc, {
