@@ -16,7 +16,7 @@ export class RfxTechnicalRequirement extends Audit {
   @Column()
   rfxItemId: string;
 
-  @OneToOne(() => RFXItem, (item) => item.bidInvitations)
+  @OneToOne(() => RFXItem, (item) => item.technicalRequirement)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
 

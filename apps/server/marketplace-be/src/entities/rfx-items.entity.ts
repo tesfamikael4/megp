@@ -11,9 +11,8 @@ import {
 import { RFX } from './rfx.entity';
 import { RfxTechnicalRequirement } from './rfx-technical-requirement.entity';
 import { ERfxItemStatus } from 'src/utils/enums';
-import { RfxBidInvitation } from './rfx-bid-invitation.entity';
+import { RfxProductInvitation } from './rfx-product-invitation.entity';
 import { RfxItemDocument } from './rfx-item-document.entity';
-import { RfxOpenProduct } from './rfx-open-products.entity';
 import { SolOffer } from './sol-offer.entity';
 import { SolItemResponse } from './sol-item-response.entity';
 
@@ -82,16 +81,13 @@ export class RFXItem extends Audit {
   technicalRequirement: RfxTechnicalRequirement;
 
   @OneToMany(
-    () => RfxBidInvitation,
-    (rfxBidInvitation) => rfxBidInvitation.rfxItem,
+    () => RfxProductInvitation,
+    (rfxProductInvitation) => rfxProductInvitation.rfxItem,
   )
-  bidInvitations: RfxBidInvitation[];
+  rfxProductInvitations: RfxProductInvitation[];
 
   @OneToOne(() => RfxItemDocument, (rfxDocument) => rfxDocument.rfxItem)
   rfxItemDocuments: RfxItemDocument;
-
-  @OneToMany(() => RfxOpenProduct, (rfxOpenProducts) => rfxOpenProducts.rfxItem)
-  openProducts: RfxOpenProduct[];
 
   @OneToMany(() => SolOffer, (offer) => offer.rfxItem)
   solOffers: SolOffer[];

@@ -9,12 +9,12 @@ import {
 } from 'typeorm';
 import { RFXItem } from './rfx-items.entity';
 import { SolRound } from './sol-round.entity';
-import { RfxBidInvitation } from './rfx-bid-invitation.entity';
+import { RfxProductInvitation } from './rfx-product-invitation.entity';
 import { ESolOfferStatus } from 'src/utils/enums';
 import { SolRegistration } from './sol-registration.entity';
 
 @Entity({ name: 'sol_offers' })
-@Unique(['rfxItemId', 'vendorId', 'round', 'invitationId'])
+@Unique(['rfxItemId', 'vendorId', 'solRoundId', 'rfxProductInvitationId'])
 export class SolOffer extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -30,16 +30,16 @@ export class SolOffer extends Audit {
   vendorId: string;
 
   @Column()
-  price: string;
+  encryptedPrice: string;
 
   @Column()
-  roundId: string;
+  solRoundId: string;
 
   @Column()
-  invitationId: string;
+  rfxProductInvitationId: string;
 
-  // @Column()
-  // registrationId: string;
+  @Column()
+  solRegistrationId: string;
 
   @Column({
     type: 'enum',
@@ -48,15 +48,15 @@ export class SolOffer extends Audit {
   })
   status: ESolOfferStatus;
 
-  @ManyToOne(() => SolRound, (round) => round.offers)
-  @JoinColumn({ name: 'roundId' })
-  round: SolRound;
+  @ManyToOne(() => SolRound, (round) => round.solOffers)
+  @JoinColumn({ name: 'solRoundId' })
+  solRound: SolRound;
 
-  @ManyToOne(() => RfxBidInvitation, (round) => round.offers)
-  @JoinColumn({ name: 'invitationId' })
-  invitation: RfxBidInvitation;
+  @ManyToOne(() => RfxProductInvitation, (round) => round.solOffers)
+  @JoinColumn({ name: 'rfxProductInvitationId' })
+  rfxBidnvitation: RfxProductInvitation;
 
-  // @ManyToOne(() => SolRegistration, registrations => registrations.offers)
-  // @JoinColumn({ name: 'registrationId' })
-  // registration: SolRegistration;
+  @ManyToOne(() => SolRegistration, (registrations) => registrations.solOffers)
+  @JoinColumn({ name: 'solRegistrationId' })
+  solRegistration: SolRegistration;
 }

@@ -16,7 +16,7 @@ import {
 import { RfxProcurementMechanism } from 'src/entities/rfx-procurement-mechanism.entity';
 import { DataSource, EntityManager, In, Repository } from 'typeorm';
 import { CreateRFXDto, UpdateRFXDto } from '../dtos/rfx.dto';
-import { RfxBidInvitation } from '../../../entities';
+import { RfxProductInvitation } from '../../../entities';
 import { ClientProxy } from '@nestjs/microservices';
 import { PdfGeneratorService } from 'src/utils/services/pdf-generator.service';
 import { DocumentService } from 'src/utils/services/document.service';
@@ -56,7 +56,7 @@ export class RfxService extends EntityCrudService<RFX> {
       });
 
       if (prExists) {
-        throw new Error('PR already used in an RFX');
+        throw new Error('PR already used in an RFQ');
       }
 
       const PR_BASE_ENDPOINT =
@@ -80,16 +80,13 @@ export class RfxService extends EntityCrudService<RFX> {
       // if (prResponse.procurementApplication != 'marketplace')
       //   throw new BadRequestException('wrong pr procurement application');
 
-      if (prResponse.status != 'APPROVED')
-        throw new BadRequestException('pr is not approved');
-
       const rfxPayload = {
         name: prResponse?.name,
         procurementCategory: prResponse?.procurementMechanisms?.procurementType,
         procurementReferenceNumber: prResponse?.procurementReference,
         budgetAmount: Number(prResponse?.totalEstimatedAmount),
         budgetAmountCurrency: prResponse?.currency,
-        budgetCode: prResponse?.budget?.budgetCode || 'N/A',
+        budgetCode: prResponse?.budget?.budgetCode,
         prId: prId,
         marketEstimate: Number(prResponse?.calculatedAmount),
         marketEstimateCurrency: prResponse?.currency,
@@ -191,8 +188,7 @@ export class RfxService extends EntityCrudService<RFX> {
 
     if (!rfx) throw new BadRequestException('rfx on reviewal not found');
 
-    const isAdjustable = await this.isAdjustable(rfx);
-    if (!isAdjustable) throw new BadRequestException('rfx not adjustable');
+    await this.verifyAdjustable(rfx);
 
     await this.rfxRepository.update(rfxId, { status: ERfxStatus.ADJUSTEDMENT });
 
@@ -202,14 +198,11 @@ export class RfxService extends EntityCrudService<RFX> {
   async submitRfx(rfxId: string): Promise<any> {
     const rfx = await this.getCompleteRfx(rfxId);
 
-    if (rfx.status != ERfxStatus.TEAM_REVIEWAL)
-      throw new BadRequestException('rfx not on reviewal');
-
     this.validateRfxOnSubmit(rfx);
 
-  for(let i = 0; i <= 4; i++){
-    this.initiateWorkflow(rfx);
-  }
+    for (let i = 0; i <= 4; i++) {
+      this.initiateWorkflow(rfx);
+    }
 
     rfx.status = ERfxStatus.SUBMITTED;
 
@@ -246,7 +239,7 @@ export class RfxService extends EntityCrudService<RFX> {
     const rfx = await this.getCompleteRfx(rfxId);
 
     if (rfx.status != ERfxStatus.DRAFT && rfx.status != ERfxStatus.ADJUSTEDMENT)
-      throw new BadRequestException('rfx not draft or adjustment');
+      throw new BadRequestException('RFQ not draft or adjustment');
 
     this.validateRfxOnReview(rfx);
 
@@ -266,7 +259,7 @@ export class RfxService extends EntityCrudService<RFX> {
     return doc;
   }
 
-  async isUpdatable(rfx: RFX): Promise<any> {
+  async validateUpdateRequest(rfx: RFX): Promise<any> {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     let canUpdate = false;
 
@@ -298,22 +291,26 @@ export class RfxService extends EntityCrudService<RFX> {
     return canUpdate;
   }
 
-  async isAdjustable(rfx: RFX): Promise<boolean> {
+  async verifyAdjustable(rfx: RFX): Promise<boolean> {
+    let canAdjust = false;
     if (
       rfx.revisionApprovals.some(
         (approval) => approval.status == ERfxRevisionApprovalStatusEnum.ADJUST,
       )
     )
-      return true;
+      canAdjust = true;
 
     const now = new Date(Date.now());
     const reviewDeadline = new Date(rfx.reviewDeadline);
 
-    if (now > reviewDeadline) return true;
+    if (now > reviewDeadline) canAdjust = true;
 
-    if (rfx.revisionApprovals.length == 2) return true;
+    if (rfx.revisionApprovals.length == 2) canAdjust = true;
 
-    return false;
+    if (!canAdjust) {
+      throw new BadRequestException('RFQ not adjustable');
+    }
+    return canAdjust;
   }
   async getNotes(rfxId: string, verison: number) {
     try {
@@ -390,14 +387,12 @@ export class RfxService extends EntityCrudService<RFX> {
       relations: {
         items: {
           rfxItemDocuments: true,
-          bidInvitations: true,
+          rfxProductInvitations: true,
           technicalRequirement: true,
         },
-        notes: true,
         revisionApprovals: true,
         rfxBidContractCondition: true,
         rfxBidProcedure: true,
-        rfxBidQualifications: true,
         rfxDocumentaryEvidences: true,
         rfxProcurementMechanism: true,
         rfxProcurementTechnicalTeams: true,
@@ -436,7 +431,7 @@ export class RfxService extends EntityCrudService<RFX> {
 
     const rfxItemIds = rfxItems.map((item) => item.id);
 
-    await entityManager.getRepository(RfxBidInvitation).update(
+    await entityManager.getRepository(RfxProductInvitation).update(
       {
         rfxItemId: In(rfxItemIds),
       },
@@ -447,33 +442,36 @@ export class RfxService extends EntityCrudService<RFX> {
   }
 
   private validateRfxOnSubmit(rfx: RFX) {
+    if (rfx.status == ERfxStatus.DRAFT)
+      throw new BadRequestException('RFQ not on team reviewal');
+
+    if (rfx.status == ERfxStatus.ADJUSTEDMENT)
+      throw new BadRequestException('RFQ not approved by team members');
+
     this.validateRfxOnReview(rfx);
     this.validateRfxReviewal(rfx);
 
     if (rfx.status != ERfxStatus.TEAM_REVIEWAL)
-      throw new BadRequestException('rfx not on reviewal');
+      throw new BadRequestException('RFQ not on reviewal');
 
     const now = new Date(Date.now());
     const deadline = new Date(rfx.reviewDeadline);
     if (rfx.status != ERfxStatus.TEAM_REVIEWAL && now < deadline)
-      throw new BadRequestException('rfx review deadline has not ended');
+      throw new BadRequestException('RFQ review deadline has not ended');
   }
 
   private validateRfxOnReview(rfx: RFX) {
-    // if (!rfx.rfxBidQualifications) {
-    //   throw new BadRequestException('rfx bid qualification not found');
-    // }
     if (!rfx.rfxProcurementTechnicalTeams) {
-      throw new BadRequestException('rfx procurement technical team not found');
+      throw new BadRequestException('RFQ procurement technical team not found');
     }
     if (!rfx.rfxBidContractCondition) {
-      throw new BadRequestException('rfx bid contract condition not found');
+      throw new BadRequestException('RFQ bid contract condition not found');
     }
     if (!rfx.rfxBidProcedure) {
-      throw new BadRequestException('rfx bid procedure not found');
+      throw new BadRequestException('RFQ bid procedure not found');
     }
     if (!rfx.rfxProcurementMechanism) {
-      throw new BadRequestException('rfx procurement mechanism not found');
+      throw new BadRequestException('RFQ procurement mechanism not found');
     }
 
     this.validateInvitation(rfx);

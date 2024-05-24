@@ -13,8 +13,8 @@ import {
   ExtraCrudController,
 } from 'megp-shared-be';
 import { ApiTags } from '@nestjs/swagger';
-import { RfxBidInvitation } from 'src/entities/rfx-bid-invitation.entity';
-import { RfxBidInvitationService } from '../services/rfx-bid-invitation.service';
+import { RfxProductInvitation } from 'src/entities/rfx-product-invitation.entity';
+import { RfxProductInvitationService } from '../services/rfx-product-invitation.service';
 import { CreateRfxBidInvitationDto } from '../dtos/rfx-bid-invitaiton.dto';
 
 const option = {
@@ -22,15 +22,26 @@ const option = {
   createDto: CreateRfxBidInvitationDto,
 };
 
-@Controller('rfx-bid-invitations')
-@ApiTags('Rfx Bid Invitations')
-export class RfxBidInvitationController extends ExtraCrudController<RfxBidInvitation>(
+@Controller('rfx-product-invitations')
+@ApiTags('Rfx Product Invitations')
+export class RfxProductInvitationController extends ExtraCrudController<RfxProductInvitation>(
   option,
 ) {
   constructor(
-    private readonly rfxBidInvitationService: RfxBidInvitationService,
+    private readonly rfxBidInvitationService: RfxProductInvitationService,
   ) {
     super(rfxBidInvitationService);
+  }
+
+  @Patch('withdraw-invitation/:rfxInvitationId')
+  async withdraw(
+    @Param('rfxInvitationId') rfxInvitationId: string,
+    @CurrentUser() user: any,
+  ) {
+    return await this.rfxBidInvitationService.withdrawInvitation(
+      rfxInvitationId,
+      user,
+    );
   }
 
   @Patch('accpet-invitation/:rfxInvitationId')

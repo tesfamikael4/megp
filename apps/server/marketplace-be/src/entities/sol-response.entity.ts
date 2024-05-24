@@ -20,7 +20,7 @@ export class SolResponse extends Audit {
   rfxId: string;
 
   @Column()
-  registrationId: string;
+  solRegistrationId: string;
 
   @Column()
   vendorId: string;
@@ -31,11 +31,11 @@ export class SolResponse extends Audit {
   @Column({ type: 'text' })
   value: string;
 
-  @ManyToOne(() => RFX, (rfx) => rfx.responses)
+  @ManyToOne(() => RFX, (rfx) => rfx.solResponses)
   @JoinColumn({ name: 'rfxId' })
   rfx: RFX;
 
-  @ManyToOne(() => SolRegistration, (registration) => registration.responses)
-  @JoinColumn({ name: 'registrationId' })
-  registration: SolRegistration;
+  @ManyToOne(() => SolRegistration, (registration) => registration.solResponses)
+  @JoinColumn({ name: 'solRegistrationId' })
+  solRegistration: SolRegistration;
 }

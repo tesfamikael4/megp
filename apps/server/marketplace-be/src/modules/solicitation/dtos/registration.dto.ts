@@ -8,20 +8,14 @@ export class CreateRegistrationDto {
   @IsUUID()
   rfxId: string;
 
-  @IsOptional()
-  @IsUUID()
   vendorId: string;
 
-  @IsOptional()
   vendorName: string;
 
-  @IsOptional()
   salt: string;
 
-  @IsOptional()
   response: string;
 
-  @IsOptional()
   status: ESolBookmarkStatus;
 }
 

@@ -1,22 +1,10 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  OnModuleInit,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import { RfxBidProcedure, SolRound } from 'src/entities';
-import {
-  EntityManager,
-  LessThan,
-  LessThanOrEqual,
-  MoreThan,
-  Repository,
-} from 'typeorm';
+import { EntityManager, LessThan, MoreThan, Repository } from 'typeorm';
 import { CreateRoundDto, RoundDto } from '../dtos/round.dto';
 import { REQUEST } from '@nestjs/core';
-import { ESolRoundStatus } from 'src/utils/enums';
 import { SolOfferService } from './offer.service';
 
 @Injectable()
@@ -66,7 +54,8 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
     const round = await this.solRoundRepository.findOne({
       where: {
         rfxId,
-        start: MoreThan(now),
+        start: LessThan(now),
+        end: MoreThan(now),
       },
       order: {
         start: 'ASC',

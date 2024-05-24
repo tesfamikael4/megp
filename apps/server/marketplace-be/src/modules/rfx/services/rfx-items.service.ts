@@ -77,34 +77,4 @@ export class RFXItemService extends ExtraCrudService<RFXItem> {
     }
     return response;
   }
-
-  async submit(id: string) {
-    const rfxItem = await this.repositoryRFXItem.findOne({
-      where: {
-        id,
-        status: ERfxItemStatus.DRAFT,
-      },
-      relations: {
-        bidInvitations: true,
-      },
-      select: {
-        id: true,
-        isOpen: true,
-        status: true,
-      },
-    });
-
-    if (!rfxItem) throw new NotFoundException('draft rfx item not found');
-
-    if (rfxItem.bidInvitations.length == 0 && !rfxItem.isOpen)
-      throw new BadRequestException('rfx bid invitation not found');
-
-    rfxItem.status = ERfxItemStatus.SUBMITTED;
-
-    await this.repositoryRFXItem.update(id, {
-      status: ERfxItemStatus.SUBMITTED,
-    });
-
-    return rfxItem;
-  }
 }

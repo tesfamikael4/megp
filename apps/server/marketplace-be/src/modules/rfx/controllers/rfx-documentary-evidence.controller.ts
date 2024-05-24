@@ -1,7 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { ExtraCrudController, ExtraCrudOptions } from 'megp-shared-be';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateRfxItemDocumentDto } from '../dtos/rfx-document.dto';
 import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
 import { RfxDocumentaryEvidenceService } from '../services/rfx-documentary-evidence.service';
 import {
