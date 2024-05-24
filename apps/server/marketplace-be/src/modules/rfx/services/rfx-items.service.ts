@@ -64,7 +64,7 @@ export class RFXItemService extends ExtraCrudService<RFXItem> {
       query,
     ).loadRelationCountAndMap(
       'rfx_items.invitationCount',
-      'rfx_items.bidInvitations',
+      'rfx_items.rfxProductInvitations',
     );
 
     const response = new DataResponseFormat<RFXItem>();
