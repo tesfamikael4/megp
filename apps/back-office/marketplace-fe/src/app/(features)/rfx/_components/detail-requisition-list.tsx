@@ -54,7 +54,7 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
         onClick={onClickPRSelection}
         loading={isConverting}
       >
-        Convert to RFX
+        Convert to RFQ
       </Button>
       <Text className="font-semibold mb-2">Definition</Text>
       <DataTable

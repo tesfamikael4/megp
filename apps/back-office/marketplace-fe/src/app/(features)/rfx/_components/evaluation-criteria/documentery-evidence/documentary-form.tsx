@@ -3,24 +3,17 @@ import {
   useCreateMutation,
   useUpdateMutation,
 } from '../../../_api/rfx/documentary-evidence.api';
-import { DocumentaryEvidence } from '@/models/tender/documentary-evidence.model';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Checkbox,
-  Flex,
-  LoadingOverlay,
-  Stack,
-  TextInput,
-} from '@mantine/core';
+import { Flex, LoadingOverlay, Stack, TextInput } from '@mantine/core';
 import { logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { useParams } from 'next/navigation';
-import React, { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { ZodType, z } from 'zod';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const schema = z.object({
-  documentTitle: z.string(),
+  documentTitle: z.string().min(1, { message: 'Title is required' }),
   description: z.string(),
 });
 
@@ -88,6 +81,7 @@ export default function DocumentaryForm({
         <Stack>
           <TextInput
             label="Title"
+            withAsterisk
             {...register('documentTitle')}
             className="w-full"
           />

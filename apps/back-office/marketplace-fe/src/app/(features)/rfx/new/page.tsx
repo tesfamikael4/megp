@@ -58,6 +58,27 @@ export default function RFXPage() {
   const onRequestChange = (request: any) => {
     trigger({
       ...request,
+      where: [
+        [
+          {
+            column: 'isUsed',
+            operator: '=',
+            value: 'false',
+          },
+        ],
+        [
+          {
+            column: 'procurementApplication',
+            operator: '=',
+            value: 'purchasing',
+          },
+          {
+            column: 'procurementApplication',
+            operator: '=',
+            value: 'auctioning',
+          },
+        ],
+      ],
       orderBy: [
         {
           column: 'createdAt',

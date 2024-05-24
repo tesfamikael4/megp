@@ -108,8 +108,10 @@ export default function ContractConditionsForm() {
                 placeholder="Delivery Period (in days)"
                 value={value}
                 className="w-full"
+                suffix=" days"
                 onChange={onChange}
                 error={errors?.deliveryPeriod?.message}
+                allowNegative={false}
                 withAsterisk
               />
             )}
@@ -133,6 +135,8 @@ export default function ContractConditionsForm() {
                 placeholder="Warranty Period (in days)"
                 value={value}
                 className="w-full"
+                suffix=" days"
+                allowNegative={false}
                 onChange={onChange}
                 error={errors?.warrantyPeriod?.message}
                 withAsterisk
@@ -150,6 +154,9 @@ export default function ContractConditionsForm() {
                 leftSection={<IconPercentage />}
                 value={value}
                 className="w-full"
+                suffix=" %"
+                min={0}
+                max={100}
                 onChange={onChange}
                 error={errors?.liquidityDamage?.message}
                 withAsterisk
@@ -169,6 +176,9 @@ export default function ContractConditionsForm() {
                 leftSection={<IconPercentage />}
                 value={value}
                 className="w-full"
+                suffix=" %"
+                min={0}
+                max={100}
                 onChange={onChange}
                 error={errors?.liquidityDamageLimit?.message}
                 withAsterisk
@@ -205,6 +215,8 @@ export default function ContractConditionsForm() {
                 value={value}
                 className="w-[calc(50%-0.5rem)]"
                 onChange={onChange}
+                suffix=" days"
+                allowNegative={false}
                 error={errors?.paymentReleasePeriod?.message}
                 withAsterisk
               />

@@ -24,7 +24,10 @@ export default function RFXDetailCard() {
     },
     {
       key: 'Budget Amount',
-      value: selectedRFX?.budgetAmount,
+      value: selectedRFX?.budgetAmount?.toLocaleString('en-US', {
+        style: 'currency',
+        currency: selectedRFX?.budgetAmountCurrency,
+      }),
     },
     {
       key: 'Budget Amount Currency',
