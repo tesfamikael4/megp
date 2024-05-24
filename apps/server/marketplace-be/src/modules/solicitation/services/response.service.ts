@@ -75,7 +75,7 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
 
       const response = this.solResponseRepository.create({
         rfxId: itemData.rfxId,
-        registrationId: solRegistration.id,
+        solRegistrationId: solRegistration.id,
         key: item.key,
         vendorId: req.user.organization.id,
         value: encryptedFileInfo,
@@ -99,7 +99,7 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
         vendorId,
       },
       relations: {
-        responses: true,
+        solResponses: true,
       },
     });
 
@@ -115,7 +115,7 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
 
     const fileInfos = [];
 
-    for (const resp of solRegistration.responses) {
+    for (const resp of solRegistration.solResponses) {
       const fileInfo = this.encryptionHelperService.decryptedData(
         resp.value,
         '123456',

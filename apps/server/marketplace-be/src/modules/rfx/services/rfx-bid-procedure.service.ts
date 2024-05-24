@@ -33,15 +33,10 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
       select: {
         id: true,
         status: true,
-        reviewDeadline: true,
       },
     });
 
-    if (!rfx) throw new NotFoundException('no rfx found');
-
-    const isUpdatable = await this.rfxService.isUpdatable(rfx);
-
-    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
+    if (!rfx) throw new NotFoundException('Draft RFQ not found');
 
     const rfxBidContract = this.rfxBidProcedureRepository.create(itemData);
     await this.rfxBidProcedureRepository.insert(rfxBidContract);
@@ -52,6 +47,9 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
       where: {
         id,
       },
+      relations: {
+        rfx: true,
+      },
       select: {
         id: true,
         rfx: {
@@ -60,14 +58,11 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
           reviewDeadline: true,
         },
       },
-      relations: {
-        rfx: true,
-      },
     });
 
     if (!rfxBidProcedure) throw new BadRequestException('rfx not found');
 
-    await this.rfxService.isUpdatable(rfxBidProcedure.rfx);
+    await this.rfxService.validateUpdateRequest(rfxBidProcedure.rfx);
 
     const rfxDocUpdate = this.rfxBidProcedureRepository.create(itemData);
     await this.rfxBidProcedureRepository.update(id, itemData);

@@ -12,6 +12,7 @@ import {
   UpdateRfxBidContractConditionDTO,
 } from '../dtos/rfx-bid-contract.dto';
 import { RfxService } from './rfx.service';
+import { ERfxStatus } from 'src/utils/enums';
 
 @Injectable()
 export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContractCondition> {
@@ -29,19 +30,15 @@ export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContr
     const rfx = await this.rfxRepository.findOne({
       where: {
         id: itemData.rfxId,
+        status: ERfxStatus.DRAFT,
       },
       select: {
         id: true,
         status: true,
-        reviewDeadline: true,
       },
     });
 
-    if (!rfx) throw new NotFoundException('no rfx found');
-
-    const isUpdatable = await this.rfxService.isUpdatable(rfx);
-
-    if (!isUpdatable) throw new BadRequestException('rfx not updatable');
+    if (!rfx) throw new NotFoundException('Draft RFQ not found');
 
     const rfxBidContract =
       this.rfxBidContractConditionRepository.create(itemData);
@@ -77,7 +74,7 @@ export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContr
     if (!rfxContractCondition)
       throw new BadRequestException('rfx bid condition not found');
 
-    await this.rfxService.isUpdatable(rfxContractCondition.rfx);
+    await this.rfxService.validateUpdateRequest(rfxContractCondition.rfx);
 
     const rfxConditionUpdate =
       this.rfxBidContractConditionRepository.create(itemData);

@@ -41,6 +41,6 @@ export class SolRound extends Audit {
   })
   status: ESolRoundStatus;
 
-  @OneToMany(() => SolOffer, (offer) => offer.round)
-  offers: SolOffer[];
+  @OneToMany(() => SolOffer, (offer) => offer.solRound)
+  solOffers: SolOffer[];
 }

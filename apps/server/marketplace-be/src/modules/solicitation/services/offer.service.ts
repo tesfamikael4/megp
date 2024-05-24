@@ -1,26 +1,16 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import {
   RFXItem,
-  RfxBidInvitation,
+  RfxProductInvitation,
   SolOffer,
   SolRegistration,
   SolRound,
 } from 'src/entities';
-import {
-  EntityManager,
-  LessThanOrEqual,
-  MoreThan,
-  MoreThanOrEqual,
-  Repository,
-} from 'typeorm';
+import { EntityManager, MoreThan, Repository } from 'typeorm';
 import { CreateOfferDto } from '../dtos/offer.dto';
-import {
-  EInvitationStatus,
-  ERfxItemStatus,
-  ESolRoundStatus,
-} from 'src/utils/enums';
+import { ERfxItemStatus } from 'src/utils/enums';
 import { EncryptionHelperService } from './encryption-helper.service';
 import { REQUEST } from '@nestjs/core';
 
@@ -41,7 +31,7 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
     const offerRepo = entityManager.getRepository(SolOffer);
-    const invitationRepo = entityManager.getRepository(RfxBidInvitation);
+    const invitationRepo = entityManager.getRepository(RfxProductInvitation);
     const registrationRepo = entityManager.getRepository(SolRegistration);
     const itemsRepo = entityManager.getRepository(RFXItem);
 
@@ -50,7 +40,7 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
         where: {
           id: itemData.rfxItemId,
           status: ERfxItemStatus.APPROVED,
-          bidInvitations: {
+          rfxProductInvitations: {
             vendorId: user?.organization.id,
           },
         },
@@ -65,7 +55,7 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
       }),
       invitationRepo.findOne({
         where: {
-          id: itemData.invitationId,
+          id: itemData.rfxProductInvitationId,
         },
         select: {
           id: true,
@@ -73,17 +63,12 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
       }),
     ]);
 
-    if (!rfxItem) throw new Error('Rfx item not found');
+    if (!rfxItem) throw new Error('RFQ item not found');
     if (!rfxInvitation) throw new Error('Invited Product not found');
 
     const currentRound = await this.getValidRound(rfxItem.rfx.id);
 
-    // if (currentRound.round === 1) {
-    // await invitationRepo.update(itemData.invitationId, {
-    //   status: EInvitationStatus.ACCEPTED,
-    // });
-    // } else
-    if (currentRound.round > 1) {
+    if (currentRound.round >= 1) {
       await this.checkPreviousRoundOfferExists(
         currentRound.round,
         itemData,
@@ -106,35 +91,21 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
 
     // Offer Price Validation
 
-    itemData.roundId = currentRound.id;
-    itemData.registrationId = registration.id;
-    itemData.price = this.encryptPrice(itemData.price, registration.salt);
+    itemData.solRoundId = currentRound.id;
+    itemData.solRegistrationId = registration.id;
+    itemData.encryptedPrice = this.encryptPrice(
+      `${itemData.price}`,
+      registration.salt,
+    );
 
     const offer = offerRepo.create(itemData);
     await offerRepo.upsert(offer, [
       'rfxItemId',
       'vendorId',
-      'round',
-      'invitationId',
+      'solRoundId',
+      'rfxProductInvitationId',
     ]);
     return offer;
-  }
-
-  async calculateWinner(round: SolRound) {
-    const roundWinners: { id: string; price: number }[] = [];
-    const winnerPrice = Math.max(
-      ...round.offers.map((offer) => {
-        // offer.price = this.encryptionHelperService.decryptedData(offer.price, '123456', offer.registration.salt);
-
-        return Number(offer.price);
-      }),
-    );
-
-    round.offers.forEach((offer) => {
-      if (Number(offer.price) === winnerPrice) {
-        roundWinners.push({ id: offer.id, price: winnerPrice });
-      }
-    });
   }
 
   private async getValidRound(rfxId: string) {
@@ -162,11 +133,11 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
   ) {
     const previousOffer = await this.solOfferRepository.findOne({
       where: {
-        round: {
+        solRound: {
           round: currentRound - 1,
         },
         rfxItemId: itemData.rfxItemId,
-        invitationId: itemData.invitationId,
+        rfxProductInvitationId: itemData.rfxProductInvitationId,
         vendorId: user.organization.id,
       },
       select: {

@@ -9,12 +9,11 @@ import { RfxController } from './controllers/rfx.controller';
 import {
   RfxBidContractCondition,
   RfxBidProcedure,
-  RfxBidQualification,
   RfxProcurementMechanism,
   RfxProcurementTechnicalTeam,
   RfxItemDocument,
   RfxTechnicalRequirement,
-  RfxBidInvitation,
+  RfxProductInvitation,
   Document,
   RfxRevisionApproval,
 } from 'src/entities';
@@ -23,24 +22,19 @@ import { RfxProcurementMechanismService } from './services/rfx-procurement-mecha
 import { RfxProcurementTechnicalTeamService } from './services/rfx-procurement-technical-team.service';
 import { RfxItemDocumentController } from './controllers/rfx-item-document.controller';
 import { RfxProcurementMechanismController } from './controllers/rfx-procurement-mechanism.controller';
-import { RfxBidQualificationController } from './controllers/rfx-bid-qualification.controller';
 import { RfxBidProcedureController } from './controllers/rfx-bid-procedure.controller';
 import { RfxBidContractConditionController } from './controllers/rfx-bid-contract-condition.controller';
-import { RfxBidQualificationService } from './services/rfx-bid-qualification.service';
 import { RfxBidProcedureService } from './services/rfx-bid-procedure.service';
 import { RfxBidContractConditionService } from './services/rfx-bid-contract-condition.service';
 import { RfxProcurementTechnicalTeamController } from './controllers/rfx-procurement-technical-team.controller';
 import { RfxTechnicalRequirementController } from './controllers/rfx-technical-requirements.controller';
 import { RfxTechnicalRequirementService } from './services/rfx-technical-requirement.service';
-import { RfxBidInvitationService } from './services/rfx-bid-invitation.service';
-import { RfxBidInvitationController } from './controllers/rfx-bid-invitation.controller';
+import { RfxProductInvitationService } from './services/rfx-product-invitation.service';
+import { RfxProductInvitationController } from './controllers/rfx-product-invitation.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
 import { RfxDocumentaryEvidenceController } from './controllers/rfx-documentary-evidence.controller';
 import { RfxDocumentaryEvidenceService } from './services/rfx-documentary-evidence.service';
-import { RfxOpenProduct } from 'src/entities/rfx-open-products.entity';
-import { RfxOpenProductController } from './controllers/rfx-open-products.controller';
-import { RfxOpenProductService } from './services/rfx-open-products.service';
 import { DocumentController } from 'src/utils/controllers/document.controller';
 import { MinIOModule } from 'megp-shared-be';
 import { UtilityModule } from 'src/utils/utils.module';
@@ -56,13 +50,11 @@ import { SolicitationModule } from '../solicitation/solicitation.module';
       RFXItem,
       RfxItemDocument,
       RfxProcurementMechanism,
-      RfxBidQualification,
       RfxBidProcedure,
       RfxBidContractCondition,
       RfxTechnicalRequirement,
-      RfxBidInvitation,
+      RfxProductInvitation,
       RfxDocumentaryEvidence,
-      RfxOpenProduct,
       RfxRevisionApproval,
       Document,
     ]),
@@ -89,13 +81,11 @@ import { SolicitationModule } from '../solicitation/solicitation.module';
     RfxItemDocumentController,
     RfxProcurementMechanismController,
     RfxProcurementTechnicalTeamController,
-    RfxBidQualificationController,
     RfxBidProcedureController,
     RfxBidContractConditionController,
     RfxTechnicalRequirementController,
-    RfxBidInvitationController,
+    RfxProductInvitationController,
     RfxDocumentaryEvidenceController,
-    RfxOpenProductController,
     RfxRevisionApprovalController,
     DocumentController,
   ],
@@ -105,13 +95,11 @@ import { SolicitationModule } from '../solicitation/solicitation.module';
     RfxItemDocumentService,
     RfxProcurementMechanismService,
     RfxProcurementTechnicalTeamService,
-    RfxBidQualificationService,
     RfxBidProcedureService,
     RfxBidContractConditionService,
     RfxTechnicalRequirementService,
-    RfxBidInvitationService,
+    RfxProductInvitationService,
     RfxDocumentaryEvidenceService,
-    RfxOpenProductService,
     RfxRevisionApprovalService,
   ],
 })

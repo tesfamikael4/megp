@@ -1,5 +1,6 @@
 import { Audit } from 'megp-shared-be';
 import {
+  Check,
   Column,
   Entity,
   JoinColumn,
@@ -13,11 +14,9 @@ import { RFXItem } from './rfx-items.entity';
 import { RfxProcurementMechanism } from './rfx-procurement-mechanism.entity';
 import { RfxProcurementTechnicalTeam } from './rfx-procurement-technical-team.entity';
 import { RfxBidProcedure } from './rfx-bid-procedure.entity';
-import { RfxBidQualification } from './rfx-bid-qualification.entity';
 import { RfxBidContractCondition } from './rfx-bid-contract-condition.entity';
 import { ERfxStatus } from 'src/utils/enums';
 import { RfxDocumentaryEvidence } from './rfx-documentary-evidence.entity';
-import { RfxNote } from './rfx-note.entity';
 import { RfxRevisionApproval } from './rfx-revision-approval.entity';
 import { SolRegistration } from './sol-registration.entity';
 import { SolRound } from './sol-round.entity';
@@ -25,7 +24,7 @@ import { SolResponse } from './sol-response.entity';
 import { SolBookmark } from './sol-bookmark.entity';
 
 @Entity({ name: 'rfxs' })
-// @Unique('"reviewDeadline" > CURRENT_TIMESTAMP')
+@Check('"reviewDeadline" > CURRENT_TIMESTAMP')
 export class RFX extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -39,7 +38,7 @@ export class RFX extends Audit {
   @Column({ nullable: true })
   procurementReferenceNumber: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
   budgetAmount: number;
 
   @Column()
@@ -67,7 +66,7 @@ export class RFX extends Audit {
   @Column()
   organizationName: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamp' })
   reviewDeadline: string;
 
   @Column({ nullable: true })
@@ -98,12 +97,6 @@ export class RFX extends Audit {
   )
   rfxProcurementTechnicalTeams: RfxProcurementTechnicalTeam[];
 
-  @OneToMany(
-    () => RfxBidQualification,
-    (rfxBidQualification) => rfxBidQualification.rfx,
-  )
-  rfxBidQualifications: RfxBidQualification[];
-
   @OneToOne(
     () => RfxBidContractCondition,
     (rfxBidContractCondition) => rfxBidContractCondition.rfx,
@@ -115,9 +108,6 @@ export class RFX extends Audit {
     (rfxDocumentaryEvidences) => rfxDocumentaryEvidences.rfx,
   )
   rfxDocumentaryEvidences: RfxDocumentaryEvidence[];
-
-  @OneToMany(() => RfxNote, (rfxNote) => rfxNote.rfx)
-  notes: RfxNote[];
 
   @OneToMany(
     () => RfxRevisionApproval,
@@ -135,5 +125,5 @@ export class RFX extends Audit {
   solRounds: SolRound[];
 
   @OneToMany(() => SolResponse, (response) => response.rfx)
-  responses: SolResponse[];
+  solResponses: SolResponse[];
 }

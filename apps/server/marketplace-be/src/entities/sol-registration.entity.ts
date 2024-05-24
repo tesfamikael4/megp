@@ -45,9 +45,9 @@ export class SolRegistration extends Audit {
   })
   status: string;
 
-  // @OneToMany(() => SolOffer, offers => offers.registration)
-  // offers: SolOffer[]
+  @OneToMany(() => SolOffer, (offers) => offers.solRegistration)
+  solOffers: SolOffer[];
 
-  @OneToMany(() => SolResponse, (response) => response.registration)
-  responses: SolResponse[];
+  @OneToMany(() => SolResponse, (response) => response.solRegistration)
+  solResponses: SolResponse[];
 }

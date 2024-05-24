@@ -1,12 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
-import {
-  RFX,
-  RfxBidInvitation,
-  SolBookmark,
-  SolRegistration,
-} from 'src/entities';
+import { RFX, SolBookmark, SolRegistration } from 'src/entities';
 import { EntityManager, Repository } from 'typeorm';
 import { EncryptionHelperService } from './encryption-helper.service';
 import { REQUEST } from '@nestjs/core';
@@ -38,7 +33,7 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     });
 
     if (!rfx) {
-      throw new BadRequestException('Rfq not found');
+      throw new BadRequestException('RFQ not found');
     } else if (rfx.rfxBidProcedure.submissionDeadline < new Date(Date.now())) {
       throw new BadRequestException('Submission deadline has passed');
     }

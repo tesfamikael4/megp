@@ -44,14 +44,14 @@ export class RfxBidProcedure extends Audit {
   @Column({ default: false })
   isReverseAuction: boolean;
 
-  @Column({ default: 1 })
+  @Column({ default: 0 })
   round: number;
 
   @Column({ nullable: true })
   minimumBidDecrementPercentage: number;
 
   @Column({ nullable: true })
-  roundDuration: number; // in minutesye
+  roundDuration: number; // in minutes
 
   @Column({ nullable: true })
   idleTime: number; // in minutes

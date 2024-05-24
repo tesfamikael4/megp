@@ -4,20 +4,23 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  Unique,
 } from 'typeorm';
 import { RFXItem } from './rfx-items.entity';
-import { ERfxOpenProductsStatus } from 'src/utils/enums';
+import { EInvitationStatus } from 'src/utils/enums/rfx.enum';
+import { SolOffer } from './sol-offer.entity';
 
-@Entity({ name: 'rfx_open_products' })
-@Unique(['rfxItemId', 'vendorId'])
-export class RfxOpenProduct extends Audit {
+@Entity({ name: 'rfx_product_invitations' })
+export class RfxProductInvitation extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   rfxItemId: string;
+
+  @Column()
+  productCatalogueId: string;
 
   @Column({ type: 'jsonb' })
   catalogueSpecificationValues: any;
@@ -36,12 +39,15 @@ export class RfxOpenProduct extends Audit {
 
   @Column({
     type: 'enum',
-    enum: ERfxOpenProductsStatus,
-    default: ERfxOpenProductsStatus.DRAFT,
+    enum: EInvitationStatus,
+    default: EInvitationStatus.DRAFT,
   })
-  status: ERfxOpenProductsStatus;
+  status: EInvitationStatus;
 
-  @ManyToOne(() => RFXItem, (item) => item.openProducts)
+  @OneToMany(() => SolOffer, (offer) => offer.rfxBidnvitation)
+  solOffers: SolOffer[];
+
+  @ManyToOne(() => RFXItem, (item) => item.rfxProductInvitations)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
 }

@@ -16,17 +16,19 @@ export class CreateOfferDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsUUID()
-  invitationId: string;
-
-  roundId: string;
+  rfxProductInvitationId: string;
 
   @ApiProperty()
-  @IsString()
-  price: string;
+  @IsNumber()
+  price: number;
+
+  solRoundId: string;
 
   vendorId: string;
 
-  registrationId: string;
+  solRegistrationId: string;
+
+  encryptedPrice: string;
 }
 
 export class UpdateOferDto extends CreateOfferDto {

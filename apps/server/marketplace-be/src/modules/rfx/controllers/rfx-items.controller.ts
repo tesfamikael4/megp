@@ -12,9 +12,4 @@ export class RFXItemController extends ExtraCrudController<RFXItem>({
   constructor(private readonly rfxItemService: RFXItemService) {
     super(rfxItemService);
   }
-
-  @Patch('submit/:rfxItemId')
-  async submit(@Param('rfxItemId') rfxItemId: string) {
-    return this.rfxItemService.submit(rfxItemId);
-  }
 }

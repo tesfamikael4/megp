@@ -40,7 +40,7 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
 
     if (!rfx) throw new NotFoundException('no rfx found');
 
-    await this.rfxService.isUpdatable(rfx);
+    await this.rfxService.validateUpdateRequest(rfx);
 
     const rfxBidQualification =
       this.rfxDocumentaryEvidenceRepository.create(itemData);
@@ -66,7 +66,7 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
       },
     });
 
-    await this.rfxService.isUpdatable(rfxDocEvidence.rfx);
+    await this.rfxService.validateUpdateRequest(rfxDocEvidence.rfx);
 
     const rfxDocUpdate = this.rfxDocumentaryEvidenceRepository.create(itemData);
     await this.rfxDocumentaryEvidenceRepository.update(id, itemData);
