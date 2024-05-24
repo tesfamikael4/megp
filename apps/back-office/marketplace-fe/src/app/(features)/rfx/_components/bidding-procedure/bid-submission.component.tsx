@@ -76,8 +76,6 @@ export default function BidSubmission() {
   const [createProcedure, { isLoading: isCreating }] = useCreateMutation();
   const [updateProcedure, { isLoading: isUpdating }] = useUpdateMutation();
 
-  logger.log(biddingProcedure);
-
   const onSubmit = async (data: FormSchema) => {
     try {
       if (biddingProcedure && biddingProcedure?.items?.length > 0) {
@@ -183,12 +181,14 @@ export default function BidSubmission() {
             render={({ field: { name, value, onChange } }) => (
               <NumberInput
                 name={name}
-                label="Bid Validity Period(in days)"
-                placeholder="Bid Validity Period(in days)"
+                label="Bid Validity Period (in days)"
+                placeholder="Bid Validity Period (in days)"
                 value={value}
                 className="w-[calc(50%-0.5rem)]"
                 onChange={onChange}
                 error={errors?.bidValidityPeriod?.message}
+                allowNegative={false}
+                suffix=" days"
                 withAsterisk
               />
             )}
@@ -199,12 +199,15 @@ export default function BidSubmission() {
             render={({ field: { name, value, onChange } }) => (
               <NumberInput
                 name={name}
-                label="Percentage Quantity Change(in %)"
-                placeholder="Percentage Quantity Change(in %)"
+                label="Percentage Quantity Change (in %)"
+                placeholder="Percentage Quantity Change (in %)"
                 leftSection={<IconPercentage />}
                 value={value}
                 className="w-[calc(50%-0.5rem)]"
+                suffix=" %"
                 onChange={onChange}
+                min={0}
+                max={100}
                 error={errors?.deltaPercentage?.message}
                 withAsterisk
               />
@@ -242,6 +245,7 @@ export default function BidSubmission() {
                         className="w-[calc(50%-0.5rem)]"
                         onChange={onChange}
                         error={errors?.round?.message}
+                        allowNegative={false}
                         withAsterisk
                       />
                     )}
@@ -252,11 +256,13 @@ export default function BidSubmission() {
                     render={({ field: { name, value, onChange } }) => (
                       <NumberInput
                         name={name}
-                        label="Round Duration(in mins)"
-                        placeholder="Round Duration(in mins)"
+                        label="Round Duration (in mins)"
+                        placeholder="Round Duration (in mins)"
                         value={value}
                         className="w-[calc(50%-0.5rem)]"
                         onChange={onChange}
+                        suffix=" mins"
+                        allowNegative={false}
                         error={errors?.round?.message}
                         withAsterisk
                       />
@@ -270,12 +276,14 @@ export default function BidSubmission() {
                     render={({ field: { name, value, onChange } }) => (
                       <NumberInput
                         name={name}
-                        label="Idle Time Between Rounds(in mins)"
-                        placeholder="Idle Time(in mins)"
+                        label="Idle Time Between Rounds (in mins)"
+                        placeholder="Idle Time (in mins)"
                         value={value}
                         className="w-[calc(50%-0.5rem)]"
+                        suffix=" mins"
                         onChange={onChange}
                         error={errors?.round?.message}
+                        allowNegative={false}
                         withAsterisk
                       />
                     )}
@@ -286,13 +294,15 @@ export default function BidSubmission() {
                     render={({ field: { name, value, onChange } }) => (
                       <NumberInput
                         name={name}
-                        label="Minimum Bid Decerement(in %)"
-                        placeholder="Minimum Bid Decerement(in %)"
+                        label="Minimum Bid Decerement (in %)"
+                        placeholder="Minimum Bid Decerement (in %)"
                         leftSection={<IconPercentage />}
                         value={value}
                         className="w-[calc(50%-0.5rem)]"
                         onChange={onChange}
                         error={errors?.round?.message}
+                        suffix=" %"
+                        allowNegative={false}
                         withAsterisk
                       />
                     )}

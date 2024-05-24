@@ -63,7 +63,7 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
-    entity: 'rfx-bid-invitations',
+    entity: 'rfx-product-invitations',
     baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
   },
   {
