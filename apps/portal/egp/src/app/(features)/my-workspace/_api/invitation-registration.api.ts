@@ -4,7 +4,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const getInvitationsApi = createApi({
   reducerPath: 'getInvitationsApi',
-  tagTypes: ['bid-invitation'],
+  tagTypes: ['product-invitation'],
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api/'),
   endpoints: (builder) => ({
@@ -16,30 +16,30 @@ export const getInvitationsApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/rfx-bid-invitations/my-invitations${q}`,
+          url: `/rfx-product-invitations/my-invitations${q}`,
           method: 'GET',
         };
       },
-      providesTags: ['bid-invitation'],
+      providesTags: ['product-invitation'],
     }),
     rfxDetail: builder.query<any, any>({
       query: (id: string) => {
         return {
-          url: `/rfx-bid-invitations/my-rfx-detail/${id}`,
+          url: `/rfx-product-invitations/my-rfx-detail/${id}`,
           method: 'GET',
         };
       },
-      providesTags: ['bid-invitation'],
+      providesTags: ['product-invitation'],
     }),
     register: builder.mutation<any, any>({
       query: (data) => {
         return {
-          url: `/rfx-bid-invitations/my-rfx-detail`,
+          url: `/rfx-product-invitations/my-rfx-detail`,
           method: 'POST',
           body: data,
         };
       },
-      invalidatesTags: ['bid-invitation'],
+      invalidatesTags: ['product-invitation'],
     }),
   }),
 });

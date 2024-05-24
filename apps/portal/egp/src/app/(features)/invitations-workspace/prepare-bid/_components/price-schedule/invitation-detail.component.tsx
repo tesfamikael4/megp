@@ -78,15 +78,13 @@ export default function InvitationDetail({
       if (!(itemOffer?.items?.[0]?.length > 0)) {
         await createItemOffer({
           ...data,
-          roundId: '8e0d9a06-a15c-4403-b160-d55127402d56',
-          invitationId: product?.id.toString(),
+          rfxProductInvitationId: product?.id.toString(),
           rfxItemId: product?.rfxItem?.id,
         }).unwrap();
       } else {
         await updateItemOffer({
           ...data,
-          roundId: '8e0d9a06-a15c-4403-b160-d55127402d56',
-          invitationId: product?.id.toString(),
+          rfxProductInvitationId: product?.id.toString(),
           rfxItemId: product?.rfxItem?.id,
         }).unwrap();
       }
@@ -119,13 +117,20 @@ export default function InvitationDetail({
     },
     {
       key: 'Delivery Location',
-      value: product?.catalogueDeliveryValues?.[0]?.address ?? '',
+      value: product?.catalogueDeliveryValues?.[0]?.address ?? 'Linogwe',
+    },
+    {
+      key: 'Delivery Days',
+      value: product?.catalogueDeliveryValues?.[0]?.deliverDays ?? '',
     },
   ];
 
   useEffect(() => {
     if (itemOffer) {
-      reset(itemOffer?.[0]?.items);
+      const offer = itemOffer?.[0]?.items?.find(
+        (item) => item?.id == product?.id,
+      );
+      if (offer) reset(offer);
     }
   }, [itemOffer]);
 
@@ -155,9 +160,11 @@ export default function InvitationDetail({
                       name={name}
                       label="Price"
                       placeholder="Price"
+                      prefix="MKW "
                       value={value}
                       className="w-full"
                       onChange={onChange}
+                      thousandSeparator=","
                       error={errors?.price?.message}
                       withAsterisk
                     />
@@ -190,6 +197,7 @@ export default function InvitationDetail({
                       name={name}
                       label="Total Price"
                       placeholder="Total Price"
+                      prefix="MKW "
                       value={value}
                       className="w-[calc(50%-0.5rem)]"
                       onChange={onChange}
