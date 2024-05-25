@@ -45,6 +45,12 @@
       "name": "Run Infrastructure ",
       "request": "launch",
       "type": "node-terminal"
+    },
+    {
+      "command": "cd .\\apps\\server\\rms-be\\ && npm run start:dev",
+      "name": "Run RMS ",
+      "request": "launch",
+      "type": "node-terminal"
     }
   ]
 }
