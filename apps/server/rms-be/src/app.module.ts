@@ -7,14 +7,11 @@ import {
   TypeOrmConfigService,
 } from 'megp-shared-be';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { EmailConfig } from 'megp-shared-be';
-import { MailerModule } from '@nestjs-modules/mailer';
 import { TenderNoticeModule } from './modules/tender-notice/tender-notice.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-    // MailerModule.forRootAsync({ useClass: EmailConfig }),
     AuthorizationModule,
     TenderNoticeModule,
   ],
