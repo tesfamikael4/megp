@@ -18,6 +18,8 @@ import { SorLabor } from './sor-labor.entity';
 import { SorDocument } from './sor-document.entity';
 import { BidResponseItem } from './bid-response-item.entity';
 import { OpenedBidResponseItem } from './opened-bid-response-item.entity';
+import { PriceAdjustingFactor } from './price-adjusting-factor.entity';
+import { BidPriceEvaluation } from './bid-price-evaluation.entity';
 
 @Entity({ name: 'items' })
 export class Item extends Audit {
@@ -105,4 +107,16 @@ export class Item extends Audit {
     (bidResponseItems) => bidResponseItems.item,
   )
   openedBidResponseItems: OpenedBidResponseItem[];
+
+  @OneToMany(
+    () => PriceAdjustingFactor,
+    (priceAdjustingFactor) => priceAdjustingFactor.item,
+  )
+  priceAdjustingFactors: PriceAdjustingFactor[];
+
+  @OneToMany(
+    () => BidPriceEvaluation,
+    (bidPriceEvaluation) => bidPriceEvaluation.item,
+  )
+  bidPriceEvaluations: BidPriceEvaluation[];
 }

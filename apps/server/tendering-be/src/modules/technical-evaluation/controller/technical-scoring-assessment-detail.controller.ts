@@ -39,36 +39,30 @@ export class TechnicalScoringAssessmentDetailController extends ExtraCrudControl
     );
   }
 
-  @Get('bidders-status/:lotId/:itemId/:isTeam')
+  // @AllowAnonymous()
+  @Get('bidders-status/:lotId')
   async passedBidders(
     @Param('lotId') lotId: string,
-    @Param('itemId') itemId: string,
-    @Param('isTeam') isTeam: string,
     @Req() req,
     @Query('q') q: string,
   ) {
     const query = decodeCollectionQuery(q);
     return await this.technicalScoringAssessmentDetailService.passedBidders(
       lotId,
-      isTeam,
       query,
       req,
     );
   }
 
-  @Get('checklist-status/:lotId/:itemId/:bidderId/:isTeam')
+  @Get('checklist-status/:lotId/:bidderId')
   async checklistStatus(
     @Param('lotId') lotId: string,
-    @Param('itemId') itemId: string,
-    @Param('isTeam') isTeam: string,
     @Param('bidderId') bidderId: string,
     @Req() req,
   ) {
     return await this.technicalScoringAssessmentDetailService.checklistStatus(
       lotId,
-      itemId,
       bidderId,
-      isTeam,
       req,
     );
   }
@@ -96,19 +90,17 @@ export class TechnicalScoringAssessmentDetailController extends ExtraCrudControl
   //   );
   // }
 
-  @Get('evaluator-report/:lotId/:itemId/:bidderId/:isTeam')
+  @Get('evaluator-report/:lotId/:itemId/:bidderId')
   async evaluatorReport(
     @Param('bidderId') bidderId: string,
     @Param('itemId') itemId: string,
     @Param('lotId') lotId: string,
-    @Param('isTeam') isTeam: string,
     @Req() req: any,
   ) {
     return await this.technicalScoringAssessmentDetailService.evaluatorReport(
       lotId,
       itemId,
       bidderId,
-      isTeam,
       req,
     );
   }

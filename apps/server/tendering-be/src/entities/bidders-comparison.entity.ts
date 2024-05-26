@@ -55,11 +55,29 @@ export class BiddersComparison extends Audit {
   })
   bidderStatusTxt: string;
 
-  @Column({ default: 0 })
-  technicalPoints: number;
+  @Column({ nullable: true })
+  technicalScore: number;
 
-  @Column({ default: 0 })
-  financialPoints: number;
+  @Column({ nullable: true })
+  adjustedTechnicalScore: number;
+
+  @Column({ nullable: true })
+  technicalRank: number;
+
+  @Column({ nullable: true })
+  financialScore: number;
+
+  @Column({ nullable: true })
+  adjustedFinancialScore: number;
+
+  @Column({ nullable: true })
+  financialRank: number;
+
+  @Column({ nullable: true })
+  totalScore: number;
+
+  @Column({ nullable: true })
+  Rank: number;
 
   @Column({ default: true })
   isCurrent: boolean;

@@ -432,7 +432,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
         .getRepository(TechnicalResponsivenessAssessment)
         .create({
           bidRegistrationDetailId: bidRegistrationDetail.id,
-          evaluatorId: itemData.userId,
+          evaluatorId: itemData.evaluatorId,
           evaluatorName: itemData.evaluatorName,
           isTeamAssessment: itemData.isTeamAssessment,
           submit: false,

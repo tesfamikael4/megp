@@ -23,6 +23,9 @@ import { MilestonesTracker } from './milestones-tracker.entity';
 import { BidGuarantee } from './bid-guarantee.entity';
 import { EqcDocumentaryEvidence } from './eqc-documentary-evidence.entity';
 import { TenderMilestone } from './tender-milestone.entity';
+import { PriceAdjustingFactor } from './price-adjusting-factor.entity';
+import { ExchangeRate } from './exchange-rate.entity';
+import { BidPriceEvaluation } from './bid-price-evaluation.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -113,4 +116,19 @@ export class Lot extends Audit {
     (tenderTenderMilestone) => tenderTenderMilestone.lot,
   )
   tenderMilestones: TenderMilestone[];
+
+  @OneToMany(
+    () => PriceAdjustingFactor,
+    (priceAdjustingFactor) => priceAdjustingFactor.lot,
+  )
+  priceAdjustingFactors: PriceAdjustingFactor[];
+
+  @OneToMany(() => ExchangeRate, (exchangeRate) => exchangeRate.lot)
+  exchangeRates: ExchangeRate[];
+
+  @OneToMany(
+    () => BidPriceEvaluation,
+    (bidPriceEvaluation) => bidPriceEvaluation.lot,
+  )
+  bidPriceEvaluations: BidPriceEvaluation[];
 }
