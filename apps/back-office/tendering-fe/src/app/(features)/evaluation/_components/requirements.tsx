@@ -21,7 +21,8 @@ export const Requirements = ({
   milestone:
     | 'technicalCompliance'
     | 'technicalQualification'
-    | 'technicalResponsiveness';
+    | 'technicalResponsiveness'
+    | 'technicalScoring';
   teamAssessment?: boolean;
 }) => {
   const [getPreliminaryRequirements, { data: preliminaryRequirements }] =
