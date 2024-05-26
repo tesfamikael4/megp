@@ -25,7 +25,8 @@ export const PreviewDocument = ({
   milestone:
     | 'technicalCompliance'
     | 'technicalQualification'
-    | 'technicalResponsiveness';
+    | 'technicalResponsiveness'
+    | 'technicalScoring';
   teamAssessment?: boolean;
 }) => {
   const [page, setPage] = useState<'teamAssessment' | 'documentPreview'>(
@@ -41,7 +42,7 @@ export const PreviewDocument = ({
     getResponsivenessTeamAssessment,
     { isLoading: isResponsivenessTeamAssessmentLoading },
   ] = useLazyGetResponsivenessMembersAssessmentResultQuery();
-  const { lotId, bidderId, requirementId } = useParams();
+  const { lotId, bidderId, requirementId, itemId } = useParams();
   const [getEqcPreliminaryExamination] =
     useLazyGetEqcPreliminaryExaminationQuery();
   const [getEqcQualification] = useLazyGetEqcQualificationQuery();
@@ -83,6 +84,7 @@ export const PreviewDocument = ({
           lotId,
           bidderId,
           requirementId,
+          itemId,
         }).unwrap();
 
         const temp = res.map((e) => ({

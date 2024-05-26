@@ -19,7 +19,8 @@ export const BidderOverView = ({
   milestone:
     | 'technicalCompliance'
     | 'technicalQualification'
-    | 'technicalResponsiveness';
+    | 'technicalResponsiveness'
+    | 'technicalScoring';
 }) => {
   const { tenderId, lotId, bidderId, itemId } = useParams();
   const router = useRouter();

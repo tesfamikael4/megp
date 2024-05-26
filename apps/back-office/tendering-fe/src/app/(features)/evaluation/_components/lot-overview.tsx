@@ -37,7 +37,8 @@ export const LotOverview = ({
   milestone:
     | 'technicalCompliance'
     | 'technicalQualification'
-    | 'technicalResponsiveness';
+    | 'technicalResponsiveness'
+    | 'technicalScoring';
 }) => {
   const { tenderId, lotId } = useParams();
   const router = useRouter();
@@ -155,46 +156,47 @@ export const LotOverview = ({
         collapsible={false}
         action={
           <Group gap="md">
-            {lotStatus?.isTeamLead?.isTeam && (
-              <Button
-                variant="outline"
-                onClick={() => {
-                  let url = '';
-                  if (milestone === 'technicalCompliance' && teamAssessment)
-                    url = `/evaluation/${tenderId}/${lotId}/preliminary`;
-                  else if (
-                    milestone === 'technicalCompliance' &&
-                    !teamAssessment
-                  )
-                    url = `/evaluation/team-assessment/${tenderId}/${lotId}/preliminary`;
-                  else if (
-                    milestone === 'technicalQualification' &&
-                    teamAssessment
-                  )
-                    url = `/evaluation/${tenderId}/${lotId}/qualification`;
-                  else if (
-                    milestone === 'technicalQualification' &&
-                    !teamAssessment
-                  )
-                    url = `/evaluation/team-assessment/${tenderId}/${lotId}/qualification`;
-                  else if (
-                    milestone === 'technicalResponsiveness' &&
-                    teamAssessment
-                  )
-                    url = `/evaluation/${tenderId}/${lotId}/responsiveness`;
-                  else if (
-                    milestone === 'technicalResponsiveness' &&
-                    !teamAssessment
-                  )
-                    url = `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness`;
+            {milestone !== 'technicalScoring' &&
+              lotStatus?.isTeamLead?.isTeam && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    let url = '';
+                    if (milestone === 'technicalCompliance' && teamAssessment)
+                      url = `/evaluation/${tenderId}/${lotId}/preliminary`;
+                    else if (
+                      milestone === 'technicalCompliance' &&
+                      !teamAssessment
+                    )
+                      url = `/evaluation/team-assessment/${tenderId}/${lotId}/preliminary`;
+                    else if (
+                      milestone === 'technicalQualification' &&
+                      teamAssessment
+                    )
+                      url = `/evaluation/${tenderId}/${lotId}/qualification`;
+                    else if (
+                      milestone === 'technicalQualification' &&
+                      !teamAssessment
+                    )
+                      url = `/evaluation/team-assessment/${tenderId}/${lotId}/qualification`;
+                    else if (
+                      milestone === 'technicalResponsiveness' &&
+                      teamAssessment
+                    )
+                      url = `/evaluation/${tenderId}/${lotId}/responsiveness`;
+                    else if (
+                      milestone === 'technicalResponsiveness' &&
+                      !teamAssessment
+                    )
+                      url = `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness`;
 
-                  router.push(url);
-                }}
-                disabled={!lotStatus?.canTeamAssess}
-              >
-                {teamAssessment ? 'Personal Assessment' : 'Team Assessment'}
-              </Button>
-            )}
+                    router.push(url);
+                  }}
+                  disabled={!lotStatus?.canTeamAssess}
+                >
+                  {teamAssessment ? 'Personal Assessment' : 'Team Assessment'}
+                </Button>
+              )}
             <Button
               onClick={onSubmit}
               loading={
@@ -202,7 +204,11 @@ export const LotOverview = ({
                 isQualificationLoading ||
                 isResponsivenessLoading
               }
-              disabled={lotStatus?.hasCompleted ?? true}
+              disabled={
+                teamAssessment
+                  ? lotStatus?.isTeamLead?.hasCompleted ?? true
+                  : lotStatus?.hasCompleted ?? true
+              }
             >
               Complete
             </Button>

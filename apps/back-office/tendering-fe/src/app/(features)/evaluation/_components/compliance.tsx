@@ -23,7 +23,8 @@ export const ComplianceAssessment = ({
   milestone:
     | 'technicalCompliance'
     | 'technicalQualification'
-    | 'technicalResponsiveness';
+    | 'technicalResponsiveness'
+    | 'technicalScoring';
   teamAssessment?: boolean;
 }) => {
   const {
@@ -74,6 +75,7 @@ export const ComplianceAssessment = ({
           bidderId,
           tenderId,
           itemId,
+          isTeamAssessment: teamAssessment,
         };
         await createTechnicalResponsivenessAssessment(castedData).unwrap();
       }
