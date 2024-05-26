@@ -53,12 +53,6 @@ export class FinancialEvaluation1716711461220 implements MigrationInterface {
       `ALTER TABLE "bidders_comparisons" ADD "Rank" integer`,
     );
     await queryRunner.query(
-      `ALTER TABLE "tenders" ALTER COLUMN "budgetAmount" TYPE numeric(10,2)`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "tenders" ALTER COLUMN "marketEstimate" TYPE numeric(10,2)`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "technical_responsiveness_assessment_details" ADD CONSTRAINT "UQ_2a5dc04a81e364246e1dfbe2259" UNIQUE ("sorTechnicalRequirementId", "technicalResponsivenessAssessmentId")`,
     );
     await queryRunner.query(
@@ -108,12 +102,6 @@ export class FinancialEvaluation1716711461220 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "technical_responsiveness_assessment_details" DROP CONSTRAINT "UQ_2a5dc04a81e364246e1dfbe2259"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "tenders" ALTER COLUMN "marketEstimate" TYPE numeric`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "tenders" ALTER COLUMN "budgetAmount" TYPE numeric`,
     );
     await queryRunner.query(
       `ALTER TABLE "bidders_comparisons" DROP COLUMN "Rank"`,
