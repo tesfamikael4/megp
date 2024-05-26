@@ -67,18 +67,12 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
     }
     return response;
   }
-  async passedBidders(
-    lotId: string,
-    isTeam: string,
-    query: CollectionQuery,
-    req: any,
-  ) {
+  async passedBidders(lotId: string, query: CollectionQuery, req: any) {
     // Functionality: Checks if the current user (opener) is part of the team for the given lot,
     // then checks if the opener has completed the spd compliance for each bidder.
     //Todo check if the opener is in the team
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const evaluatorId = req.user.userId;
-    const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
 
     const [passed, eqcChecklist] = await Promise.all([
       manager.getRepository(BiddersComparison).find({
@@ -86,8 +80,8 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
           bidRegistrationDetail: {
             lotId: lotId,
           },
-          milestoneNum: 303,
-          bidderStatus: 304,
+          milestoneNum: 305,
+          bidderStatus: 308,
           isCurrent: true,
         },
         relations: {
@@ -153,9 +147,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
       const test = checklists.filter(
         (x) =>
           x.technicalScoringAssessment.bidRegistrationDetail.bidRegistration
-            .bidderId ==
-            bidder.bidRegistrationDetail.bidRegistration.bidderId &&
-          x.technicalScoringAssessment.isTeamAssessment == isTeamAssessment,
+            .bidderId == bidder.bidRegistrationDetail.bidRegistration.bidderId,
       );
       if (checklists.length == 0) {
         response.items.push({
@@ -168,8 +160,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
           (x) =>
             x.technicalScoringAssessment.bidRegistrationDetail.bidRegistration
               .bidderId ==
-              bidder.bidRegistrationDetail.bidRegistration.bidderId &&
-            x.technicalScoringAssessment.isTeamAssessment == isTeamAssessment,
+            bidder.bidRegistrationDetail.bidRegistration.bidderId,
         ).length
       ) {
         response.items.push({
@@ -181,8 +172,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
           (x) =>
             x.technicalScoringAssessment.bidRegistrationDetail.bidRegistration
               .bidderId ==
-              bidder.bidRegistrationDetail.bidRegistration.bidderId &&
-            x.technicalScoringAssessment.isTeamAssessment == isTeamAssessment,
+            bidder.bidRegistrationDetail.bidRegistration.bidderId,
         ).length == 0
       ) {
         response.items.push({
@@ -197,24 +187,15 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
       }
     }
     return response;
-
-    // return bidders
   }
 
-  async checklistStatus(
-    lotId: string,
-    itemId: string,
-    bidderId: string,
-    isTeam: string,
-    req: any,
-  ) {
+  async checklistStatus(lotId: string, bidderId: string, req: any) {
     const evaluatorId = req.user.userId;
-    const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const [spdChecklist, checklists] = await Promise.all([
-      manager.getRepository(SorTechnicalRequirement).find({
+    const [eqcChecklist, checklists] = await Promise.all([
+      manager.getRepository(EqcTechnicalScoring).find({
         where: {
-          itemId,
+          lotId,
         },
       }),
       // Todo: check if the opener is the team member
@@ -236,18 +217,15 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
         },
       }),
     ]);
-    const response = spdChecklist.map((spdChecklist) => ({
-      ...spdChecklist,
-      check: checklists.find(
-        (x) =>
-          x.eqcTechnicalScoringId == spdChecklist.id &&
-          x.technicalScoringAssessment.isTeamAssessment == isTeamAssessment,
-      )
+    const response = eqcChecklist.map((eqcChecklist) => ({
+      ...eqcChecklist,
+      check: checklists.find((x) => x.eqcTechnicalScoringId == eqcChecklist.id)
         ? true
         : false,
     }));
 
-    return this.groupChecklist(response);
+    // return this.groupChecklist(response);
+    return response;
   }
 
   async groupChecklist(items: any[]) {
@@ -312,7 +290,6 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
               },
               evaluatorId,
               submit: false,
-              isTeamAssessment: false,
             },
           },
         }),
@@ -323,7 +300,6 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
                 lotId,
               },
               submit: false,
-              isTeamAssessment: false,
             },
           },
         }),
@@ -351,7 +327,6 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
                 lotId,
               },
               evaluatorId,
-              isTeamAssessment: true,
               submit: false,
             },
           },
@@ -364,7 +339,6 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
                 //
               },
               evaluatorId,
-              isTeamAssessment: true,
             },
           },
         }),
@@ -418,7 +392,6 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
       .findOne({
         where: {
           bidRegistrationDetailId,
-          isTeamAssessment: itemData.isTeamAssessment,
         },
       });
 
@@ -427,7 +400,6 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
         bidRegistrationDetailId: bidder.bidRegistrationDetails[0]?.id,
         evaluatorId: req.user.userId,
         evaluatorName: req.user.firstName + ' ' + req.user.lastName,
-        isTeamAssessment: itemData.isTeamAssessment,
         submit: false,
         // technicalScoringAssessmentDetail: [itemD]
       });
@@ -582,10 +554,8 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
     lotId: string,
     itemId: string,
     bidderId: string,
-    isTeam: string,
     req: any,
   ): Promise<any> {
-    const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const [technicalScoringAssessmentDetail, spdChecklist] = await Promise.all([
       manager.getRepository(TechnicalScoringAssessmentDetail).find({
@@ -599,7 +569,6 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
               },
             },
             evaluatorId: req.user.userId,
-            isTeamAssessment: isTeamAssessment,
           },
         },
         relations: {
@@ -610,9 +579,6 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
           // qualified: true,
           eqcTechnicalScoringId: true,
           remark: true,
-          technicalScoringAssessment: {
-            isTeamAssessment: true,
-          },
         },
       }),
       manager.getRepository(SorTechnicalRequirement).find({

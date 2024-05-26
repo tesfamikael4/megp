@@ -48,9 +48,6 @@ export class TechnicalScoringAssessment {
   @Column()
   evaluatorName: string;
 
-  @Column({ type: 'boolean', default: false })
-  isTeamAssessment: boolean;
-
   @Column()
   totalPoints: number;
 
