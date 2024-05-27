@@ -24,7 +24,29 @@ export const procurementRequisitionApi = createApi({
       },
       providesTags: ['procurement-requisition'],
     }),
+    getPRDetail: builder.query<any, any>({
+      query: (id: string) => {
+        return {
+          url: `/procurement-requisitions/${id}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['procurement-requisition'],
+    }),
+    getAnalytics: builder.query<any, any>({
+      query: (id: string) => {
+        return {
+          url: `/procurement-mechanisms/list/${id}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['procurement-requisition'],
+    }),
   }),
 });
 
-export const { useLazyGetApprovedPRQuery } = procurementRequisitionApi;
+export const {
+  useLazyGetApprovedPRQuery,
+  useLazyGetPRDetailQuery,
+  useLazyGetAnalyticsQuery,
+} = procurementRequisitionApi;
