@@ -529,7 +529,9 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
           milestoneNum: TenderMilestoneEnum.TechnicalQualification,
           milestoneTxt: 'TechnicalQualification',
           bidderStatus:
-            list.qualified == EvaluationStatusEnum.COMPLY ? 304 : 303,
+            list.qualified == EvaluationStatusEnum.COMPLY
+              ? BidderStatusEnum.TechnicalQualificationSucceeded
+              : BidderStatusEnum.TechnicalQualificationFailed,
           bidderStatusTxt:
             list.qualified == EvaluationStatusEnum.COMPLY
               ? 'TechnicalQualificationSucceeded'

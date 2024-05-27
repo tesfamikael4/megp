@@ -27,6 +27,7 @@ import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
 import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { CompleteBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
+import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 
 @Injectable()
 export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudService<TechnicalPreliminaryAssessmentDetail> {
@@ -454,7 +455,10 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
           bidRegistrationDetailId: list.bidRegistrationDetailId,
           milestoneNum: 303,
           milestoneTxt: 'TechnicalCompliance',
-          bidderStatus: list.qualified == 'COMPLY' ? 304 : 303,
+          bidderStatus:
+            list.qualified == 'COMPLY'
+              ? BidderStatusEnum.TechnicalComplianceSucceeded
+              : BidderStatusEnum.TechnicalComplianceFailed,
           bidderStatusTxt:
             list.qualified == 'COMPLY'
               ? 'TechnicalComplianceSucceeded'
