@@ -26,3 +26,5 @@ export * from './contract-allocated-item.entity';
 export * from './contract-beneficiary.entity';
 export * from './contract-item.entity';
 export * from './contract-item-price.entity';
+
+export * from './tax.entity';
