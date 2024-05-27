@@ -531,6 +531,13 @@ export class TenderService extends EntityCrudService<Tender> {
     }
   }
 
+  async softDelete(id: string, req?: any): Promise<void> {
+    const item = await this.findOneOrFail(id);
+    await this.tenderRepository.update(item.id, {
+      status: 'RE_ADVERTISE',
+    });
+  }
+
   private async downloadAndConvert(fileInfo: any, data: any) {
     const fileReadable = await this.minIOService.downloadBuffer(fileInfo);
     const fileBuffer =

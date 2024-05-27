@@ -103,4 +103,11 @@ export class LotService extends ExtraCrudService<Lot> {
     }
     return response;
   }
+
+  async softDelete(id: string, req?: any): Promise<void> {
+    const item = await this.findOneOrFail(id);
+    await this.lotRepository.update(item.id, {
+      status: 'RE_ADVERTISE',
+    });
+  }
 }

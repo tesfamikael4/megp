@@ -12,4 +12,11 @@ export class ItemService extends ExtraCrudService<Item> {
   ) {
     super(ItemRepository);
   }
+
+  async softDelete(id: string, req?: any): Promise<void> {
+    const item = await this.findOneOrFail(id);
+    await this.ItemRepository.update(item.id, {
+      status: 'RE_ADVERTISE',
+    });
+  }
 }

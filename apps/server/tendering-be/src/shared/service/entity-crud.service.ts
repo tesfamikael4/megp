@@ -79,7 +79,7 @@ export class EntityCrudService<T extends ObjectLiteral> {
     return response;
   }
 
-  private async findOneOrFail(id: any): Promise<T> {
+  async findOneOrFail(id: any): Promise<T> {
     const item = await this.repository.findOneBy({ id });
     if (!item) {
       throw new NotFoundException(`not_found`);

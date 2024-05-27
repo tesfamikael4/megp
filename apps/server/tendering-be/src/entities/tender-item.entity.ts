@@ -69,6 +69,9 @@ export class Item extends Audit {
   @Column({ type: 'jsonb', nullable: true })
   metaData: any;
 
+  @Column({ default: 'ACTIVE' })
+  status: string;
+
   @OneToMany(
     () => SorTechnicalRequirement,
     (technicalRequirement) => technicalRequirement.item,
