@@ -1,5 +1,4 @@
 import {
-  LoadingOverlay,
   Stack,
   Button,
   TextInput,
@@ -9,33 +8,24 @@ import {
   Menu,
   Checkbox,
   Paper,
-  Divider,
   Badge,
-  Box,
   Flex,
-  MenuDropdown,
   Select,
   Loader,
-  Switch,
 } from '@mantine/core';
-import { ReactElement, useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { DragTable, Table, TableConfig } from '@megp/core-fe';
+import { useEffect, useState } from 'react';
+import { Table, TableConfig } from '@megp/core-fe';
 import {
   IconCirclePlus,
   IconDeviceFloppy,
   IconDotsVertical,
   IconEdit,
-  IconEye,
   IconMenuOrder,
-  IconPlus,
   IconTrash,
-  IconX,
 } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useDisclosure } from '@mantine/hooks';
-import { closestCenter, DndContext, DragOverlay } from '@dnd-kit/core';
+import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
   arrayMove,
   SortableContext,
@@ -89,10 +79,15 @@ const Method = ({ cell, selected, setSelected }: any) => {
   );
 };
 
-export function Steps({ activityId }: { activityId: string }) {
+export function Steps({
+  activityId,
+  key,
+}: {
+  activityId: string;
+  key?: string;
+}) {
   const { user } = useAuth();
   const [data, setData] = useState<any>([]);
-  // const activityId = '1f344819-d64d-4986-b192-ee06f5bf0e98';
   const [orderedData, setOrderedData] = useState<any>(data);
   const [opened, { open, close }] = useDisclosure(false);
   const { data: defaultSteps, isLoading: isFetchingDefaultSteps } =

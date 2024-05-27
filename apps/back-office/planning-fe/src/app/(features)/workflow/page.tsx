@@ -5,7 +5,7 @@ import { Skeleton, Stack } from '@mantine/core';
 import { useGetActivitiesQuery } from '@/store/api/workflow/workflow.api';
 
 export default function WorkflowPage() {
-  const { data: activites } = useGetActivitiesQuery({});
+  const { data: activites } = useGetActivitiesQuery({ key: 'planning' });
   if (!activites)
     return (
       <>
@@ -17,17 +17,11 @@ export default function WorkflowPage() {
     );
   return (
     <Stack>
-      {activites?.items.map((e, index) => (
+      {activites?.items?.map((e, index) => (
         <Section key={index} title={e.title} subTitle="Steps" defaultCollapsed>
           <Steps activityId={e.id} />
         </Section>
       ))}
-      {/* <Section title="A1" subTitle="Steps" defaultCollapsed>
-        <Steps />
-      </Section>
-      <Section title="A2" subTitle="Steps" defaultCollapsed>
-        <Steps />
-      </Section> */}
     </Stack>
   );
 }

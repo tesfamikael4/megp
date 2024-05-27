@@ -6,12 +6,14 @@ export const workflowApi = createApi({
   refetchOnFocus: true,
   tagTypes: ['Steps', 'activity', 'Activities'],
   baseQuery: baseQuery(
-    // baseUrl: process.env.NEXT_PUBLIC_WORKFLOW_API ?? '/workflow/api/',
     process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/api/',
   ),
   endpoints: (builder) => ({
     getActivities: builder.query<any, { workFlowId: string }>({
       query: (payload) => `roles/list/${payload.workFlowId}`,
+    }),
+    getWorkflows: builder.query<any, any>({
+      query: () => `workflow`,
     }),
     addActivity: builder.mutation<any, any>({
       query: (data) => ({
@@ -67,4 +69,6 @@ export const {
   useAddPermissionsMutation,
   useGetDefaultStepsQuery,
   useAddActivityMutation,
+  useLazyGetWorkflowsQuery,
+  useGetWorkflowsQuery,
 } = workflowApi;
