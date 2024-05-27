@@ -1,6 +1,7 @@
 import {
   LoadingOverlay,
   NativeSelect,
+  Select,
   Stack,
   TextInput,
   Textarea,
@@ -8,7 +9,7 @@ import {
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useReadQuery,
   useDeleteMutation,
@@ -42,7 +43,7 @@ export function QualificationFormDetail({
     category: z.string().optional(),
     factor: z.string().min(1, { message: 'This field is required' }),
     requirement: z.string().min(1, { message: 'This field is required' }),
-    formLink: z.string().min(1, { message: 'This field is required' }),
+    bidFormId: z.string().min(1, { message: 'This field is required' }),
     itbDescription: z.string().min(1, { message: 'This field is required' }),
     itbReference: z.string().min(1, { message: 'This field is required' }),
     singleEntityCondition: z.object({
@@ -72,6 +73,7 @@ export function QualificationFormDetail({
     handleSubmit,
     reset,
     formState: { errors },
+    control,
     register,
   } = useForm({
     resolver: zodResolver(qualificationSchema),
@@ -109,11 +111,9 @@ export function QualificationFormDetail({
     try {
       await update({
         ...data,
-        pdId: id,
-        value: '',
+        lotId: lotId,
         category: type,
         order: 1,
-        mandate: '',
         id: adId?.toString(),
       });
       notify('Success', 'Qualification updated successfully');
@@ -150,7 +150,7 @@ export function QualificationFormDetail({
         jvCombinedPartnerCondition: selected?.jvCombinedPartnerCondition,
         jvEachPartnerCondition: selected?.jvEachPartnerCondition,
         jvAtleastOnePartnerCondition: selected?.jvAtleastOnePartnerCondition,
-        formLink: selected?.formLink,
+        bidFormId: selected?.bidFormId,
         isRequired: selected?.isRequired,
         itbDescription: selected?.itbDescription,
         itbReference: selected?.itbReference,
@@ -293,21 +293,29 @@ export function QualificationFormDetail({
         />
       </div>
 
-      <NativeSelect
-        placeholder="Bid Form Link"
-        withAsterisk
-        label="Bid Form Link"
-        className="w-1/2"
-        error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
-        data={
-          bidFormLinks?.items
-            ? bidFormLinks?.items.map((link) => ({
-                label: link.title,
-                value: link.code,
-              }))
-            : []
-        }
-        {...register('formLink')}
+      <Controller
+        name="bidFormId"
+        control={control}
+        render={({ field: { name, value, onChange } }) => (
+          <Select
+            placeholder="Bid Form Link"
+            className="w-1/2"
+            label="Bid Form Link"
+            value={value}
+            data={
+              bidFormLinks?.items
+                ? bidFormLinks?.items.map((link) => ({
+                    label: link.title,
+                    value: link.id,
+                  }))
+                : []
+            }
+            onChange={(d) => onChange(d)}
+            error={
+              errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
+            }
+          />
+        )}
       />
 
       <EntityButton

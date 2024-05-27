@@ -76,22 +76,6 @@ export default function DocumentaryEvidence({
               )}
               <Text size="sm">Check On First Opening</Text>
             </Flex>
-            <Flex gap={'sm'}>
-              {evidence.checkOnSecondCompliance ? (
-                <IconCircleCheck className="w-4" />
-              ) : (
-                <IconCircleX className="w-4" />
-              )}
-              <Text size="sm">Check On Second Compliance</Text>
-            </Flex>
-            <Flex gap={'sm'}>
-              {evidence.checkOnSecondOpening ? (
-                <IconCircleCheck className="w-4" />
-              ) : (
-                <IconCircleX className="w-4" />
-              )}
-              <Text size="sm">Check On Second Opening</Text>
-            </Flex>
           </Flex>
         ),
       },

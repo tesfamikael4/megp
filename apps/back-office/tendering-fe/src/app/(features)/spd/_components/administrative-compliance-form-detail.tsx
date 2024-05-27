@@ -40,7 +40,7 @@ export function SpdAdministrativeComplianceFormDetail({
     type: z.enum(['technical', 'financial']).optional(),
     itbDescription: z.string().min(1, { message: 'This field is required' }),
     itbReference: z.string().min(1, { message: 'This field is required' }),
-    formLink: z.string().min(1, { message: 'This field is required' }),
+    bidFromId: z.string().min(1, { message: 'This field is required' }),
   });
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const {
@@ -116,7 +116,7 @@ export function SpdAdministrativeComplianceFormDetail({
         criteria: selected?.criteria,
         type: selected?.type,
         itbReference: selected?.itbReference,
-        formLink: selected?.formLink,
+        bidFromId: selected?.bidFromId,
         itbDescription: selected?.itbDescription,
       });
     }
@@ -156,19 +156,19 @@ export function SpdAdministrativeComplianceFormDetail({
         {...register('itbDescription')}
       />
       <NativeSelect
-        placeholder="FormLink"
+        placeholder="Form Link"
         withAsterisk
         label="Bid Form Link"
-        error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
+        error={errors?.bidFromId ? errors?.bidFromId?.message?.toString() : ''}
         data={
           data?.items
             ? data?.items.map((link) => ({
                 label: link.title,
-                value: link.code,
+                value: link.id,
               }))
             : []
         }
-        {...register('formLink')}
+        {...register('bidFromId')}
       />
 
       <EntityButton

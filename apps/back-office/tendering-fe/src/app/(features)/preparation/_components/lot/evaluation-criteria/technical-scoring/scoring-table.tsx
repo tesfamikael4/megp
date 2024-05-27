@@ -142,6 +142,7 @@ export function ScoringTable({
           {
             accessor: 'requirement',
             title: 'Requirement',
+            width: 500,
             noWrap: true,
             render: ({ id, requirement }) => (
               <>
@@ -151,7 +152,7 @@ export function ScoringTable({
                   ) : (
                     <IconChevronRight size={20} />
                   )}
-                  <span>{requirement}</span>
+                  <Text className="w-full line-clamp-2">{requirement}</Text>
                 </div>
               </>
             ),
@@ -324,6 +325,7 @@ export function NodeTree({
           {
             accessor: 'requirement',
             noWrap: true,
+            width: 500,
             render: ({ id, requirement }) => (
               <Box component="span" className="flex" ml={20 + padding}>
                 {scoring.filter((s) => s.parentId === id).length > 0 &&
@@ -332,7 +334,7 @@ export function NodeTree({
                   ) : (
                     <IconChevronRight size={20} />
                   ))}
-                <span>{requirement}</span>
+                <Text className="w-full line-clamp-2">{requirement}</Text>
               </Box>
             ),
           },

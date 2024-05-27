@@ -40,7 +40,7 @@ export function SpdQualificationFormDetail({
     category: z.string().optional(),
     factor: z.string().min(1, { message: 'This field is required' }),
     requirement: z.string().optional(),
-    formLink: z.string().min(1, { message: 'This field is required' }),
+    bidFormId: z.string().min(1, { message: 'This field is required' }),
     itbDescription: z.string().min(1, { message: 'This field is required' }),
     itbReference: z.string().min(1, { message: 'This field is required' }),
   });
@@ -116,7 +116,7 @@ export function SpdQualificationFormDetail({
         category: selected?.category,
         factor: selected?.factor,
         requirement: selected?.requirement,
-        formLink: selected?.formLink,
+        bidFormId: selected?.bidFormId,
         isRequired: selected?.isRequired,
         itbDescription: selected?.itbDescription,
         itbReference: selected?.itbReference,
@@ -179,16 +179,16 @@ export function SpdQualificationFormDetail({
         placeholder="Bid Form Link"
         withAsterisk
         label="Form Link"
-        error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
+        error={errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''}
         data={
           bidFormLinks?.items
             ? bidFormLinks?.items.map((link) => ({
                 label: link.title,
-                value: link.code,
+                value: link.id,
               }))
             : []
         }
-        {...register('formLink')}
+        {...register('bidFormId')}
       />
 
       <EntityButton

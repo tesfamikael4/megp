@@ -43,9 +43,10 @@ export default function Qualification({ lotId }: { lotId: string }) {
         width: 300,
       },
       {
-        accessor: 'formLink',
-        title: 'Document Requirement',
+        accessor: 'bidFormId',
+        title: 'Bid Form Link',
         width: 150,
+        render: (record) => <Box>{record.bidForm?.title}</Box>,
       },
       {
         accessor: 'action',
@@ -136,6 +137,7 @@ export default function Qualification({ lotId }: { lotId: string }) {
     trigger({
       id: lotId,
       collectionQuery: {
+        includes: ['bidForm'],
         ...request,
       },
     });
@@ -145,16 +147,20 @@ export default function Qualification({ lotId }: { lotId: string }) {
     close();
     trigger({
       id: lotId,
-      collectionQuery: {},
+      collectionQuery: {
+        includes: ['bidForm'],
+      },
     });
   };
 
   useEffect(() => {
     trigger({
       id: lotId,
-      collectionQuery: {},
+      collectionQuery: {
+        includes: ['bidForm'],
+      },
     });
-  }, [lotId]);
+  }, [lotId, trigger]);
 
   const onEditCategory = (category: string) => {
     openEditor();
@@ -181,69 +187,73 @@ export default function Qualification({ lotId }: { lotId: string }) {
   return (
     <>
       {Object.keys(qualificationList).map((item, index) => (
-        <Section
-          title={item}
-          collapsible={true}
-          defaultCollapsed={true}
-          className="capitalize"
-          action={
-            <Flex gap={'md'}>
-              <Button onClick={() => onEditCategory(item)} variant="light">
-                <IconPencil size={14} /> Edit Category
-              </Button>
-              <Button onClick={open}>
-                <IconPlus size={14} /> Add
-              </Button>
-            </Flex>
-          }
-          key={index}
-        >
-          <ExpandableTable
-            config={config}
-            data={qualificationList[item] ?? []}
-            total={qualificationList[item].length ?? 0}
-            onRequestChange={onRequestChange}
-          />
-          <Modal
-            opened={opened}
-            size={'50%'}
-            onClose={close}
-            withCloseButton={false}
+        <Box key={index} className="my-2">
+          <Section
+            title={item}
+            collapsible={true}
+            defaultCollapsed={true}
+            className="capitalize"
+            action={
+              <Flex gap={'md'}>
+                <Button onClick={() => onEditCategory(item)} variant="light">
+                  <IconPencil size={14} /> Edit Category
+                </Button>
+                <Button onClick={open}>
+                  <IconPlus size={14} /> Add
+                </Button>
+              </Flex>
+            }
           >
-            <div className="flex justify-between">
-              <h2 className="font-medium text-lg capitalize">{item}</h2>
-              <IconX onClick={close} />
-            </div>
-            <Divider mt={'md'} mb={'md'} />
-            <Box className="bg-white rounded shadow-sm mx-2">
-              <QualificationFormDetail
-                mode={mode}
-                adId={qId}
-                type={item}
-                lotId={lotId}
-                returnFunction={onReturnFunction}
-              />
-            </Box>
-          </Modal>
+            <ExpandableTable
+              config={config}
+              data={qualificationList[item] ?? []}
+              total={qualificationList[item].length ?? 0}
+              onRequestChange={onRequestChange}
+            />
+            <Modal
+              opened={opened}
+              size={'50%'}
+              onClose={close}
+              withCloseButton={false}
+            >
+              <div className="flex justify-between">
+                <h2 className="font-medium text-lg capitalize">{item}</h2>
+                <IconX onClick={close} />
+              </div>
+              <Divider mt={'md'} mb={'md'} />
+              <Box className="bg-white rounded shadow-sm mx-2">
+                <QualificationFormDetail
+                  mode={mode}
+                  adId={qId}
+                  type={item}
+                  lotId={lotId}
+                  returnFunction={onReturnFunction}
+                />
+              </Box>
+            </Modal>
 
-          <Modal
-            opened={editorOpened}
-            size={'50%'}
-            onClose={closeEditor}
-            withCloseButton={false}
-          >
-            <div className="flex justify-between">
-              <h2 className="font-medium text-lg capitalize">
-                Edit Qualification Category
-              </h2>
-              <IconX onClick={closeEditor} />
-            </div>
-            <Divider mt={'md'} mb={'md'} />
-            <Box className="bg-white rounded shadow-sm mx-2">
-              <QualificationCategoryEditor category={category} lotId={lotId} />
-            </Box>
-          </Modal>
-        </Section>
+            <Modal
+              opened={editorOpened}
+              size={'50%'}
+              onClose={closeEditor}
+              withCloseButton={false}
+            >
+              <div className="flex justify-between">
+                <h2 className="font-medium text-lg capitalize">
+                  Edit Qualification Category
+                </h2>
+                <IconX onClick={closeEditor} />
+              </div>
+              <Divider mt={'md'} mb={'md'} />
+              <Box className="bg-white rounded shadow-sm mx-2">
+                <QualificationCategoryEditor
+                  category={category}
+                  lotId={lotId}
+                />
+              </Box>
+            </Modal>
+          </Section>
+        </Box>
       ))}
     </>
   );

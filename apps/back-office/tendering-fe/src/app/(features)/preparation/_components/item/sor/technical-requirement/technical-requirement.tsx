@@ -154,7 +154,7 @@ export default function TechnicalRequirement({
         where: [
           [
             {
-              column: 'type',
+              column: 'sorType',
               value: type,
               operator: '=',
             },

@@ -6,19 +6,24 @@ import {
   LoadingOverlay,
   NativeSelect,
   Stack,
-  TextInput,
   Textarea,
 } from '@mantine/core';
 import { logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
-import { useCreateMutation } from '../_api/spd-documentary-evidence.api';
+import {
+  useCreateMutation,
+  useDeleteMutation,
+  useReadQuery,
+  useUpdateMutation,
+} from '../_api/spd-documentary-evidence.api';
 import { useParams } from 'next/navigation';
-import { useLazyListByIdQuery } from '../_api/bid-form.api';
 
 interface SpdDocumentaryModalProps {
+  mode: 'new' | 'detail';
+  dId: string;
   returnFunction: () => void;
 }
 const evidenceTypes = [
@@ -71,6 +76,8 @@ const requiredToList = [
   },
 ];
 export default function SpdDocumentaryModal({
+  mode,
+  dId,
   returnFunction,
 }: SpdDocumentaryModalProps) {
   const { id } = useParams();
@@ -82,7 +89,7 @@ export default function SpdDocumentaryModal({
       evidenceType: z.string().min(1, { message: 'Evidence Type is required' }),
       isRequired: z.boolean(),
       requiredTo: z.string().min(1, { message: 'Required To is required' }),
-      sectionLink: z.string().min(1, { message: 'Section Link is required' }),
+      sectionLink: z.string().optional(),
     });
 
   const {
@@ -93,17 +100,26 @@ export default function SpdDocumentaryModal({
   } = useForm({
     resolver: zodResolver(DocumentaryFormSchema),
   });
-  const [trigger, { data: bidFormLinks, isLoading: isBidFormLoading }] =
-    useLazyListByIdQuery();
 
-  const [create, { isLoading }] = useCreateMutation();
+  const [create, { isLoading: isSaving }] = useCreateMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [remove, { isLoading: isDeleting }] = useDeleteMutation();
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(dId?.toString());
 
   const onCreate = async (data) => {
     try {
       await create({
         ...data,
         spdId: id.toString() ?? '',
-      });
+        checkOnFirstCompliance: false,
+        checkOnFirstOpening: false,
+        checkOnSecondCompliance: false,
+        checkOnSecondOpening: false,
+      }).unwrap();
       notify('Success', 'SPD Documentary Evidence created successfully');
       returnFunction();
     } catch (err) {
@@ -111,21 +127,45 @@ export default function SpdDocumentaryModal({
     }
   };
 
-  useEffect(() => {
-    logger.log(errors);
-  }, [errors]);
+  const onUpdate = async (data) => {
+    try {
+      await update({
+        ...data,
+        id: dId?.toString(),
+        spdId: id.toString() ?? '',
+        checkOnFirstCompliance: false,
+        checkOnFirstOpening: false,
+        checkOnSecondCompliance: false,
+        checkOnSecondOpening: false,
+      });
+      returnFunction();
+      notify('Success', 'SPD Documentary Evidence updated successfully');
+    } catch {
+      notify('Error', 'Error in updating SPD Documentary Evidence');
+    }
+  };
+  const onDelete = async () => {
+    try {
+      await remove(dId?.toString());
+      notify('Success', 'SPD Documentary Evidence  deleted successfully');
+    } catch {
+      notify('Error', 'Error in deleting SPD Documentary Evidence');
+    }
+  };
 
   useEffect(() => {
-    if (id) {
-      trigger({
-        id: id.toString(),
-        collectionQuery: { where: [] },
+    if (mode == 'detail' && selectedSuccess && selected !== undefined) {
+      reset({
+        evidenceTitle: selected?.evidenceTitle,
+        evidenceType: selected?.evidenceType,
+        requiredTo: selected?.requiredTo,
+        isRequired: selected?.isRequired,
       });
     }
-  }, [id, trigger]);
+  }, [mode, reset, selected, selectedSuccess]);
   return (
     <Stack>
-      <LoadingOverlay visible={isLoading || isBidFormLoading} />
+      <LoadingOverlay visible={isLoading} />
       <Flex direction={'column'} gap={'lg'}>
         <Flex gap={'md'}>
           <Textarea
@@ -155,34 +195,6 @@ export default function SpdDocumentaryModal({
             }
             {...register('evidenceType')}
           />
-
-          <NativeSelect
-            placeholder="Bid Form Link"
-            withAsterisk
-            label="Form Link"
-            className="w-1/2"
-            error={
-              errors?.sectionLink
-                ? errors?.sectionLink?.message?.toString()
-                : ''
-            }
-            data={
-              bidFormLinks?.items
-                ? bidFormLinks?.items.map((link) => ({
-                    label: link.title,
-                    value: link.code,
-                  }))
-                : []
-            }
-            {...register('sectionLink')}
-          />
-        </Flex>
-        <Flex gap={'md'} align={'center'}>
-          <Checkbox
-            label="Is Required"
-            className="w-1/2"
-            {...register('isRequired')}
-          />
           <NativeSelect
             placeholder="Required To"
             withAsterisk
@@ -195,9 +207,21 @@ export default function SpdDocumentaryModal({
             {...register('requiredTo')}
           />
         </Flex>
+        <Flex gap={'md'} align={'center'}>
+          <Checkbox
+            label="Is Required"
+            className="w-1/2"
+            {...register('isRequired')}
+          />
+        </Flex>
         <EntityButton
-          mode={'new'}
+          mode={mode}
           onCreate={handleSubmit(onCreate)}
+          onUpdate={handleSubmit(onUpdate)}
+          onDelete={handleSubmit(onDelete)}
+          isSaving={isSaving}
+          isUpdating={isUpdating}
+          isDeleting={isDeleting}
           onReset={reset}
         />
       </Flex>

@@ -2,13 +2,14 @@ import {
   LoadingOverlay,
   NativeSelect,
   Stack,
+  Select,
   TextInput,
   Textarea,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useReadQuery,
   useDeleteMutation,
@@ -20,6 +21,8 @@ import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
 import { TechnicalRequirement } from '@/models/tender/lot/item/technical-requirement.model';
 import { RequirementCondition } from '@/models/tender/lot/technical-scoring.model';
+import { useReadQuery as useGetSpd } from '@/app/(features)/preparation/_api/tender/tender-spd.api';
+import { useLazyListByIdQuery } from '@/app/(features)/preparation/_api/lot/bid-form.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -43,13 +46,14 @@ export function TechnicalRequirementFormDetail({
     requirementType: z.enum(['minimum', 'exact'], {
       required_error: 'This field is required',
     }),
-    formLink: z.string().min(1, { message: 'This field is required' }),
+    bidFormId: z.string().min(1, { message: 'This field is required' }),
   });
 
   const {
     handleSubmit,
     reset,
     formState: { errors },
+    control,
     register,
   } = useForm({
     resolver: zodResolver(spdSchema),
@@ -57,12 +61,19 @@ export function TechnicalRequirementFormDetail({
   useEffect(() => {
     logger.log(errors);
   }, [errors]);
-  const { itemId } = useParams();
+  const { itemId, id } = useParams();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
 
+  const {
+    data: selectedSpd,
+    isSuccess: isSpdSuccess,
+    isLoading: isSpdLoading,
+  } = useGetSpd(id?.toString());
+  const [trigger, { data: bidFormLinks, isLoading: isBidFormLoading }] =
+    useLazyListByIdQuery();
   const {
     data: selected,
     isSuccess: selectedSuccess,
@@ -107,6 +118,14 @@ export function TechnicalRequirementFormDetail({
       notify('Error', `Error in deleting ${type}`);
     }
   };
+  useEffect(() => {
+    if (isSpdSuccess && selectedSpd) {
+      trigger({
+        id: selectedSpd.spdId,
+        collectionQuery: { where: [] },
+      });
+    }
+  }, [isSpdSuccess, selectedSpd, trigger]);
 
   useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
@@ -115,14 +134,14 @@ export function TechnicalRequirementFormDetail({
         requirement: selected?.requirement,
         requirementCondition: selected?.requirementCondition,
         requirementType: selected?.requirementType,
-        formLink: selected?.formLink,
+        bidFormId: selected?.bidFormId,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
 
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading || isBidFormLoading || isSpdLoading} />
       <Textarea
         label="Requirement"
         withAsterisk
@@ -169,12 +188,29 @@ export function TechnicalRequirementFormDetail({
         />
       </div>
 
-      <TextInput
-        placeholder="Bid Form Link"
-        withAsterisk
-        label="formLink"
-        error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
-        {...register('formLink')}
+      <Controller
+        name="bidFormId"
+        control={control}
+        render={({ field: { name, value, onChange } }) => (
+          <Select
+            placeholder="Bid Form Link"
+            className="w-1/2"
+            label="Bid Form Link"
+            value={value}
+            data={
+              bidFormLinks?.items
+                ? bidFormLinks?.items.map((link) => ({
+                    label: link.title,
+                    value: link.id,
+                  }))
+                : []
+            }
+            onChange={(d) => onChange(d)}
+            error={
+              errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
+            }
+          />
+        )}
       />
 
       <EntityButton

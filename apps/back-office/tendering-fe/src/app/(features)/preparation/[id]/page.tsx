@@ -21,7 +21,7 @@ import {
 } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import Items from '../_components/item/items';
-import { IconChevronLeft, IconFolderOpen } from '@tabler/icons-react';
+import { IconChevronLeft, IconEdit, IconFolderOpen } from '@tabler/icons-react';
 import FormDetail from '../_components/tender/form-detail';
 import { Section, logger, notify } from '@megp/core-fe';
 import BidProGeneral from '../_components/bidding-procedure/bid-pro-general';
@@ -57,11 +57,14 @@ import {
 } from '../_api/tender/approve-tender.api';
 import { Status } from '@/models/tender/tender.model';
 import Document from '../_components/tender/document';
+import { LotFormDetail } from '../_components/lot/lot-form-detail';
 export default function TenderDetailPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [opened, { open, close }] = useDisclosure(false);
+  const [updateLot, { open: openUpdateLot, close: closeUpdateLot }] =
+    useDisclosure(false);
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
@@ -364,7 +367,7 @@ export default function TenderDetailPage() {
           selected?.status === Status.DRAFT && (
             <>
               <Box className="w-full flex flex-row justify-between items-center container my-2">
-                <p className="text-lg font-semibold">
+                <p className="text-lg font-semibold flex">
                   <Select
                     placeholder="Pick Lot"
                     data={
@@ -379,6 +382,12 @@ export default function TenderDetailPage() {
                     }
                     onChange={setValue}
                   />
+                  {value && (
+                    <IconEdit
+                      className="my-auto mx-3 pointer"
+                      onClick={openUpdateLot}
+                    />
+                  )}
                 </p>
                 <div className="flex justify-end items-center gap-3">
                   <LoadingOverlay visible={isFetching} />
@@ -567,15 +576,6 @@ export default function TenderDetailPage() {
                   <div className="py-2">
                     <Qualification lotId={value} />
                   </div>
-                  {/* <div className="py-2">
-                    <Qualification type="professional" lotId={value} />
-                  </div>
-                  <div className="py-2">
-                    <Qualification type="technical" lotId={value} />
-                  </div>
-                  <div className="py-2">
-                    <Qualification type="financial" lotId={value} />
-                  </div> */}
                   <div className="text-lg font-medium mt-4 pt-4 pb-4">
                     Documentary Evidence
                   </div>
@@ -663,6 +663,15 @@ export default function TenderDetailPage() {
           listOfLots={data ? data.items : []}
           closeModal={close}
         />
+      </Modal>
+      <Modal
+        title="Update Lot"
+        opened={updateLot}
+        size={'60%'}
+        onClose={closeUpdateLot}
+        withCloseButton={false}
+      >
+        <LotFormDetail lotId={value} closeModal={close} />
       </Modal>
     </>
   );

@@ -2,6 +2,7 @@ import {
   Checkbox,
   LoadingOverlay,
   NativeSelect,
+  Select,
   Stack,
   TextInput,
   Textarea,
@@ -9,7 +10,7 @@ import {
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useReadQuery,
   useDeleteMutation,
@@ -45,7 +46,7 @@ export function PreliminaryExaminationFormDetail({
       type: z.enum(['technical', 'financial']).optional(),
       itbDescription: z.string().min(1, { message: 'This field is required' }),
       itbReference: z.string().min(1, { message: 'This field is required' }),
-      formLink: z.string().min(1, { message: 'This field is required' }),
+      bidFormId: z.string().min(1, { message: 'This field is required' }),
       requirementCondition: z.enum(
         ['Must meet', 'Has to meet', 'Not applicable'],
         { required_error: 'this field is required' },
@@ -56,6 +57,7 @@ export function PreliminaryExaminationFormDetail({
     handleSubmit,
     reset,
     formState: { errors },
+    control,
     register,
   } = useForm({
     resolver: zodResolver(preliminaryExaminationSchema),
@@ -99,7 +101,7 @@ export function PreliminaryExaminationFormDetail({
 
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, pdId: id, type: type, id: adId?.toString() });
+      await update({ ...data, lotId: lotId, type: type, id: adId?.toString() });
       notify('Success', 'Preliminary examination updated successfully');
       returnFunction();
     } catch {
@@ -125,12 +127,13 @@ export function PreliminaryExaminationFormDetail({
     }
   }, [isSpdSuccess, selectedSpd, trigger]);
   useEffect(() => {
+    logger.log(selected);
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
         criteria: selected?.criteria,
         type: selected?.type,
         itbReference: selected?.itbReference,
-        formLink: selected?.formLink,
+        bidFormId: selected?.bidFormId,
         itbDescription: selected?.itbDescription,
       });
     }
@@ -170,21 +173,29 @@ export function PreliminaryExaminationFormDetail({
         {...register('itbDescription')}
       />
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Bid Form Link"
-          withAsterisk
-          label="Bid Form Link"
-          className="w-1/2"
-          error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
-          data={
-            bidFormLinks?.items
-              ? bidFormLinks?.items.map((link) => ({
-                  label: link.title,
-                  value: link.code,
-                }))
-              : []
-          }
-          {...register('formLink')}
+        <Controller
+          name="bidFormId"
+          control={control}
+          render={({ field: { name, value, onChange } }) => (
+            <Select
+              placeholder="Bid Form Link"
+              className="w-1/2"
+              label="Bid Form Link"
+              value={value}
+              data={
+                bidFormLinks?.items
+                  ? bidFormLinks?.items.map((link) => ({
+                      label: link.title,
+                      value: link.id,
+                    }))
+                  : []
+              }
+              onChange={(d) => onChange(d)}
+              error={
+                errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
+              }
+            />
+          )}
         />
         <NativeSelect
           placeholder="Requirement condition"

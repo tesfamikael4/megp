@@ -2,7 +2,7 @@ import {
   LoadingOverlay,
   NumberInput,
   Stack,
-  TextInput,
+  NativeSelect,
   Textarea,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
@@ -19,6 +19,7 @@ import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
 import { SpdProfessionalSetting } from '@/models/spd/professional-setting.model';
+import { useLazyListByIdQuery } from '../_api/bid-form.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -29,7 +30,7 @@ export function SpdProfessionalSettingFormDetail({
 }: Readonly<FormDetailProps>) {
   const spdSchema: ZodType<Partial<SpdProfessionalSetting>> = z.object({
     requirement: z.string().min(1, { message: 'This field is required' }),
-    formLink: z.string().min(1, { message: 'This field is required' }),
+    bidFormId: z.string().min(1, { message: 'This field is required' }),
     validation: z.object({
       min: z
         .number()
@@ -56,6 +57,9 @@ export function SpdProfessionalSettingFormDetail({
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
+
+  const [trigger, { data: bidFormLinks, isLoading: isBidFormLoading }] =
+    useLazyListByIdQuery();
 
   const {
     data: selected,
@@ -102,15 +106,25 @@ export function SpdProfessionalSettingFormDetail({
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
         requirement: selected?.requirement,
-        formLink: selected?.formLink,
+        bidFormId: selected?.bidFormId,
         validation: selected?.validation,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
+  useEffect(() => {
+    if (id) {
+      trigger({
+        id: id.toString(),
+        collectionQuery: { where: [] },
+      });
+    }
+  }, [id, trigger]);
 
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
+      <LoadingOverlay
+        visible={isLoading || isUpdating || isSaving || isBidFormLoading}
+      />
       <Textarea
         label="Criteria"
         withAsterisk
@@ -164,12 +178,22 @@ export function SpdProfessionalSettingFormDetail({
         />
       </div>
       <div className="flex space-x-4">
-        <TextInput
-          label="Bid Form Link"
+        <NativeSelect
+          placeholder="Bid Form Link"
           withAsterisk
-          className="w-1/2"
-          error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
-          {...register('formLink')}
+          label="Form Link"
+          error={
+            errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
+          }
+          data={
+            bidFormLinks?.items
+              ? bidFormLinks?.items.map((link) => ({
+                  label: link.title,
+                  value: link.id,
+                }))
+              : []
+          }
+          {...register('bidFormId')}
         />
       </div>
       <EntityButton
