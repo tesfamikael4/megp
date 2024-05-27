@@ -35,6 +35,7 @@ export const Menu: MenuItem[] = [
   { label: 'Item Tags', icon: IconBookmark, link: '/tag' },
   { label: 'Rules', icon: IconFileCheck, link: '/rule-designer' },
   { label: 'Currency', icon: IconDatabaseDollar, link: '/currency' },
+  { label: 'Tax', icon: IconFileDollar, link: '/tax' },
   {
     label: 'Target Group',
     icon: IconBrandFlightradar24,
@@ -45,8 +46,8 @@ export const Menu: MenuItem[] = [
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,
     links: [
-      { label: 'Donors', link: '/lookup/donors' },
       { label: 'Budget Category', link: '/lookup/budget-category' },
+      { label: 'Donors', link: '/lookup/donors' },
       // { label: 'Procurement Institution', link: '/procurement-institution' },
       // { label: 'Procurement Method', link: '/lookup/procurement-method' },
       // {
