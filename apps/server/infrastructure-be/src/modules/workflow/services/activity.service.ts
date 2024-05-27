@@ -21,4 +21,14 @@ export class ActivityService extends ExtraCrudService<Activity> {
     await this.repositoryActivity.insert(item);
     return item;
   }
+
+  async findByName(name: string, req?: any) {
+    return await this.repositoryActivity.find({
+      where: {
+        workflow: {
+          name,
+        },
+      },
+    });
+  }
 }
