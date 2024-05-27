@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Spd } from './spd.entity';
 import { Audit } from 'src/shared/entities';
+import { SpdBidForm } from './spd-bid-form.entity';
 
 @Entity({ name: 'spd_professional_settings' })
 export class SpdProfessionalSetting extends Audit {
@@ -20,7 +21,11 @@ export class SpdProfessionalSetting extends Audit {
   requirement: string;
 
   @Column()
-  formLink: string;
+  bidFromId: string;
+
+  @ManyToOne(() => SpdBidForm, (spd) => spd.spdPreliminaryEvaluations)
+  @JoinColumn({ name: 'bidFromId' })
+  bidFrom: SpdBidForm;
 
   @Column({ type: 'jsonb' })
   validation: any;

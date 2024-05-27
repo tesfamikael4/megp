@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Spd } from './spd.entity';
 import { Audit } from 'src/shared/entities';
+import { SpdBidForm } from './spd-bid-form.entity';
 
 @Entity({ name: 'spd_technical_scoring' })
 export class SpdTechnicalScoring extends Audit {
@@ -37,7 +38,11 @@ export class SpdTechnicalScoring extends Audit {
   requirement: string;
 
   @Column()
-  formLink: string;
+  bidFromId: string;
+
+  @ManyToOne(() => SpdBidForm, (spd) => spd.spdTechnicalScorings)
+  @JoinColumn({ name: 'bidFromId' })
+  bidFrom: SpdBidForm;
 
   @Column()
   isProfessional: boolean;

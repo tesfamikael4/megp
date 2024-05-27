@@ -222,7 +222,7 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
         eqcQualification.category = qualification.category;
         eqcQualification.requirement = qualification.requirement;
         eqcQualification.factor = qualification.factor;
-        eqcQualification.formLink = qualification.formLink;
+        eqcQualification.bidFromId = qualification.bidFromId;
         eqcQualification.itbReference = qualification.itbReference;
         eqcQualification.itbDescription = qualification.itbDescription;
         eqcQualification.order = 0;
@@ -245,7 +245,7 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
           eqcTechnicalScoring.lotId = lotId;
           eqcTechnicalScoring.spdTechnicalScoringId = scoring.id;
           eqcTechnicalScoring.requirement = scoring.requirement;
-          eqcTechnicalScoring.formLink = scoring.formLink;
+          eqcTechnicalScoring.bidFromId = scoring.bidFromId;
           eqcTechnicalScoring.isProfessional = scoring.isProfessional;
           eqcTechnicalScoring.hasProfessional = false;
           eqcTechnicalScoring.point = 0;
@@ -264,7 +264,7 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
             evaluation.id;
           eqcPreliminaryExamination.criteria = evaluation.criteria;
           eqcPreliminaryExamination.type = evaluation.type;
-          eqcPreliminaryExamination.formLink = evaluation.formLink;
+          eqcPreliminaryExamination.bidFromId = evaluation.bidFromId;
           eqcPreliminaryExamination.itbReference = evaluation.itbReference;
           eqcPreliminaryExamination.itbDescription = evaluation.itbDescription;
           eqcPreliminaryExamination.order = 0;

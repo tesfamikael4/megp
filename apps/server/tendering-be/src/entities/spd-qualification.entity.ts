@@ -3,12 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Spd } from './spd.entity';
 import { Audit } from 'src/shared/entities';
-import { TechnicalQualificationAssessmentDetail } from './technical-qualification-assessment-detail.entity';
+import { SpdBidForm } from './spd-bid-form.entity';
 
 @Entity({ name: 'spd_qualifications' })
 export class SpdQualification extends Audit {
@@ -28,7 +27,11 @@ export class SpdQualification extends Audit {
   requirement: string;
 
   @Column()
-  formLink: string;
+  bidFromId: string;
+
+  @ManyToOne(() => SpdBidForm, (spd) => spd.spdQualifications)
+  @JoinColumn({ name: 'bidFromId' })
+  bidFrom: SpdBidForm;
 
   @Column()
   itbReference: string;

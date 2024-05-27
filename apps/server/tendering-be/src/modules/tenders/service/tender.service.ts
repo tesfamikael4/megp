@@ -34,6 +34,7 @@ import { DocumentManipulatorService } from 'src/shared/document-manipulator/docu
 import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class TenderService extends EntityCrudService<Tender> {
@@ -42,6 +43,8 @@ export class TenderService extends EntityCrudService<Tender> {
     private readonly tenderRepository: Repository<Tender>,
     private readonly minIOService: MinIOService,
     private readonly documentManipulatorService: DocumentManipulatorService,
+    @Inject('TENDERING_RMQ_SERVICE')
+    private readonly tenderingRMQClient: ClientProxy,
     @Inject(REQUEST) private request: Request,
   ) {
     super(tenderRepository);
@@ -311,13 +314,9 @@ export class TenderService extends EntityCrudService<Tender> {
 
     if (!tender) {
       throw new BadRequestException('Tender not found');
-    }
-
-    if (tender.status == 'DRAFT' && input.status == 'SUBMITTED') {
+    } else if (tender.status == 'DRAFT' && input.status == 'SUBMITTED') {
       await this.validateTender(tender.id);
-    }
-
-    if (tender.status == 'SUBMITTED' && input.status == 'PUBLISHED') {
+    } else if (tender.status == 'SUBMITTED' && input.status == 'PUBLISHED') {
       await this.generateTenderInvitation({ id: tender.id });
     }
 
@@ -325,6 +324,15 @@ export class TenderService extends EntityCrudService<Tender> {
     await manager
       .getRepository(Tender)
       .update({ id: input.id }, { status: input.status });
+
+    if (tender.status == 'SUBMISSION' && input.status == 'APPROVAL') {
+      await this.tenderingRMQClient.emit('initiate-workflow', {
+        id: tender.id,
+        name: tender.name,
+        itemName: tender.name,
+        organizationId: tender.organizationId,
+      });
+    }
   }
 
   async generateTenderDocument(input: GenerateTenderDocumentDto) {

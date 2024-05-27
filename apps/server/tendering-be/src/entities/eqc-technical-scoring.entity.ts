@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { Lot } from '.';
 import { TechnicalScoringAssessmentDetail } from './technical-scoring-assessment-detail.entity';
+import { SpdBidForm } from './spd-bid-form.entity';
 
 @Tree('closure-table')
 @Entity({ name: 'eqc_technical_scorings' })
@@ -45,7 +46,11 @@ export class EqcTechnicalScoring extends Audit {
   point: number;
 
   @Column()
-  formLink: string;
+  bidFromId: string;
+
+  @ManyToOne(() => SpdBidForm, (spd) => spd.eqcTechnicalScorings)
+  @JoinColumn({ name: 'bidFromId' })
+  bidFrom: SpdBidForm;
 
   // Relation?
   @Column({ type: 'uuid', nullable: true })

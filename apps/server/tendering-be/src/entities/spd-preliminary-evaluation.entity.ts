@@ -3,12 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Audit } from 'src/shared/entities';
 import { Spd } from './spd.entity';
-import { TechnicalPreliminaryAssessmentDetail } from './technical-preliminary-assessment-detail.entity';
+import { SpdBidForm } from './spd-bid-form.entity';
 
 @Entity({ name: 'spd_preliminary_evaluations' })
 export class SpdPreliminaryEvaluation extends Audit {
@@ -25,9 +24,6 @@ export class SpdPreliminaryEvaluation extends Audit {
   type: string;
 
   @Column()
-  formLink: string;
-
-  @Column()
   itbReference: string;
 
   @Column({ type: 'text', nullable: true })
@@ -36,4 +32,11 @@ export class SpdPreliminaryEvaluation extends Audit {
   @ManyToOne(() => Spd, (spd) => spd.spdPreliminaryEvaluations)
   @JoinColumn({ name: 'spdId' })
   spd: Spd;
+
+  @Column()
+  bidFromId: string;
+
+  @ManyToOne(() => SpdBidForm, (spd) => spd.spdPreliminaryEvaluations)
+  @JoinColumn({ name: 'bidFromId' })
+  bidFrom: SpdBidForm;
 }

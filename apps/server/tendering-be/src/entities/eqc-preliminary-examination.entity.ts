@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Lot, TechnicalPreliminaryAssessmentDetail } from '.';
+import { SpdBidForm } from './spd-bid-form.entity';
 
 @Entity({ name: 'eqc_preliminary_examinations' })
 export class EqcPreliminaryExamination extends Audit {
@@ -43,7 +44,11 @@ export class EqcPreliminaryExamination extends Audit {
   type: string;
 
   @Column()
-  formLink: string;
+  bidFromId: string;
+
+  @ManyToOne(() => SpdBidForm, (spd) => spd.eqcPreliminaryExaminations)
+  @JoinColumn({ name: 'bidFromId' })
+  bidFrom: SpdBidForm;
 
   // relation?
   @Column({ type: 'uuid', nullable: true })

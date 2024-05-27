@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Lot } from '.';
 import { TechnicalQualificationAssessmentDetail } from './technical-qualification-assessment-detail.entity';
+import { SpdBidForm } from './spd-bid-form.entity';
 
 @Entity({ name: 'eqc_qualifications' })
 export class EqcQualification extends Audit {
@@ -47,7 +48,11 @@ export class EqcQualification extends Audit {
   order: number;
 
   @Column()
-  formLink: string;
+  bidFromId: string;
+
+  @ManyToOne(() => SpdBidForm, (spd) => spd.eqcQualifications)
+  @JoinColumn({ name: 'bidFromId' })
+  bidFrom: SpdBidForm;
 
   @Column({ nullable: true })
   itbDescription: string;
