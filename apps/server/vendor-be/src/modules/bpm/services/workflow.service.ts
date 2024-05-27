@@ -100,7 +100,6 @@ export class WorkflowService {
       dto.serviceId,
       dto.bpId,
     );
-
     console.log('serviceBp', serviceBp);
     if (!serviceBp || !dto.requestorId)
       throw new NotFoundException('Business Process Not Found');
@@ -137,13 +136,15 @@ export class WorkflowService {
       nextCommand.action = 'ISR';
       nextCommand.data = { ...dto?.data };
       await this.gotoNextStep(nextCommand, user);
-      this.notificationService.sendSubmissionNotification(
+      await this.notificationService.sendSubmissionNotification(
         user.id,
         instanceEntity.applicationNumber,
         serviceBp.service.name,
       );
     }
-    await this.vendorRegService.permitForOtherServiceRequest(wfinstance.requestorId);
+    await this.vendorRegService.permitForOtherServiceRequest(
+      wfinstance.requestorId,
+    );
     return response;
   }
   async changeWorkflowInstanceStatus(status: string, instanceId: string) {
@@ -195,9 +196,12 @@ export class WorkflowService {
         if (
           curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
           nextCommand.action.toUpperCase() ==
-          ApplicationStatus.CANCEL.toUpperCase()
+            ApplicationStatus.CANCEL.toUpperCase()
         ) {
-          response = await this.vendorRegService.cancelApplication(wfInstance);
+          response = await this.vendorRegService.cancelApplication(
+            wfInstance,
+            nextCommand.remark,
+          );
           await this.notificationService.sendCancelNotification(
             workflowInstance.userId,
             workflowInstance.applicationNumber,
@@ -230,7 +234,9 @@ export class WorkflowService {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
           workflowInstance.taskHandler = null;
-          await this.vendorRegService.permitForOtherServiceRequest(workflowInstance.requestorId);
+          await this.vendorRegService.permitForOtherServiceRequest(
+            workflowInstance.requestorId,
+          );
         } else {
           throw new Error('Unable to update vender status');
         }
@@ -366,8 +372,9 @@ export class WorkflowService {
     switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
         if (
-          command.action.toUpperCase() == ApplicationStatus.ADJUST.toUpperCase() || command.action.toUpperCase() == "NO"
-
+          command.action.toUpperCase() ==
+            ApplicationStatus.ADJUST.toUpperCase() ||
+          command.action.toUpperCase() == 'NO'
         ) {
           const result = await this.notify(
             wfi,
@@ -404,7 +411,9 @@ export class WorkflowService {
             );
           }
           if (result) {
-            await this.vendorRegService.permitForOtherServiceRequest(wfi.requestorId);
+            await this.vendorRegService.permitForOtherServiceRequest(
+              wfi.requestorId,
+            );
           }
         }
         break;
@@ -443,7 +452,9 @@ export class WorkflowService {
           }
 
           if (result) {
-            await this.vendorRegService.permitForOtherServiceRequest(wfi.requestorId);
+            await this.vendorRegService.permitForOtherServiceRequest(
+              wfi.requestorId,
+            );
           }
         }
         break;
@@ -485,8 +496,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-        commandLower == 'yes' ||
-        commandLower == 'success'
+      commandLower == 'yes' ||
+      commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {
@@ -540,7 +551,8 @@ export class WorkflowService {
     // const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
     // url = vendor_url + '/vendor-registrations/adjust-vendor-services';
     // console.log("vendor_url", vendor_url);
-    const action = (metaDate.action == 'ADJUST' || metaDate.action == 'NO') ? 'Adjust' : '';
+    const action =
+      metaDate.action == 'ADJUST' || metaDate.action == 'NO' ? 'Adjust' : '';
     const payload = {
       isrVendorId: wfi.requestorId,
       instanceId: wfi.id,
@@ -658,9 +670,11 @@ export class WorkflowService {
     return this.workflowInstanceRepository.findOne({ where: { id: id } });
   }
   getRequestedAppByVendorId(requestorId: string) {
-    return this.workflowInstanceRepository.findOne({ relations: { service: true }, where: { requestorId: requestorId, status: ApplicationStatus.INPROGRESS } });
+    return this.workflowInstanceRepository.findOne({
+      relations: { service: true },
+      where: { requestorId: requestorId, status: ApplicationStatus.INPROGRESS },
+    });
   }
-
 
   getStateMetaData(meta) {
     return Object.keys(meta).reduce((acc, key) => {
@@ -688,6 +702,7 @@ export class WorkflowService {
           ApplicationStatus.ADJUSTMENT,
           ApplicationStatus.REJECTED,
           ApplicationStatus.PENDING,
+          ApplicationStatus.CANCELED,
         ],
       })
       .orderBy('wf.updatedAt', 'DESC')

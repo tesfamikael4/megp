@@ -123,7 +123,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   renewal: any;
   preferential: any;
   static toResponse(entity: WorkflowInstanceEntity) {
-    const response = new WorkflowInstanceResponse();
+    const response: any = {}; // new WorkflowInstanceResponse();
     response.id = entity.id;
     response.bpId = entity.bpId;
     response.applicationNumber = entity.applicationNumber;
@@ -148,8 +148,6 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
       response.taskHandler.task = null;
     }
 
-
-
     if (entity?.isrVendor) {
       response.isrvendor = entity?.isrVendor;
       const bainfo = response.isrvendor.bankAccountDetails.map((item) => {
@@ -165,6 +163,8 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
       const { level, status, ...basicRest } = basic;
       basicRest.status = entity?.isrVendor.status;
       response.isrvendor.basic = { ...basicRest };
+    } else {
+      response.isrvendor = { ...entity.taskHandler?.data };
     }
 
     if (entity?.taskTrackers) {

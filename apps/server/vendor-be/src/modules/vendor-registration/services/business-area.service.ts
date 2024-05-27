@@ -45,10 +45,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     return null;
   }
 
-  async getBusinessUpgradesOrRenewal(
-    categories: string[],
-    serviceKey: string,
-  ) {
+  async getBusinessUpgradesOrRenewal(categories: string[], serviceKey: string) {
     return this.businessAreaRepository.find({
       where: {
         category: In(categories),
@@ -66,11 +63,12 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       where: { instanceId: instanceId },
     });
   }
-  async cancelServiceApplication(instanceId: string) {
+  async cancelServiceApplication(instanceId: string, remark: string) {
     const bas = await this.getBusinessAreaByInstanceId(instanceId);
     for (const ba of bas) {
       ba.status = ApplicationStatus.CANCELED;
       ba.approvedAt = new Date();
+      ba.remark = remark;
       await this.update(ba.id, ba);
     }
 
@@ -118,7 +116,6 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       },
     });
   }
-
 
   async getUserInprogressBusinessAreaByServiceId(
     serviceId: string,
@@ -178,7 +175,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
           BusinessCategories.WORKS,
         ]),
       },
-      relations: { servicePrice: true }
+      relations: { servicePrice: true },
     });
     return result;
   }
@@ -187,9 +184,9 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       where: {
         vendorId: vendorId,
         status: VendorStatusEnum.APPROVED,
-        category: ServiceKeyEnum.PREFERENTIAL_TREATMENT
+        category: ServiceKeyEnum.PREFERENTIAL_TREATMENT,
       },
-      relations: { BpService: true }
+      relations: { BpService: true },
     });
     return result;
   }

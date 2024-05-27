@@ -1,7 +1,4 @@
-import {
-  HttpException,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
@@ -13,7 +10,11 @@ import {
   GotoNextStateDto,
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
-import { BusinessAreaEntity, IsrVendorsEntity, VendorsEntity } from 'src/entities';
+import {
+  BusinessAreaEntity,
+  IsrVendorsEntity,
+  VendorsEntity,
+} from 'src/entities';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 import { FileService } from 'src/modules/vendor-registration/services/file.service';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
@@ -56,7 +57,11 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
       where: {
         userId: userId,
         status: Not(
-          In([ApplicationStatus.APPROVED, ApplicationStatus.REJECTED, ApplicationStatus.DRAFT]),
+          In([
+            ApplicationStatus.APPROVED,
+            ApplicationStatus.REJECTED,
+            ApplicationStatus.DRAFT,
+          ]),
         ),
         // serviceId: serviceId,
       },
@@ -68,22 +73,20 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
       relations: { service: true },
       where: {
         userId: userId,
-        status: ApplicationStatus.APPROVED
+        status: ApplicationStatus.APPROVED,
       },
     });
     const keys = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.MSME);
-    const response = []
+    const response = [];
     for (const row of result) {
-      if (
-        keys.some((item: any) => row.service.key == item)
-      ) {
+      if (keys.some((item: any) => row.service.key == item)) {
         response.push({
           certiNumber: row.certiNumber,
           category: ServiceKeyEnum.MSME,
           type: row.service.key,
           certificateUrl: row.certificateUrl,
           certificateValidityPeriod: row.certificateValidityPeriod,
-          certificateIssuedDate: row.certificateIssuedDate
+          certificateIssuedDate: row.certificateIssuedDate,
         });
       } else {
         response.push({
@@ -92,7 +95,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           type: row.service.key,
           certificateUrl: row.certificateUrl,
           certificateValidityPeriod: row.certificateValidityPeriod,
-          certificateIssuedDate: row.certificateIssuedDate
+          certificateIssuedDate: row.certificateIssuedDate,
         });
       }
     }
@@ -155,15 +158,15 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     applicationNumber = null,
   ) {
     let data: any = {};
-    const title = "Registration of Preferential Treatment Application";
+    const title = 'Registration of Preferential Treatment Application';
     let vendor: any = await this.vendorRepository.findOne({
       where: { userId: user.id },
       relations: {
         beneficialOwnershipShareholders: true,
         vendorAccounts: true,
         areasOfBusinessInterest: { price: true },
-      }
-    })
+      },
+    });
     if (!vendor) {
       vendor = await this.srRepository.findOne({
         where: { userId: user.id },
@@ -182,12 +185,11 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           tinNumber: vendor.tinNumber,
           registrationNumber: vendor.registrationNumber,
           status: vendor.status,
-
         },
         address: vendor.metaData.address,
         contactPersons: vendor.metaData.contactPersons,
-        lineOfBusiness: [...vendor.lineOfBusiness]
-      }
+        lineOfBusiness: [...vendor.lineOfBusiness],
+      };
     }
 
     if (!vendor) throw new HttpException('First, Register as a vendor', 404);
@@ -227,34 +229,56 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           wfi.serviceId = dto.serviceId;
           const { serviceId, id, ...preferential } = entity;
           const ptServices = await this.ptRepository.find({
-            where: { status: ApplicationStatus.APPROVED, userId: user.id, service: { key: In(this.commonService.getPreferentialServices()) } },
-            relations: { service: true }
-          })
+            where: {
+              status: ApplicationStatus.APPROVED,
+              userId: user.id,
+              service: {
+                key: In(this.commonService.getPreferentialServices()),
+              },
+            },
+            relations: { service: true },
+          });
           data.preferential = [...ptServices];
           data.preferentialRequests = [];
           data.preferentialRequests.push(preferential);
           const formattedData = await this.formatData(data);
           const documentId = await this.generatePDFForReview(
             formattedData,
-            user, title
+            user,
+            title,
           );
           const fileId = uuidv4();
-          wfi.data = { ...formattedData, documentId: documentId, fileId: fileId };
+          wfi.data = {
+            ...formattedData,
+            documentId: documentId,
+            fileId: fileId,
+          };
           wfi.user = user;
           const baexisted =
             await this.baService.getUserInprogressBusinessAreaByServiceId(
               dto.serviceId,
               user.id,
             );
-          if (baexisted?.status == ApplicationStatus.ADJUSTMENT && instanceId == null) {
+          if (
+            baexisted?.status == ApplicationStatus.ADJUSTMENT &&
+            instanceId == null
+          ) {
             const nextCommand = new GotoNextStateDto();
             nextCommand.instanceId = baexisted.instanceId;
             nextCommand.action = 'ISR';
 
-            nextCommand.data = { ...formattedData, documentId: documentId, fileId: fileId, preferential: { ...preferential } };
+            nextCommand.data = {
+              ...formattedData,
+              documentId: documentId,
+              fileId: fileId,
+              preferential: { ...preferential },
+            };
             // nextCommand.data = wfi.data;
             return await this.workflowService.gotoNextStep(nextCommand, user);
-          } else if (baexisted?.status == ApplicationStatus.ADJUSTMENT && instanceId != null) {
+          } else if (
+            baexisted?.status == ApplicationStatus.ADJUSTMENT &&
+            instanceId != null
+          ) {
             baexisted.status = ApplicationStatus.PENDING;
             this.baService.update(baexisted.id, baexisted);
             continue;
@@ -282,6 +306,69 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
 
     return true;
   }
+  async submitPreferentialWithInitialRegistration(
+    dtos: CreatePTDto[],
+    user: any,
+    instanceId: string,
+    applicationNumber: string,
+  ) {
+    for (const dto of dtos) {
+      let existedRequest = null;
+      try {
+        existedRequest = await this.ptRepository.findOne({
+          where: {
+            serviceId: dto.serviceId,
+            userId: user.id,
+            status: In([ApplicationStatus.SUBMITTED, ApplicationStatus.DRAFT]),
+          },
+        });
+        if (!existedRequest) {
+          existedRequest = await this.ptRepository.findOne({
+            where: {
+              serviceId: dto.serviceId,
+              userId: user.id,
+              status: ApplicationStatus.ADJUSTMENT,
+            },
+          });
+        }
+
+        if (!existedRequest) {
+          throw new NotFoundException('Preferential_request_not_drafted');
+        }
+
+        existedRequest.status = ApplicationStatus.SUBMITTED;
+        await this.ptRepository.save(existedRequest);
+
+        const baexisted =
+          await this.baService.getUserInprogressBusinessAreaByServiceId(
+            dto.serviceId,
+            user.id,
+          );
+        if (baexisted?.status == ApplicationStatus.ADJUSTMENT) {
+          baexisted.status = ApplicationStatus.PENDING;
+          this.baService.update(baexisted.id, baexisted);
+          continue;
+        } else {
+          const baEnt = new BusinessAreaEntity();
+          const vendor = await this.srRepository.findOne({
+            where: { userId: user.id },
+          });
+          baEnt.vendorId = vendor?.id;
+          baEnt.category = ServiceKeyEnum.PREFERENTIAL_TREATMENT;
+          baEnt.status = ApplicationStatus.PENDING;
+          baEnt.serviceId = dto.serviceId;
+          baEnt.instanceId = instanceId;
+          baEnt.applicationNumber = applicationNumber;
+          await this.baService.create(baEnt);
+        }
+      } catch (error) {
+        throw new HttpException(error, 500);
+      }
+    }
+
+    return true;
+  }
+
   //price
   async formatData(data: any) {
     delete data.basic?.address;
@@ -321,7 +408,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
       formattedData.preferential.push(formatted);
     }
     formattedData.address = this.commonService.orderAddress(data.address);
-    formattedData.basic = this.commonService.orderVendorBasicInformation(data.basic);
+    formattedData.basic = this.commonService.orderVendorBasicInformation(
+      data.basic,
+    );
 
     return formattedData;
   }
