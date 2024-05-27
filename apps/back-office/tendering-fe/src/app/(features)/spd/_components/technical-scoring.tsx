@@ -27,10 +27,7 @@ export default function SpdTechnicalScoring() {
     close();
     trigger({
       spdId: id.toString(),
-      collectionQuery: {
-        skip: 1,
-        take: 10,
-      },
+      collectionQuery: {},
     });
   };
   return (

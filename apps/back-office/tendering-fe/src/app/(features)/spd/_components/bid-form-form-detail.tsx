@@ -138,7 +138,7 @@ export function BidFormFormDetail({
           withAsterisk
           className="w-1/2"
           label="Form type"
-          data={['technical', 'financial', 'bid-security']}
+          data={['technical', 'financial', 'instructional']}
           {...register('type')}
         />
         <FileInput

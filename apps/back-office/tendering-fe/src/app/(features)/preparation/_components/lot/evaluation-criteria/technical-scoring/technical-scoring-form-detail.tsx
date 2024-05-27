@@ -2,8 +2,8 @@ import {
   LoadingOverlay,
   NativeSelect,
   NumberInput,
+  Select,
   Stack,
-  TextInput,
   Textarea,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
@@ -18,7 +18,7 @@ import {
 } from '@/app/(features)/preparation/_api/lot/technical-scoring.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import {
   RequirementCondition,
   TechnicalScoring,
@@ -42,7 +42,7 @@ export function TechnicalScoringFormDetail({
   const { id } = useParams();
   const spdSchema: ZodType<Partial<TechnicalScoring>> = z.object({
     requirement: z.string().min(1, { message: 'This field is required' }),
-    formLink: z.string().min(1, { message: 'This field is required' }),
+    bidFormId: z.string().min(1, { message: 'This field is required' }),
     requirementCondition: z.string(),
     point: z.number({ required_error: 'This field is required' }),
   });
@@ -70,7 +70,7 @@ export function TechnicalScoringFormDetail({
     data: selected,
     isSuccess: selectedSuccess,
     isLoading,
-  } = useReadQuery(id?.toString());
+  } = useReadQuery(parentId ? parentId?.toString() : '');
 
   const [trigger, { data: bidFormLinks, isLoading: isBidFormLoading }] =
     useLazyListByIdQuery();
@@ -126,7 +126,7 @@ export function TechnicalScoringFormDetail({
       reset({
         requirement: selected?.requirement,
         point: selected?.point,
-        formLink: selected?.formLink,
+        bidFormId: selected?.bidFormId,
         requirementCondition: selected?.requirementCondition,
         validation: selected?.validation,
       });
@@ -163,6 +163,8 @@ export function TechnicalScoringFormDetail({
               label="Point"
               name={name}
               value={value}
+              min={selected ? selected?.validation?.min : 0}
+              max={selected ? selected?.validation?.max : 0}
               className="w-1/2"
               onChange={(d) => onChange(parseInt(d as string))}
               error={
@@ -182,21 +184,29 @@ export function TechnicalScoringFormDetail({
           {...register('requirementCondition')}
         />
       </div>
-      <NativeSelect
-        placeholder="Bid Form Link"
-        withAsterisk
-        label="Bid Form Link"
-        className="w-1/2"
-        error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
-        data={
-          bidFormLinks?.items
-            ? bidFormLinks?.items.map((link) => ({
-                label: link.title,
-                value: link.code,
-              }))
-            : []
-        }
-        {...register('formLink')}
+      <Controller
+        name="bidFormId"
+        control={control}
+        render={({ field: { name, value, onChange } }) => (
+          <Select
+            placeholder="Bid Form Link"
+            className="w-1/2"
+            label="Bid Form Link"
+            value={value}
+            data={
+              bidFormLinks?.items
+                ? bidFormLinks?.items.map((link) => ({
+                    label: link.title,
+                    value: link.id,
+                  }))
+                : []
+            }
+            onChange={(d) => onChange(d)}
+            error={
+              errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
+            }
+          />
+        )}
       />
       <EntityButton
         mode={mode}

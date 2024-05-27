@@ -21,7 +21,7 @@ import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
 import { TechnicalScoring } from '@/models/tender/lot/technical-scoring.model';
-
+import { useLazyListByIdQuery } from '../_api/bid-form.api';
 interface FormDetailProps {
   mode: 'new' | 'detail';
   parentId?: string;
@@ -35,7 +35,7 @@ export function SpdTechnicalScoringFormDetail({
 }: Readonly<FormDetailProps>) {
   const spdSchema: ZodType<Partial<TechnicalScoring>> = z.object({
     requirement: z.string().min(1, { message: 'This field is required' }),
-    formLink: z.string().min(1, { message: 'This field is required' }),
+    bidFormId: z.string().min(1, { message: 'This field is required' }),
     isProfessional: z.boolean(),
     validation: z.object({
       min: z
@@ -58,6 +58,8 @@ export function SpdTechnicalScoringFormDetail({
   } = useForm({
     resolver: zodResolver(spdSchema),
   });
+  const [trigger, { data: bidFormLinks, isLoading: isBidFormLoading }] =
+    useLazyListByIdQuery();
   const { id } = useParams();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
@@ -70,6 +72,14 @@ export function SpdTechnicalScoringFormDetail({
     isLoading,
   } = useReadQuery(id?.toString());
 
+  useEffect(() => {
+    if (id) {
+      trigger({
+        id: id.toString(),
+        collectionQuery: { where: [] },
+      });
+    }
+  }, [id, trigger]);
   useEffect(() => {
     logger.log(errors);
   }, [errors]);
@@ -122,7 +132,9 @@ export function SpdTechnicalScoringFormDetail({
 
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
+      <LoadingOverlay
+        visible={isLoading || isUpdating || isSaving || isBidFormLoading}
+      />
       <Textarea
         label="Criteria"
         withAsterisk
@@ -176,12 +188,23 @@ export function SpdTechnicalScoringFormDetail({
         />
       </div>
       <div className="flex space-x-4">
-        <TextInput
-          label="Bid Form Link"
+        <NativeSelect
+          placeholder="Bid Form Link"
           withAsterisk
-          className="w-1/2"
-          error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
-          {...register('formLink')}
+          className="w-1/2 my-auto"
+          label="Form Link"
+          error={
+            errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
+          }
+          data={
+            bidFormLinks?.items
+              ? bidFormLinks?.items.map((link) => ({
+                  label: link.title,
+                  value: link.id,
+                }))
+              : []
+          }
+          {...register('bidFormId')}
         />
         <Checkbox
           label="Is Professional"

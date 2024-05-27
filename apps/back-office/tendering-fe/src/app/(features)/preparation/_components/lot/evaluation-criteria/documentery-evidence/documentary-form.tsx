@@ -23,66 +23,39 @@ import { ZodType, z } from 'zod';
 
 const evidenceTypes = [
   {
-    value: 'power of attorney',
-    label: 'Power Of Attorney',
+    value: 'VTL',
+    label: 'Valid Trade License',
   },
   {
-    value: 'articles of incorporation',
-    label: 'Articles Of Incorporation',
+    value: 'VRC',
+    label: 'Vat Registration Certificate',
   },
   {
-    value: 'letter of intent to form jv',
-    label: 'Letter Of Intent To Form JV',
+    value: 'VTCC',
+    label: 'Valid Tax Clearance Certificate',
   },
   {
-    value: 'state owned enterprise eligbility',
-    label: 'state owned enterprise eligbility',
+    value: 'BORC',
+    label: 'Business Organization Registration Certificate',
   },
   {
-    value: 'organizational structure',
-    label: 'organizational structure',
+    value: 'RPPC',
+    label: 'Relevant Professional Practice Certificate',
   },
   {
-    value: 'benefical ownership disclosure',
-    label: 'benefical ownership disclosure',
+    value: 'BS',
+    label: 'Bid Security',
   },
   {
-    value: 'business registration certificate',
-    label: 'business registration certificate',
+    value: 'PMD',
+    label: 'Preference Margin Declaration',
   },
   {
-    value: 'business license certificate',
-    label: 'business license certificate',
-  },
-  {
-    value: 'tax clearance certificate',
-    label: 'tax clearance certificate',
-  },
-  {
-    value: 'audited balance sheet',
-    label: 'audited balance sheet',
-  },
-  {
-    value: 'audited income statement',
-    label: 'audited income statement',
-  },
-  {
-    value: 'code of conduct agreement',
-    label: 'code of conduct agreement',
-  },
-  {
-    value: 'sub-contractors agreement',
-    label: 'sub-contractors agreement',
-  },
-  {
-    value: 'capabilities',
-    label: 'capabilities',
-  },
-  {
-    value: 'manufacturing authization',
-    label: 'manufacturing authization',
+    value: 'OD',
+    label: 'Other Documents',
   },
 ];
+
 const requiredToList = [
   {
     value: 'LocalBiddersOnly',
@@ -113,10 +86,8 @@ export default function DocumentaryForm({
     {
       evidenceTitle: z
         .string()
-        .min(10, { message: 'Evidence Title is required' }),
-      evidenceType: z
-        .string()
-        .min(10, { message: 'Evidence Type is required' }),
+        .min(1, { message: 'Evidence Title is required' }),
+      evidenceType: z.string().min(1, { message: 'Evidence Type is required' }),
       checkOnFirstCompliance: z.boolean({
         required_error: 'Check On First Compliance is required',
       }),
@@ -131,7 +102,6 @@ export default function DocumentaryForm({
       }),
       isRequired: z.boolean(),
       requiredTo: z.string().min(1, { message: 'Required To is required' }),
-      sectionLink: z.string().min(1, { message: 'Section Link is required' }),
     },
   );
 
@@ -231,17 +201,6 @@ export default function DocumentaryForm({
           />
         </Flex>
         <Flex gap={'md'}>
-          <TextInput
-            withAsterisk
-            label="Section Link"
-            className="w-1/2"
-            error={
-              errors?.sectionLink
-                ? errors?.sectionLink?.message?.toString()
-                : ''
-            }
-            {...register('sectionLink')}
-          />
           <NativeSelect
             placeholder="Required To"
             withAsterisk
@@ -252,6 +211,11 @@ export default function DocumentaryForm({
               errors?.requiredTo ? errors?.requiredTo?.message?.toString() : ''
             }
             {...register('requiredTo')}
+          />
+          <Checkbox
+            label="Is Required"
+            className="w-1/2 my-auto"
+            {...register('isRequired')}
           />
         </Flex>
         <Flex gap={'md'}>
@@ -264,26 +228,6 @@ export default function DocumentaryForm({
             label="Check On First Opening"
             className="w-1/2"
             {...register('checkOnFirstOpening')}
-          />
-        </Flex>
-        <Flex gap={'md'}>
-          <Checkbox
-            label="Check On Second Compliance"
-            className="w-1/2"
-            {...register('checkOnSecondCompliance')}
-          />
-          <Checkbox
-            label="Check On Second Opening"
-            className="w-1/2"
-            {...register('checkOnSecondOpening')}
-          />
-        </Flex>
-
-        <Flex gap={'md'}>
-          <Checkbox
-            label="Is Required"
-            className="w-1/2"
-            {...register('isRequired')}
           />
         </Flex>
         <EntityButton

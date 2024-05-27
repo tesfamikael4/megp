@@ -38,6 +38,7 @@ export default function SpdAdministrativeCompliance({
     trigger({
       id: id.toString(),
       collectionQuery: {
+        includes: ['bidForm'],
         where: [
           [
             {
@@ -59,7 +60,12 @@ export default function SpdAdministrativeCompliance({
         title: 'ITB Reference',
         width: 150,
       },
-      { accessor: 'formLink', title: 'Bid Form Link', width: 150 },
+      {
+        accessor: 'bidFormId',
+        title: 'Bid Form Link',
+        width: 150,
+        render: (record) => <Box>{record.bidForm?.title}</Box>,
+      },
       {
         accessor: 'action',
         header: 'Action',
@@ -149,6 +155,7 @@ export default function SpdAdministrativeCompliance({
       id: id.toString(),
       collectionQuery: {
         ...request,
+        includes: ['bidForm'],
         where: [
           [
             {
