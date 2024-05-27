@@ -5,9 +5,6 @@ export class UpdateOnFormLink1716794709953 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "technical_preliminary_assessment_details" DROP CONSTRAINT "FK_8427135ffaf205f1edd505d5215"`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "spd_preliminary_evaluations" RENAME COLUMN "formLink" TO "bidFromId"`,
     );
     await queryRunner.query(
@@ -177,9 +174,6 @@ export class UpdateOnFormLink1716794709953 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "spd_preliminary_evaluations" RENAME COLUMN "bidFromId" TO "formLink"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "technical_preliminary_assessment_details" ADD CONSTRAINT "FK_8427135ffaf205f1edd505d5215" FOREIGN KEY ("eqcPreliminaryExaminationId") REFERENCES "spd_preliminary_evaluations"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
   }
 }
