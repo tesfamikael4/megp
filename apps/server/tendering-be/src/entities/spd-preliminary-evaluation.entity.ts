@@ -34,9 +34,9 @@ export class SpdPreliminaryEvaluation extends Audit {
   spd: Spd;
 
   @Column()
-  bidFromId: string;
+  bidFormId: string;
 
   @ManyToOne(() => SpdBidForm, (spd) => spd.spdPreliminaryEvaluations)
-  @JoinColumn({ name: 'bidFromId' })
-  bidFrom: SpdBidForm;
+  @JoinColumn({ name: 'bidFormId' })
+  bidForm: SpdBidForm;
 }

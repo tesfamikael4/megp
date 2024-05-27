@@ -100,7 +100,7 @@ export class EqcTechnicalScoringService extends ExtraCrudService<EqcTechnicalSco
       eqcTechnicalScoring.parentId = entity.id;
       eqcTechnicalScoring.spdTechnicalScoringId = tenderPersonal.id;
       eqcTechnicalScoring.requirement = tenderPersonal.position;
-      eqcTechnicalScoring.bidFromId = entity.bidFromId;
+      eqcTechnicalScoring.bidFormId = entity.bidFormId;
       eqcTechnicalScoring.isProfessional = false;
       eqcTechnicalScoring.hasProfessional = true;
       eqcTechnicalScoring.point = 0;
@@ -135,7 +135,7 @@ export class EqcTechnicalScoringService extends ExtraCrudService<EqcTechnicalSco
         eqcTechnicalScoring.parentId = entity.id;
         eqcTechnicalScoring.spdTechnicalScoringId = spdProfessionalSetting.id;
         eqcTechnicalScoring.requirement = spdProfessionalSetting.requirement;
-        eqcTechnicalScoring.bidFromId = spdProfessionalSetting.bidFromId;
+        eqcTechnicalScoring.bidFormId = spdProfessionalSetting.bidFormId;
         eqcTechnicalScoring.isProfessional = false;
         eqcTechnicalScoring.hasProfessional = false;
         eqcTechnicalScoring.point = 0;
@@ -181,7 +181,7 @@ export class EqcTechnicalScoringService extends ExtraCrudService<EqcTechnicalSco
         eqcTechnicalScoring.spdTechnicalScoringParentId =
           spdTechnicalScoringChild.parentId;
         eqcTechnicalScoring.requirement = spdTechnicalScoringChild.requirement;
-        eqcTechnicalScoring.bidFromId = spdTechnicalScoringChild.bidFromId;
+        eqcTechnicalScoring.bidFormId = spdTechnicalScoringChild.bidFormId;
         eqcTechnicalScoring.isProfessional =
           spdTechnicalScoringChild.isProfessional;
         eqcTechnicalScoring.hasProfessional = false;

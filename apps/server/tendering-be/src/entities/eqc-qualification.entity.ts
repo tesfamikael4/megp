@@ -48,11 +48,11 @@ export class EqcQualification extends Audit {
   order: number;
 
   @Column()
-  bidFromId: string;
+  bidFormId: string;
 
   @ManyToOne(() => SpdBidForm, (spd) => spd.eqcQualifications)
-  @JoinColumn({ name: 'bidFromId' })
-  bidFrom: SpdBidForm;
+  @JoinColumn({ name: 'bidFormId' })
+  bidForm: SpdBidForm;
 
   @Column({ nullable: true })
   itbDescription: string;

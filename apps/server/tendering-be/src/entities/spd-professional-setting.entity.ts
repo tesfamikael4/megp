@@ -21,11 +21,11 @@ export class SpdProfessionalSetting extends Audit {
   requirement: string;
 
   @Column()
-  bidFromId: string;
+  bidFormId: string;
 
   @ManyToOne(() => SpdBidForm, (spd) => spd.spdPreliminaryEvaluations)
-  @JoinColumn({ name: 'bidFromId' })
-  bidFrom: SpdBidForm;
+  @JoinColumn({ name: 'bidFormId' })
+  bidForm: SpdBidForm;
 
   @Column({ type: 'jsonb' })
   validation: any;

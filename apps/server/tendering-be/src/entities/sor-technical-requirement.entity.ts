@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Item } from './tender-item.entity';
 import { TechnicalResponsivenessAssessmentDetail } from './technical-responsiveness-assessment-detail.entity';
+import { SpdBidForm } from './spd-bid-form.entity';
 
 @Entity({ name: 'sor_technical_requirements' })
 export class SorTechnicalRequirement extends Audit {
@@ -38,7 +39,11 @@ export class SorTechnicalRequirement extends Audit {
   requirementType: string;
 
   @Column()
-  formLink: string;
+  bidFormId: string;
+
+  @ManyToOne(() => SpdBidForm, (spd) => spd.sorTechnicalRequirements)
+  @JoinColumn({ name: 'bidFormId' })
+  bidForm: SpdBidForm;
 
   @OneToMany(
     () => TechnicalResponsivenessAssessmentDetail,

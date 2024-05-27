@@ -38,11 +38,11 @@ export class SpdTechnicalScoring extends Audit {
   requirement: string;
 
   @Column()
-  bidFromId: string;
+  bidFormId: string;
 
   @ManyToOne(() => SpdBidForm, (spd) => spd.spdTechnicalScorings)
-  @JoinColumn({ name: 'bidFromId' })
-  bidFrom: SpdBidForm;
+  @JoinColumn({ name: 'bidFormId' })
+  bidForm: SpdBidForm;
 
   @Column()
   isProfessional: boolean;

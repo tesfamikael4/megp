@@ -16,6 +16,7 @@ import { EqcTechnicalScoring } from './eqc-technical-scoring.entity';
 import { EqcQualification } from './eqc-qualification.entity';
 import { EqcPreliminaryExamination } from './eqc-preliminary-examination.entity';
 import { SpdQualification } from './spd-qualification.entity';
+import { SorTechnicalRequirement } from './sor-technical-requirement.entity';
 
 @Entity({ name: 'spd_bid_forms' })
 export class SpdBidForm extends Audit {
@@ -52,43 +53,49 @@ export class SpdBidForm extends Audit {
 
   @OneToMany(
     () => SpdPreliminaryEvaluation,
-    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidFrom,
+    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidForm,
   )
   spdPreliminaryEvaluations: SpdPreliminaryEvaluation[];
 
   @OneToMany(
     () => SpdProfessionalSetting,
-    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidFrom,
+    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidForm,
   )
   spdProfessionalSettings: SpdProfessionalSetting[];
 
   @OneToMany(
     () => SpdTechnicalScoring,
-    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidFrom,
+    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidForm,
   )
   spdTechnicalScorings: SpdTechnicalScoring[];
 
   @OneToMany(
     () => SpdQualification,
-    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidFrom,
+    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidForm,
   )
   spdQualifications: SpdQualification[];
 
   @OneToMany(
     () => EqcTechnicalScoring,
-    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidFrom,
+    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidForm,
   )
   eqcTechnicalScorings: EqcTechnicalScoring[];
 
   @OneToMany(
     () => EqcQualification,
-    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidFrom,
+    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidForm,
   )
   eqcQualifications: EqcQualification[];
 
   @OneToMany(
     () => EqcPreliminaryExamination,
-    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidFrom,
+    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidForm,
   )
   eqcPreliminaryExaminations: EqcPreliminaryExamination[];
+
+  @OneToMany(
+    () => SorTechnicalRequirement,
+    (ppdPreliminaryEvaluations) => ppdPreliminaryEvaluations.bidForm,
+  )
+  sorTechnicalRequirements: SorTechnicalRequirement[];
 }

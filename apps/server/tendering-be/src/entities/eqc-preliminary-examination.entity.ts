@@ -44,11 +44,11 @@ export class EqcPreliminaryExamination extends Audit {
   type: string;
 
   @Column()
-  bidFromId: string;
+  bidFormId: string;
 
   @ManyToOne(() => SpdBidForm, (spd) => spd.eqcPreliminaryExaminations)
-  @JoinColumn({ name: 'bidFromId' })
-  bidFrom: SpdBidForm;
+  @JoinColumn({ name: 'bidFormId' })
+  bidForm: SpdBidForm;
 
   // relation?
   @Column({ type: 'uuid', nullable: true })
