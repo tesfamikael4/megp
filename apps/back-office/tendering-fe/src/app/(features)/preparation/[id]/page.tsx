@@ -474,7 +474,7 @@ export default function TenderDetailPage() {
                 defaultCollapsed={true}
                 className="capitalize my-2"
               >
-                <ProcurementMechanismForm />
+                <ProcurementMechanismForm prId={selected?.prId} />
               </Section>
             </>
           )}

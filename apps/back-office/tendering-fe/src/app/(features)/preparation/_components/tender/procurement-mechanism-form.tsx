@@ -4,12 +4,12 @@ import {
   Flex,
   LoadingOverlay,
   NativeSelect,
-  NumberInput,
   Stack,
+  Table,
   Text,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import {
@@ -19,8 +19,14 @@ import {
 } from '../../_api/tender/procurement-mechanisms.api';
 import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
+import { useLazyGetAnalyticsQuery } from '../../_api/tender/procurement-requisition.api';
 
-export default function ProcurementMechanismForm() {
+interface ProcurementMechanismFormProps {
+  prId: string;
+}
+export default function ProcurementMechanismForm({
+  prId,
+}: ProcurementMechanismFormProps) {
   const { id } = useParams();
   const ProcurementMechanismSchema: ZodType<Partial<ProcurementMechanism>> =
     z.object({
@@ -46,6 +52,9 @@ export default function ProcurementMechanismForm() {
   const stageTypeValue = watch('stageType');
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
+
+  const [triggerAnalytics, { data: analytics, isLoading: analyticsLoading }] =
+    useLazyGetAnalyticsQuery();
 
   const onCreate = async (data) => {
     try {
@@ -90,9 +99,17 @@ export default function ProcurementMechanismForm() {
     }
   }, [reset, selected, selectedSuccess]);
 
+  useEffect(() => {
+    if (prId) {
+      triggerAnalytics(prId);
+    }
+  }, [prId, triggerAnalytics]);
+
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
+      <LoadingOverlay
+        visible={isLoading || isUpdating || isSaving || analyticsLoading}
+      />
       <div className="w-full flex space-x-4">
         <NativeSelect
           placeholder="Invitation Type"
@@ -155,6 +172,75 @@ export default function ProcurementMechanismForm() {
         isSaving={isSaving}
         isUpdating={isUpdating}
       />
+      {analytics && analytics.items[0] && (
+        <Table highlightOnHover withTableBorder withColumnBorders>
+          <Table.Tbody>
+            <Table.Tr>
+              <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                Procurement Type
+              </Table.Td>
+              <Table.Td>{analytics.items[0].procurementType}</Table.Td>
+            </Table.Tr>
+
+            <Table.Tr>
+              <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                Procurement Method
+              </Table.Td>
+              <Table.Td>{analytics.items[0].procurementMethod}</Table.Td>
+            </Table.Tr>
+
+            <Table.Tr>
+              <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                Funding Source
+              </Table.Td>
+              <Table.Td>{analytics.items[0].fundingSource}</Table.Td>
+            </Table.Tr>
+
+            <Table.Tr>
+              <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                Target Group
+              </Table.Td>
+              <Table.Td>
+                {analytics.items[0].targetGroup &&
+                  analytics.items[0].targetGroup.length > 0 && (
+                    <Flex gap={'sm'}>
+                      {analytics.items[0].targetGroup.map((element, index) => (
+                        <Text key={index}>
+                          {' '}
+                          {element}{' '}
+                          {index < analytics.items[0].targetGroup.length - 1
+                            ? ','
+                            : ''}{' '}
+                        </Text>
+                      ))}
+                    </Flex>
+                  )}
+              </Table.Td>
+            </Table.Tr>
+
+            <Table.Tr>
+              <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                Donor
+              </Table.Td>
+              <Table.Td></Table.Td>
+            </Table.Tr>
+
+            <Table.Tr>
+              <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                Contract
+              </Table.Td>
+              <Table.Td></Table.Td>
+            </Table.Tr>
+
+            <Table.Tr>
+              <Table.Td className="bg-slate-100 font-semibold w-2/6">
+                Is Online
+              </Table.Td>
+              <Table.Td>{analytics.items[0].isOnline ? 'Yes' : 'No'}</Table.Td>
+            </Table.Tr>
+          </Table.Tbody>
+        </Table>
+      )}
     </Stack>
   );
 }
