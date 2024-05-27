@@ -24,12 +24,10 @@ function Page() {
       {
         accessor: 'name',
         title: 'Name',
-        render: (record) => {
-          return record?.attachmentId?.substring(
-            0,
-            record?.attachmentId?.indexOf('.'),
-          );
-        },
+      },
+      {
+        accessor: 'description',
+        title: 'Description',
       },
       {
         accessor: 'type',
