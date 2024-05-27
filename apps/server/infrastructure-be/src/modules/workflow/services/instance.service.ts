@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { DataSource, EntityManager, In, Not, Repository } from 'typeorm';
-import { Step } from 'src/entities';
+import { Step, Workflow } from 'src/entities';
 import { Instance } from 'src/entities/instance.entity';
 import { Activity } from 'src/entities/activity.entity';
 import { StateService } from './state.service';
@@ -47,6 +47,11 @@ export class InstanceService extends EntityCrudService<Instance> {
     try {
       const entityManager: EntityManager = queryRunner.manager;
 
+      const application = await entityManager.getRepository(Workflow).findOne({
+        where: {
+          name: data.application,
+        },
+      });
       const act = await entityManager.getRepository(Activity).findOne({
         where: {
           name: data.name,

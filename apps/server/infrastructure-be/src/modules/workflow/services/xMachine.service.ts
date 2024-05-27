@@ -122,12 +122,18 @@ export class XMachineService {
               if (params.status == 'Approved' || params.status == 'Rejected') {
                 const acti = await this.repositoryActivity.findOne({
                   where: { id: activityId },
+                  relations: {
+                    workflow: true,
+                  },
                 });
-                this.workflowRMQClient.emit(`workflow-approval.${acti.name}`, {
-                  status: params.status,
-                  activityId: activityId,
-                  itemId: existingData.itemId,
-                });
+                this.workflowRMQClient.emit(
+                  `${acti.workflow.name}-workflow.${acti.name}`,
+                  {
+                    status: params.status,
+                    activityId: activityId,
+                    itemId: existingData.itemId,
+                  },
+                );
               }
             } else {
               const data = {

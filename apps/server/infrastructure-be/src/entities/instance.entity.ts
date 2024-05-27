@@ -13,6 +13,7 @@ import { Step } from './step.entity';
 import { OrgAudit } from 'megp-shared-be';
 import { State } from './state.entity';
 import { InstanceStep } from './instance-step.entity';
+import { Workflow } from './workflow.entity';
 
 @Entity({ name: 'instances' })
 export class Instance extends OrgAudit {
