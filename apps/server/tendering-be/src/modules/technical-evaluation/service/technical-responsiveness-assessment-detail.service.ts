@@ -568,7 +568,6 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
             isTeamAssessment: true,
             bidRegistrationDetail: {
               lotId: itemData.lotId,
-              technicalItems: ArrayContains([itemData.itemId]),
             },
           },
         });
@@ -577,14 +576,17 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
         (list) => {
           return {
             bidRegistrationDetailId: list.bidRegistrationDetailId,
-            milestoneNum: TenderMilestoneEnum.TechnicalScoring,
-            milestoneTxt: 'TechnicalScoring',
+
+            milestoneNum: TenderMilestoneEnum.TechnicalResponsiveness,
+            milestoneTxt: 'TechnicalResponsiveness',
             bidderStatus:
-              list.qualified == EvaluationStatusEnum.COMPLY ? 306 : 305,
+              list.qualified == EvaluationStatusEnum.COMPLY
+                ? BidderStatusEnum.TechnicalResponsivenessSucceeded
+                : BidderStatusEnum.TechnicalResponsivenessFailed,
             bidderStatusTxt:
               list.qualified == EvaluationStatusEnum.COMPLY
-                ? 'TechnicalScoringSucceeded'
-                : 'TechnicalScoringFailed',
+                ? 'TechnicalResponsivenessSucceeded'
+                : 'TechnicalResponsivenessFailed',
             passFail:
               list.qualified == EvaluationStatusEnum.COMPLY ? true : false,
           };

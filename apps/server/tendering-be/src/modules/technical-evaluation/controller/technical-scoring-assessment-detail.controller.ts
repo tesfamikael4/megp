@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Put, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { TechnicalScoringAssessmentDetail } from 'src/entities/technical-scoring-assessment-detail.entity';
@@ -8,12 +17,15 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { TechnicalScoringAssessmentDetailService } from '../service/technical-scoring-assessment-detail.service';
 import { CompleteBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
+import { GroupMemberGuard } from 'src/shared/authorization/guards/team-member.guard';
+import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'technicalScoringAssessmentId',
   // createDto: CreateTechnicalScoringAssessmentDetailDto,
 };
 
+@UseGuards(GroupMemberGuard(TeamRoleEnum.TECHNICAL_EVALUATOR))
 @Controller('technical-scoring-assessment-detail')
 @ApiTags('Technical Scoring Assessment Detail Controller')
 export class TechnicalScoringAssessmentDetailController extends ExtraCrudController<TechnicalScoringAssessmentDetail>(

@@ -190,14 +190,17 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
   }
 
   async checklistStatus(lotId: string, bidderId: string, req: any) {
-    const evaluatorId = req.user.userId;
+    const evaluatorId = 'bed33925-3a83-4cba-be4a-fd563a306c3b';
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const entities = await manager.getRepository(EqcTechnicalScoring).find({
+      where: {
+        lotId,
+        parentId: null,
+      },
+    });
+    const root = entities.find((entry) => entry.parentId === null);
     const [eqcChecklist, checklists] = await Promise.all([
-      manager.getRepository(EqcTechnicalScoring).find({
-        where: {
-          lotId,
-        },
-      }),
+      manager.getTreeRepository(EqcTechnicalScoring).findDescendantsTree(root),
       // Todo: check if the opener is the team member
       this.technicalScoringAssessmentDetailRepository.find({
         where: {
@@ -217,15 +220,41 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
         },
       }),
     ]);
-    const response = eqcChecklist.map((eqcChecklist) => ({
-      ...eqcChecklist,
-      check: checklists.find((x) => x.eqcTechnicalScoringId == eqcChecklist.id)
-        ? true
-        : false,
-    }));
+
+    // Helper function to construct the tree structure
+    function buildTree(
+      entries: EqcTechnicalScoring[],
+      parentId: string | null = null,
+    ) {
+      return entries
+        .filter((entry) => entry.parentId === parentId)
+        .map((entry) => ({
+          ...entry,
+          check: checklists.some((x) => x.eqcTechnicalScoringId === entry.id),
+          children: buildTree(entries, entry.id),
+        }));
+    }
+
+    // Identify root entries and construct the tree
+    const rootEntries = buildTree(entities, null);
+    const response = await this.traverseAndMap(rootEntries, checklists);
 
     // return this.groupChecklist(response);
     return response;
+  }
+
+  async traverseAndMap(
+    treeNode: EqcTechnicalScoring,
+    checklists: any,
+  ): Promise<any> {
+    const tree = {
+      ...treeNode,
+      check: checklists.some((x) => x.eqcTechnicalScoringId === treeNode.id),
+      children: treeNode.children
+        ? treeNode.children.map(await this.traverseAndMap)
+        : [],
+    };
+    return tree;
   }
 
   async groupChecklist(items: any[]) {
