@@ -13,6 +13,7 @@ import {
 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { RequirementsTree } from './requirements-tree';
 
 export const Requirements = ({
   milestone,
@@ -201,6 +202,34 @@ export const Requirements = ({
                 ? qualificationRequirements
                 : responsivenessRequirements ?? []
             }
+          />
+        )}
+
+        {milestone === 'technicalScoring' && (
+          <RequirementsTree
+            requirements={[
+              {
+                id: 1,
+                description: 'Parent 1',
+                children: [
+                  {
+                    id: 2,
+                    description: 'children 1',
+                  },
+                  {
+                    id: 3,
+                    description: 'children 2',
+                    children: [
+                      {
+                        id: 4,
+                        description: 'grand children',
+                        children: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ]}
           />
         )}
       </Section>
