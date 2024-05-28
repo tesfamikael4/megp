@@ -20,6 +20,8 @@ import {
   CollectionQuery,
   FilterOperators,
   QueryConstructor,
+  decodeCollectionQuery,
+  encodeCollectionQuery,
 } from 'src/shared/collection-query';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
@@ -29,12 +31,12 @@ import {
   ChangeTenderStatusDto,
   CreateTenderDto,
   GenerateTenderDocumentDto,
+  ReAdvertiseTenderDto,
 } from '../dto';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
 import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
-import { ClientProxy } from '@nestjs/microservices';
 import {
   ItemStatusEnum,
   LotStatusEnum,
@@ -202,6 +204,7 @@ export class TenderService extends EntityCrudService<Tender> {
         value: req.user.userId,
       },
     ]);
+
     query.where.push([
       {
         column: 'status',
@@ -618,6 +621,21 @@ export class TenderService extends EntityCrudService<Tender> {
     const item = await this.findOneOrFail(id);
     await this.tenderRepository.update(item.id, {
       status: TenderStatusEnum.CANCELED,
+    });
+  }
+
+  async reAdvertiseTender(payload: ReAdvertiseTenderDto) {
+    const tender = await this.tenderRepository.findOne({
+      where: {
+        id: payload.id,
+      },
+      relations: {
+        procurementMechanism: true,
+        procurementTechnicalTeams: true,
+        lots: {
+          items: true,
+        },
+      },
     });
   }
 

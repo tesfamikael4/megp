@@ -11,7 +11,11 @@ import {
 } from '../dto/tender.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous } from 'src/shared/authorization';
-import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+import {
+  MessageHandlerErrorBehavior,
+  RabbitRPC,
+  RabbitSubscribe,
+} from '@golevelup/nestjs-rabbitmq';
 import { ConsumeMessage } from 'amqplib';
 
 const options: EntityCrudOptions = {
@@ -26,12 +30,21 @@ export class TenderController extends EntityCrudController<Tender>(options) {
     super(tenderService);
   }
 
-  @RabbitSubscribe({
+  // @RabbitSubscribe({
+  //   exchange: 'workflow-broadcast-exchanges',
+  //   routingKey: 'tendering-workflow.tenderApproval',
+  //   queue: 'tendering-approval-workflow',
+  //   errorHandler: (err) => {
+  //     console.error('🚀 ~ TenderController ~ err:', err);
+  //   },
+  // })
+  @RabbitRPC({
     exchange: 'workflow-broadcast-exchanges',
     routingKey: 'tendering-workflow.tenderApproval',
-    queue: 'tendering-approval-workflow',
+    queue: 'tendering-approval-workflow1',
+    errorBehavior: MessageHandlerErrorBehavior.ACK,
     errorHandler: (err) => {
-      console.error('🚀 ~ TenderController ~ err:', err);
+      console.log('🚀 ~ TenderController ~ err:', err);
     },
   })
   @AllowAnonymous()

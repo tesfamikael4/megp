@@ -39,11 +39,15 @@ export class TenantInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    let query = req.query.q as string;
+    const q = req.query.q as string;
+
+    let query = decodeURIComponent(q);
 
     if (query == undefined) {
       query = '';
     }
+
+    query = query.replace('q=', '');
 
     const whereExist: boolean = query.includes('w=');
 

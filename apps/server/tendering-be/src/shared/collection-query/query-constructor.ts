@@ -1,7 +1,6 @@
 import { ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
 import { CollectionQuery, Order, Where } from './query';
 import { FilterOperators } from './filter_operators';
-import { decodeCollectionQuery, encodeCollectionQuery } from './query-mapper';
 
 const addFilterConditions = (
   op: string,
@@ -88,7 +87,6 @@ const applyWhereConditions = <T>(
   for (const [index, conditions] of whereConditions.entries()) {
     const operator = index === 0 ? 'where' : 'andWhere';
 
-    let count = 0;
     queryBuilder[operator]((subQuery) => {
       const orConditions = conditions.map(({ column, value, operator: op }) => {
         if (column.includes('.')) {
@@ -130,7 +128,7 @@ const applyWhereConditions = <T>(
               );
             }
           } else {
-            const columnValue = `${column}_${++count}`;
+            const columnValue = `${column}_${index + 1}`;
 
             return addFilterConditions(
               op,
@@ -142,7 +140,6 @@ const applyWhereConditions = <T>(
         }
       });
 
-      count = 0;
       const queryParams = conditions.reduce(
         (acc, { column, value, operator: op }) => {
           if (column.includes('.')) {
@@ -172,7 +169,7 @@ const applyWhereConditions = <T>(
               );
             }
           } else {
-            const columnValue = `${column}_${++count}`;
+            const columnValue = `${column}_${index + 1}`;
 
             acc = addFilterParams(op, value, columnValue, acc);
           }

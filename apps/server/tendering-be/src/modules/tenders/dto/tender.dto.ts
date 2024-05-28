@@ -23,3 +23,14 @@ export class GenerateTenderDocumentDto {
   @IsUUID()
   id: string;
 }
+
+export class ReAdvertiseTenderDto {
+  @ApiProperty()
+  @IsUUID()
+  id: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+}
