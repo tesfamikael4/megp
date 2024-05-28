@@ -23,7 +23,7 @@ export class ActivityController extends ExtraCrudController<Activity>(options) {
   constructor(private readonly activityService: ActivityService) {
     super(activityService);
   }
-  @Get()
+  @Get('find-all')
   @ApiQuery({
     name: 'q',
     type: String,
@@ -31,13 +31,13 @@ export class ActivityController extends ExtraCrudController<Activity>(options) {
     required: false,
   })
   @IgnoreTenantInterceptor()
-  async findAll(
-    @Param('id') id: string,
+  async findAllActivities(
+    // @Param('id') id: string,
     @Query('q') q: string,
     @Req() req?: any,
   ) {
     const query = decodeCollectionQuery(q);
-    return this.activityService.findAll(id, query, options, req);
+    return this.activityService.findAllActivities(query, options, req);
   }
 
   @Get(':name')

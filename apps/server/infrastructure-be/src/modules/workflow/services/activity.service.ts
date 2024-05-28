@@ -2,7 +2,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Activity } from 'src/entities/activity.entity';
-import { ExtraCrudService } from 'megp-shared-be';
+import {
+  CollectionQuery,
+  DataResponseFormat,
+  ExtraCrudOptions,
+  ExtraCrudService,
+  FilterOperators,
+  QueryConstructor,
+} from 'megp-shared-be';
 
 @Injectable()
 export class ActivityService extends ExtraCrudService<Activity> {
@@ -30,5 +37,25 @@ export class ActivityService extends ExtraCrudService<Activity> {
         },
       },
     });
+  }
+
+  async findAllActivities(
+    query: CollectionQuery,
+    extraCrudOptions: ExtraCrudOptions,
+    req?: any,
+  ) {
+    const dataQuery = QueryConstructor.constructQuery<Activity>(
+      this.repositoryActivity,
+      query,
+    );
+    const response = new DataResponseFormat<Activity>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }
