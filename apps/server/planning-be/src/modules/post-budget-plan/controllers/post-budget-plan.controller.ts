@@ -110,7 +110,7 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
     await this.postBudgetPlanService.initiateWorkflow(data);
   }
 
-  @EventPattern('workflow-approval.postBudgetApproval')
+  @EventPattern('planning-workflow.postBudgetApproval')
   @ApiPaginatedResponse(PostBudgetPlan)
   async handleApprovedWorkflow(@Body() data: any) {
     return await this.postBudgetPlanService.approvePostBudget(data);
