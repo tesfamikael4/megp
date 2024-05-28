@@ -49,7 +49,29 @@ dotenv.config({ path: '.env' });
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RMQ_URL],
-          queue: 'work-plan-approve',
+          queue: 'planning-workflow',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+      {
+        name: 'WORKFLOW_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'tendering-workflow',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+      {
+        name: 'WORKFLOW_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'marketplace-workflow',
           queueOptions: {
             durable: false,
           },
