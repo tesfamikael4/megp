@@ -29,7 +29,7 @@ export class TenderController extends EntityCrudController<Tender>(options) {
   @RabbitSubscribe({
     exchange: 'workflow-broadcast-exchanges',
     routingKey: 'tendering-workflow.tenderApproval',
-    queue: 'tenderingApprovalWorkflow',
+    queue: 'tendering-approval-workflow',
     errorHandler: (err) => {
       console.error('🚀 ~ TenderController ~ err:', err);
     },
