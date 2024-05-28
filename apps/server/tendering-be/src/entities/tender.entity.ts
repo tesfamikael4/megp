@@ -32,6 +32,7 @@ import { Team } from './team.entity';
 import { Note } from './note.entity';
 import { TenderMilestone } from './tender-milestone.entity';
 import { RevisionApproval } from './revision-approval.entity';
+import { TenderStatusEnum } from 'src/shared/enums/tender-status.enum';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -65,7 +66,11 @@ export class Tender extends Audit {
   @Column()
   marketEstimateCurrency: string;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: TenderStatusEnum,
+    default: TenderStatusEnum.DRAFT,
+  })
   status: string;
 
   @Column({ type: 'jsonb', nullable: true })

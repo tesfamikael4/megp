@@ -35,6 +35,10 @@ import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { ClientProxy } from '@nestjs/microservices';
+import {
+  LotStatusEnum,
+  TenderStatusEnum,
+} from 'src/shared/enums/tender-status.enum';
 
 @Injectable()
 export class TenderService extends EntityCrudService<Tender> {
@@ -100,7 +104,7 @@ export class TenderService extends EntityCrudService<Tender> {
         prId: prId,
         marketEstimate: Number(prResponse.calculatedAmount),
         marketEstimateCurrency: prResponse.currency,
-        status: 'DRAFT',
+        status: TenderStatusEnum.DRAFT,
         organizationId: req.user.organization.id,
         organizationName: req.user.organization.name,
       };
@@ -141,7 +145,7 @@ export class TenderService extends EntityCrudService<Tender> {
       const lot = manager.getRepository(Lot).create({
         number: 1,
         name: `Lot 1`,
-        status: `DRAFT`,
+        status: LotStatusEnum.DRAFT,
         tenderId: tender.id,
       });
       await manager.getRepository(Lot).insert(lot);
@@ -197,6 +201,13 @@ export class TenderService extends EntityCrudService<Tender> {
         value: req.user.userId,
       },
     ]);
+    query.where.push([
+      {
+        column: 'status',
+        operator: FilterOperators.NotEqualTo,
+        value: TenderStatusEnum.RE_ADVERTISE,
+      },
+    ]);
 
     const dataQuery = QueryConstructor.constructQuery<Tender>(
       this.tenderRepository,
@@ -232,7 +243,7 @@ export class TenderService extends EntityCrudService<Tender> {
       {
         column: 'status',
         operator: FilterOperators.EqualTo,
-        value: 'PUBLISHED',
+        value: TenderStatusEnum.PUBLISHED,
       },
     ]);
     query.where.push([
@@ -280,7 +291,7 @@ export class TenderService extends EntityCrudService<Tender> {
       {
         column: 'status',
         operator: FilterOperators.EqualTo,
-        value: 'PUBLISHED',
+        value: TenderStatusEnum.PUBLISHED,
       },
     ]);
     query.where.push([
@@ -314,9 +325,15 @@ export class TenderService extends EntityCrudService<Tender> {
 
     if (!tender) {
       throw new BadRequestException('Tender not found');
-    } else if (tender.status == 'DRAFT' && input.status == 'SUBMITTED') {
+    } else if (
+      tender.status == TenderStatusEnum.DRAFT &&
+      input.status == TenderStatusEnum.SUBMITTED
+    ) {
       await this.validateTender(tender.id);
-    } else if (tender.status == 'SUBMITTED' && input.status == 'PUBLISHED') {
+    } else if (
+      tender.status == TenderStatusEnum.SUBMITTED &&
+      input.status == TenderStatusEnum.PUBLISHED
+    ) {
       await this.generateTenderInvitation({ id: tender.id });
     }
 
@@ -325,7 +342,10 @@ export class TenderService extends EntityCrudService<Tender> {
       .getRepository(Tender)
       .update({ id: input.id }, { status: input.status });
 
-    if (tender.status == 'SUBMISSION' && input.status == 'APPROVAL') {
+    if (
+      tender.status == TenderStatusEnum.SUBMISSION &&
+      input.status == TenderStatusEnum.APPROVAL
+    ) {
       await this.tenderingRMQClient.emit('initiate-workflow', {
         id: tender.id,
         name: tender.name,
@@ -534,7 +554,7 @@ export class TenderService extends EntityCrudService<Tender> {
   async softDelete(id: string, req?: any): Promise<void> {
     const item = await this.findOneOrFail(id);
     await this.tenderRepository.update(item.id, {
-      status: 'RE_ADVERTISE',
+      status: TenderStatusEnum.RE_ADVERTISE,
     });
   }
 

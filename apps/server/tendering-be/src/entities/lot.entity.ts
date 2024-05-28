@@ -26,6 +26,7 @@ import { TenderMilestone } from './tender-milestone.entity';
 import { PriceAdjustingFactor } from './price-adjusting-factor.entity';
 import { ExchangeRate } from './exchange-rate.entity';
 import { BidPriceEvaluation } from './bid-price-evaluation.entity';
+import { LotStatusEnum } from 'src/shared/enums/tender-status.enum';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -45,7 +46,7 @@ export class Lot extends Audit {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'enum', enum: LotStatusEnum, default: LotStatusEnum.DRAFT })
   status: string;
 
   @Column({ type: 'jsonb', nullable: true })

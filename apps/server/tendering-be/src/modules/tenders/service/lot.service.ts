@@ -12,6 +12,7 @@ import {
   QueryConstructor,
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
+import { LotStatusEnum } from 'src/shared/enums/tender-status.enum';
 
 @Injectable()
 export class LotService extends ExtraCrudService<Lot> {
@@ -50,7 +51,7 @@ export class LotService extends ExtraCrudService<Lot> {
         const lot = this.lotRepository.create({
           number: lotCount.number + 1,
           name: itemData.name,
-          status: `DRAFT`,
+          status: LotStatusEnum.DRAFT,
           tenderId: itemData.tenderId,
         });
         await manager.getRepository(Lot).insert(lot);
@@ -107,7 +108,7 @@ export class LotService extends ExtraCrudService<Lot> {
   async softDelete(id: string, req?: any): Promise<void> {
     const item = await this.findOneOrFail(id);
     await this.lotRepository.update(item.id, {
-      status: 'RE_ADVERTISE',
+      status: LotStatusEnum.RE_ADVERTISE,
     });
   }
 }

@@ -1,0 +1,20 @@
+export enum TenderStatusEnum {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  SUBMISSION = 'SUBMISSION',
+  APPROVAL = 'APPROVAL',
+  PUBLISHED = 'PUBLISHED',
+  CANCELED = 'CANCELED',
+  RE_ADVERTISE = 'RE_ADVERTISE',
+}
+
+export enum ItemStatusEnum {
+  ACTIVE = 'ACTIVE',
+  RE_ADVERTISE = 'RE_ADVERTISE',
+}
+
+export enum LotStatusEnum {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  RE_ADVERTISE = 'RE_ADVERTISE',
+}
