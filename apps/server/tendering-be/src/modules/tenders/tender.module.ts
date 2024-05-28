@@ -43,7 +43,6 @@ import {
   TenderSpdService,
   TenderService,
 } from './service';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 @Module({
@@ -64,19 +63,6 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     MinIOModule,
     DocxModule,
     DocumentManipulatorModule,
-    ClientsModule.register([
-      {
-        name: 'TENDERING_RMQ_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.RMQ_URL],
-          queue: 'work-plan-initiate',
-          queueOptions: {
-            durable: false,
-          },
-        },
-      },
-    ]),
     RabbitMQModule.forRoot(RabbitMQModule, {
       exchanges: [
         {

@@ -28,15 +28,15 @@ export class TenderController extends EntityCrudController<Tender>(options) {
 
   @RabbitSubscribe({
     exchange: 'workflow-broadcast-exchanges',
-    routingKey: 'tendering.approval',
-    queue: 'tendering',
+    routingKey: 'tendering-workflow.tenderApproval',
+    queue: 'tenderingApprovalWorkflow',
     errorHandler: (err) => {
       console.error('🚀 ~ TenderController ~ err:', err);
     },
   })
   @AllowAnonymous()
   async tenderApproval(data: any, amqpMsg: ConsumeMessage) {
-    if (amqpMsg.fields.routingKey == 'tendering.approval') {
+    if (amqpMsg.fields.routingKey == 'tendering-workflow.tenderApproval') {
       return this.tenderService.tenderApproval(data);
     }
   }

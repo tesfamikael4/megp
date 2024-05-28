@@ -15,20 +15,6 @@ async function bootstrap() {
     cors: true,
   });
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      // noAck: false,
-      urls: [process.env.RMQ_URL],
-      queue: 'tendering-workflow',
-      queueOptions: {
-        durable: false,
-      },
-    },
-  });
-
-  await app.startAllMicroservices();
-
   app.enableCors();
 
   const port = Number(process.env.PORT || 3000);
