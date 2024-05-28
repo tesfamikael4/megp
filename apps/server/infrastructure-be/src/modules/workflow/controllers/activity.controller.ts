@@ -48,9 +48,13 @@ export class ActivityController extends ExtraCrudController<Activity>(options) {
     required: false,
   })
   @IgnoreTenantInterceptor()
-  async findByName(@Param('name') name: string, @Req() req?: any) {
-    // const query = decodeCollectionQuery(q);
-    return await this.activityService.findByName(name);
+  async findByName(
+    @Param('name') name: string,
+    @Query('q') q: string,
+    @Req() req?: any,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.activityService.findByName(name, query, options, req);
   }
   @Get(':id')
   @IgnoreTenantInterceptor()

@@ -29,14 +29,36 @@ export class ActivityService extends ExtraCrudService<Activity> {
     return item;
   }
 
-  async findByName(name: string, req?: any) {
-    return await this.repositoryActivity.find({
-      where: {
-        workflow: {
-          name,
-        },
-      },
-    });
+  async findByName(
+    name: string,
+    query: CollectionQuery,
+    extraCrudOptions: ExtraCrudOptions,
+    req?: any,
+  ) {
+    // query.includes.push('workflow');
+
+    // query.where.push([
+    //   {
+    //     column: 'workflow.name',
+    //     value: name,
+    //     operator: FilterOperators.EqualTo,
+    //   },
+    // ]);
+    const dataQuery = QueryConstructor.constructQuery<Activity>(
+      this.repositoryActivity,
+      query,
+    )
+      .leftJoin('activities.workflow', 'workflow')
+      .andWhere('workflow.name = :name', { name });
+    const response = new DataResponseFormat<Activity>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 
   async findAllActivities(
