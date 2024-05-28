@@ -11,7 +11,7 @@ import {
 } from '../dto/tender.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous } from 'src/shared/authorization';
-import { EventPattern } from '@nestjs/microservices';
+import { EventPattern, Payload } from '@nestjs/microservices';
 
 const options: EntityCrudOptions = {
   createDto: CreateTenderDto,
@@ -27,7 +27,7 @@ export class TenderController extends EntityCrudController<Tender>(options) {
 
   @EventPattern('tendering-workflow.tenderApproval')
   @AllowAnonymous()
-  async tenderApproval(@Body() data: any) {
+  async tenderApproval(@Payload() data: any) {
     return this.tenderService.tenderApproval(data);
   }
 
@@ -63,7 +63,6 @@ export class TenderController extends EntityCrudController<Tender>(options) {
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
-  @AllowAnonymous()
   async getReAdvertiseTenders(@Query('q') q?: string, @Req() req?: any) {
     const query = decodeCollectionQuery(q);
     return await this.tenderService.getReAdvertiseTenders(query, req);

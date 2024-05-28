@@ -5,11 +5,13 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { Tender } from './tender.entity';
 import { RevisionApprovalStatusEnum } from 'src/shared/enums';
 
 @Entity({ name: 'revision_approvals' })
+@Unique(['tenderId', 'userId'])
 export class RevisionApproval extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

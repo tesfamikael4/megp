@@ -51,7 +51,7 @@ export class LotService extends ExtraCrudService<Lot> {
         const lot = this.lotRepository.create({
           number: lotCount.number + 1,
           name: itemData.name,
-          status: LotStatusEnum.DRAFT,
+          status: LotStatusEnum.ACTIVE,
           tenderId: itemData.tenderId,
         });
         await manager.getRepository(Lot).insert(lot);

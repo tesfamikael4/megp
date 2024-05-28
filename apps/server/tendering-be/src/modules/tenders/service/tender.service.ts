@@ -146,7 +146,7 @@ export class TenderService extends EntityCrudService<Tender> {
       const lot = manager.getRepository(Lot).create({
         number: 1,
         name: `Lot 1`,
-        status: LotStatusEnum.DRAFT,
+        status: LotStatusEnum.ACTIVE,
         tenderId: tender.id,
       });
       await manager.getRepository(Lot).insert(lot);
@@ -380,7 +380,7 @@ export class TenderService extends EntityCrudService<Tender> {
       .update({ id: input.id }, { status: input.status });
 
     if (
-      tender.status == TenderStatusEnum.SUBMISSION &&
+      tender.status == TenderStatusEnum.REVIEWED &&
       input.status == TenderStatusEnum.APPROVAL
     ) {
       this.tenderingRMQClient.emit('initiate-workflow', {

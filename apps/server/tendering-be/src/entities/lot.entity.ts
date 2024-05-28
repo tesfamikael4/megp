@@ -46,7 +46,7 @@ export class Lot extends Audit {
   @Column()
   name: string;
 
-  @Column({ type: 'enum', enum: LotStatusEnum, default: LotStatusEnum.DRAFT })
+  @Column({ type: 'enum', enum: LotStatusEnum, default: LotStatusEnum.ACTIVE })
   status: string;
 
   @Column({ type: 'jsonb', nullable: true })

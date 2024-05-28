@@ -9,7 +9,12 @@ import { Repository, EntityManager, DeepPartial } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
-import { RevisionApproval, ProcurementTechnicalTeam } from 'src/entities';
+import {
+  RevisionApproval,
+  ProcurementTechnicalTeam,
+  Tender,
+} from 'src/entities';
+import { TenderStatusEnum } from 'src/shared/enums/tender-status.enum';
 
 @Injectable()
 export class RevisionApprovalService extends ExtraCrudService<RevisionApproval> {
@@ -42,6 +47,20 @@ export class RevisionApprovalService extends ExtraCrudService<RevisionApproval> 
       await manager
         .getRepository(RevisionApproval)
         .upsert(item, ['tenderId', 'userId']);
+
+      const [teams, revisedTeamCount] = await Promise.all([
+        manager.getRepository(ProcurementTechnicalTeam).countBy({
+          tenderId: itemData.tenderId,
+        }),
+        await manager.getRepository(RevisionApproval).countBy({
+          tenderId: itemData.tenderId,
+        }),
+      ]);
+      if (teams - 1 == revisedTeamCount) {
+        await manager.getRepository(Tender).update(itemData.tenderId, {
+          status: TenderStatusEnum.REVIEWED,
+        });
+      }
 
       return item;
     } catch (e) {
