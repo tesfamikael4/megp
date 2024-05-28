@@ -1,6 +1,6 @@
 'use client';
 
-import { useLazyGetPreliminaryRequirementsByLotIdQuery } from '@/store/api/tendering/preliminary-compliance.api';
+import { useLazyGetScoringRequirementsByLotIdQuery } from '@/store/api/tendering/technical-scoring.api';
 import { Box, Loader } from '@mantine/core';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 export default function BiderDetail() {
   const router = useRouter();
   const [getRequirements, { data: requirementData, isSuccess }] =
-    useLazyGetPreliminaryRequirementsByLotIdQuery();
+    useLazyGetScoringRequirementsByLotIdQuery();
   const { tenderId, lotId, bidderId } = useParams();
 
   useEffect(() => {

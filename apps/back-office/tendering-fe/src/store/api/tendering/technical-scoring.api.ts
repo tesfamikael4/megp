@@ -20,18 +20,10 @@ export const technicalScoring = createApi({
         };
       },
     }),
-    getPreliminaryRequirementsByLotId: builder.query<any, any>({
-      query: ({
-        lotId,
-        bidderId,
-        team = 'member',
-      }: {
-        lotId: string;
-        bidderId: string;
-        team: string;
-      }) => {
+    getScoringRequirementsByLotId: builder.query<any, any>({
+      query: ({ lotId, bidderId }: { lotId: string; bidderId: string }) => {
         return {
-          url: `/technical-preliminary-assessment-detail/checklist-status/${lotId}/${bidderId}/${team}`,
+          url: `/technical-scoring-assessment-detail/checklist-status/${lotId}/${bidderId}`,
         };
       },
       providesTags: ['bidAttribute'],
@@ -76,8 +68,8 @@ export const technicalScoring = createApi({
         `/technical-preliminary-assessment-detail/members-report/${lotId}/${bidderId}/${requirementId}`,
     }),
 
-    getEqcPreliminaryExamination: builder.query<any, any>({
-      query: (eqcId) => `/eqc-preliminary-examinations/${eqcId}`,
+    getEqcTechnicalScoring: builder.query<any, any>({
+      query: (eqcId) => `/eqc-technical-scorings/${eqcId}`,
     }),
 
     completeEvaluation: builder.mutation<any, any>({
@@ -112,12 +104,12 @@ export const technicalScoring = createApi({
 
 export const {
   useLazyGetPassedBiddersQuery,
-  useLazyGetPreliminaryRequirementsByLotIdQuery,
+  useLazyGetScoringRequirementsByLotIdQuery,
   useCreatePreliminaryComplianceAssessmentMutation,
   useLazyGetCanPreliminaryCompleteQuery,
   useSubmitPreliminaryEvaluationMutation,
   useLazyGetPreliminaryMembersAssesmentResultQuery,
-  useLazyGetEqcPreliminaryExaminationQuery,
+  useLazyGetEqcTechnicalScoringQuery,
   useCompleteEvaluationMutation,
   useLazyGetComplianceAssessmentsQuery,
 } = technicalScoring;

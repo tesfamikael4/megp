@@ -12,6 +12,7 @@ import {
   useLazyGetResponsivenessMembersAssessmentResultQuery,
   useLazyGetSorTechnicalRequirementsQuery,
 } from '@/store/api/tendering/technical-responsiveness.api';
+import { useLazyGetEqcTechnicalScoringQuery } from '@/store/api/tendering/technical-scoring.api';
 import { ActionIcon, Box, LoadingOverlay, Text } from '@mantine/core';
 import { ExpandableTable, Section, logger } from '@megp/core-fe';
 import { IconFile, IconUsers } from '@tabler/icons-react';
@@ -46,6 +47,7 @@ export const PreviewDocument = ({
   const [getEqcPreliminaryExamination] =
     useLazyGetEqcPreliminaryExaminationQuery();
   const [getEqcQualification] = useLazyGetEqcQualificationQuery();
+  const [getEqcTechnicalScoring] = useLazyGetEqcTechnicalScoringQuery();
   const [getSorTechnicalRequirement] =
     useLazyGetSorTechnicalRequirementsQuery();
   const [title, setTitle] = useState('');
@@ -109,6 +111,9 @@ export const PreviewDocument = ({
         setTitle(res.itbDescription);
       } else if (milestone === 'technicalResponsiveness') {
         const res = await getSorTechnicalRequirement(requirementId).unwrap();
+        setTitle(res.requirement);
+      } else if (milestone === 'technicalScoring') {
+        const res = await getEqcTechnicalScoring(requirementId).unwrap();
         setTitle(res.requirement);
       }
     } catch (err) {
