@@ -408,7 +408,7 @@ export class TenderService extends EntityCrudService<Tender> {
       {
         status:
           data.status == 'Approved'
-            ? TenderStatusEnum.PUBLISHED
+            ? TenderStatusEnum.APPROVED
             : TenderStatusEnum.ADJUSTED,
       },
     );
