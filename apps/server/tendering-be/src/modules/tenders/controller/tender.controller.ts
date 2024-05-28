@@ -11,6 +11,7 @@ import {
 } from '../dto/tender.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous } from 'src/shared/authorization';
+import { EventPattern } from '@nestjs/microservices';
 
 const options: EntityCrudOptions = {
   createDto: CreateTenderDto,
@@ -22,6 +23,12 @@ const options: EntityCrudOptions = {
 export class TenderController extends EntityCrudController<Tender>(options) {
   constructor(private readonly tenderService: TenderService) {
     super(tenderService);
+  }
+
+  @EventPattern('tendering-workflow.tenderApproval')
+  @AllowAnonymous()
+  async tenderApproval(@Body() data: any) {
+    return this.tenderService.tenderApproval(data);
   }
 
   @Get('active-tenders')
@@ -47,6 +54,19 @@ export class TenderController extends EntityCrudController<Tender>(options) {
   async getClosedTenders(@Query('q') q?: string, @Req() req?: any) {
     const query = decodeCollectionQuery(q);
     return await this.tenderService.getClosedTenders(query, req);
+  }
+
+  @Get('re-advertise-tenders')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  @AllowAnonymous()
+  async getReAdvertiseTenders(@Query('q') q?: string, @Req() req?: any) {
+    const query = decodeCollectionQuery(q);
+    return await this.tenderService.getReAdvertiseTenders(query, req);
   }
 
   @Post('change-status')

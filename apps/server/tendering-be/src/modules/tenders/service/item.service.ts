@@ -17,7 +17,7 @@ export class ItemService extends ExtraCrudService<Item> {
   async softDelete(id: string, req?: any): Promise<void> {
     const item = await this.findOneOrFail(id);
     await this.ItemRepository.update(item.id, {
-      status: ItemStatusEnum.RE_ADVERTISE,
+      status: ItemStatusEnum.CANCELED,
     });
   }
 }

@@ -36,6 +36,7 @@ import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { ClientProxy } from '@nestjs/microservices';
 import {
+  ItemStatusEnum,
   LotStatusEnum,
   TenderStatusEnum,
 } from 'src/shared/enums/tender-status.enum';
@@ -205,7 +206,7 @@ export class TenderService extends EntityCrudService<Tender> {
       {
         column: 'status',
         operator: FilterOperators.NotEqualTo,
-        value: TenderStatusEnum.RE_ADVERTISE,
+        value: TenderStatusEnum.CANCELED,
       },
     ]);
 
@@ -318,6 +319,42 @@ export class TenderService extends EntityCrudService<Tender> {
     return response;
   }
 
+  async getReAdvertiseTenders(query: CollectionQuery, req: any) {
+    query.includes.push('procurementTechnicalTeams');
+    query.includes.push('lots');
+    query.includes.push('lots.items');
+
+    query.where.push([
+      {
+        column: 'procurementTechnicalTeams.userId',
+        operator: FilterOperators.EqualTo,
+        value: req.user.userId,
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<Tender>(
+      this.tenderRepository,
+      query,
+    ).andWhere(
+      'tenders.status =:tenderStatus OR lots.status =:lotStatus OR items.status =:itemStatus',
+      {
+        tenderStatus: TenderStatusEnum.CANCELED,
+        lotStatus: LotStatusEnum.CANCELED,
+        itemStatus: ItemStatusEnum.CANCELED,
+      },
+    );
+
+    const response = new DataResponseFormat<Tender>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
   async changeStatus(input: ChangeTenderStatusDto) {
     const tender = await this.tenderRepository.findOneBy({
       id: input.id,
@@ -346,13 +383,35 @@ export class TenderService extends EntityCrudService<Tender> {
       tender.status == TenderStatusEnum.SUBMISSION &&
       input.status == TenderStatusEnum.APPROVAL
     ) {
-      await this.tenderingRMQClient.emit('initiate-workflow', {
+      this.tenderingRMQClient.emit('initiate-workflow', {
         id: tender.id,
-        name: tender.name,
+        name: 'tender',
         itemName: tender.name,
         organizationId: tender.organizationId,
       });
     }
+  }
+
+  async tenderApproval(data: { itemId: string; status: string }) {
+    const tender = await this.tenderRepository.findOneBy({
+      id: data.itemId,
+    });
+
+    if (!tender) {
+      throw new BadRequestException('Tender not found');
+    }
+    if (data.status == 'Approved') {
+      await this.generateTenderInvitation({ id: tender.id });
+    }
+    await this.tenderRepository.update(
+      { id: data.itemId },
+      {
+        status:
+          data.status == 'Approved'
+            ? TenderStatusEnum.PUBLISHED
+            : TenderStatusEnum.ADJUSTED,
+      },
+    );
   }
 
   async generateTenderDocument(input: GenerateTenderDocumentDto) {
@@ -554,7 +613,7 @@ export class TenderService extends EntityCrudService<Tender> {
   async softDelete(id: string, req?: any): Promise<void> {
     const item = await this.findOneOrFail(id);
     await this.tenderRepository.update(item.id, {
-      status: TenderStatusEnum.RE_ADVERTISE,
+      status: TenderStatusEnum.CANCELED,
     });
   }
 

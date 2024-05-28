@@ -20,7 +20,7 @@ async function bootstrap() {
     options: {
       // noAck: false,
       urls: [process.env.RMQ_URL],
-      queue: 'work-plan-approve',
+      queue: 'tendering-workflow',
       queueOptions: {
         durable: false,
       },

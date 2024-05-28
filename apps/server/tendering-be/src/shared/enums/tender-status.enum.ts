@@ -4,17 +4,20 @@ export enum TenderStatusEnum {
   SUBMISSION = 'SUBMISSION',
   APPROVAL = 'APPROVAL',
   PUBLISHED = 'PUBLISHED',
+  ADJUSTED = 'ADJUSTED',
   CANCELED = 'CANCELED',
   RE_ADVERTISE = 'RE_ADVERTISE',
 }
 
 export enum ItemStatusEnum {
   ACTIVE = 'ACTIVE',
+  CANCELED = 'CANCELED',
   RE_ADVERTISE = 'RE_ADVERTISE',
 }
 
 export enum LotStatusEnum {
   DRAFT = 'DRAFT',
   ACTIVE = 'ACTIVE',
+  CANCELED = 'CANCELED',
   RE_ADVERTISE = 'RE_ADVERTISE',
 }
