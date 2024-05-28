@@ -382,10 +382,7 @@ export class TenderService extends EntityCrudService<Tender> {
       .getRepository(Tender)
       .update({ id: input.id }, { status: input.status });
 
-    if (
-      tender.status == TenderStatusEnum.REVIEWED &&
-      input.status == TenderStatusEnum.APPROVAL
-    ) {
+    if (input.status == TenderStatusEnum.APPROVAL) {
       this.amqpConnection.publish(
         'workflow-broadcast-exchanges',
         'workflow.initiate',
