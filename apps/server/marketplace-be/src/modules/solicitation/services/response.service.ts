@@ -5,11 +5,11 @@ import {
   ExtraCrudService,
   MinIOService,
 } from 'megp-shared-be';
-import { SolRegistration, SolResponse } from 'src/entities';
+import { OpenedResponse, SolRegistration, SolResponse } from 'src/entities';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateSolResponseDto } from '../dtos/response.dto';
 import { REQUEST } from '@nestjs/core';
-import { EncryptionHelperService } from './encryption-helper.service';
+import { EncryptionHelperService } from '../../../utils/services/encryption-helper.service';
 import { SolRoundService } from './round.service';
 
 @Injectable()
@@ -17,6 +17,8 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
   constructor(
     @InjectRepository(SolResponse)
     private readonly solResponseRepository: Repository<SolResponse>,
+    @InjectRepository(OpenedResponse)
+    private readonly openedResponseRepository: Repository<OpenedResponse>,
     @InjectRepository(SolRegistration)
     private readonly solRegistrationRepository: Repository<SolRegistration>,
     @Inject(REQUEST) private readonly request: Request,
@@ -68,7 +70,7 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
       preSignedResponse.push({ key: item.key, preSignedUrl: url.presignedUrl });
 
       const encryptedFileInfo = this.encryptionHelperService.encryptData(
-        JSON.stringify(item.fileInfo),
+        JSON.stringify(url.file),
         '123456',
         solRegistration.salt,
       );
@@ -128,5 +130,23 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
     }
 
     return fileInfos;
+  }
+
+  async getOpenResponseByKey(rfxId: string, key: string, vendorId: string) {
+    const response = await this.openedResponseRepository.findOne({
+      where: {
+        rfxId,
+        key,
+        vendorId,
+      },
+    });
+
+    if (!response) {
+      throw new BadRequestException('Response Not Found');
+    }
+
+    const presignedUrl = await this.minIoService.generatePresignedDownloadUrl(
+      response.value,
+    );
   }
 }

@@ -22,9 +22,9 @@ import { SolRegistration } from './sol-registration.entity';
 import { SolRound } from './sol-round.entity';
 import { SolResponse } from './sol-response.entity';
 import { SolBookmark } from './sol-bookmark.entity';
+import { EvalResponse } from './eval-response.entity';
 
 @Entity({ name: 'rfxs' })
-@Check('"reviewDeadline" > CURRENT_TIMESTAMP')
 export class RFX extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -50,6 +50,9 @@ export class RFX extends Audit {
   @Column()
   prId: string;
 
+  @Column({ default: false, type: 'boolean' })
+  isOpen: boolean;
+
   @Column({
     type: 'enum',
     enum: ERfxStatus,
@@ -65,9 +68,6 @@ export class RFX extends Audit {
 
   @Column()
   organizationName: string;
-
-  @Column({ nullable: true, type: 'timestamp' })
-  reviewDeadline: string;
 
   @Column({ nullable: true })
   parentId: string;
@@ -126,4 +126,10 @@ export class RFX extends Audit {
 
   @OneToMany(() => SolResponse, (response) => response.rfx)
   solResponses: SolResponse[];
+
+  @OneToMany(() => SolResponse, (response) => response.rfx)
+  openedResponses: SolResponse[];
+
+  @OneToMany(() => EvalResponse, (response) => response.rfx)
+  evalResponses: EvalResponse[];
 }

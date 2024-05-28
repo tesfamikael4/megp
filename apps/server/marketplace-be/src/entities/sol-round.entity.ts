@@ -11,6 +11,7 @@ import {
 import { RFX } from './rfx.entity';
 import { SolOffer } from './sol-offer.entity';
 import { ESolRoundStatus } from 'src/utils/enums';
+import { OpenedOffer } from './opened-offer.entity';
 
 @Entity({ name: 'sol_rounds' })
 @Unique(['rfxId', 'round'])
@@ -34,6 +35,9 @@ export class SolRound extends Audit {
   @Column({ type: 'timestamp' })
   end: Date;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  startingPrice: number;
+
   @Column({
     type: 'enum',
     enum: ESolRoundStatus,
@@ -43,4 +47,7 @@ export class SolRound extends Audit {
 
   @OneToMany(() => SolOffer, (offer) => offer.solRound)
   solOffers: SolOffer[];
+
+  @OneToMany(() => OpenedOffer, (offer) => offer.solRound)
+  openedOffers: OpenedOffer[];
 }

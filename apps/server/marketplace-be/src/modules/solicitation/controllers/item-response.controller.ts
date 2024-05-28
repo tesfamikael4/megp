@@ -29,7 +29,7 @@ export class SolItemResponseController extends ExtraCrudController<SolItemRespon
   }
 
   @Post()
-  async create(itemData: CreateSolItemResponseDto, @CurrentUser() user: any) {
+  async create(itemData: any, @CurrentUser() user: any) {
     itemData.vendorId = user?.id;
     return await this.rfxRepsonseItemService.create(itemData, user);
   }

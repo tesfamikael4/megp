@@ -19,4 +19,5 @@ export enum ESolRoundStatus {
   PENDING = 'PENDING',
   STARTED = 'STARTED',
   COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
 }

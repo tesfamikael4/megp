@@ -17,3 +17,10 @@ export * from './sol-round.entity';
 export * from './sol-item-response.entity';
 export * from './sol-response.entity';
 export * from './sol-bookmark.entity';
+
+export * from './opened-item-response.entity';
+export * from './opened-response.entity';
+export * from './opened-offer.entity';
+
+export * from './eval-response.entity';
+export * from './eval-item-response.entity';

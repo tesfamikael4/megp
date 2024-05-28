@@ -15,6 +15,9 @@ import { RfxProductInvitation } from './rfx-product-invitation.entity';
 import { RfxItemDocument } from './rfx-item-document.entity';
 import { SolOffer } from './sol-offer.entity';
 import { SolItemResponse } from './sol-item-response.entity';
+import { OpenedItemResponse } from './opened-item-response.entity';
+import { OpenedOffer } from './opened-offer.entity';
+import { EvalItemResponse } from './eval-item-response.entity';
 
 @Entity({ name: 'rfx_items' })
 export class RFXItem extends Audit {
@@ -47,6 +50,9 @@ export class RFXItem extends Audit {
 
   @Column()
   unitOfMeasure: string;
+
+  @Column({ nullable: true })
+  warrantyPeriod: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   estimatedPrice: number;
@@ -92,9 +98,24 @@ export class RFXItem extends Audit {
   @OneToMany(() => SolOffer, (offer) => offer.rfxItem)
   solOffers: SolOffer[];
 
+  @OneToMany(() => OpenedOffer, (offer) => offer.rfxItem)
+  openedOffers: OpenedOffer[];
+
+  @OneToMany(
+    () => OpenedItemResponse,
+    (rfxItemResponse) => rfxItemResponse.rfxItem,
+  )
+  openedItemResponses: OpenedItemResponse[];
+
   @OneToMany(
     () => SolItemResponse,
     (rfxItemResponse) => rfxItemResponse.rfxItem,
   )
-  itemResponses: SolItemResponse[];
+  solItemResponses: SolItemResponse[];
+
+  @OneToMany(
+    () => EvalItemResponse,
+    (rfxItemResponse) => rfxItemResponse.rfxItem,
+  )
+  evalItemResponses: EvalItemResponse[];
 }

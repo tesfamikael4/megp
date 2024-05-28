@@ -37,6 +37,9 @@ export enum EInvitationStatus {
   DISCARED = 'DISCARDED',
   WITHDRAWN = 'WITHDRAWN',
 
+  COMPLY = 'COMPLY',
+  NOT_COMPLY = 'NOT_COMPLY',
+
   ENDED = 'ENDED',
   EXPIRED = 'EXPIRED',
 }

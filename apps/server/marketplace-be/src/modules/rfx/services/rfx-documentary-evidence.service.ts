@@ -34,7 +34,12 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
       select: {
         id: true,
         status: true,
-        reviewDeadline: true,
+        rfxBidProcedure: {
+          reviewDeadline: true,
+        },
+      },
+      relations: {
+        rfxBidProcedure: true,
       },
     });
 
@@ -58,11 +63,16 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
         rfx: {
           id: true,
           status: true,
-          reviewDeadline: true,
+          rfxBidProcedure: {
+            id: true,
+            reviewDeadline: true,
+          },
         },
       },
       relations: {
-        rfx: true,
+        rfx: {
+          rfxBidProcedure: true,
+        },
       },
     });
 

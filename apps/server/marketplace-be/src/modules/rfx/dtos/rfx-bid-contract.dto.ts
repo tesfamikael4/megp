@@ -26,11 +26,6 @@ export class CreateRfxBidContractConditionDTO {
   deliverySite: string;
 
   @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  warrantyPeriod: number;
-
-  @ApiProperty()
   @IsInt()
   @Min(0)
   @Max(100)
@@ -45,10 +40,6 @@ export class CreateRfxBidContractConditionDTO {
   @ApiProperty()
   @IsBoolean()
   isPartialAllowed: boolean;
-
-  @ApiProperty()
-  @IsArray()
-  paymentMode: string[];
 
   @ApiProperty()
   @IsInt()

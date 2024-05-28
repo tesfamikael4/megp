@@ -37,4 +37,17 @@ export class SolResponseController extends ExtraCrudController<SolResponse>(
   ) {
     return this.rfxRepsonseItemService.reviewResonses(rfxId, vendorId);
   }
+
+  @Get('opened-response/:rfxId/:key/:vendorId')
+  async openedResponse(
+    @Param('rfxId') rfxId: string,
+    @Param('key') key: string,
+    @Param('vendorId') vendorId: string,
+  ) {
+    return this.rfxRepsonseItemService.getOpenResponseByKey(
+      rfxId,
+      key,
+      vendorId,
+    );
+  }
 }

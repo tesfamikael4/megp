@@ -12,6 +12,7 @@ import { EmailConfig } from 'megp-shared-be';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { RfxModule } from './modules/rfx/rfx.module';
 import { SolicitationModule } from './modules/solicitation/solicitation.module';
+import { EvaluationModule } from './modules/evaluation/evaluation.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { SolicitationModule } from './modules/solicitation/solicitation.module';
     AuthorizationModule,
     RfxModule,
     SolicitationModule,
+    EvaluationModule,
   ],
   providers: [
     {

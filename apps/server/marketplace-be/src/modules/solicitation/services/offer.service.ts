@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import {
@@ -10,8 +10,8 @@ import {
 } from 'src/entities';
 import { EntityManager, MoreThan, Repository } from 'typeorm';
 import { CreateOfferDto } from '../dtos/offer.dto';
-import { ERfxItemStatus } from 'src/utils/enums';
-import { EncryptionHelperService } from './encryption-helper.service';
+import { EInvitationStatus, ERfxItemStatus } from 'src/utils/enums';
+import { EncryptionHelperService } from '../../../utils/services/encryption-helper.service';
 import { REQUEST } from '@nestjs/core';
 
 @Injectable()
@@ -59,6 +59,7 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
         },
         select: {
           id: true,
+          status: true,
         },
       }),
     ]);
@@ -67,6 +68,17 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     if (!rfxInvitation) throw new Error('Invited Product not found');
 
     const currentRound = await this.getValidRound(rfxItem.rfx.id);
+
+    if (rfxInvitation.status == EInvitationStatus.NOT_COMPLY)
+      throw new BadRequestException('Invitaion response is not comply');
+
+    if (
+      rfxInvitation.status !== EInvitationStatus.ACCEPTED ||
+      currentRound.round !== 0
+    )
+      throw new BadRequestException(
+        'Invitaiton is not Accepted. Please Accept First',
+      );
 
     if (currentRound.round >= 1) {
       await this.checkPreviousRoundOfferExists(

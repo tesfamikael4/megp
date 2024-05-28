@@ -34,7 +34,6 @@ class DocumentResponseDto {
   key: string;
 
   @ApiProperty()
-  @IsString()
   fileInfo: FileUploadDto;
 }
 

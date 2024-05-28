@@ -1,12 +1,27 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
-import { RFX, SolBookmark, SolRegistration } from 'src/entities';
+import {
+  CollectionQuery,
+  DataResponseFormat,
+  ENTITY_MANAGER_KEY,
+  ExtraCrudService,
+  QueryConstructor,
+} from 'megp-shared-be';
+import {
+  RFX,
+  RfxProductInvitation,
+  SolBookmark,
+  SolRegistration,
+} from 'src/entities';
 import { EntityManager, Repository } from 'typeorm';
-import { EncryptionHelperService } from './encryption-helper.service';
+import { EncryptionHelperService } from '../../../utils/services/encryption-helper.service';
 import { REQUEST } from '@nestjs/core';
 import { CreateRegistrationDto } from '../dtos/registration.dto';
-import { ESolBookmarkStatus } from 'src/utils/enums';
+import {
+  EInvitationStatus,
+  ERfxStatus,
+  ESolBookmarkStatus,
+} from 'src/utils/enums';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -96,5 +111,94 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     await this.solRegistrationRepository.insert(rfxRegistration);
 
     return rfxRegistration;
+  }
+
+  async vendorsList(rfxId: string, query: CollectionQuery) {
+    const dataQuery = QueryConstructor.constructQuery<SolRegistration>(
+      this.solRegistrationRepository,
+      query,
+    );
+
+    dataQuery
+      .andWhere('sol_registration.rfxId = :rfxId', {
+        rfxId,
+      })
+      .andWhere('sol_registration.status = :status', {
+        status: ESolBookmarkStatus.REGISTERED,
+      })
+      .loadRelationCountAndMap(
+        'sol_registration.totalResponses',
+        'sol_registration.openedResponses',
+      )
+      .loadRelationCountAndMap(
+        'sol_registration.evaluatedResponses',
+        'sol_registration.evalResponses',
+      )
+      .loadRelationCountAndMap(
+        'sol_registration.totalItemResponses',
+        'sol_registration.openedItemResponses',
+      )
+      .loadRelationCountAndMap(
+        'sol_registration.evaluatedItemResponses',
+        'sol_registration.evalItemResponses',
+      );
+
+    const response = new DataResponseFormat<SolRegistration>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+
+      const newResult = result.map((item: any) => {
+        const evaluationStatus = {
+          response: false,
+          itemResponse: false,
+        };
+        if (item.totalResponses == item.evaluatedResponses) {
+          evaluationStatus.response = true;
+        }
+        if (item.totalItemResponses == item.evaluatedItemResponses) {
+          evaluationStatus.itemResponse = true;
+        }
+
+        item.evaluationStatus = evaluationStatus;
+        return item;
+      });
+      response.total = total;
+      response.items = newResult;
+    }
+    return response;
+  }
+
+  async solicitationStatus(query: CollectionQuery) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const dataQuery = QueryConstructor.constructQuery<RFX>(
+      entityManager.getRepository(RFX),
+      query,
+    );
+
+    dataQuery
+      .andWhere('rfxs.status = :status', { status: ERfxStatus.APPROVED })
+      .loadRelationCountAndMap(
+        'rfxs.solRegistrationCount',
+        'rfxs.solRegistrations',
+        'registration',
+        (qb) =>
+          qb.where('registration.status = :status', {
+            status: ESolBookmarkStatus.REGISTERED,
+          }),
+      );
+
+    const response = new DataResponseFormat<RFX>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }

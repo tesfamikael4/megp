@@ -8,10 +8,18 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { RFX } from './rfx.entity';
 import { ESolRegistrationStatus } from 'src/utils/enums/sol.enum';
-import { SolResponse } from './sol-response.entity';
-import { SolOffer } from './sol-offer.entity';
+import {
+  EvalItemResponse,
+  EvalResponse,
+  OpenedItemResponse,
+  OpenedOffer,
+  OpenedResponse,
+  RFX,
+  SolItemResponse,
+  SolOffer,
+  SolResponse,
+} from '.';
 
 @Entity({ name: 'sol_registration' })
 @Unique(['rfxId', 'vendorId'])
@@ -48,6 +56,30 @@ export class SolRegistration extends Audit {
   @OneToMany(() => SolOffer, (offers) => offers.solRegistration)
   solOffers: SolOffer[];
 
+  @OneToMany(() => OpenedOffer, (offers) => offers.solRegistration)
+  openedOffers: OpenedOffer[];
+
   @OneToMany(() => SolResponse, (response) => response.solRegistration)
   solResponses: SolResponse[];
+
+  @OneToMany(() => OpenedResponse, (response) => response.solRegistration)
+  openedResponses: OpenedResponse[];
+
+  @OneToMany(
+    () => SolItemResponse,
+    (itemResponse) => itemResponse.solRegistration,
+  )
+  solItemResponses: SolItemResponse[];
+
+  @OneToMany(
+    () => OpenedItemResponse,
+    (itemResponse) => itemResponse.solRegistrations,
+  )
+  openedItemResponses: OpenedItemResponse[];
+
+  @OneToMany(() => EvalResponse, (evaluation) => evaluation.solRegistration)
+  evalResponses: EvalResponse[];
+
+  @OneToMany(() => EvalItemResponse, (evaluation) => evaluation.solRegistration)
+  evalItemResponses: EvalItemResponse[];
 }
