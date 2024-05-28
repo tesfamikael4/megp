@@ -112,13 +112,16 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
   }
 
   async create(itemData: CreateEvalResponseDto, req?: any) {
-    const [isTeamLead, numberOfTeam, evaluationsCount, solRegistration] =
+    const [evaluator, numberOfTeam, evaluationsCount, solRegistration] =
       await Promise.all([
-        this.rfxProcurementTechnicalTeamRepository.exists({
+        this.rfxProcurementTechnicalTeamRepository.findOne({
           where: {
             rfxId: itemData.rfxId,
-            isTeamLead: true,
             userId: req.user.userId,
+          },
+          select: {
+            id: true,
+            isTeamLead: true,
           },
         }),
         this.rfxProcurementTechnicalTeamRepository.count({
@@ -145,7 +148,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         }),
       ]);
 
-    if (isTeamLead) {
+    if (!evaluator) throw new BadRequestException('Evaluator not found');
+
+    if (evaluator.isTeamLead) {
       if (evaluationsCount !== numberOfTeam - 1) {
         throw new BadRequestException(
           'All Team Members Should Evaluate First.',
@@ -154,7 +159,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
       itemData.isTeamAssesment = true;
     }
 
-    itemData.evaluatorId = req.user.userId;
+    itemData.evaluatorId = evaluator.id;
     itemData.solRegistrationId = solRegistration.id;
     const evaluationItem = this.evalResponseRepository.create(itemData);
     await this.evalResponseRepository.insert(evaluationItem);
