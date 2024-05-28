@@ -11,7 +11,9 @@ import {
 } from '../dto/tender.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous } from 'src/shared/authorization';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { Payload } from '@nestjs/microservices';
+import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+import { ConsumeMessage } from 'amqplib';
 
 const options: EntityCrudOptions = {
   createDto: CreateTenderDto,
@@ -25,10 +27,19 @@ export class TenderController extends EntityCrudController<Tender>(options) {
     super(tenderService);
   }
 
-  @EventPattern('tendering-workflow.tenderApproval')
+  @RabbitSubscribe({
+    exchange: 'workflow-broadcast-exchanges',
+    routingKey: 'tendering.approval',
+    queue: 'tendering',
+    errorHandler: (err) => {
+      console.error('🚀 ~ TenderController ~ err:', err);
+    },
+  })
   @AllowAnonymous()
-  async tenderApproval(@Payload() data: any) {
-    return this.tenderService.tenderApproval(data);
+  async tenderApproval(data: any, amqpMsg: ConsumeMessage) {
+    if (amqpMsg.fields.routingKey == 'tendering.approval') {
+      return this.tenderService.tenderApproval(data);
+    }
   }
 
   @Get('active-tenders')

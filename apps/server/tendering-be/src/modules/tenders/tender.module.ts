@@ -44,6 +44,7 @@ import {
   TenderService,
 } from './service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 @Module({
   imports: [
@@ -76,6 +77,16 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         },
       },
     ]),
+    RabbitMQModule.forRoot(RabbitMQModule, {
+      exchanges: [
+        {
+          name: 'workflow-broadcast-exchanges',
+          type: 'direct',
+        },
+      ],
+      uri: process.env.RMQ_URL,
+      enableControllerDiscovery: true,
+    }),
   ],
   controllers: [
     TenderController,

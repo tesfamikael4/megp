@@ -16,6 +16,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const request: any = ctx.getRequest();
 
+    if (ctx['contextType'] === 'rmq') {
+      return;
+    }
     const status =
       exception instanceof HttpException
         ? exception.getStatus()

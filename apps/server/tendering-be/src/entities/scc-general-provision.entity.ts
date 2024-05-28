@@ -28,4 +28,7 @@ export class SccGeneralProvision extends Audit {
 
   @Column()
   deliverySite: string;
+
+  @Column()
+  contractType: string;
 }

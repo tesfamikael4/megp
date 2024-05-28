@@ -392,7 +392,7 @@ export class TenderService extends EntityCrudService<Tender> {
     }
   }
 
-  async tenderApproval(data: { itemId: string; status: string }) {
+  async tenderApproval(data: any) {
     const tender = await this.tenderRepository.findOneBy({
       id: data.itemId,
     });
