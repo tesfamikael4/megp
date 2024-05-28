@@ -1,4 +1,5 @@
 import { baseQuery } from '@/store/base-query';
+import { encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const workflowApi = createApi({
@@ -11,6 +12,17 @@ export const workflowApi = createApi({
   endpoints: (builder) => ({
     getActivities: builder.query<any, { workFlowId: string }>({
       query: (payload) => `roles/list/${payload.workFlowId}`,
+    }),
+    getAllActivities: builder.query<any, any>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `activities/find-all/${q}`, method: 'GET' };
+      },
+      providesTags: ['activity', 'Activities'],
     }),
     getWorkflows: builder.query<any, any>({
       query: () => `workflow`,
@@ -71,4 +83,5 @@ export const {
   useAddActivityMutation,
   useLazyGetWorkflowsQuery,
   useGetWorkflowsQuery,
+  useLazyGetAllActivitiesQuery,
 } = workflowApi;

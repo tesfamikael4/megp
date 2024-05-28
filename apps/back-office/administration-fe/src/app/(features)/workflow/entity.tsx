@@ -1,19 +1,17 @@
 'use client';
-import { useLazyListByIdQuery, useLazyListQuery } from './_api/activities.api';
+import { useLazyGetAllActivitiesQuery } from '@/store/api/workflow/workflow.api';
+import { useLazyListQuery } from './_api/activities.api';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useMemo } from 'react';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
 
-  // const [workflowId ] = useState(
-  //   '9bdffbcb-d7f6-499c-a93c-5e2639991dbe',
-  // );
-
   const pathname = usePathname();
 
-  const [trigger, { data: activities, isFetching }] = useLazyListQuery();
+  const [trigger, { data: activities, isFetching }] =
+    useLazyGetAllActivitiesQuery();
 
   const config: EntityConfig<any> = useMemo(() => {
     return {
@@ -62,8 +60,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/workflow`
       ? 'list'
       : pathname === `/workflow/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   return (
     <EntityLayout
