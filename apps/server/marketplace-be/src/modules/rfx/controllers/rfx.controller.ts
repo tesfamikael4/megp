@@ -1,5 +1,9 @@
-import { Controller, Post, Param, Body } from '@nestjs/common';
-import { EntityCrudController, EntityCrudOptions } from 'megp-shared-be';
+import { Controller, Post, Param, Body, Query, Get } from '@nestjs/common';
+import {
+  EntityCrudController,
+  EntityCrudOptions,
+  decodeCollectionQuery,
+} from 'megp-shared-be';
 import { RFX } from 'src/entities';
 import { RfxService } from '../services/rfx.service';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
@@ -17,6 +21,22 @@ export class RfxController extends EntityCrudController<RFX>(options) {
   constructor(private readonly rfxService: RfxService) {
     super(rfxService);
   }
+  @Get('closed-rfxs')
+  async closedRfx(@Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.rfxService.getClosedRfx(query);
+  }
+
+  @Post('make-rfx-open/:rfxId')
+  async makeRfxOpen(@Param('rfxId') rfxId: string) {
+    return await this.rfxService.makeOpenRfx(rfxId);
+  }
+
+  @Post('make-close-rfx/:rfxId')
+  async makeRfxClose(@Param('rfxId') rfxId: string) {
+    return await this.rfxService.makeCloseRfx(rfxId);
+  }
+
   @Post('review/:rfxId')
   async submitForReview(
     @Param('rfxId') rfxId: string,

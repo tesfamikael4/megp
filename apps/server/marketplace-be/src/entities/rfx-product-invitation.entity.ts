@@ -7,9 +7,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { RFXItem } from './rfx-items.entity';
 import { EInvitationStatus } from 'src/utils/enums/rfx.enum';
-import { SolOffer } from './sol-offer.entity';
+import { EvalItemResponse, OpenedOffer, RFXItem, SolOffer } from '.';
 
 @Entity({ name: 'rfx_product_invitations' })
 export class RfxProductInvitation extends Audit {
@@ -44,10 +43,19 @@ export class RfxProductInvitation extends Audit {
   })
   status: EInvitationStatus;
 
-  @OneToMany(() => SolOffer, (offer) => offer.rfxBidnvitation)
+  @OneToMany(() => SolOffer, (offer) => offer.rfxProductInvitation)
   solOffers: SolOffer[];
+
+  @OneToMany(() => OpenedOffer, (offer) => offer.rfxProductInvitation)
+  openedOffers: OpenedOffer[];
 
   @ManyToOne(() => RFXItem, (item) => item.rfxProductInvitations)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
+
+  @OneToMany(
+    () => EvalItemResponse,
+    (evaluation) => evaluation.rfxProductInvitation,
+  )
+  evalItemResponses: EvalItemResponse[];
 }

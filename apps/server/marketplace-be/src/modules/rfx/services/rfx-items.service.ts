@@ -13,7 +13,7 @@ import {
   QueryConstructor,
 } from 'megp-shared-be';
 import { RFXItem } from 'src/entities';
-import { ERfxItemStatus } from 'src/utils/enums';
+import { EInvitationStatus, ERfxItemStatus } from 'src/utils/enums';
 import { Repository } from 'typeorm';
 import { RfxService } from './rfx.service';
 
@@ -76,5 +76,17 @@ export class RFXItemService extends ExtraCrudService<RFXItem> {
       response.items = result;
     }
     return response;
+  }
+
+  async vendorRegistries(vendorId: string, rfxId: string) {
+    return this.repositoryRFXItem.find({
+      where: {
+        rfxId,
+        rfxProductInvitations: {
+          vendorId,
+          status: EInvitationStatus.ACCEPTED,
+        },
+      },
+    });
   }
 }

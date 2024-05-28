@@ -14,7 +14,14 @@ import {
   QueryConstructor,
 } from 'megp-shared-be';
 import { RFX, RFXItem, RfxProductInvitation } from 'src/entities';
-import { EntityManager, Repository, In, SelectQueryBuilder } from 'typeorm';
+import {
+  EntityManager,
+  Repository,
+  In,
+  SelectQueryBuilder,
+  MoreThan,
+  MoreThanOrEqual,
+} from 'typeorm';
 import { CreateRfxBidInvitationDto } from '../dtos/rfx-bid-invitaiton.dto';
 import { ProductCatalogueDto } from '../dtos/product-catalogue.dto';
 import {
@@ -38,6 +45,33 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
   ) {
     super(rfxBidInvitationRepository);
   }
+
+  async applyOnInvitation(itemData: any, req?: any): Promise<any> {
+    const rfxItemId = itemData.rfxItemId;
+
+    const now = new Date(Date.now());
+    const item = await this.rfxItemRepository.findOne({
+      where: {
+        id: rfxItemId,
+        rfx: {
+          isOpen: true,
+          solRegistrations: {
+            vendorId: req.user.organization.id,
+          },
+          rfxBidProcedure: {
+            submissionDeadline: MoreThanOrEqual(now),
+          },
+        },
+      },
+    });
+
+    if (!item) throw new BadRequestException('No Invitaion Found for you');
+
+    const invitaion = this.rfxBidInvitationRepository.create(itemData);
+    await this.rfxBidInvitationRepository.insert(invitaion);
+    return invitaion;
+  }
+
   async myItemInvitations(
     query: CollectionQuery,
     rfxItemId: string,
@@ -295,7 +329,7 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
     });
 
     if (!rfxProductInvitation)
-      throw new NotFoundException('RFQ bid invitation not found');
+      throw new NotFoundException('RFQ Porduct invitation not found');
 
     await this.rfxBidInvitationRepository.update(rfxBidInvitationId, {
       status: EInvitationStatus.ACCEPTED,

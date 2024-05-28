@@ -42,27 +42,26 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
     await this.rfxBidProcedureRepository.insert(rfxBidContract);
     return rfxBidContract;
   }
+
   async update(id: string, itemData: UpdateRfxBidProcedureDTO) {
-    const rfxBidProcedure = await this.rfxBidProcedureRepository.findOne({
+    const rfx = await this.rfxRepository.findOne({
       where: {
-        id,
+        rfxBidProcedure: {
+          id,
+        },
       },
       relations: {
-        rfx: true,
+        rfxBidProcedure: true,
       },
       select: {
         id: true,
-        rfx: {
-          id: true,
-          status: true,
-          reviewDeadline: true,
-        },
+        status: true,
       },
     });
 
-    if (!rfxBidProcedure) throw new BadRequestException('rfx not found');
+    if (!rfx) throw new BadRequestException('rfx not found');
 
-    await this.rfxService.validateUpdateRequest(rfxBidProcedure.rfx);
+    await this.rfxService.validateUpdateRequest(rfx);
 
     const rfxDocUpdate = this.rfxBidProcedureRepository.create(itemData);
     await this.rfxBidProcedureRepository.update(id, itemData);

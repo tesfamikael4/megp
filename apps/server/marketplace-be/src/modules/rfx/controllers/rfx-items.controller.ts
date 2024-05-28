@@ -1,4 +1,4 @@
-import { Controller, Param, Patch } from '@nestjs/common';
+import { Controller, Get, Param, Patch } from '@nestjs/common';
 import { ExtraCrudController } from 'megp-shared-be';
 import { RFXItem } from 'src/entities';
 import { RFXItemService } from '../services/rfx-items.service';
@@ -11,5 +11,13 @@ export class RFXItemController extends ExtraCrudController<RFXItem>({
 }) {
   constructor(private readonly rfxItemService: RFXItemService) {
     super(rfxItemService);
+  }
+
+  @Get('vendor-registries/:vendorId/:rfxId')
+  async vendorRegistries(
+    @Param('vendorId') vendorId: string,
+    @Param('rfxId') rfxId: string,
+  ) {
+    return await this.rfxItemService.vendorRegistries(vendorId, rfxId);
   }
 }

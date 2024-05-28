@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { SolRegistrationController } from './controllers/registration.controller';
 import { SolRegistrationService } from './services/registration.service';
 import {
+  OpenedItemResponse,
+  OpenedResponse,
   RFX,
   RFXItem,
   SolBookmark,
@@ -18,13 +20,14 @@ import { SolOfferController } from './controllers/offer.controller';
 import { SolOfferService } from './services/offer.service';
 import { SolItemResponseController } from './controllers/item-response.controller';
 import { SolItemResponseService } from './services/item-response.service';
-import { EncryptionHelperService } from './services/encryption-helper.service';
+import { EncryptionHelperService } from '../../utils/services/encryption-helper.service';
 import { SolBookmarkController } from './controllers/bookmark.controller';
 import { SolBookmarkService } from './services/bookmark.service';
 import { SolResponseController } from './controllers/response.controller';
 import { SolResponseService } from './services/response.service';
 import { MinIOModule } from 'megp-shared-be';
-import { ScheduleModule } from '@nestjs/schedule';
+import { UtilityModule } from 'src/utils/utils.module';
+import { OpenerSerivice } from '../evaluation/services/opener.service';
 
 @Module({
   imports: [
@@ -37,9 +40,11 @@ import { ScheduleModule } from '@nestjs/schedule';
       SolItemResponse,
       RFX,
       RFXItem,
+      OpenedResponse,
+      OpenedItemResponse,
     ]),
-    ScheduleModule.forRoot(),
     MinIOModule,
+    UtilityModule,
   ],
   controllers: [
     SolBookmarkController,
@@ -57,6 +62,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     SolItemResponseService,
     SolResponseService,
     EncryptionHelperService,
+    OpenerSerivice,
   ],
   exports: [SolRoundService],
 })

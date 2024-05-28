@@ -10,8 +10,7 @@ import {
 import { RFX } from './rfx.entity';
 
 @Entity({ name: 'rfx_bid_contract_conditions' })
-@Check('"deliveryPeriod" > 0')
-@Check('"liquidityDamage" >= 0 AND "liquidityDamage" <= 100')
+@Check('"liquidityDamageLimit" >=  "liquidityDamage"')
 @Check('"liquidityDamageLimit" >= 0 AND "liquidityDamageLimit" <= 100')
 export class RfxBidContractCondition extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -24,15 +23,6 @@ export class RfxBidContractCondition extends Audit {
   @JoinColumn({ name: 'rfxId' })
   rfx: RFX;
 
-  @Column()
-  deliveryPeriod: number;
-
-  @Column()
-  deliverySite: string;
-
-  @Column()
-  warrantyPeriod: number;
-
   @Column({ default: 0 })
   liquidityDamage: number;
 
@@ -41,9 +31,6 @@ export class RfxBidContractCondition extends Audit {
 
   @Column({ default: false })
   isPartialAllowed: boolean;
-
-  @Column({ type: 'simple-array' })
-  paymentMode: string[];
 
   @Column()
   paymentReleasePeriod: number;

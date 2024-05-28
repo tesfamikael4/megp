@@ -1,11 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { FileUploadDto } from 'megp-shared-be';
+
+class DocumentResponseDto {
+  @ApiProperty()
+  @IsString()
+  key: string;
+
+  @ApiProperty()
+  fileInfo: FileUploadDto;
+}
 
 export class CreateSolItemResponseDto {
   @ApiProperty()
@@ -18,8 +22,7 @@ export class CreateSolItemResponseDto {
   vendorId: string;
 
   @ApiProperty()
-  @IsString()
-  value: string;
+  value: DocumentResponseDto;
 }
 
 export class UpdateSolItemResponseDto extends CreateSolItemResponseDto {

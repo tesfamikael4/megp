@@ -33,6 +33,11 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
     super(rfxBidInvitationService);
   }
 
+  @Post('apply-on-invitation')
+  async applyOnInvtitation(@Body() itemData: any, @CurrentUser() user: any) {
+    return await this.rfxBidInvitationService.applyOnInvitation(itemData, user);
+  }
+
   @Patch('withdraw-invitation/:rfxInvitationId')
   async withdraw(
     @Param('rfxInvitationId') rfxInvitationId: string,

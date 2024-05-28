@@ -59,14 +59,19 @@ export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContr
           id,
         },
         relations: {
-          rfx: true,
+          rfx: {
+            rfxBidProcedure: true,
+          },
         },
         select: {
           id: true,
           rfx: {
             id: true,
             status: true,
-            reviewDeadline: true,
+            rfxBidProcedure: {
+              id: true,
+              reviewDeadline: true,
+            },
           },
         },
       });

@@ -5,7 +5,8 @@ import { RfxBidProcedure, SolRound } from 'src/entities';
 import { EntityManager, LessThan, MoreThan, Repository } from 'typeorm';
 import { CreateRoundDto, RoundDto } from '../dtos/round.dto';
 import { REQUEST } from '@nestjs/core';
-import { SolOfferService } from './offer.service';
+import { SchedulerService } from 'src/utils/services/scheduler.service';
+import { OpenerSerivice } from 'src/modules/evaluation/services/opener.service';
 
 @Injectable()
 export class SolRoundService extends ExtraCrudService<SolRound> {
@@ -13,7 +14,8 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
     @InjectRepository(SolRound)
     private readonly solRoundRepository: Repository<SolRound>,
     @Inject(REQUEST) private readonly request: Request,
-    private readonly solOfferService: SolOfferService,
+    private readonly schedulerService: SchedulerService,
+    private readonly openerService: OpenerSerivice,
   ) {
     super(solRoundRepository);
   }
@@ -21,8 +23,8 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
   async createZeroSolicitationRound(rfxBidProcedure: RfxBidProcedure) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const start = new Date(rfxBidProcedure.invitationDate);
-    const end = new Date(rfxBidProcedure.submissionDeadline);
+    const start = rfxBidProcedure.invitationDate || new Date(Date.now());
+    const end = rfxBidProcedure.submissionDeadline;
 
     const roundItem: CreateRoundDto = {
       rfxId: rfxBidProcedure.rfxId,
@@ -33,6 +35,35 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
     const round = this.solRoundRepository.create(roundItem);
     await entityManager.getRepository(SolRound).insert(round);
     return round;
+  }
+
+  async scheduleRoundOpening(rfxId: string, roundNumber: number) {
+    try {
+      const round = await this.solRoundRepository.findOne({
+        where: {
+          rfxId,
+          round: roundNumber,
+        },
+      });
+
+      if (!round)
+        throw new BadRequestException(
+          `Round ${roundNumber} for rfx with id ${rfxId} is not found`,
+        );
+
+      const payload = {
+        round: roundNumber,
+        rfxId,
+      };
+
+      await this.schedulerService.scheduleWithEncryption(
+        this.openerService.openAndEvaluateResponses,
+        round.end,
+        payload,
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async scheduleNextRounds(rfxBidProcedure: RfxBidProcedure) {

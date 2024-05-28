@@ -1,6 +1,10 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ExtraCrudOptions, ExtraCrudController } from 'megp-shared-be';
+import {
+  ExtraCrudOptions,
+  ExtraCrudController,
+  decodeCollectionQuery,
+} from 'megp-shared-be';
 import { SolRegistrationService } from '../services/registration.service';
 import { SolRegistration } from 'src/entities';
 import {
@@ -20,7 +24,19 @@ const options: ExtraCrudOptions = {
 export class SolRegistrationController extends ExtraCrudController<SolRegistration>(
   options,
 ) {
-  constructor(private readonly solBookmarkService: SolRegistrationService) {
-    super(solBookmarkService);
+  constructor(private readonly solRegistrationService: SolRegistrationService) {
+    super(solRegistrationService);
+  }
+
+  @Get('vendors-list/:rfxId')
+  async getVendorsList(@Param('rfxId') rfxId: string, @Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.solRegistrationService.vendorsList(rfxId, query);
+  }
+
+  @Get('solicitation-status')
+  async solicitationStatus(@Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.solRegistrationService.solicitationStatus(query);
   }
 }

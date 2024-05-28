@@ -9,12 +9,12 @@ import {
 } from 'typeorm';
 import { RFXItem } from './rfx-items.entity';
 import { Audit } from 'megp-shared-be';
-import { OpenedItemResponse } from './opened-item-response.entity';
+import { SolItemResponse } from './sol-item-response.entity';
 import { SolRegistration } from './sol-registration.entity';
 
-@Entity({ name: 'sol_response_items' })
+@Entity({ name: 'opened_response_items' })
 @Unique(['rfxItemId', 'vendorId', 'key'])
-export class SolItemResponse extends Audit {
+export class OpenedItemResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -24,29 +24,35 @@ export class SolItemResponse extends Audit {
   @Column()
   key: string;
 
-  @Column({ type: 'text' })
-  value: string;
+  @Column({ type: 'jsonb' })
+  value: any;
 
+  // Foreign Keys
   @Column('uuid')
   rfxItemId: string;
 
   @Column('uuid')
+  solItemResponseId: string;
+
+  @Column('uuid')
   solRegistrationId: string;
 
-  @ManyToOne(() => RFXItem, (rfx) => rfx.solItemResponses)
+  // Relations
+  @ManyToOne(() => RFXItem, (rfx) => rfx.openedItemResponses)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
 
   @OneToOne(
-    () => OpenedItemResponse,
-    (OpenedItemResponse) => OpenedItemResponse.solItemResponse,
+    () => SolItemResponse,
+    (solItemResponse) => solItemResponse.openedItemResponse,
   )
-  openedItemResponse: OpenedItemResponse;
+  @JoinColumn({ name: 'solItemResponseId' })
+  solItemResponse: SolItemResponse;
 
   @ManyToOne(
     () => SolRegistration,
-    (registration) => registration.solItemResponses,
+    (solRegistration) => solRegistration.openedItemResponses,
   )
   @JoinColumn({ name: 'solRegistrationId' })
-  solRegistration: SolRegistration;
+  solRegistrations: SolRegistration;
 }

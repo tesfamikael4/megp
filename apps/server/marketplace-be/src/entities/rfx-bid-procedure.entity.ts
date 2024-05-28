@@ -38,6 +38,9 @@ export class RfxBidProcedure extends Audit {
   @Column({ nullable: true, type: 'timestamp' })
   invitationDate: Date;
 
+  @Column({ nullable: true, type: 'timestamp' })
+  reviewDeadline: string;
+
   @Column()
   deltaPercentage: number;
 
