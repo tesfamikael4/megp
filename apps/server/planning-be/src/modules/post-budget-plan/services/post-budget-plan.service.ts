@@ -22,6 +22,7 @@ import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.
 import { DocumentService } from 'src/modules/utility/services/document.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { SubmittedPlan } from 'src/entities/submitted-plan.entity';
+import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 
 @Injectable()
 export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
@@ -316,31 +317,6 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       itemName: data.itemName,
       organizationId: data.organizationId,
     });
-  }
-
-  async approvePostBudget(data: any): Promise<void> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      const sourceEntity = await this.repositoryPostBudgetPlan.findOneOrFail({
-        where: { id: data.itemId },
-      });
-
-      //check Approval status and update the postBudgetPlan
-      queryRunner.manager.connection.transaction(async (entityManager) => {
-        await entityManager
-          .getRepository(PostBudgetPlan)
-          .update(sourceEntity.id, {
-            status: data.status == 'Rejected' ? 'Draft' : 'Approved',
-          });
-      });
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
   }
 
   async pdfGenerator(

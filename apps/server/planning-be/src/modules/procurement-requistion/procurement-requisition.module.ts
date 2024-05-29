@@ -25,6 +25,7 @@ import { ProcurementRequisitionController } from './controllers/procurement-requ
 import { ProcurementRequisitionService } from './services/procurement-requisition.service';
 import { UtilityModule } from '../utility/utility.module';
 import { MinIOModule } from 'src/shared/min-io';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 @Module({
   imports: [
@@ -40,6 +41,16 @@ import { MinIOModule } from 'src/shared/min-io';
       PostBudgetPlanActivity,
       Budget,
     ]),
+    RabbitMQModule.forRoot(RabbitMQModule, {
+      exchanges: [
+        {
+          name: 'workflow-broadcast-exchanges',
+          type: 'direct', // You can change this to 'topic', 'fanout', etc. as needed
+        },
+      ],
+      uri: process.env.RMQ_URL, // Replace with your RabbitMQ URI
+      enableControllerDiscovery: true,
+    }),
     ClientsModule.register([
       {
         name: 'PR_RMQ_SERVICE',

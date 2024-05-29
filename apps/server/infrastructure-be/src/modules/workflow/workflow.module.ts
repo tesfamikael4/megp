@@ -28,6 +28,7 @@ import * as dotenv from 'dotenv';
 import { InstanceStepService } from './services/instance-step.service';
 import { InstanceStepController } from './controllers/instance-step.controller';
 import { InstanceStep } from 'src/entities/instance-step.entity';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 dotenv.config({ path: '.env' });
 
@@ -43,9 +44,19 @@ dotenv.config({ path: '.env' });
       Permission,
       InstanceStep,
     ]),
+    RabbitMQModule.forRoot(RabbitMQModule, {
+      exchanges: [
+        {
+          name: 'workflow-broadcast-exchanges',
+          type: 'direct', // You can change this to 'topic', 'fanout', etc. as needed
+        },
+      ],
+      uri: process.env.RMQ_URL, // Replace with your RabbitMQ URI
+      enableControllerDiscovery: true,
+    }),
     ClientsModule.register([
       {
-        name: 'WORKFLOW_RMQ_SERVICE',
+        name: 'PLANNING_RMQ_SERVICE',
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RMQ_URL],
@@ -56,7 +67,7 @@ dotenv.config({ path: '.env' });
         },
       },
       {
-        name: 'WORKFLOW_RMQ_SERVICE',
+        name: 'TENDERING_RMQ_SERVICE',
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RMQ_URL],
@@ -67,7 +78,7 @@ dotenv.config({ path: '.env' });
         },
       },
       {
-        name: 'WORKFLOW_RMQ_SERVICE',
+        name: 'MARKETPLACE_RMQ_SERVICE',
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RMQ_URL],
@@ -91,6 +102,7 @@ dotenv.config({ path: '.env' });
     PermissionService,
     AuthHelper,
     JwtService,
+    InstanceController,
   ],
   controllers: [
     WorkflowController,
@@ -105,6 +117,7 @@ dotenv.config({ path: '.env' });
   exports: [
     // StateService,
     XMachineService,
+    WorkflowModule,
   ],
 })
 export class WorkflowModule {}

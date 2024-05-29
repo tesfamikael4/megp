@@ -7,9 +7,10 @@ import { State } from 'src/entities/state.entity';
 import { In, Not, Repository } from 'typeorm';
 import { setup } from 'xstate';
 import axios from 'axios';
-import { ClientProxy } from '@nestjs/microservices';
+// import { ClientProxy } from '@nestjs/microservices';
 import { Activity } from 'src/entities/activity.entity';
 import e from 'express';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 interface StateMachineConfig {
   states: {
@@ -43,9 +44,18 @@ export class XMachineService {
     @InjectRepository(Activity)
     private readonly repositoryActivity: Repository<Activity>,
 
+    private readonly amqpConnection: AmqpConnection,
+
     // private readonly instanceService: InstanceService,
-    @Inject('WORKFLOW_RMQ_SERVICE')
-    private readonly workflowRMQClient: ClientProxy,
+    // @Inject('WORKFLOW_RMQ_SERVICE')
+    // private readonly workflowRMQClient: ClientProxy,
+
+    // @Inject('TENDERING_RMQ_SERVICE')
+    // private readonly tenderingRMQClient: ClientProxy,
+    // @Inject('PLANNING_RMQ_SERVICE')
+    // private readonly planningRMQClient: ClientProxy,
+    // @Inject('MARKETPLACE_RMQ_SERVICE')
+    // private readonly marketplaceRMQClient: ClientProxy,
   ) {}
 
   async createMachineConfig(
@@ -126,7 +136,9 @@ export class XMachineService {
                     workflow: true,
                   },
                 });
-                this.workflowRMQClient.emit(
+
+                this.amqpConnection.publish(
+                  'workflow-broadcast-exchanges',
                   `${acti.workflow.name}-workflow.${acti.name}`,
                   {
                     status: params.status,
@@ -134,6 +146,15 @@ export class XMachineService {
                     itemId: existingData.itemId,
                   },
                 );
+
+                // this.workflowRMQClient.emit(
+                //   `${acti.workflow.name}-workflow.${acti.name}`,
+                //   {
+                //     status: params.status,
+                //     activityId: activityId,
+                //     itemId: existingData.itemId,
+                //   },
+                // );
               }
             } else {
               const data = {

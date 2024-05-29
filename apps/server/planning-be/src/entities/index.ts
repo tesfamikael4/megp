@@ -14,8 +14,9 @@ export * from './post-budget-activity-document.entity';
 export * from './item-budget-line.entity';
 export * from './post-budget-plan-timeline.entity';
 export * from './post-budget-plan-disbursement.entity';
-export * from './pre-budget-activity-document.entity';
-export * from './pre-budget-plan-requisitioner.entity';
+export * from './post-budget-activity-document.entity';
+export * from './post-budget-plan-requisitioner.entity';
+export * from './post-procurement-mechanism.entity';
 export * from './budget-year.entity';
 export * from './budget.entity';
 

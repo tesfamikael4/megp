@@ -18,9 +18,6 @@ export class StateService extends ExtraCrudService<State> {
     private readonly xMachineState: XMachineService,
     @InjectRepository(InstanceStep)
     private readonly repositoryInstanceStep: Repository<InstanceStep>,
-
-    @Inject(REQUEST)
-    private request: Request,
   ) {
     super(repositoryState);
   }
