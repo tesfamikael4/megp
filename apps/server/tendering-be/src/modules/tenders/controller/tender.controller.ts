@@ -92,7 +92,6 @@ export class TenderController extends EntityCrudController<Tender>(options) {
   }
 
   @Post('change-status')
-  @AllowAnonymous()
   async changeStatus(@Body() itemData: ChangeTenderStatusDto) {
     return this.tenderService.changeStatus(itemData);
   }
