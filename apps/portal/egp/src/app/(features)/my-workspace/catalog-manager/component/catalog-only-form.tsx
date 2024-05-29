@@ -6,21 +6,18 @@ import {
   Checkbox,
   Flex,
   Group,
-  LoadingOverlay,
   MultiSelect,
   NumberInput,
   Select,
   Stack,
   TextInput,
 } from '@mantine/core';
-import { logger } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 export const CatalogDetalForm = ({
   template,
   schema,
-  isLoading,
   onCreate,
   onUpdate,
   OnDelete,
@@ -41,7 +38,6 @@ export const CatalogDetalForm = ({
     formState: { errors },
     control,
     reset,
-    setValue,
   } = useForm({
     resolver: zodResolver(schema),
   });
@@ -53,7 +49,6 @@ export const CatalogDetalForm = ({
         const nameToValidate = item?.label?.toLowerCase().replace(' ', '');
         temp[nameToValidate] = item?.value;
       });
-      logger.log({ temp });
 
       reset({
         ...temp,
@@ -66,52 +61,100 @@ export const CatalogDetalForm = ({
 
   return (
     <>
-      <LoadingOverlay visible={isLoading} />
       <Box mih={'80vh'} className="w-full">
-        <Stack className="w-full ml-2">
-          <Flex wrap={'wrap'} gap={'xl'}>
+        <Stack className="w-full">
+          <Flex wrap={'wrap'} gap={'xl'} mih={'40vh'}>
             {template?.properties?.map((item, index) => {
               const nameToValidate = item.displayName
                 .toLowerCase()
                 .replace(' ', '');
-              return item.validation.type == 'string' ? (
-                <Controller
-                  key={index}
-                  name={nameToValidate}
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <TextInput
-                      className="w-2/5 "
-                      label={item?.displayName}
-                      value={value}
-                      onChange={onChange}
-                      placeholder={item?.displayName}
-                      required={item?.validation?.min}
-                      error={
-                        errors?.[nameToValidate]?.message?.toString() ?? ''
-                      }
+              const uomFieldName = `${nameToValidate}_uom`;
+
+              return item.dataType == 'string' ? (
+                <Flex gap={'sm'} className="w-full">
+                  <Controller
+                    key={index}
+                    name={nameToValidate}
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <TextInput
+                        label={item?.displayName}
+                        value={value}
+                        onChange={onChange}
+                        placeholder={item?.displayName}
+                        required={item?.validation?.min}
+                        error={
+                          errors?.[nameToValidate]?.message?.toString() ?? ''
+                        }
+                      />
+                    )}
+                  />
+                  {item.uom.length != 0 && (
+                    <Controller
+                      name={uomFieldName}
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          label={'Unit of Measurement'}
+                          name={uomFieldName}
+                          onChange={onChange}
+                          value={value}
+                          className="w-1/2"
+                          error={errors?.uom?.message?.toString() ?? ''}
+                          data={item?.uom?.map((uom) => {
+                            return {
+                              value: uom,
+                              label: uom,
+                            };
+                          })}
+                        />
+                      )}
                     />
                   )}
-                />
-              ) : item.validation.type == 'number' ? (
-                <Controller
-                  key={index}
-                  name={nameToValidate}
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <NumberInput
-                      label={item?.displayName}
-                      className="w-2/5  "
-                      value={value}
-                      onChange={onChange}
-                      placeholder={item?.displayName}
-                      required={item?.validation?.min}
-                      error={
-                        errors?.[nameToValidate]?.message?.toString() ?? ''
-                      }
+                </Flex>
+              ) : item.dataType == 'number' ? (
+                <Flex gap={'sm'} className="w-full">
+                  <Controller
+                    key={index}
+                    name={nameToValidate}
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <NumberInput
+                        label={item?.displayName}
+                        className={`${item.uom ? 'w-1/2' : 'w-full'}`}
+                        value={value}
+                        onChange={onChange}
+                        placeholder={item?.displayName}
+                        required={item?.validation?.min}
+                        error={
+                          errors?.[nameToValidate]?.message?.toString() ?? ''
+                        }
+                      />
+                    )}
+                  />
+                  {item.uom.length != 0 && (
+                    <Controller
+                      name={uomFieldName}
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          label={'Unit of Measurement'}
+                          name={uomFieldName}
+                          onChange={onChange}
+                          value={value}
+                          className="w-1/2"
+                          error={errors?.uom?.message?.toString() ?? ''}
+                          data={item?.uom?.map((uom) => {
+                            return {
+                              value: uom,
+                              label: uom,
+                            };
+                          })}
+                        />
+                      )}
                     />
                   )}
-                />
+                </Flex>
               ) : item.dataType == 'boolean' ? (
                 <Controller
                   key={index}
@@ -119,7 +162,7 @@ export const CatalogDetalForm = ({
                   control={control}
                   render={({ field: { name, value, onChange } }) => (
                     <Checkbox
-                      className="w-2/5 mt-auto"
+                      className="mt-auto"
                       label={item?.displayName}
                       name={name}
                       value={value}
@@ -131,113 +174,125 @@ export const CatalogDetalForm = ({
                     />
                   )}
                 />
-              ) : item.validation.type == 'singleSelect' ? (
-                <Controller
-                  key={index}
-                  name={nameToValidate}
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <Select
-                      name="name"
-                      className="w-2/5 "
-                      label={item?.displayName}
-                      value={value}
-                      data={
-                        item?.validation?.enum?.map((i) => {
-                          return {
-                            value: i,
-                            lable: i,
-                          };
-                        }) || []
-                      }
-                      onChange={onChange}
-                      placeholder={item?.displayName}
-                      withAsterisk={item?.validation?.isRequired ?? false}
-                      error={
-                        errors?.[nameToValidate]?.message?.toString() ?? ''
-                      }
+              ) : item.dataType == 'singleSelect' ? (
+                <Flex gap={'sm'} className="w-full">
+                  <Controller
+                    key={index}
+                    name={nameToValidate}
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        name="name"
+                        className={`${item.uom ? 'w-1/2' : 'w-full'}`}
+                        label={item?.displayName}
+                        value={value}
+                        data={
+                          item?.validation?.enum?.map((i) => {
+                            return {
+                              value: i,
+                              lable: i,
+                            };
+                          }) || []
+                        }
+                        onChange={onChange}
+                        placeholder={item?.displayName}
+                        withAsterisk={item?.validation?.isRequired ?? false}
+                        error={
+                          errors?.[nameToValidate]?.message?.toString() ?? ''
+                        }
+                      />
+                    )}
+                  />
+
+                  {item.uom.length != 0 && (
+                    <Controller
+                      name={uomFieldName}
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          label={'Unit of Measurement'}
+                          name={uomFieldName}
+                          onChange={onChange}
+                          value={value}
+                          className="w-1/2"
+                          error={errors?.uom?.message?.toString() ?? ''}
+                          data={item?.uom?.map((uom) => {
+                            return {
+                              value: uom,
+                              label: uom,
+                            };
+                          })}
+                        />
+                      )}
                     />
                   )}
-                />
-              ) : item.validation.type == 'multiSelect' ? (
-                <Controller
-                  key={index}
-                  name={nameToValidate}
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <MultiSelect
-                      name="name"
-                      className="w-2/5 "
-                      label={item?.displayName}
-                      value={value}
-                      data={
-                        item?.validation?.enum?.map((i) => {
-                          return {
-                            value: i,
-                            lable: i,
-                          };
-                        }) || []
-                      }
-                      onChange={onChange}
-                      placeholder={item?.displayName}
-                      withAsterisk={item?.validation?.isRequired ?? false}
-                      error={
-                        errors?.[nameToValidate]?.message?.toString() ?? ''
-                      }
+                </Flex>
+              ) : item.dataType == 'multiSelect' ? (
+                <Flex gap={'sm'} className="w-full">
+                  <Controller
+                    key={index}
+                    name={nameToValidate}
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <MultiSelect
+                        name="name"
+                        label={item?.displayName}
+                        value={value}
+                        data={
+                          item?.validation?.enum?.map((i) => {
+                            return {
+                              value: i,
+                              lable: i,
+                            };
+                          }) || []
+                        }
+                        onChange={onChange}
+                        placeholder={item?.displayName}
+                        withAsterisk={item?.validation?.isRequired ?? false}
+                        error={
+                          errors?.[nameToValidate]?.message?.toString() ?? ''
+                        }
+                      />
+                    )}
+                  />
+                  {item.uom.length != 0 && (
+                    <Controller
+                      name={uomFieldName}
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          label={'Unit of Measurement'}
+                          name={uomFieldName}
+                          onChange={onChange}
+                          value={value}
+                          className="w-1/2"
+                          error={errors?.uom?.message?.toString() ?? ''}
+                          data={item?.uom?.map((uom) => {
+                            return {
+                              value: uom,
+                              label: uom,
+                            };
+                          })}
+                        />
+                      )}
                     />
                   )}
-                />
+                </Flex>
               ) : null;
             })}
-            {template?.properties?.length > 0 && (
-              <>
-                <Controller
-                  name={'quantity'}
-                  control={control}
-                  render={({ field: { name, value, onChange } }) => (
-                    <NumberInput
-                      className="w-2/5 "
-                      label={'Quantity'}
-                      value={value}
-                      onChange={onChange}
-                      error={errors?.quantity?.message?.toString() ?? ''}
-                    />
-                  )}
+            <Controller
+              name={'quantity'}
+              control={control}
+              render={({ field: { name, value, onChange } }) => (
+                <NumberInput
+                  className="w-1/2"
+                  label={'Quantity'}
+                  value={value}
+                  onChange={onChange}
+                  error={errors?.quantity?.message?.toString() ?? ''}
                 />
-                <Controller
-                  name={'location'}
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <Select
-                      label={'Location'}
-                      name="location"
-                      onChange={onChange}
-                      value={value}
-                      className="w-2/5 "
-                      error={errors?.location?.message?.toString() ?? ''}
-                      data={[
-                        { value: 'location1', label: 'Location 1' },
-                        { value: 'location2', label: 'Location 2' },
-                      ]}
-                    />
-                  )}
-                />
-
-                <Controller
-                  name={'deliverDays'}
-                  control={control}
-                  render={({ field: { name, value, onChange } }) => (
-                    <NumberInput
-                      label={'Delivery Days'}
-                      value={value}
-                      className="w-2/5 "
-                      onChange={onChange}
-                      error={errors?.deliverDays?.message?.toString() ?? ''}
-                    />
-                  )}
-                />
-              </>
-            )}
+              )}
+            />
           </Flex>
           {template?.properties?.length > 0 && (
             <Group className="ml-auto">
