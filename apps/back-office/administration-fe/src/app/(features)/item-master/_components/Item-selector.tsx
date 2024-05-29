@@ -91,12 +91,14 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
   }, [opened]);
 
   useEffect(() => {
-    getItemMaster({
-      skip: 0,
-      take: 10,
-      where: [itemCollectionSelector],
-      includes: ['itemMetaData'],
-    });
+    if (opened) {
+      getItemMaster({
+        skip: 0,
+        take: 10,
+        where: [itemCollectionSelector],
+        includes: ['itemMetaData'],
+      });
+    }
   }, [getItemMaster, itemCollectionSelector]);
 
   return (

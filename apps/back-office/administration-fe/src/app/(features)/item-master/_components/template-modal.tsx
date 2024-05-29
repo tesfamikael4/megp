@@ -27,7 +27,7 @@ interface Specification {
   defaultValue?: string | number | boolean | unknown;
   min?: number;
   max?: number;
-  uom?: string | undefined;
+  uom?: string[] | undefined;
   isRequired?: boolean;
   spec?: string;
   selectFrom?: any[];
@@ -55,7 +55,7 @@ export function Popup({
     isRequired: z.boolean().default(false),
     min: z.number().optional(),
     max: z.number().optional(),
-    uom: z.string().optional(),
+    uom: z.array(z.string()).optional(),
     spec: z.string().optional(),
     selectFrom: z.array(z.any()).optional().default([]),
   });
@@ -112,8 +112,6 @@ export function Popup({
     }
   }, [index, updatedItems]);
 
-  logger.log(data, 'hu');
-
   useEffect(() => {
     reset({
       ...data,
@@ -129,7 +127,7 @@ export function Popup({
         <TextInput
           withAsterisk
           {...register('displayName')}
-          label="Display Name"
+          label="Name"
           error={
             errors?.displayName ? errors?.displayName?.message?.toString() : ''
           }
@@ -144,7 +142,7 @@ export function Popup({
           name="uom"
           control={control}
           render={({ field: { onChange, value } }) => (
-            <TextInput
+            <TagsInput
               value={value}
               label="unit Of Measurement "
               {...register('uom')}
@@ -165,7 +163,7 @@ export function Popup({
               value={value}
               onChange={onChange}
               data={dataTypes}
-              label="Input type"
+              label="Input Type"
               withAsterisk
               className="w-full"
               error={errors.dataType?.message as string | undefined}
@@ -212,7 +210,7 @@ export function Popup({
           <Controller
             name="selectFrom"
             control={control}
-            render={({ field: { onChange, name, value } }) => (
+            render={({ field: { onChange, value } }) => (
               <TagsInput
                 value={value}
                 withAsterisk
@@ -235,7 +233,7 @@ export function Popup({
               checked={value}
               onChange={onChange}
               className="w-full mt-4 mb-2"
-              label="IsRequired"
+              label="Is Required"
               error={errors.isRequired?.message as string}
             />
           )}

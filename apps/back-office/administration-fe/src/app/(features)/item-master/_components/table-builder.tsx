@@ -1,4 +1,4 @@
-import { Box, Button, Group, LoadingOverlay, Modal, rem } from '@mantine/core';
+import { Box, Button, Group, LoadingOverlay, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -17,7 +17,7 @@ import ItemSelector from './Item-selector';
 import { DraggableTable } from './dragable';
 import { useLazyReadQuery } from '../_api/item-master.api';
 
-export function Builder() {
+export function Builder({ isCollapsed }: any) {
   const [opened, { open, close }] = useDisclosure(false);
   const [copyModalOpend, { open: openCopyModal, close: closeCopyModal }] =
     useDisclosure(false);
@@ -138,8 +138,10 @@ export function Builder() {
   };
 
   useEffect(() => {
-    trigger(id.toString());
-  }, [id, isSuccess, trigger]);
+    if (!isCollapsed) {
+      trigger(id.toString());
+    }
+  }, [id, isCollapsed, isSuccess, trigger]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -155,8 +157,11 @@ export function Builder() {
   }, [fields, isSuccess]);
 
   useEffect(() => {
-    readItem(id?.toString());
-  }, [id, readItem]);
+    if (!isCollapsed) {
+      readItem(id?.toString());
+    }
+  }, [id, isCollapsed, readItem]);
+
   const handleEdit = (index) => {
     openForEdit();
     setSelectedIndex(index);
@@ -205,7 +210,7 @@ export function Builder() {
           opened={opened}
           onClose={close}
           title={<Group fw={'bold'}>Add Specification Template Form</Group>}
-          size={'lg'}
+          size={'xl'}
         >
           <Popup close={close} add={append} mode="new" />
         </Modal>
