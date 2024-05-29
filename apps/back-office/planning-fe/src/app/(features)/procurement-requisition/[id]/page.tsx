@@ -4,7 +4,6 @@ import { Box, Container, Text, Flex, Tooltip, ActionIcon } from '@mantine/core';
 import { ActivityMechanization } from '@/app/(features)/(app)/_components/activity-mechanization';
 import { Items } from '@/app/(features)/procurement-requisition/_components/items';
 import TimelineTab from '@/app/(features)/procurement-requisition/_components/timeline-tab';
-import { Requisitioner } from '@/app/(features)/(app)/_components/requisitioner';
 import { Documents } from '@/app/(features)/(app)/_components/documents';
 import { useParams, useRouter } from 'next/navigation';
 import { useReadQuery } from '@/store/api/pr/pr.api';
@@ -102,16 +101,6 @@ export default function PrDetailPage() {
             >
               Timeline
             </Box>
-            <Box
-              className={
-                currentTab === 'Technical Team'
-                  ? activeTabStyle
-                  : inActiveTabStyle
-              }
-              onClick={() => setCurrentTab('Technical Team')}
-            >
-              Technical Team
-            </Box>
           </Flex>
         </Container>
       </Box>
@@ -137,10 +126,6 @@ export default function PrDetailPage() {
 
             {currentTab === 'timeline' && (
               <TimelineTab disableFields={disableFields} />
-            )}
-
-            {currentTab === 'Technical Team' && (
-              <Requisitioner page="pr" disableFields={disableFields} />
             )}
 
             {opened && (

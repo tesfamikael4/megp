@@ -2,13 +2,12 @@ import {
   useLazyGetUsersByPermissionQuery,
   useLazyGetUsersQuery,
 } from '@/store/api/iam/iam.api';
-import { ActionIcon, Box, Button, Group, Modal } from '@mantine/core';
+import { ActionIcon, Box, Button, Checkbox, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
   ExpandableTable,
   ExpandableTableConfig,
   Section,
-  logger,
   notify,
 } from '@megp/core-fe';
 import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
@@ -38,12 +37,75 @@ export const Requisitioner = ({
   disableFields?: boolean;
 }) => {
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [checkedRow, setCheckedRow] = useState(null);
+
   const config = {
     columns: [
       {
         title: 'Name',
         accessor: 'name',
       },
+      {
+        title: 'Action',
+        accessor: 'action',
+        width: 100,
+        render: (record) => {
+          return (
+            <>
+              <ActionIcon
+                size="sm"
+                variant="subtle"
+                color="red"
+                disabled={disableFields}
+                onClick={() => {
+                  const temp = requisitioners.filter(
+                    (r) => r.userId != record.userId,
+                  );
+                  setRequisitioners([...temp]);
+                }}
+              >
+                <IconTrash size={16} />
+              </ActionIcon>
+            </>
+          );
+        },
+      },
+    ],
+  };
+  const handleChange = (record) => {
+    setCheckedRow(record.userId);
+    const updatedRequisitioners = requisitioners.map((r) => {
+      if (r.userId === record.userId) {
+        return { name: r.name, isTeamLeader: true, userId: r.userId };
+      }
+      return { name: r.name, userId: r.userId, isTeamLeader: false };
+    });
+    setRequisitioners([...updatedRequisitioners]);
+  };
+
+  const prConfig = {
+    columns: [
+      {
+        title: 'Name',
+        accessor: 'name',
+      },
+
+      {
+        title: 'Team Leader',
+        accessor: 'action',
+        render: (record) => {
+          return (
+            <>
+              <Checkbox
+                onChange={() => handleChange(record)}
+                checked={record.userId === checkedRow || record.isTeamLeader}
+                value={record?.isTeamLeader}
+              />
+            </>
+          );
+        },
+      },
+
       {
         title: 'Action',
         accessor: 'action',
@@ -140,11 +202,13 @@ export const Requisitioner = ({
           procurementRequisitionId: id.toString(),
           officers: castePrData,
         }).unwrap();
+
         notify('Success', 'Technical Team Assigned Successfully');
       }
     } catch (err) {
-      logger.log({ err });
-      notify('Error', 'Something went wrong');
+      err.data?.statusCode === 430
+        ? notify('Error', `${err?.data?.message}`)
+        : notify('Error', 'Something went wrong');
     }
   };
 
@@ -179,7 +243,6 @@ export const Requisitioner = ({
     isPrRequisitionerSuccess,
     prRequisitioner,
   ]);
-  logger.log(usersPr);
 
   useEffect(() => {
     const castedData = requisitioners?.map((r: any) => ({
@@ -203,7 +266,7 @@ export const Requisitioner = ({
       <Box>
         <ExpandableTable
           data={requisitioners}
-          config={config}
+          config={page == 'pr' ? prConfig : config}
           total={requisitioners.length}
         />
 
