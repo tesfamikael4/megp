@@ -18,8 +18,6 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
     private readonly repositoryDefaultStep: Repository<DefaultStep>,
     @InjectRepository(Activity)
     private readonly repositoryActivity: Repository<Activity>,
-    @Inject(REQUEST)
-    private request: Request,
   ) {
     super(repositoryInstanceStep);
   }

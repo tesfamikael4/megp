@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Injectable,
+  Param,
+  Post,
+  Scope,
+} from '@nestjs/common';
 import {
   Ctx,
   EventPattern,
@@ -7,14 +16,17 @@ import {
 } from '@nestjs/microservices';
 import { InstanceService } from '../services/instance.service';
 import { Instance } from '../../../entities/instance.entity';
-import { EntityCrudController } from 'megp-shared-be';
+import { AllowAnonymous, EntityCrudController } from 'megp-shared-be';
 import { ApiTags } from '@nestjs/swagger';
 import { EntityCrudOptions, ExtraCrudOptions } from 'megp-shared-be';
 import { StateService } from '../services/state.service';
 import { CurrentUser } from 'megp-shared-be';
+import { RabbitSubscribe, RabbitRPC } from '@golevelup/nestjs-rabbitmq';
+import { ConsumeMessage } from 'amqplib';
 
 const options: EntityCrudOptions = {};
 
+@Injectable({ scope: Scope.DEFAULT })
 @Controller('instance')
 @ApiTags('instance')
 export class InstanceController extends EntityCrudController<Instance>(
@@ -23,6 +35,8 @@ export class InstanceController extends EntityCrudController<Instance>(
   constructor(private readonly instanceService: InstanceService) {
     super(instanceService);
   }
+  @Inject()
+  private readonly instanceServices: InstanceService;
 
   @Get(':id')
   async findOne(@Param('id') id: string, @CurrentUser() user) {
@@ -54,10 +68,14 @@ export class InstanceController extends EntityCrudController<Instance>(
     return this.instanceService.isActive(key, organizationId, itemId);
   }
 
-  @Post('initiate')
-  @EventPattern('initiate-workflow')
-  async initiate(@Body() data: any, @Ctx() context: RmqContext) {
-    return await this.instanceService.initiate(data, context);
+  // @AllowAnonymous()
+  // @RabbitRPC({
+  //   exchange: 'workflow-broadcast-exchanges',
+  //   routingKey: 'workflow.initiate',
+  //   queue: 'workflow',
+  // })
+  async initiate(data: any, context: ConsumeMessage) {
+    return await this.instanceServices.initiate(data, context);
   }
 
   @Post('goto')

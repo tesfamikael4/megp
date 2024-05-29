@@ -40,6 +40,7 @@ import { UtilityModule } from '../utility/utility.module';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import { HashModule } from 'src/shared/hash/hash.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 dotenv.config({ path: '.env' });
 
@@ -57,6 +58,16 @@ dotenv.config({ path: '.env' });
       PreBudgetRequisitioner,
       PreBudgetActivityDocument,
     ]),
+    RabbitMQModule.forRoot(RabbitMQModule, {
+      exchanges: [
+        {
+          name: 'workflow-broadcast-exchanges',
+          type: 'direct', // You can change this to 'topic', 'fanout', etc. as needed
+        },
+      ],
+      uri: process.env.RMQ_URL, // Replace with your RabbitMQ URI
+      enableControllerDiscovery: true,
+    }),
     ClientsModule.register([
       {
         name: 'PLANNING_RMQ_SERVICE',

@@ -32,6 +32,7 @@ import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PostBudgetActivityDocumentController } from './controllers/post-budget-activity-documents.controller';
 import { PostBudgetActivityDocumentService } from './services/post-budget-activity-documents.service';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 @Module({
   imports: [
@@ -46,6 +47,16 @@ import { PostBudgetActivityDocumentService } from './services/post-budget-activi
       PostBudgetRequisitioner,
       PostBudgetActivityDocument,
     ]),
+    RabbitMQModule.forRoot(RabbitMQModule, {
+      exchanges: [
+        {
+          name: 'workflow-broadcast-exchanges',
+          type: 'direct', // You can change this to 'topic', 'fanout', etc. as needed
+        },
+      ],
+      uri: process.env.RMQ_URL, // Replace with your RabbitMQ URI
+      enableControllerDiscovery: true,
+    }),
     ClientsModule.register([
       {
         name: 'PLANNING_RMQ_SERVICE',
