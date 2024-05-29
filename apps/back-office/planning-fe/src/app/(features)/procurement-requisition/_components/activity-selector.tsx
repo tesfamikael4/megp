@@ -14,9 +14,12 @@ import {
 import { DetailActivity } from './detail-activity';
 import { ExpandableTable, notify } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@megp/auth';
 
 export const ActivitySelector = () => {
   const [selected, setSelected] = useState<any | any[]>([]);
+  const { user } = useAuth();
+
   const [selectedBudgetYear, setSelectedBudgetYear] = useState<
     string | undefined
   >();
@@ -134,6 +137,13 @@ export const ActivitySelector = () => {
                 column: 'status',
                 value: 'USED_IN_PR',
                 operator: '!=',
+              },
+            ],
+            [
+              {
+                column: 'postBudgetRequisitioners.userId',
+                value: `${user?.organizations?.[0]?.userId}`, //todo: will replace with ${user?.id}
+                operator: '=',
               },
             ],
           ],
