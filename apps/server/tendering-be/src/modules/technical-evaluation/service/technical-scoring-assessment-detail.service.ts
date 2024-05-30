@@ -1,5 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   ArrayContains,
   EntityManager,
@@ -190,7 +196,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
   }
 
   async checklistStatus(lotId: string, bidderId: string, req: any) {
-    const evaluatorId = 'bed33925-3a83-4cba-be4a-fd563a306c3b';
+    const evaluatorId = req.user.userId;
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const entities = await manager.getRepository(EqcTechnicalScoring).find({
       where: {
@@ -231,13 +237,16 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
         .map((entry) => ({
           ...entry,
           check: checklists.some((x) => x.eqcTechnicalScoringId === entry.id),
+          awardedPoints: checklists.find(
+            (x) => x.eqcTechnicalScoringId === entry.id,
+          )?.pointsAwarded,
           children: buildTree(entries, entry.id),
         }));
     }
 
     // Identify root entries and construct the tree
     const rootEntries = buildTree(entities, null);
-    const response = await this.traverseAndMap(rootEntries, checklists);
+    const response = await this.traverseAndMap(rootEntries[0], checklists);
 
     // return this.groupChecklist(response);
     return response;
@@ -249,9 +258,18 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
   ): Promise<any> {
     const tree = {
       ...treeNode,
-      check: checklists.some((x) => x.eqcTechnicalScoringId === treeNode.id),
+      // check: checklists.some((x) => x.eqcTechnicalScoringId === treeNode.id),
+      check:
+        checklists &&
+        checklists.find((x) => x.eqcTechnicalScoringId == treeNode.id)
+          ? true
+          : false,
       children: treeNode.children
-        ? treeNode.children.map(await this.traverseAndMap)
+        ? await Promise.all(
+            treeNode.children.map((child) =>
+              this.traverseAndMap(child, checklists),
+            ),
+          )
         : [],
     };
     return tree;
@@ -424,78 +442,187 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
         },
       });
 
-    if (!technicalScoringAssessment) {
-      const item = manager.getRepository(TechnicalScoringAssessment).create({
-        bidRegistrationDetailId: bidder.bidRegistrationDetails[0]?.id,
-        evaluatorId: req.user.userId,
-        evaluatorName: req.user.firstName + ' ' + req.user.lastName,
-        submit: false,
-        // technicalScoringAssessmentDetail: [itemD]
+    const eqcTechnicalScoring = await manager
+      .getRepository(EqcTechnicalScoring)
+      .findOne({
+        where: {
+          id: itemData.eqcTechnicalScoringId,
+        },
       });
+    // const eqcTechnicalScoringParents = await manager.getTreeRepository(EqcTechnicalScoring).findAncestorsTree(eqcTechnicalScoring)
 
-      const savedItem = await manager
-        .getRepository(TechnicalScoringAssessment)
-        .save(item);
+    // const eqcTechnicalScoringTree = await manager.getTreeRepository(EqcTechnicalScoring).findAncestorsTree(eqcTechnicalScoring);
 
-      const itemD = manager
-        .getRepository(TechnicalScoringAssessmentDetail)
-        .create({
-          ...itemData,
-          technicalScoringAssessmentId: savedItem.id,
-        }) as any;
-      await manager.getRepository(TechnicalScoringAssessmentDetail).save(itemD);
-    } else {
-      const itemD = manager
-        .getRepository(TechnicalScoringAssessmentDetail)
-        .create({
-          ...itemData,
-          technicalScoringAssessmentId: technicalScoringAssessment.id,
-        }) as any;
-      await manager.getRepository(TechnicalScoringAssessmentDetail).save(itemD);
+    const ancestors = await this.findAncestors(manager, itemData);
+
+    if (itemData.pointsAwarded > eqcTechnicalScoring.point) {
+      throw new HttpException('Points Awarded Exceeds Maximum Points', 430);
     }
 
-    itemData.bidRegistrationDetailId = bidder.bidRegistrationDetails[0]?.id;
+    itemData.maxPoints = eqcTechnicalScoring.point;
 
-    const item =
-      this.technicalScoringAssessmentDetailRepository.create(itemData);
-    // await this.technicalScoringAssessmentDetailRepository.insert(item);
-    return item;
+    let technicalScoringAssessmentId;
+    if (!technicalScoringAssessment) {
+      const newAssessment = manager
+        .getRepository(TechnicalScoringAssessment)
+        .create({
+          bidRegistrationDetailId,
+          evaluatorId: req.user.userId,
+          evaluatorName: itemData.evaluatorName,
+          submit: false,
+          totalPoints: +itemData.pointsAwarded,
+        });
+
+      const savedAssessment = await manager
+        .getRepository(TechnicalScoringAssessment)
+        .save(newAssessment);
+      technicalScoringAssessmentId = savedAssessment.id;
+    } else {
+      technicalScoringAssessmentId = technicalScoringAssessment.id;
+    }
+
+    const saveDetailTree = async (
+      treeNode: EqcTechnicalScoring,
+      parentId: string | null = null,
+      pointsAwarded: number,
+      child: EqcTechnicalScoring,
+    ) => {
+      const parent = await manager
+        .getRepository(TechnicalScoringAssessmentDetail)
+        .findOne({
+          where: {
+            eqcTechnicalScoringId: treeNode.id,
+          },
+        });
+      if (parent && !child) {
+        await manager.getRepository(TechnicalScoringAssessmentDetail).update(
+          {
+            eqcTechnicalScoringId: treeNode.id,
+          },
+          {
+            pointsAwarded: pointsAwarded,
+          },
+        );
+      } else if (parent) {
+        await manager.getRepository(TechnicalScoringAssessmentDetail).update(
+          {
+            eqcTechnicalScoringId: treeNode.id,
+          },
+          {
+            pointsAwarded: +parent.pointsAwarded + +pointsAwarded,
+          },
+        );
+        parentId = parent.id;
+      } else {
+        const newDetail = manager
+          .getRepository(TechnicalScoringAssessmentDetail)
+          .create({
+            ...itemData,
+            eqcTechnicalScoringId: treeNode.id,
+            pointsAwarded: pointsAwarded, // Adjust this based on your logic
+            maxPoints: treeNode.point,
+            technicalScoringAssessmentId,
+            parentId,
+          });
+
+        const savedDetail = (await manager
+          .getRepository(TechnicalScoringAssessmentDetail)
+          .save(newDetail)) as any;
+        parentId = savedDetail.id;
+      }
+      if (child) {
+        // for (const child of treeNode.children) {
+        await saveDetailTree(
+          child,
+          parentId,
+          pointsAwarded,
+          ancestors.find((x) => x.parentId == child.id) as any,
+        );
+        // }
+      }
+    };
+    const root = ancestors.find((x) => x.parentId == null);
+    const child = ancestors.find((x) => x.parentId == root.id);
+
+    await saveDetailTree(root, null, itemData.pointsAwarded, child);
+
+    return manager
+      .getRepository(TechnicalScoringAssessmentDetail)
+      .findOne({ where: { id: technicalScoringAssessmentId } });
   }
 
-  // async completeBidderEvaluation(
-  //   itemData: CompleteBidderEvaluationDto,
-  //   req: any,
-  // ) {
-  //   const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-  //   const assessment = await manager
-  //     .getRepository(TechnicalScoringAssessment)
-  //     .findOne({
-  //       where: {
-  //         bidRegistrationDetail: {
-  //           bidRegistration: {
-  //             bidderId: itemData.bidderId,
-  //           },
-  //           lotId: itemData.lotId,
-  //         },
-  //         // technicalScoringAssessmentDetail: {
+  private async findAncestors(manager: EntityManager, itemData: any) {
+    const entities = await manager.getRepository(EqcTechnicalScoring).find({
+      where: {
+        lotId: itemData.lotId,
+      },
+      relations: {
+        children: true,
+      },
+    });
 
-  //         // },
-  //         evaluatorId: req.user.userId,
-  //         isTeamAssessment: itemData.isTeamLead,
-  //       },
-  //       relations: {
-  //         technicalScoringAssessmentDetail: true,
-  //       },
-  //     });
-  //   await manager.getRepository(TechnicalScoringAssessment).update(
-  //     {
-  //       id: assessment.id,
-  //     },
-  //     {
-  //       qualified: EvaluationStatusEnum.COMPLY,
-  //     },
-  //   );
-  // }
+    const entityMap = new Map();
+    entities.forEach((entity) => {
+      entityMap.set(entity.id, entity);
+    });
+
+    const eqcTechnicalScoring = entityMap.get(itemData.eqcTechnicalScoringId);
+
+    if (!eqcTechnicalScoring) {
+      throw new Error('Target entity not found');
+    }
+
+    // Initialize an array to store the ancestors
+    const ancestors = [];
+    ancestors.push(eqcTechnicalScoring);
+
+    // Traverse the hierarchy upwards to find all ancestors
+    let currentEntity = eqcTechnicalScoring;
+    while (currentEntity && currentEntity.parentId) {
+      const parentEntity = entityMap.get(currentEntity.parentId);
+      if (parentEntity) {
+        ancestors.push(parentEntity);
+        currentEntity = parentEntity;
+      } else {
+        break; // If the parent entity is not found, break the loop
+      }
+    }
+    return ancestors;
+  }
+
+  async completeBidderEvaluation(
+    itemData: CompleteBidderEvaluationDto,
+    req: any,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const assessment = await manager
+      .getRepository(TechnicalScoringAssessment)
+      .findOne({
+        where: {
+          bidRegistrationDetail: {
+            bidRegistration: {
+              bidderId: itemData.bidderId,
+            },
+            lotId: itemData.lotId,
+          },
+          // technicalScoringAssessmentDetail: {
+
+          // },
+          evaluatorId: req.user.userId,
+        },
+        relations: {
+          technicalScoringAssessmentDetail: true,
+        },
+      });
+    // await manager.getRepository(TechnicalScoringAssessment).update(
+    //   {
+    //     id: assessment.id,
+    //   },
+    //   {
+    //     qualified: EvaluationStatusEnum.COMPLY,
+    //   },
+    // );
+  }
 
   // async submit(itemData: any, req?: any): Promise<any> {
   //   const checklist =

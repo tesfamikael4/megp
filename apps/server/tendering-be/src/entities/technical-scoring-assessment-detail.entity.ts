@@ -52,6 +52,9 @@ export class TechnicalScoringAssessmentDetail extends OrgAudit {
   @Column({ type: 'int' })
   maxPoints: number;
 
+  @Column({ default: false })
+  isComplete: boolean;
+
   @Column({ type: 'uuid', nullable: true })
   parentId: string;
 
