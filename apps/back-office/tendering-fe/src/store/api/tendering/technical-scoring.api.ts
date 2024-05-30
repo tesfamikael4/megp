@@ -28,9 +28,9 @@ export const technicalScoring = createApi({
       },
       providesTags: ['bidAttribute'],
     }),
-    createPreliminaryComplianceAssessment: builder.mutation<any, any>({
+    createTechnicalScoringComplianceAssessment: builder.mutation<any, any>({
       query: (data) => ({
-        url: `/technical-preliminary-assessment-detail`,
+        url: `/technical-scoring-assessment-detail`,
         method: 'POST',
         body: data,
       }),
@@ -45,10 +45,10 @@ export const technicalScoring = createApi({
       },
       providesTags: ['evaluation', 'bidder'],
     }),
-    submitPreliminaryEvaluation: builder.mutation<any, any>({
+    submitScoringEvaluation: builder.mutation<any, any>({
       query: (data: { tenderId: string; isTeamLead: boolean }) => {
         return {
-          url: `/technical-preliminary-assessment-detail/submit-checklist`,
+          url: `/technical-scoring-assessment-detail/submit-checklist`,
           method: 'PUT',
           body: data,
         };
@@ -72,14 +72,14 @@ export const technicalScoring = createApi({
       query: (eqcId) => `/eqc-technical-scorings/${eqcId}`,
     }),
 
-    completeEvaluation: builder.mutation<any, any>({
+    completeScoringEvaluation: builder.mutation<any, any>({
       query: (data: {
         lotId: string;
         bidderId: string;
         isTeamLead: boolean;
       }) => {
         return {
-          url: `/technical-preliminary-assessment-detail/complete-bidder-evaluation`,
+          url: `/technical-scoring-assessment-detail/complete-bidder-evaluation`,
           method: 'PUT',
           body: data,
         };
@@ -105,11 +105,12 @@ export const technicalScoring = createApi({
 export const {
   useLazyGetPassedBiddersQuery,
   useLazyGetScoringRequirementsByLotIdQuery,
-  useCreatePreliminaryComplianceAssessmentMutation,
+  useCreateTechnicalScoringComplianceAssessmentMutation,
   useLazyGetCanPreliminaryCompleteQuery,
-  useSubmitPreliminaryEvaluationMutation,
+  useSubmitScoringEvaluationMutation,
   useLazyGetPreliminaryMembersAssesmentResultQuery,
   useLazyGetEqcTechnicalScoringQuery,
-  useCompleteEvaluationMutation,
+  useGetEqcTechnicalScoringQuery,
+  useCompleteScoringEvaluationMutation,
   useLazyGetComplianceAssessmentsQuery,
 } = technicalScoring;

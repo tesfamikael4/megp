@@ -3,11 +3,12 @@ import { useCreatePreliminaryComplianceAssessmentMutation } from '@/store/api/te
 import { useCreateTechnicalQualificationAssessmentMutation } from '@/store/api/tendering/technical-qualification';
 import { useCreateTechnicalResponsivenessAssessmentMutation } from '@/store/api/tendering/technical-responsiveness.api';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Group, Select, Textarea } from '@mantine/core';
+import { Button, Group, Select, Stack, Textarea } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
+import { ScoringCompliance } from './scoring-compliance';
 
 const checklistSchema: ZodType<any> = z.object({
   qualified: z.string({
@@ -86,43 +87,49 @@ export const ComplianceAssessment = ({
   };
   return (
     <Section title="Compliance" collapsible={false} className="h-full">
-      <Controller
-        control={control}
-        name="qualified"
-        render={({ field: { name, value, onChange } }) => (
-          <Select
-            label="Assessment"
-            name={name}
-            value={value?.toString()}
-            data={[
-              { label: 'Comply', value: 'COMPLY' },
-              { label: 'Not Comply', value: 'NOT_COMPLY' },
-            ]}
-            withAsterisk
-            onChange={onChange}
-            error={errors.qualified?.message?.toString()}
+      {milestone !== 'technicalScoring' && (
+        <Stack>
+          <Controller
+            control={control}
+            name="qualified"
+            render={({ field: { name, value, onChange } }) => (
+              <Select
+                label="Assessment"
+                name={name}
+                value={value?.toString()}
+                data={[
+                  { label: 'Comply', value: 'COMPLY' },
+                  { label: 'Not Comply', value: 'NOT_COMPLY' },
+                ]}
+                withAsterisk
+                onChange={onChange}
+                error={errors.qualified?.message?.toString()}
+              />
+            )}
           />
-        )}
-      />
-      <Textarea
-        autosize
-        label="Remark"
-        mt={10}
-        minRows={7}
-        {...register('remark')}
-      />
-      <Group justify="end" mt={10}>
-        <Button
-          onClick={handleSubmit(onSubmit)}
-          loading={
-            isLoading ||
-            isQualificationAssessmentCreating ||
-            isResponsivenessAssessmentCreating
-          }
-        >
-          Save
-        </Button>
-      </Group>
+          <Textarea
+            autosize
+            label="Remark"
+            mt={10}
+            minRows={7}
+            {...register('remark')}
+          />
+          <Group justify="end" mt={10}>
+            <Button
+              onClick={handleSubmit(onSubmit)}
+              loading={
+                isLoading ||
+                isQualificationAssessmentCreating ||
+                isResponsivenessAssessmentCreating
+              }
+            >
+              Save
+            </Button>
+          </Group>
+        </Stack>
+      )}
+
+      {milestone === 'technicalScoring' && <ScoringCompliance />}
     </Section>
   );
 };

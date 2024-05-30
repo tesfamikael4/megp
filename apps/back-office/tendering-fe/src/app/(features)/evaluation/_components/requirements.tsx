@@ -14,6 +14,7 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { RequirementsTree } from './requirements-tree';
+import { useLazyGetScoringRequirementsByLotIdQuery } from '@/store/api/tendering/technical-scoring.api';
 
 export const Requirements = ({
   milestone,
@@ -32,6 +33,8 @@ export const Requirements = ({
     useLazyGetQualificationRequirementsByLotIdQuery();
   const [getResponsivenessRequirements, { data: responsivenessRequirements }] =
     useLazyGetResponsivenessRequirementsByLotIdQuery();
+  const [getScoringRequirements, { data: scoringRequirement }] =
+    useLazyGetScoringRequirementsByLotIdQuery();
 
   useEffect(() => {
     if (milestone === 'technicalCompliance') {
@@ -52,6 +55,11 @@ export const Requirements = ({
         bidderId: bidderId as string,
         itemId: itemId as string,
         team: teamAssessment ? 'teamLeader' : 'member',
+      });
+    } else if (milestone === 'technicalScoring') {
+      getScoringRequirements({
+        lotId: lotId as string,
+        bidderId: bidderId as string,
       });
     }
   }, []);
@@ -207,29 +215,7 @@ export const Requirements = ({
 
         {milestone === 'technicalScoring' && (
           <RequirementsTree
-            requirements={[
-              {
-                id: 1,
-                description: 'Parent 1',
-                children: [
-                  {
-                    id: 2,
-                    description: 'children 1',
-                  },
-                  {
-                    id: 3,
-                    description: 'children 2',
-                    children: [
-                      {
-                        id: 4,
-                        description: 'grand children',
-                        children: [],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ]}
+            requirements={scoringRequirement ? [scoringRequirement] : []}
           />
         )}
       </Section>

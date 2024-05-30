@@ -15,10 +15,19 @@ export default function BiderDetail() {
     getRequirements({ lotId: lotId as string, bidderId: bidderId as string });
   }, []);
 
+  const getLeafId = (data) => {
+    let leafId = data.id;
+    if (data?.children?.length > 0) {
+      leafId = getLeafId(data?.children[0]);
+    }
+    return leafId;
+  };
+
   useEffect(() => {
-    if (requirementData && requirementData?.length > 0) {
+    if (requirementData) {
+      const reqId = getLeafId(requirementData);
       router.push(
-        `/evaluation/${tenderId}/${lotId}/scoring/${bidderId}/${requirementData[0].id}`,
+        `/evaluation/${tenderId}/${lotId}/scoring/${bidderId}/${reqId}`,
       );
     }
   }, [bidderId, requirementData, isSuccess, lotId, router, tenderId]);

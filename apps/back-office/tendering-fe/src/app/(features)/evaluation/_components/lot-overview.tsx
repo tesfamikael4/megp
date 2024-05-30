@@ -11,6 +11,7 @@ import {
   useLazyGetCanResponsivenessCompleteQuery,
   useSubmitResponsivenessEvaluationMutation,
 } from '@/store/api/tendering/technical-responsiveness.api';
+import { useSubmitScoringEvaluationMutation } from '@/store/api/tendering/technical-scoring.api';
 import { useLazyGetLotDetailQuery } from '@/store/api/tendering/tendering.api';
 import {
   Badge,
@@ -50,6 +51,8 @@ export const LotOverview = ({
     useSubmitQualificationEvaluationMutation();
   const [submitResponsiveness, { isLoading: isResponsivenessLoading }] =
     useSubmitResponsivenessEvaluationMutation();
+  const [submitScoring, { isLoading: isScoringLoading }] =
+    useSubmitScoringEvaluationMutation();
   const [getCanPreliminaryComplete, { data: preliminaryCanSubmitData }] =
     useLazyGetCanPreliminaryCompleteQuery();
   const [getCanQualificationComplete, { data: qualificationCanSubmitData }] =
@@ -93,10 +96,19 @@ export const LotOverview = ({
           tenderId: tenderId as string,
           isTeamLead: teamAssessment,
         }).unwrap();
+      } else if (milestone === 'technicalScoring') {
+        await submitScoring({
+          lotId: lotId as string,
+          tenderId: tenderId as string,
+        }).unwrap();
       }
       notify('Success', 'Evaluation successfully completed');
     } catch (err) {
-      notify('Error', 'Something went wrong');
+      if (err.status == 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong');
+      }
     }
   };
 
@@ -202,12 +214,15 @@ export const LotOverview = ({
               loading={
                 isPreliminaryLoading ||
                 isQualificationLoading ||
-                isResponsivenessLoading
+                isResponsivenessLoading ||
+                isScoringLoading
               }
               disabled={
-                teamAssessment
-                  ? lotStatus?.isTeamLead?.hasCompleted ?? true
-                  : lotStatus?.hasCompleted ?? true
+                milestone === 'technicalScoring'
+                  ? false
+                  : teamAssessment
+                    ? lotStatus?.isTeamLead?.hasCompleted ?? true
+                    : lotStatus?.hasCompleted ?? true
               }
             >
               Complete
