@@ -48,6 +48,10 @@ export const procurementRequisitionPdf = async (
                   value: procurementRequisition.procurementReference,
                 },
                 {
+                  key: 'User Reference',
+                  value: procurementRequisition.userReference ?? 'N/A',
+                },
+                {
                   key: 'Name',
                   value: procurementRequisition.name,
                 },

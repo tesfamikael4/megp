@@ -22,6 +22,7 @@ import { ProcurementRequisitionStatusEnum } from 'src/shared/enums';
 import { PostBudgetPlan } from './post-budget-plan.entity';
 import { Reason } from './reason.entity';
 import { BudgetYear } from './budget-year.entity';
+import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
 @Entity({ name: 'procurement_requisitions' })
 @Unique(['procurementReference', 'deletedAt'])
 export class ProcurementRequisition extends OrgAudit {
@@ -40,7 +41,7 @@ export class ProcurementRequisition extends OrgAudit {
   @Column({ unique: true })
   procurementReference: string;
 
-  @Column({ unique: true })
+  @Column({ nullable: true })
   userReference: string;
 
   @Column({ default: false })
@@ -101,8 +102,8 @@ export class ProcurementRequisition extends OrgAudit {
   @Column({ default: false })
   isFundAvailable: boolean;
 
-  @Column({ default: true })
-  isCustom: boolean;
+  @Column({ nullable: true })
+  postBudgetPlanActivityId: string;
 
   @Column({ nullable: true })
   remark: string;
@@ -173,12 +174,18 @@ export class ProcurementRequisition extends OrgAudit {
 
   @OneToMany(() => Reason, (reasons) => reasons.procurementRequisition)
   reasons: Reason[];
+
+  @ManyToOne(
+    () => PostBudgetPlanActivity,
+    (postBudgetActivity) => postBudgetActivity.procurementRequisitions,
+  )
+  @JoinColumn({ name: 'postBudgetActivityId' })
+  public postBudgetActivity?: PostBudgetPlanActivity;
+
   @BeforeInsert()
   generateRandomNumbers(): void {
     const randomNumUser = () => Math.floor(100000 + Math.random() * 900000);
-    this.userReference = this.userReference
-      ? this.userReference
-      : (this.userReference = `uREF-${randomNumUser()}`);
+
     this.procurementReference = this.procurementReference
       ? this.procurementReference
       : (this.procurementReference = `REF-${randomNumUser()}`);

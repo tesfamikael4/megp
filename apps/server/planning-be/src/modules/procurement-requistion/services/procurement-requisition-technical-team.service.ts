@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProcurementRequisitionTechnicalTeam } from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
@@ -18,6 +18,9 @@ export class ProcurementRequisitionTechnicalTeamService extends ExtraCrudService
     technicalTeam: CreateProcurementRequisitionTechnicalTeamsDto,
     organizationId: string,
   ) {
+    if (technicalTeam.officers.length !== 3) {
+      throw new HttpException('Technical Team must have 3 officers', 430);
+    }
     await this.repositoryProcurementRequisitionTechnicalTeam.delete({
       procurementRequisitionId: technicalTeam.procurementRequisitionId,
     });

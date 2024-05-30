@@ -12,6 +12,9 @@ export class CreateProcurementRequisitionTechnicalTeamDto {
   @ApiProperty()
   @IsUUID()
   userId: string;
+
+  @ApiProperty()
+  isTeamLeader: boolean;
 }
 
 export class UpdateProcurementRequisitionTechnicalTeamDto extends CreateProcurementRequisitionTechnicalTeamDto {
@@ -27,6 +30,9 @@ export class Officers {
   @ApiProperty()
   @IsString()
   name: string;
+
+  @ApiProperty()
+  isTeamLeader: boolean;
 }
 
 export class CreateProcurementRequisitionTechnicalTeamsDto {

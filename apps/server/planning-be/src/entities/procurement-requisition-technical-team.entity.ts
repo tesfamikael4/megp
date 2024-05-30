@@ -22,6 +22,9 @@ export class ProcurementRequisitionTechnicalTeam extends OrgAudit {
   @Column({ type: 'uuid' })
   procurementRequisitionId: string;
 
+  @Column({ default: false })
+  isTeamLeader: boolean;
+
   @ManyToOne(
     () => ProcurementRequisition,
     (procurementRequisition) =>
