@@ -13,18 +13,19 @@ import {
   useRouter,
   useSearchParams,
 } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { IconChevronLeft } from '@tabler/icons-react';
-import Guarantees from '../../_components/guarantee';
-import SubmittedBidders from '../../_components/submitted-bidders';
-import { useReadQuery } from '../../_api/tender.api';
+import { Section } from '@megp/core-fe';
+import { useReadQuery } from '../_api/tender/tender.api';
+import TenderDetail from '../_components/tender-detail';
+import Lot from './lot/page';
 export default function TenderDetailPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const { tenderId } = useParams();
-  const { data: selected, isLoading } = useReadQuery(tenderId?.toString());
+  const { id } = useParams();
+  const { data: selected, isLoading } = useReadQuery(id?.toString());
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -59,21 +60,7 @@ export default function TenderDetailPage() {
                 <div className="flex space-x-4">
                   <Text
                     className={
-                      searchParams.get('tab') === 'guarantee'
-                        ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
-                        : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
-                    }
-                    onClick={() => {
-                      router.push(
-                        pathname + '?' + createQueryString('tab', 'guarantee'),
-                      );
-                    }}
-                  >
-                    Guarantee
-                  </Text>
-                  <Text
-                    className={
-                      searchParams.get('tab') === 'submitted-bidders'
+                      searchParams.get('tab') === 'configuration'
                         ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
                         : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
                     }
@@ -81,11 +68,25 @@ export default function TenderDetailPage() {
                       router.push(
                         pathname +
                           '?' +
-                          createQueryString('tab', 'submitted-bidders'),
+                          createQueryString('tab', 'configuration'),
                       );
                     }}
                   >
-                    Submitted Bidders
+                    Tender
+                  </Text>
+                  <Text
+                    className={
+                      searchParams.get('tab') === 'lot'
+                        ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                        : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                    }
+                    onClick={() => {
+                      router.push(
+                        pathname + '?' + createQueryString('tab', 'lot'),
+                      );
+                    }}
+                  >
+                    Lot
                   </Text>
                 </div>
               }
@@ -95,14 +96,21 @@ export default function TenderDetailPage() {
       </div>
       <Box className="container mx-auto my-4">
         <Container fluid>
-          {searchParams.get('tab') === 'guarantee' && (
+          {searchParams.get('tab') === 'configuration' && (
             <>
-              <Guarantees />
+              <Section
+                title="Tender Detail"
+                collapsible={false}
+                defaultCollapsed={false}
+                className="capitalize my-2"
+              >
+                <TenderDetail />
+              </Section>
             </>
           )}
-          {searchParams.get('tab') === 'submitted-bidders' && (
+          {searchParams.get('tab') === 'lot' && (
             <>
-              <SubmittedBidders />
+              <Lot />
             </>
           )}
         </Container>

@@ -11,14 +11,21 @@ export const procurementRequisitionApi = createApi({
   ),
   endpoints: (builder) => ({
     getApprovedPR: builder.query<any, any>({
-      query: (collectionQuery: CollectionQuery) => {
+      query: (args: {
+        whereFrom: 'tender' | 'pr';
+        collectionQuery: CollectionQuery;
+      }) => {
         let q = '';
-        if (collectionQuery) {
-          const query = encodeCollectionQuery(collectionQuery);
+        if (args.collectionQuery) {
+          const query = encodeCollectionQuery(args.collectionQuery);
           q = `?q=${query}`;
         }
+
         return {
-          url: `/procurement-requisitions/get-procurement-requisitions-for-tenders${q}`,
+          url:
+            args.whereFrom === 'tender'
+              ? `/tenders/re-advertise-tenders${q}`
+              : `/procurement-requisitions/get-procurement-requisitions-for-tenders${q}`,
           method: 'GET',
         };
       },
@@ -50,3 +57,29 @@ export const {
   useLazyGetPRDetailQuery,
   useLazyGetAnalyticsQuery,
 } = procurementRequisitionApi;
+
+export const readvertTendersApi = createApi({
+  reducerPath: 'readvertTendersApi',
+  tagTypes: ['readvert-tender'],
+  refetchOnFocus: true,
+  baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
+  endpoints: (builder) => ({
+    getReAdvertTender: builder.query<any, any>({
+      query: (collectionQuery: CollectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+
+        return {
+          url: `/tenders/re-advertise-tenders${q}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['readvert-tender'],
+    }),
+  }),
+});
+
+export const { useLazyGetReAdvertTenderQuery } = readvertTendersApi;
