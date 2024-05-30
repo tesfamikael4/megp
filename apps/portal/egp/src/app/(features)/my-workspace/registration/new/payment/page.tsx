@@ -208,12 +208,54 @@ function Page() {
               {checkAccess('payment') ? (
                 invoiceSlipImageUrl ? (
                   watch().file ? (
-                    <Button type="submit">Pay</Button>
+                    <>
+                      <Button
+                        onClick={() =>
+                          router.push(
+                            isrVendor?.basic.countryOfRegistration !== 'Malawi'
+                              ? 'ppda'
+                              : `preferential`,
+                          )
+                        }
+                        variant="outline"
+                      >
+                        Back
+                      </Button>
+                      <Button type="submit">Submit</Button>
+                    </>
                   ) : (
-                    <Button onClick={onPreviousFileExists}>Next</Button>
+                    <>
+                      <Button
+                        onClick={() =>
+                          router.push(
+                            isrVendor?.basic.countryOfRegistration !== 'Malawi'
+                              ? 'ppda'
+                              : `preferential`,
+                          )
+                        }
+                        variant="outline"
+                      >
+                        Back
+                      </Button>
+                      <Button onClick={onPreviousFileExists}>Next</Button>
+                    </>
                   )
                 ) : (
-                  <Button type="submit">Pay</Button>
+                  <>
+                    <Button
+                      onClick={() =>
+                        router.push(
+                          isrVendor?.basic.countryOfRegistration !== 'Malawi'
+                            ? 'ppda'
+                            : `preferential`,
+                        )
+                      }
+                      variant="outline"
+                    >
+                      Back
+                    </Button>
+                    <Button type="submit">Submit</Button>
+                  </>
                 )
               ) : (
                 ''

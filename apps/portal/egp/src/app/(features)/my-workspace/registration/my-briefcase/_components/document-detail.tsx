@@ -55,13 +55,7 @@ const DocumentDetail = ({ row, setRow, fetch }: any) => {
         {status === 'success' && (
           <>
             <Group justify="space-between" mt="md" mb="xs">
-              <Text fw={500}>
-                Name:{' '}
-                {row.attachmentId?.substring(
-                  0,
-                  row?.attachmentId?.indexOf('.'),
-                )}
-              </Text>
+              <Text fw={500}>Name: {row.name}</Text>
             </Group>
             <Text size="sm" c="dimmed">
               Size: {row && (row as any).size}

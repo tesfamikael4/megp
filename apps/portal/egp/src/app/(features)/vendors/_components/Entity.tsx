@@ -17,11 +17,13 @@ const Entity = ({
   list,
   isLoading,
   onRequestChange,
+  isSearchable,
 }: {
   children: React.ReactElement;
   list: { items: any[]; total: number };
   isLoading: boolean;
   onRequestChange: (query: CollectionQuery) => void;
+  isSearchable: boolean;
 }) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -32,7 +34,7 @@ const Entity = ({
       entity: 'vendors',
       primaryKey: 'id',
       primaryContent: 'name',
-      searchable: true,
+      searchable: isSearchable,
       title: 'Vendors List',
       hasAdd: false,
       hasDetail: true,

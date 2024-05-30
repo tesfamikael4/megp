@@ -117,9 +117,9 @@ export interface AreasOfBusinessInterestType {
   userType: string; // User type (Contractor, Consultant)
   classification: string; // Classification of Contractor or consultants
   // activationDate: string; // Activation date
-  expiryDate: string; // Expiry date
-  ncicRegistrationNumber: string;
-  ncicRegistrationDate: string;
+  expiryDate?: string; // Expiry date
+  ncicRegistrationNumber?: string;
+  ncicRegistrationDate?: string;
 }
 
 export interface PreferentialTreatment {
