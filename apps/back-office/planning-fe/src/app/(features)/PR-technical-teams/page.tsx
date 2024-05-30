@@ -69,7 +69,7 @@ export default function ProcurementRequisition() {
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/procurement-requisition-team/${pr.id}`);
+              router.push(`/PR-technical-teams/${pr.id}`);
             }}
           >
             <IconChevronRight />
@@ -89,6 +89,13 @@ export default function ProcurementRequisition() {
   };
 
   const onRequestChange = (request: CollectionQuery) => {
+    request?.where?.push([
+      {
+        column: 'status',
+        value: 'APPROVED',
+        operator: '=',
+      },
+    ]);
     trigger({ ...request, includes: ['reasons'] });
   };
 

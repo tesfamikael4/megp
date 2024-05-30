@@ -77,7 +77,7 @@ const activitiesSchema: ZodType<Partial<any>> = z
         data.donor),
     {
       message: 'Donor is required',
-      path: ['donor'], // Pointing out which field is invalid
+      path: ['donor'],
     },
   );
 
@@ -488,10 +488,14 @@ export const ActivityMechanization = ({
               name="isOnline"
               placeholder="Select Procurement Process"
               control={control}
-              data={[
-                { label: 'Online', value: 'true' },
-                { label: 'Offline', value: 'false' },
-              ]}
+              data={
+                page == 'pr'
+                  ? [{ label: 'Online', value: 'true' }]
+                  : [
+                      { label: 'Online', value: 'true' },
+                      { label: 'Offline', value: 'false' },
+                    ]
+              }
               errors={errors}
               disableFields={disableFields}
             />

@@ -22,6 +22,7 @@ import { CollectionQuery } from '@megp/entity';
 
 export default function ProcurementRequisition() {
   const [trigger, { data, isLoading }] = useLazyListQuery();
+
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
   const [type, setType] = useState<string>('');
@@ -104,7 +105,15 @@ export default function ProcurementRequisition() {
   };
 
   const onRequestChange = (request: CollectionQuery) => {
-    trigger({ ...request, includes: ['reasons'] });
+    request?.where?.push([
+      {
+        column: 'status',
+        value: 'SUBMITTED',
+        operator: '!=',
+      },
+    ]);
+
+    trigger({ ...request, includes: ['reasons', 'procurementMechanisms'] });
   };
 
   return (

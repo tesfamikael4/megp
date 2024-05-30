@@ -7,6 +7,7 @@ import {
   IconCalendarStats,
   IconCoins,
   IconReportAnalytics,
+  IconUsers,
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
@@ -43,9 +44,9 @@ export const Menu: MenuItem[] = [
     link: '/procurement-requisition',
   },
   {
-    label: 'PR Technical Team',
-    icon: IconBadge,
-    link: '/procurement-requisition-team',
+    label: 'PR Technical Teams',
+    icon: IconUsers,
+    link: '/PR-technical-teams',
   },
   {
     label: 'Report and Analytics',
