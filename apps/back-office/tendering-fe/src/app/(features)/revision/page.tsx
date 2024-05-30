@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import { ExpandableTable } from '../_components/expandable-table';
 import { useLazyListQuery } from './_api/tender.api';
+import { CollectionQuery } from '@megp/entity';
+import { TenderStatusEnum } from '@/models/tender/tender.model';
 
 export default function Preparation() {
   const [trigger, { data, isFetching }] = useLazyListQuery();
@@ -46,8 +48,19 @@ export default function Preparation() {
     isFetching: isFetching,
   };
 
-  const onRequestChange = (request: any) => {
-    trigger(request);
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger({
+      ...request,
+      where: [
+        [
+          {
+            column: 'status',
+            value: TenderStatusEnum.SENT_FOR_REVIEW,
+            operator: '=',
+          },
+        ],
+      ],
+    });
   };
   return (
     <Section title="Tenders" collapsible={false}>

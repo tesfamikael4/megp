@@ -197,13 +197,24 @@ export function PreliminaryExaminationFormDetail({
             />
           )}
         />
-        <NativeSelect
-          placeholder="Requirement condition"
-          withAsterisk
-          className="w-1/2"
-          label="Requirement condition"
-          data={Object.values(RequirementCondition)}
-          {...register('requirementCondition')}
+        <Controller
+          name="requirementCondition"
+          control={control}
+          render={({ field: { name, value, onChange } }) => (
+            <Select
+              placeholder="Requirement condition"
+              className="w-1/2"
+              label="Requirement condition"
+              value={value}
+              data={Object.values(RequirementCondition)}
+              onChange={(d) => onChange(d)}
+              error={
+                errors?.requirementCondition
+                  ? errors?.requirementCondition?.message?.toString()
+                  : ''
+              }
+            />
+          )}
         />
       </div>
       <EntityButton

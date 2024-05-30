@@ -26,7 +26,9 @@ export default function Lots() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/solicitation/${tenderId}/${record.id}`);
+              router.push(
+                `/solicitation/${tenderId}/${record.id}?tab=guarantee`,
+              );
             }}
           >
             <IconChevronRight size={14} />

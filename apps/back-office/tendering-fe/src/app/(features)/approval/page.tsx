@@ -6,11 +6,11 @@ import { IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { ExpandableTable } from '../_components/expandable-table';
-import { useLazyListQuery } from './_api/tender/tender.api';
-import TenderDetail from './_components/tender/tender-detail';
 import { TenderStatusEnum } from '@/models/tender/tender.model';
+import TenderDetail from './_components/tender-detail';
+import { useLazyListQuery } from './_api/tender/tender.api';
 
-export default function Preparation() {
+export default function Approval() {
   const [trigger, { data, isFetching }] = useLazyListQuery();
   const router = useRouter();
 
@@ -46,7 +46,7 @@ export default function Preparation() {
     ],
     isExpandable: true,
     isSearchable: true,
-    primaryColumn: 'name',
+    primaryColumn: 'title',
     isFetching: isFetching,
     expandedRowContent: (tender) => {
       return <TenderDetail tender={tender} />;
@@ -54,7 +54,18 @@ export default function Preparation() {
   };
 
   const onRequestChange = (request: any) => {
-    trigger(request);
+    trigger({
+      ...request,
+      where: [
+        [
+          {
+            column: 'status',
+            value: TenderStatusEnum.APPROVAL,
+            operator: '=',
+          },
+        ],
+      ],
+    });
   };
   return (
     <Section

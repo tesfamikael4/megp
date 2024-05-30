@@ -1,14 +1,11 @@
 import { MenuItem } from '@megp/core-fe';
 import {
-  IconAdjustmentsHorizontal,
   IconBuildingBank,
-  IconCoins,
   IconFileStack,
   IconFolderOpen,
   IconListCheck,
   IconLockSquareRounded,
   IconReportAnalytics,
-  IconRuler,
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
@@ -20,6 +17,7 @@ export const Menu: MenuItem[] = [
   },
   { label: 'Preparation', icon: IconLockSquareRounded, link: '/preparation' },
   { label: 'Revision', icon: IconLockSquareRounded, link: '/revision' },
+  { label: 'Approval', icon: IconLockSquareRounded, link: '/approval' },
   { label: 'Solicitation', icon: IconLockSquareRounded, link: '/solicitation' },
   {
     label: 'Bid Opening',
@@ -34,7 +32,20 @@ export const Menu: MenuItem[] = [
   {
     label: 'Administration',
     icon: IconBuildingBank,
-    link: '/administration',
+    links: [
+      {
+        label: 'Assignment',
+        link: '/administration',
+      },
+      {
+        label: 'Cancelation',
+        link: '/cancelation',
+      },
+      {
+        label: 'Workflow',
+        link: '/workflow',
+      },
+    ],
   },
   {
     label: 'Report',
