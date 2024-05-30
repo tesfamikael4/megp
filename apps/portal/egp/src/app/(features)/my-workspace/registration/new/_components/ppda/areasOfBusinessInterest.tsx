@@ -128,7 +128,6 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                         render={({ field }) => (
                           <DatePickerInput
                             valueFormat="YYYY/MM/DD"
-                            required
                             label="Expiry Date"
                             placeholder="Expiry Date"
                             leftSection={
@@ -156,56 +155,50 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                         )}
                       />
                     </Grid.Col>
-                    {control._getWatch('basic.countryOfRegistration') ===
-                      'Malawi' &&
-                      field.category === 'Works' && (
-                        <>
-                          <Grid.Col span={6}>
-                            <TextInput
-                              label="NCIC Registration Number"
-                              placeholder="Enter NCIC Registration Number"
-                              {...register(
-                                `${name}.${index}.ncicRegistrationNumber`,
-                              )}
-                            />
-                          </Grid.Col>
-                          <Grid.Col span={6}>
-                            <Controller
-                              name={`areasOfBusinessInterest.${index}.ncicRegistrationDate`}
-                              control={control}
-                              render={({ field }) => (
-                                <DatePickerInput
-                                  // name={`areasOfBusinessInterest.${index}.expiryDate`}}`}
-                                  valueFormat="YYYY/MM/DD"
-                                  required
-                                  label="NCIC Registration Issued Date"
-                                  placeholder="NCIC Registration Issued Date"
-                                  leftSection={
-                                    <IconCalendar
-                                      size={'1.2rem'}
-                                      stroke={1.5}
-                                    />
-                                  }
-                                  {...register(
-                                    `areasOfBusinessInterest.${index}.ncicRegistrationDate`,
-                                  )}
-                                  value={new Date('2023/02/12')}
-                                  maxDate={dayjs(new Date()).toDate()}
-                                  onChange={async (value: any) =>
-                                    value &&
-                                    field.onChange(
-                                      dayjs(value)
-                                        .format('YYYY/MM/DD')
-                                        .toString()
-                                        .replace(/\//g, '-'),
-                                    )
-                                  }
-                                />
-                              )}
-                            />
-                          </Grid.Col>
-                        </>
-                      )}
+                    {field.category === 'Works' && (
+                      <>
+                        <Grid.Col span={6}>
+                          <TextInput
+                            label="NCIC Registration Number"
+                            placeholder="Enter NCIC Registration Number"
+                            {...register(
+                              `${name}.${index}.ncicRegistrationNumber`,
+                            )}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                          <Controller
+                            name={`areasOfBusinessInterest.${index}.ncicRegistrationDate`}
+                            control={control}
+                            render={({ field }) => (
+                              <DatePickerInput
+                                // name={`areasOfBusinessInterest.${index}.expiryDate`}}`}
+                                valueFormat="YYYY/MM/DD"
+                                label="NCIC Registration Issued Date"
+                                placeholder="NCIC Registration Issued Date"
+                                leftSection={
+                                  <IconCalendar size={'1.2rem'} stroke={1.5} />
+                                }
+                                {...register(
+                                  `areasOfBusinessInterest.${index}.ncicRegistrationDate`,
+                                )}
+                                value={new Date('2023/02/12')}
+                                maxDate={dayjs(new Date()).toDate()}
+                                onChange={async (value: any) =>
+                                  value &&
+                                  field.onChange(
+                                    dayjs(value)
+                                      .format('YYYY/MM/DD')
+                                      .toString()
+                                      .replace(/\//g, '-'),
+                                  )
+                                }
+                              />
+                            )}
+                          />
+                        </Grid.Col>
+                      </>
+                    )}
                   </>
                 )}
               </Grid>

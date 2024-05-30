@@ -29,7 +29,7 @@ export const useTabs = (extendedRegister, control, disabled): Tabs[] => [
   },
   {
     tabValue: 'address',
-    tabName: 'Address Information',
+    tabName: 'Company Address Information',
     tabDescription: 'Company Address Information',
     tabPanelComponent: (
       <AddressInformation register={extendedRegister} control={control} />

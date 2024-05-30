@@ -82,7 +82,7 @@ export const areasOfBusinessInterestSchema = z
       userType: string(),
       classification: z.string(),
       // activationDate: z.string(),
-      expiryDate: z.string(),
+      expiryDate: z.string().optional(),
       ncicRegistrationNumber: z.string().optional(),
       ncicRegistrationDate: z.string().optional(),
     }),
@@ -155,7 +155,12 @@ export const AreasOfBusinessInterestForm = ({
       );
     }
     if (saveValues.isError) {
-      NotificationService.requestErrorNotification('Error on Request');
+      console.log(saveValues.error);
+      if ((saveValues.error as any).data?.message === 'not_registered_on_ncic')
+        NotificationService.requestErrorNotification(
+          'You Are not registered on NCIC',
+        );
+      else NotificationService.requestErrorNotification('Error on Request');
     }
     return () => {};
   }, [saveValues.isSuccess, saveValues.isError, router]);
@@ -260,64 +265,62 @@ export const AreasOfBusinessInterestForm = ({
                     (value: z.infer<typeof areasOfBusinessInterestSchema>) =>
                       value.category === 'Goods' ||
                       value.category === 'Services',
-                  ) &&
-                    watch('basic.countryOfRegistration') === 'Malawi' && (
-                      <TextInput
-                        label="PPDA Registration Number"
-                        placeholder="Enter PPDA Registration Number"
-                        {...extendedRegister(`ppdaRegistrationNumber`)}
-                      />
-                    )}
+                  ) && (
+                    <TextInput
+                      label="PPDA Registration Number"
+                      placeholder="Enter PPDA Registration Number"
+                      {...extendedRegister(`ppdaRegistrationNumber`)}
+                    />
+                  )}
                 </Group>
                 {getValues('areasOfBusinessInterest').some(
                   (value: z.infer<typeof areasOfBusinessInterestSchema>) =>
                     value.category === 'Goods' || value.category === 'Services',
-                ) &&
-                  watch('basic.countryOfRegistration') === 'Malawi' && (
-                    <Group grow>
-                      <DatePickerInput
-                        valueFormat="YYYY/MM/DD"
-                        label="PPDA Registration Issued Date"
-                        placeholder="PPDA Registration Issued Date"
-                        leftSection={
-                          <IconCalendar size={'1.2rem'} stroke={1.5} />
-                        }
-                        maxDate={dayjs(new Date()).toDate()}
-                        onChange={async (value: any) =>
-                          value &&
-                          (await extendedRegister(
-                            `ppdaRegistrationDate`,
-                          ).onChange(
-                            dayjs(value)
-                              .format('YYYY/MM/DD')
-                              .toString()
-                              .replace(/\//g, '-'),
-                          ))
-                        }
-                      />
-                      <DatePickerInput
-                        // name={`expiryDate`}
-                        valueFormat="YYYY/MM/DD"
-                        label="Expiry Date"
-                        placeholder="Expiry Date"
-                        leftSection={
-                          <IconCalendar size={'1.2rem'} stroke={1.5} />
-                        }
-                        maxDate={dayjs(new Date()).toDate()}
-                        {...extendedRegister(`expiryDate`)}
-                        onChange={async (value: any) =>
-                          value &&
-                          (await extendedRegister(`expiryDate`)).onChange(
-                            dayjs(value)
-                              .format('YYYY/MM/DD')
-                              .toString()
-                              .replace(/\//g, '-'),
-                          )
-                        }
-                        error={extendedRegister(`expiryDate`).error}
-                      />
-                    </Group>
-                  )}
+                ) && (
+                  <Group grow>
+                    <DatePickerInput
+                      valueFormat="YYYY/MM/DD"
+                      label="PPDA Registration Issued Date"
+                      placeholder="PPDA Registration Issued Date"
+                      leftSection={
+                        <IconCalendar size={'1.2rem'} stroke={1.5} />
+                      }
+                      maxDate={dayjs(new Date()).toDate()}
+                      onChange={async (value: any) =>
+                        value &&
+                        (await extendedRegister(
+                          `ppdaRegistrationDate`,
+                        ).onChange(
+                          dayjs(value)
+                            .format('YYYY/MM/DD')
+                            .toString()
+                            .replace(/\//g, '-'),
+                        ))
+                      }
+                    />
+                    <DatePickerInput
+                      // name={`expiryDate`}
+                      valueFormat="YYYY/MM/DD"
+                      label="Expiry Date"
+                      placeholder="Expiry Date"
+                      leftSection={
+                        <IconCalendar size={'1.2rem'} stroke={1.5} />
+                      }
+                      maxDate={dayjs(new Date()).toDate()}
+                      {...extendedRegister(`expiryDate`)}
+                      onChange={async (value: any) =>
+                        value &&
+                        (await extendedRegister(`expiryDate`)).onChange(
+                          dayjs(value)
+                            .format('YYYY/MM/DD')
+                            .toString()
+                            .replace(/\//g, '-'),
+                        )
+                      }
+                      error={extendedRegister(`expiryDate`).error}
+                    />
+                  </Group>
+                )}
               </>
             )}
         </Flex>

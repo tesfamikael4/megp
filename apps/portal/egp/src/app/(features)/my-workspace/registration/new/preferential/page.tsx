@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
 import { useGetVendorQuery } from '../../_api/query';
 import { PreferentialTreatmentForm } from '../_components/preferential/formShell';
-import { useGetDraftApplicationQuery } from '@/store/api/preferential-treatment/preferential-treatment.api';
 
 function Page() {
   const router = useRouter();
