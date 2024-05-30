@@ -180,7 +180,6 @@ export class LotService extends ExtraCrudService<Lot> {
         },
       ],
     });
-
     await manager.getRepository(Tender).save(newTender);
 
     await manager.getRepository(TenderMilestone).insert({
@@ -191,7 +190,9 @@ export class LotService extends ExtraCrudService<Lot> {
       milestoneTxt: 'Initiation',
     });
 
-    await manager.getRepository(Lot).update({ id: lot.id }, { status: LotStatusEnum.RE_ADVERTISED });
+    await manager
+      .getRepository(Lot)
+      .update({ id: lot.id }, { status: LotStatusEnum.RE_ADVERTISED });
 
     return newTender;
   }
