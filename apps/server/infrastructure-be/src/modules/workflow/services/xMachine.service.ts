@@ -146,15 +146,6 @@ export class XMachineService {
                     itemId: existingData.itemId,
                   },
                 );
-
-                // this.workflowRMQClient.emit(
-                //   `${acti.workflow.name}-workflow.${acti.name}`,
-                //   {
-                //     status: params.status,
-                //     activityId: activityId,
-                //     itemId: existingData.itemId,
-                //   },
-                // );
               }
             } else {
               const data = {
