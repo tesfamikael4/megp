@@ -31,7 +31,7 @@ export class CreateSolResponseDto {
 class DocumentResponseDto {
   @ApiProperty()
   @IsString()
-  key: string;
+  rfxDocumentaryEvidenceId: string;
 
   @ApiProperty()
   fileInfo: FileUploadDto;

@@ -7,6 +7,7 @@ import { CreateRoundDto, RoundDto } from '../dtos/round.dto';
 import { REQUEST } from '@nestjs/core';
 import { SchedulerService } from 'src/utils/services/scheduler.service';
 import { OpenerSerivice } from 'src/modules/evaluation/services/opener.service';
+import { ESolRoundStatus } from 'src/utils/enums';
 
 @Injectable()
 export class SolRoundService extends ExtraCrudService<SolRound> {
@@ -31,6 +32,7 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
       round: 0,
       end,
       start,
+      status: ESolRoundStatus.STARTED,
     };
     const round = this.solRoundRepository.create(roundItem);
     await entityManager.getRepository(SolRound).insert(round);

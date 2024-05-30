@@ -6,11 +6,12 @@ import {
   MinIOService,
 } from 'megp-shared-be';
 import { OpenedResponse, SolRegistration, SolResponse } from 'src/entities';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { CreateSolResponseDto } from '../dtos/response.dto';
 import { REQUEST } from '@nestjs/core';
 import { EncryptionHelperService } from '../../../utils/services/encryption-helper.service';
 import { SolRoundService } from './round.service';
+import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
 
 @Injectable()
 export class SolResponseService extends ExtraCrudService<SolResponse> {
@@ -35,7 +36,6 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
     await this.roundService.getCurrentRound(itemData.rfxId);
 
     const vendorId = req.user.organization.id;
-
     const solRegistration = await manager
       .getRepository(SolRegistration)
       .findOne({
@@ -67,7 +67,10 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
         'marketplace',
       );
 
-      preSignedResponse.push({ key: item.key, preSignedUrl: url.presignedUrl });
+      preSignedResponse.push({
+        rfxDocumentaryEvidenceId: item.rfxDocumentaryEvidenceId,
+        preSignedUrl: url.presignedUrl,
+      });
 
       const encryptedFileInfo = this.encryptionHelperService.encryptData(
         JSON.stringify(url.file),
@@ -78,7 +81,7 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
       const response = this.solResponseRepository.create({
         rfxId: itemData.rfxId,
         solRegistrationId: solRegistration.id,
-        key: item.key,
+        rfxDocumentaryEvidenceId: item.rfxDocumentaryEvidenceId,
         vendorId: req.user.organization.id,
         value: encryptedFileInfo,
       });
@@ -88,7 +91,11 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
 
     const item = this.solResponseRepository.create(responseItem);
 
-    await this.solResponseRepository.upsert(item, ['key', 'vendorId', 'rfxId']);
+    await this.solResponseRepository.upsert(item, [
+      'rfxDocumentaryEvidenceId',
+      'vendorId',
+      'rfxId',
+    ]);
     return preSignedResponse;
   }
 
@@ -126,17 +133,22 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
       const x = JSON.parse(fileInfo);
       const presignedUrl =
         await this.minIoService.generatePresignedDownloadUrl(x);
-      fileInfos.push({ key: resp.key, presignedUrl });
+      fileInfos.push({
+        rfxDocumentaryEvidenceId: resp.rfxDocumentaryEvidenceId,
+        presignedUrl,
+      });
     }
 
     return fileInfos;
   }
 
-  async getOpenResponseByKey(rfxId: string, key: string, vendorId: string) {
+  async getOpenResponseByEvidenceId(
+    rfxDocumentaryEvidenceId: string,
+    vendorId: string,
+  ) {
     const response = await this.openedResponseRepository.findOne({
       where: {
-        rfxId,
-        key,
+        rfxDocumentaryEvidenceId: rfxDocumentaryEvidenceId,
         vendorId,
       },
     });
@@ -148,5 +160,35 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
     const presignedUrl = await this.minIoService.generatePresignedDownloadUrl(
       response.value,
     );
+
+    return { presignedUrl, response };
+  }
+
+  async getDocument(
+    rfxId: string,
+    rfxDocumentaryEvidenceId: string,
+    solRegistrationId: string,
+  ) {
+    const resposne = await this.openedResponseRepository.findOne({
+      where: {
+        rfxId,
+        rfxDocumentaryEvidenceId: rfxDocumentaryEvidenceId,
+        solRegistrationId,
+      },
+      select: {
+        id: true,
+        value: true,
+      },
+    });
+
+    if (!resposne) {
+      throw new BadRequestException('Document Not Found');
+    }
+
+    const presignedUrl = await this.minIoService.generatePresignedDownloadUrl(
+      resposne.value,
+    );
+
+    return { presignedUrl };
   }
 }

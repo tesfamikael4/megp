@@ -20,6 +20,7 @@ import {
   SolOffer,
   SolResponse,
 } from '.';
+import { EvalAssessment } from './eval-assessment.entity';
 
 @Entity({ name: 'sol_registration' })
 @Unique(['rfxId', 'vendorId'])
@@ -73,13 +74,22 @@ export class SolRegistration extends Audit {
 
   @OneToMany(
     () => OpenedItemResponse,
-    (itemResponse) => itemResponse.solRegistrations,
+    (itemResponse) => itemResponse.solRegistration,
   )
   openedItemResponses: OpenedItemResponse[];
 
-  @OneToMany(() => EvalResponse, (evaluation) => evaluation.solRegistration)
+  @OneToMany(
+    () => EvalItemResponse,
+    (itemResponse) => itemResponse.solRegistration,
+  )
+  evalItemResponses: EvalItemResponse[];
+
+  @OneToMany(() => EvalResponse, (itemResponse) => itemResponse.solRegistration)
   evalResponses: EvalResponse[];
 
-  @OneToMany(() => EvalItemResponse, (evaluation) => evaluation.solRegistration)
-  evalItemResponses: EvalItemResponse[];
+  @OneToMany(
+    () => EvalAssessment,
+    (itemResponse) => itemResponse.solRegistration,
+  )
+  evaluationAssessments: EvalAssessment[];
 }

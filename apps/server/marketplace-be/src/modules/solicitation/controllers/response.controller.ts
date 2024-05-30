@@ -29,6 +29,19 @@ export class SolResponseController extends ExtraCrudController<SolResponse>(
     super(rfxRepsonseItemService);
   }
 
+  @Get('document/:rfxId/:rfxDocumentaryEvidenceId/:solRegistrationId')
+  async getDocument(
+    @Param('rfxId') rfxId: string,
+    @Param('rfxDocumentaryEvidenceId') rfxDocumentaryEvidenceId: string,
+    @Param('solRegistrationId') solRegistrationId: string,
+  ) {
+    return this.rfxRepsonseItemService.getDocument(
+      rfxId,
+      rfxDocumentaryEvidenceId,
+      solRegistrationId,
+    );
+  }
+
   @Get('responses/:rfxId/:vendorId')
   @AllowAnonymous()
   async reviewResonses(
@@ -38,15 +51,13 @@ export class SolResponseController extends ExtraCrudController<SolResponse>(
     return this.rfxRepsonseItemService.reviewResonses(rfxId, vendorId);
   }
 
-  @Get('opened-response/:rfxId/:key/:vendorId')
+  @Get('opened-response/:rfxDocumentaryEvidenceId/:vendorId')
   async openedResponse(
-    @Param('rfxId') rfxId: string,
-    @Param('key') key: string,
+    @Param('rfxDocumentaryEvidenceId') rfxDocumentaryEvidenceId: string,
     @Param('vendorId') vendorId: string,
   ) {
-    return this.rfxRepsonseItemService.getOpenResponseByKey(
-      rfxId,
-      key,
+    return this.rfxRepsonseItemService.getOpenResponseByEvidenceId(
+      rfxDocumentaryEvidenceId,
       vendorId,
     );
   }

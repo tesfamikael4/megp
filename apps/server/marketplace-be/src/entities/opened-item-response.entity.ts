@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -11,6 +12,7 @@ import { RFXItem } from './rfx-items.entity';
 import { Audit } from 'megp-shared-be';
 import { SolItemResponse } from './sol-item-response.entity';
 import { SolRegistration } from './sol-registration.entity';
+import { EvalItemResponse } from './eval-item-response.entity';
 
 @Entity({ name: 'opened_response_items' })
 @Unique(['rfxItemId', 'vendorId', 'key'])
@@ -54,5 +56,11 @@ export class OpenedItemResponse extends Audit {
     (solRegistration) => solRegistration.openedItemResponses,
   )
   @JoinColumn({ name: 'solRegistrationId' })
-  solRegistrations: SolRegistration;
+  solRegistration: SolRegistration;
+
+  @OneToMany(
+    () => EvalItemResponse,
+    (evaluation) => evaluation.openedItemResponse,
+  )
+  evalItemResponses: EvalItemResponse[];
 }

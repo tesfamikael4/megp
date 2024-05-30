@@ -65,7 +65,8 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
       },
     });
 
-    if (!item) throw new BadRequestException('No Invitaion Found for you');
+    if (!item)
+      throw new BadRequestException('No Solicitation Registration Found');
 
     const invitaion = this.rfxBidInvitationRepository.create(itemData);
     await this.rfxBidInvitationRepository.insert(invitaion);

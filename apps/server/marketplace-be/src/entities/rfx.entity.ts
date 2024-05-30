@@ -23,6 +23,8 @@ import { SolRound } from './sol-round.entity';
 import { SolResponse } from './sol-response.entity';
 import { SolBookmark } from './sol-bookmark.entity';
 import { EvalResponse } from './eval-response.entity';
+import { TeamMember } from './team-member.entity';
+import { EvalAssessment } from './eval-assessment.entity';
 
 @Entity({ name: 'rfxs' })
 export class RFX extends Audit {
@@ -132,4 +134,10 @@ export class RFX extends Audit {
 
   @OneToMany(() => EvalResponse, (response) => response.rfx)
   evalResponses: EvalResponse[];
+
+  @OneToMany(() => TeamMember, (response) => response.rfx)
+  teamMembers: TeamMember[];
+
+  @OneToMany(() => EvalAssessment, (response) => response.rfx)
+  evaluationAssessments: EvalAssessment[];
 }

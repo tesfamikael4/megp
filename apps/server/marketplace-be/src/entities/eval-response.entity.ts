@@ -4,18 +4,18 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { SolRegistration } from './sol-registration.entity';
-import { RfxProductInvitation } from './rfx-product-invitation.entity';
 import { EvaluationResponse } from 'src/utils/enums';
-import { RfxProcurementTechnicalTeam } from './rfx-procurement-technical-team.entity';
 import { RFX } from './rfx.entity';
+import { TeamMember } from './team-member.entity';
+import { RfxDocumentaryEvidence } from './rfx-documentary-evidence.entity';
+import { OpenedResponse } from './opened-response.entity';
+import { SolRegistration } from './sol-registration.entity';
 
 @Entity({ name: 'eval_responses' })
-@Unique(['evaluatorId', 'rfxId'])
+@Unique(['teamMemberId', 'rfxId', 'isTeamAssesment', 'openedResponseId'])
 export class EvalResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -33,21 +33,35 @@ export class EvalResponse extends Audit {
   remark: string;
 
   @Column('uuid')
-  solRegistrationId: string;
+  openedResponseId: string;
 
   @Column('uuid')
-  evaluatorId: string;
+  teamMemberId: string;
 
   @Column('uuid')
   rfxId: string;
+
+  @Column('uuid')
+  rfxDocumentaryEvidenceId: string;
+
+  @Column('uuid')
+  solRegistrationId: string;
+
+  @ManyToOne(() => RfxDocumentaryEvidence, (evidence) => evidence.evalResponses)
+  @JoinColumn({ name: 'rfxDocumentaryEvidenceId' })
+  rfxDocumentaryEvidence: RfxDocumentaryEvidence;
 
   @ManyToOne(() => RFX, (rfx) => rfx.evalResponses)
   @JoinColumn({ name: 'rfxId' })
   rfx: RFX;
 
-  @ManyToOne(() => RfxProcurementTechnicalTeam, (team) => team.evalResponses)
-  @JoinColumn({ name: 'evaluatorId' })
-  evaluator: RfxProcurementTechnicalTeam;
+  @ManyToOne(() => TeamMember, (team) => team.responseEvaluations)
+  @JoinColumn({ name: 'teamMemberId' })
+  teamMember: TeamMember;
+
+  @ManyToOne(() => OpenedResponse, (registration) => registration.evalResponses)
+  @JoinColumn({ name: 'openedResponseId' })
+  openedResponse: OpenedResponse;
 
   @ManyToOne(
     () => SolRegistration,

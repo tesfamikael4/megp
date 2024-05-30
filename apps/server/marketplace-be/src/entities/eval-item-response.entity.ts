@@ -4,20 +4,20 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import { EvaluationResponse } from 'src/utils/enums';
 import {
+  OpenedItemResponse,
   RFXItem,
-  RfxProcurementTechnicalTeam,
   RfxProductInvitation,
   SolRegistration,
 } from '.';
+import { TeamMember } from './team-member.entity';
 
 @Entity({ name: 'eval_item_responses' })
-@Unique(['evaluatorId', 'rfxProductInvitaitonId'])
+@Unique(['teamMemberId', 'rfxProductInvitaitonId', 'isTeamAssesment'])
 export class EvalItemResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -35,30 +35,27 @@ export class EvalItemResponse extends Audit {
   remark: string;
 
   @Column('uuid')
-  solRegistrationId: string;
+  openedItemResponseId: string;
 
   @Column('uuid')
   rfxProductInvitaitonId: string;
 
   @Column('uuid')
-  evaluatorId: string;
+  teamMemberId: string;
 
   @Column('uuid')
   rfxItemId: string;
 
-  @ManyToOne(
-    () => RfxProcurementTechnicalTeam,
-    (team) => team.evalItemResponses,
-  )
-  @JoinColumn({ name: 'evaluatorId' })
-  evaluator: RfxProcurementTechnicalTeam;
+  @Column('uuid')
+  solRegistrationId: string;
 
-  @ManyToOne(
-    () => SolRegistration,
-    (registration) => registration.evalItemResponses,
-  )
-  @JoinColumn({ name: 'solRegistrationId' })
-  solRegistration: SolRegistration;
+  @ManyToOne(() => TeamMember, (team) => team.itemResponseEvaluations)
+  @JoinColumn({ name: 'teamMemberId' })
+  teamMember: TeamMember;
+
+  @ManyToOne(() => OpenedItemResponse, (response) => response.evalItemResponses)
+  @JoinColumn({ name: 'openedItemResponseId' })
+  openedItemResponse: OpenedItemResponse;
 
   @ManyToOne(
     () => RfxProductInvitation,
@@ -70,4 +67,11 @@ export class EvalItemResponse extends Audit {
   @ManyToOne(() => RFXItem, (invitation) => invitation.evalItemResponses)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
+
+  @ManyToOne(
+    () => SolRegistration,
+    (invitation) => invitation.evalItemResponses,
+  )
+  @JoinColumn({ name: 'solRegistrationId' })
+  solRegistration: SolRegistration;
 }

@@ -1,6 +1,10 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ExtraCrudController, ExtraCrudOptions } from 'megp-shared-be';
+import {
+  CurrentUser,
+  ExtraCrudController,
+  ExtraCrudOptions,
+} from 'megp-shared-be';
 import { EvalItemResponse } from 'src/entities';
 import { EvalItemResponseService } from '../services/eval-item-response.service';
 import { CreateEvalItemResponseDto } from '../dtos/eval-item-response.dto';
@@ -20,5 +24,18 @@ export class EvalItemResponseController extends ExtraCrudController<EvalItemResp
     private readonly evalItemResponseService: EvalItemResponseService,
   ) {
     super(evalItemResponseService);
+  }
+
+  @Get('team-members-eval/:rfxProductInvitationId')
+  async getTeamMembersEvaluation(
+    @Param('rfxProductInvitationId') rfxProductInvitationId: string,
+    @Param('solRegistrationId') solRegistrationId: string,
+    @CurrentUser() user: any,
+  ) {
+    return await this.evalItemResponseService.getTeamMembersEvaluation(
+      rfxProductInvitationId,
+      solRegistrationId,
+      user,
+    );
   }
 }

@@ -38,7 +38,6 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     const [rfxItem, rfxInvitation] = await Promise.all([
       itemsRepo.findOne({
         where: {
-          id: itemData.rfxItemId,
           status: ERfxItemStatus.APPROVED,
           rfxProductInvitations: {
             vendorId: user?.organization.id,
@@ -148,7 +147,6 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
         solRound: {
           round: currentRound - 1,
         },
-        rfxItemId: itemData.rfxItemId,
         rfxProductInvitationId: itemData.rfxProductInvitationId,
         vendorId: user.organization.id,
       },
