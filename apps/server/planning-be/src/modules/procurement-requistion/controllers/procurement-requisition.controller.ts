@@ -57,6 +57,18 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
     return await this.procurementRequisitionService.prApprovalDecision(data);
   }
 
+  @Put(':id')
+  async updatePr(
+    @Param('id') id: string,
+    @Body() itemData: any,
+    @CurrentUser() user: any,
+  ): Promise<ProcurementRequisition> {
+    return await this.procurementRequisitionService.updatePr(
+      id,
+      itemData,
+      user.organization.id,
+    );
+  }
   @Post('pr-from-app')
   async selectFromAPP(@Body() itemData: any, @CurrentUser() user: any) {
     return await this.procurementRequisitionService.selectFromAPP(

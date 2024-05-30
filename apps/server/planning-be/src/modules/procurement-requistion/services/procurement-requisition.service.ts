@@ -48,14 +48,73 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
   ) {
     super(repositoryProcurementRequisition);
   }
+
+  async create(itemData: any, req?: any): Promise<any> {
+    if (itemData.userReference) {
+      const uniqueUserRef = await this.repositoryProcurementRequisition.exists({
+        where: {
+          userReference: itemData.userReference,
+          organizationId: req.user.organization.id,
+        },
+      });
+
+      if (uniqueUserRef) {
+        throw new HttpException('User reference is already in use', 430);
+      }
+    }
+
+    if (req?.user?.organization) {
+      itemData.organizationId = req.user.organization.id;
+      itemData.organizationName = req.user.organization.name;
+    }
+
+    const item = this.repositoryProcurementRequisition.create(itemData);
+    await this.repositoryProcurementRequisition.insert(item);
+    return item;
+  }
+
+  async updatePr(
+    id: string,
+    itemData: any,
+    organizationId: string,
+  ): Promise<ProcurementRequisition> {
+    const existingItem = await this.repositoryProcurementRequisition.findOne({
+      where: { id },
+    });
+    if (
+      itemData.userReference &&
+      existingItem?.userReference !== itemData.userReference
+    ) {
+      const uniqueUserRef = await this.repositoryProcurementRequisition.exists({
+        where: {
+          userReference: itemData.userReference,
+          organizationId,
+        },
+      });
+
+      if (uniqueUserRef) {
+        throw new HttpException('User reference is already in use', 430);
+      }
+    }
+
+    await this.repositoryProcurementRequisition.update(id, itemData);
+    return this.findOne(id);
+  }
+
   async getCurrentBudget(query?: CollectionQuery) {
     const date = new Date();
-    const year = date.getFullYear().toString();
     query.where.push([
       {
-        column: 'budgetYears.name',
-        operator: '=',
-        value: year,
+        column: 'budgetYears.startDate',
+        operator: '<=',
+        value: date,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'budgetYears.endDate',
+        operator: '>=',
+        value: date,
       },
     ]);
     query.includes.push('budgetYears');
@@ -107,7 +166,13 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       },
     });
 
-    if (!activity || activity.status === 'USED_IN_PR') {
+    if (!activity) {
+      throw new HttpException(
+        'This Activity is not found in your organization',
+        430,
+      );
+    }
+    if (activity.status === 'USED_IN_PR') {
       throw new HttpException(
         'Activity is used in Procurement requisition',
         430,
@@ -120,16 +185,29 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     ) {
       throw new HttpException('Plan is not approved', 430);
     }
-
+    if (activity.userReference) {
+      const uniqueUserRef = await this.repositoryProcurementRequisition.exists({
+        where: {
+          userReference: activity.userReference,
+          organizationId: activity.organizationId,
+        },
+      });
+      if (uniqueUserRef) {
+        throw new HttpException('User reference is already in use', 430);
+      }
+    }
     const procurementRequisitionItems = activity.postBudgetPlanItems;
     procurementRequisitionItems.forEach((x: any) => (x.uom = x.uomName));
     const procurementRequisitionTimelines = activity.postBudgetPlanTimelines;
     procurementRequisitionTimelines.forEach(
-      (x: any) => (x.appDueDate = new Date(x.dueDate)),
+      (x: any) => (
+        (x.appDueDate = new Date(x.dueDate)),
+        (x.organizationId = user.organization.id)
+      ),
     );
     const procurementRequisition: ProcurementRequisition = {
       ...activity,
-      id: itemData.id,
+      postBudgetPlanActivityId: itemData.id,
       isPlanned: true,
       totalEstimatedAmount: activity.estimatedAmount,
       userReference: activity.userReference,
@@ -190,9 +268,9 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         430,
       );
     }
-    if (pr.procurementRequisitionTechnicalTeams.length === 0) {
+    if (pr.procurementRequisitionTechnicalTeams.length !== 0) {
       throw new HttpException(
-        'Procurement Requisition Technical Team is empty',
+        'Procurement Requisition Technical Team should be empty',
         430,
       );
     }
