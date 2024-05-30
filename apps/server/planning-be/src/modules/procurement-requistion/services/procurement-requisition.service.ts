@@ -140,6 +140,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       relations: {
         budgetYear: true,
         budget: true,
+        procurementMechanisms: true,
       },
     });
     return result;
