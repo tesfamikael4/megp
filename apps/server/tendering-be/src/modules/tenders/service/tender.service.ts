@@ -86,6 +86,8 @@ export class TenderService extends EntityCrudService<Tender> {
 
       if (prResponse.status !== 'APPROVED') {
         throw new BadRequestException('pr_is_not_approved');
+      } else if (prResponse.isUsed) {
+        throw new BadRequestException('pr_already_used');
       } else if (
         !prResponse.procurementRequisitionTechnicalTeams ||
         prResponse.procurementRequisitionTechnicalTeams.length < 1
@@ -93,9 +95,13 @@ export class TenderService extends EntityCrudService<Tender> {
         throw new BadRequestException('pr_has_no_technical_team');
       } else if (!prResponse.procurementMechanisms) {
         throw new BadRequestException('pr_has_no_mechanism');
+      } else if (!prResponse.budget) {
+        throw new BadRequestException('pr_has_no_budget');
+      } else if (prResponse.organizationId != req.user.organization.id) {
+        throw new BadRequestException('pr_not_under_same_organization');
       }
 
-      const tenderPayload = {
+      const tender = manager.getRepository(Tender).create({
         name: prResponse.name,
         procurementCategory: prResponse.procurementCategory ?? 'Goods',
         procurementReferenceNumber: prResponse.procurementReference,
@@ -108,68 +114,46 @@ export class TenderService extends EntityCrudService<Tender> {
         status: TenderStatusEnum.DRAFT,
         organizationId: req.user.organization.id,
         organizationName: req.user.organization.name,
-      };
-
-      const tender = manager.getRepository(Tender).create(tenderPayload);
-      await manager.getRepository(Tender).insert(tender);
-
-      const procurementTechnicalTeams: ProcurementTechnicalTeam[] = [];
-      for (const iterator of prResponse.procurementRequisitionTechnicalTeams) {
-        const procurementTechnicalTeam = new ProcurementTechnicalTeam();
-        procurementTechnicalTeam.tenderId = tender.id;
-        procurementTechnicalTeam.userId = iterator.userId;
-        procurementTechnicalTeam.userName = iterator.name;
-        procurementTechnicalTeam.isTeamLead = iterator.isTeamLead ?? false;
-        procurementTechnicalTeams.push(procurementTechnicalTeam);
-      }
-
-      await manager
-        .getRepository(ProcurementTechnicalTeam)
-        .insert(procurementTechnicalTeams);
-
-      const {
-        tenantId,
-        createdAt,
-        updatedAt,
-        organizationId,
-        id,
-        procurementRequisitionId,
-        ...PRProcurementMechanisms
-      } = prResponse.procurementMechanisms;
-      const procurementMechanism = new ProcurementMechanism();
-      procurementMechanism.PRProcurementMechanisms = PRProcurementMechanisms;
-      procurementMechanism.tenderId = tender.id;
-      await manager
-        .getRepository(ProcurementMechanism)
-        .insert(procurementMechanism);
-
-      const lot = manager.getRepository(Lot).create({
-        number: 1,
-        name: `Lot 1`,
-        status: LotStatusEnum.ACTIVE,
-        tenderId: tender.id,
+        procurementTechnicalTeams:
+          prResponse?.procurementRequisitionTechnicalTeams?.map(
+            (procurementTechnicalTeam: any) => {
+              return {
+                userId: procurementTechnicalTeam.userId,
+                userName: procurementTechnicalTeam.name,
+                isTeamLead: procurementTechnicalTeam.isTeamLead ?? false,
+              };
+            },
+          ),
+        procurementMechanism: {
+          PRProcurementMechanisms:
+            prResponse?.procurementMechanisms?.PRProcurementMechanisms,
+        },
+        lots: [
+          {
+            number: 1,
+            name: `Lot 1`,
+            status: LotStatusEnum.ACTIVE,
+            items: prResponse.procurementRequisitionItems?.map((item: any) => {
+              return {
+                itemCode: item.itemCode,
+                procurementCategory: item.procurementCategory ?? `Goods`,
+                name: item.description,
+                description: item.description,
+                quantity: item.quantity,
+                unitOfMeasure: item.uom,
+                estimatedPrice: Number(item.unitPrice),
+                estimatedPriceCurrency: item.currency,
+                hasBom: false,
+              };
+            }),
+          },
+        ],
       });
-      await manager.getRepository(Lot).insert(lot);
+      await manager.getRepository(Tender).save(tender);
 
-      const items: Item[] = [];
-      for (const iterator of prResponse.procurementRequisitionItems) {
-        const item = new Item();
-        item.itemCode = iterator.itemCode;
-        item.procurementCategory = iterator.procurementCategory ?? `Goods`;
-        item.name = iterator.description;
-        item.description = iterator.description;
-        item.quantity = iterator.quantity;
-        item.unitOfMeasure = iterator.uom;
-        item.estimatedPrice = Number(iterator.unitPrice);
-        item.estimatedPriceCurrency = iterator.currency;
-        item.hasBom = false;
-        item.lotId = lot.id;
-        items.push(item);
-      }
-      await manager.getRepository(Item).insert(items);
       await manager.getRepository(TenderMilestone).insert({
         tenderId: tender.id,
-        lotId: lot.id,
+        lotId: tender.lots.find((lot) => lot.number === 1).id,
         isCurrent: true,
         milestoneNum: TenderMilestoneEnum.Initiation,
         milestoneTxt: 'Initiation',
@@ -605,6 +589,11 @@ export class TenderService extends EntityCrudService<Tender> {
         },
       },
     });
+    if (!tender) {
+      throw new BadRequestException('tender_not_found');
+    } else if (tender.status != LotStatusEnum.CANCELED) {
+      throw new BadRequestException('active_tender_cannot_re_advertise');
+    }
 
     const {
       id,
@@ -622,54 +611,47 @@ export class TenderService extends EntityCrudService<Tender> {
       tenderDocument: null,
       tenderInvitation: null,
       name: tender.name + ' (Re-Advertised)',
-    });
-    await manager.getRepository(Tender).insert(newTender);
-
-    await manager.getRepository(ProcurementMechanism).insert({
-      ...procurementMechanism,
-      tenderId: newTender.id,
-      id: undefined,
-    });
-
-    const newProcurementTechnicalTeams = [];
-    for (const procurementTechnicalTeam of procurementTechnicalTeams) {
-      newProcurementTechnicalTeams.push(
-        manager.getRepository(ProcurementTechnicalTeam).create({
-          ...procurementTechnicalTeam,
-          tenderId: newTender.id,
-          id: undefined,
-        }),
-      );
-    }
-    await manager
-      .getRepository(ProcurementTechnicalTeam)
-      .insert(newProcurementTechnicalTeams);
-
-    for (const lot of lots) {
-      const { id, items, ...rest } = lot;
-      const newLot = manager.getRepository(Lot).create({
-        ...rest,
-        tenderId: newTender.id,
-        status: LotStatusEnum.ACTIVE,
+      procurementMechanism: {
+        ...procurementMechanism,
+        tenderId: undefined,
         id: undefined,
-      });
-
-      await manager.getRepository(Lot).insert(newLot);
-
-      const newItems = [];
-      for (const item of items) {
-        const { id, lotId, ...rest } = item;
-        newItems.push(
-          manager.getRepository(Item).create({
-            ...rest,
-            status: ItemStatusEnum.ACTIVE,
-            lotId: newLot.id,
+      },
+      procurementTechnicalTeams: procurementTechnicalTeams?.map(
+        (procurementTechnicalTeam) => {
+          return {
+            ...procurementTechnicalTeam,
+            tenderId: undefined,
+            id: undefined,
+          };
+        },
+      ),
+      lots: lots?.map((lot) => {
+        return {
+          ...lot,
+          status: LotStatusEnum.ACTIVE,
+          tenderId: undefined,
+          id: undefined,
+          items: lot.items?.map((item) => {
+            return {
+              ...item,
+              status: ItemStatusEnum.ACTIVE,
+              lotId: undefined,
+              id: undefined,
+            };
           }),
-        );
-      }
+        };
+      }),
+    });
 
-      await manager.getRepository(Item).insert(newItems);
-    }
+    await manager.getRepository(Tender).save(newTender);
+
+    await manager.getRepository(TenderMilestone).insert({
+      tenderId: newTender.id,
+      lotId: newTender.lots.find((lot) => lot.number).id,
+      isCurrent: true,
+      milestoneNum: TenderMilestoneEnum.Initiation,
+      milestoneTxt: 'Initiation',
+    });
 
     await manager.getRepository(Tender).update(id, {
       status: TenderStatusEnum.RE_ADVERTISED,

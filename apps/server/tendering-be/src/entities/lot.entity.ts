@@ -52,7 +52,7 @@ export class Lot extends Audit {
   @Column({ type: 'jsonb', nullable: true })
   metadata: any;
 
-  @OneToMany(() => Item, (item) => item.lot)
+  @OneToMany(() => Item, (item) => item.lot, { cascade: true })
   items: Item[];
 
   @OneToMany(
@@ -115,6 +115,7 @@ export class Lot extends Audit {
   @OneToMany(
     () => TenderMilestone,
     (tenderTenderMilestone) => tenderTenderMilestone.lot,
+    { cascade: true },
   )
   tenderMilestones: TenderMilestone[];
 

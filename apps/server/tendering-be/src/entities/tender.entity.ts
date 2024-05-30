@@ -91,10 +91,13 @@ export class Tender extends Audit {
   @OneToMany(
     () => ProcurementTechnicalTeam,
     (procurementTechnicalTeam) => procurementTechnicalTeam.tender,
+    {
+      cascade: true,
+    },
   )
   procurementTechnicalTeams: ProcurementTechnicalTeam[];
 
-  @OneToMany(() => Lot, (lot) => lot.tender)
+  @OneToMany(() => Lot, (lot) => lot.tender, { cascade: true })
   lots: Lot[];
 
   @OneToOne(() => TenderSpd, (spd) => spd.tender)
@@ -211,6 +214,7 @@ export class Tender extends Audit {
   @OneToMany(
     () => TenderMilestone,
     (tenderTenderMilestone) => tenderTenderMilestone.tender,
+    { cascade: true },
   )
   tenderMilestones: TenderMilestone[];
 

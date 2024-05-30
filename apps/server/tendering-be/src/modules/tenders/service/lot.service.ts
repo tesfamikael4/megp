@@ -1,18 +1,23 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Item, Lot } from 'src/entities';
+import { Item, Lot, Tender } from 'src/entities';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
 import { EntityManager, In, Repository } from 'typeorm';
-import { SplitItemDto } from '../dto';
+import { ReAdvertiseLotDto, SplitItemDto } from '../dto';
 import {
   CollectionQuery,
   FilterOperators,
   QueryConstructor,
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { LotStatusEnum } from 'src/shared/enums/tender-status.enum';
+import {
+  LotStatusEnum,
+  TenderStatusEnum,
+} from 'src/shared/enums/tender-status.enum';
+import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
+import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 
 @Injectable()
 export class LotService extends ExtraCrudService<Lot> {
@@ -110,5 +115,84 @@ export class LotService extends ExtraCrudService<Lot> {
     await this.lotRepository.update(item.id, {
       status: LotStatusEnum.CANCELED,
     });
+  }
+
+  async reAdvertiseLot(payload: ReAdvertiseLotDto) {
+    const lot = await this.lotRepository.findOne({
+      where: {
+        id: payload.id,
+      },
+      relations: {
+        tender: {
+          procurementMechanism: true,
+          procurementTechnicalTeams: true,
+        },
+        items: true,
+      },
+    });
+    if (!lot) {
+      throw new BadRequestException('lot_not_found');
+    } else if (lot.status != LotStatusEnum.CANCELED) {
+      throw new BadRequestException('active_lot_cannot_re_advertise');
+    }
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const budgetAmount = lot.items.reduce(
+      (total, item) => item.quantity * item.estimatedPrice + total,
+      0,
+    );
+
+    const newTender = manager.getRepository(Tender).create({
+      ...lot.tender,
+      id: undefined,
+      name: payload.name,
+      status: TenderStatusEnum.DRAFT,
+      tenderDocument: null,
+      tenderInvitation: null,
+      budgetAmount,
+      procurementMechanism: {
+        ...lot.tender.procurementMechanism,
+        tenderId: undefined,
+        id: undefined,
+      },
+      procurementTechnicalTeams: lot?.tender?.procurementTechnicalTeams?.map(
+        (procurementTechnicalTeam) => {
+          return {
+            ...procurementTechnicalTeam,
+            tenderId: undefined,
+            id: undefined,
+          };
+        },
+      ),
+      lots: [
+        {
+          number: 1,
+          name: `Lot 1`,
+          status: LotStatusEnum.ACTIVE,
+          items: lot?.items?.map((item) => {
+            return {
+              ...item,
+              lotId: undefined,
+              id: undefined,
+            };
+          }),
+        },
+      ],
+    });
+
+    await manager.getRepository(Tender).save(newTender);
+
+    await manager.getRepository(TenderMilestone).insert({
+      tenderId: newTender.id,
+      lotId: newTender.lots.find((lot) => lot.number).id,
+      isCurrent: true,
+      milestoneNum: TenderMilestoneEnum.Initiation,
+      milestoneTxt: 'Initiation',
+    });
+
+    await manager.getRepository(Lot).update({ id: lot.id }, { status: LotStatusEnum.RE_ADVERTISED });
+
+    return newTender;
   }
 }

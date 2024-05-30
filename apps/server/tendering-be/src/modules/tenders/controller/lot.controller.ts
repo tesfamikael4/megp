@@ -4,7 +4,7 @@ import { Lot } from 'src/entities';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { LotService } from '../service/lot.service';
-import { SplitItemDto } from '../dto';
+import { ReAdvertiseLotDto, SplitItemDto } from '../dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
@@ -32,5 +32,10 @@ export class LotController extends ExtraCrudController<Lot>(options) {
   ) {
     const query = decodeCollectionQuery(q);
     return await this.lotService.getAssignedLot(tenderId, query, req);
+  }
+
+  @Post('re-advertise-lot')
+  async reAdvertiseTender(@Body() itemData: ReAdvertiseLotDto) {
+    return this.lotService.reAdvertiseLot(itemData);
   }
 }
