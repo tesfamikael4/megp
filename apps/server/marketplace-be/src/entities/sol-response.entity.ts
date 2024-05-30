@@ -11,9 +11,10 @@ import { Audit } from 'megp-shared-be';
 import { RFX } from './rfx.entity';
 import { SolRegistration } from './sol-registration.entity';
 import { OpenedResponse } from './opened-response.entity';
+import { RfxDocumentaryEvidence } from './rfx-documentary-evidence.entity';
 
 @Entity({ name: 'sol_responses' })
-@Unique(['rfxId', 'vendorId', 'key'])
+@Unique(['rfxId', 'vendorId', 'rfxDocumentaryEvidenceId'])
 export class SolResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,11 +28,15 @@ export class SolResponse extends Audit {
   @Column()
   vendorId: string;
 
-  @Column()
-  key: string;
-
   @Column({ type: 'text' })
   value: string;
+
+  @Column('uuid')
+  rfxDocumentaryEvidenceId: string;
+
+  @ManyToOne(() => RfxDocumentaryEvidence, (evidence) => evidence.solResponses)
+  @JoinColumn({ name: 'rfxDocumentaryEvidenceId' })
+  rfxDocumentaryEvidence: RfxDocumentaryEvidence;
 
   @OneToOne(() => OpenedResponse, (rfx) => rfx.solResponse)
   openedResponse: OpenedResponse;

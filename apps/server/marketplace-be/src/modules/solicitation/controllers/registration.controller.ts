@@ -1,9 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   ExtraCrudOptions,
   ExtraCrudController,
   decodeCollectionQuery,
+  CurrentUser,
 } from 'megp-shared-be';
 import { SolRegistrationService } from '../services/registration.service';
 import { SolRegistration } from 'src/entities';
@@ -28,13 +29,10 @@ export class SolRegistrationController extends ExtraCrudController<SolRegistrati
     super(solRegistrationService);
   }
 
-  @Get('vendors-list/:rfxId')
-  async getVendorsList(@Param('rfxId') rfxId: string, @Query('q') q?: string) {
-    const query = decodeCollectionQuery(q);
-    return await this.solRegistrationService.vendorsList(rfxId, query);
-  }
-
   @Get('solicitation-status')
+  @ApiOperation({
+    summary: 'Back-Office Solicitation Status Checks',
+  })
   async solicitationStatus(@Query('q') q?: string) {
     const query = decodeCollectionQuery(q);
     return await this.solRegistrationService.solicitationStatus(query);

@@ -5,11 +5,11 @@ import { EvaluationResponse } from 'src/utils/enums';
 export class CreateEvalResponseDto {
   @ApiProperty()
   @IsUUID()
-  vendorId: string;
+  rfxId: string;
 
   @ApiProperty()
   @IsUUID()
-  rfxId: string;
+  rfxDocumentaryEvidenceId: string;
 
   @ApiProperty()
   @IsEnum(EvaluationResponse)
@@ -20,7 +20,11 @@ export class CreateEvalResponseDto {
   @IsOptional()
   remark: string;
 
+  @ApiProperty()
+  @IsString()
   solRegistrationId: string;
-  evaluatorId: string;
-  isTeamAssesment: boolean;
+
+  openedResponseId: string;
+  teamMemberId: string;
+  isTeamAssessment: boolean;
 }

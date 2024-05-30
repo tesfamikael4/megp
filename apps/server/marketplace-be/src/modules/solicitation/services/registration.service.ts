@@ -113,63 +113,6 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     return rfxRegistration;
   }
 
-  async vendorsList(rfxId: string, query: CollectionQuery) {
-    const dataQuery = QueryConstructor.constructQuery<SolRegistration>(
-      this.solRegistrationRepository,
-      query,
-    );
-
-    dataQuery
-      .andWhere('sol_registration.rfxId = :rfxId', {
-        rfxId,
-      })
-      .andWhere('sol_registration.status = :status', {
-        status: ESolBookmarkStatus.REGISTERED,
-      })
-      .loadRelationCountAndMap(
-        'sol_registration.totalResponses',
-        'sol_registration.openedResponses',
-      )
-      .loadRelationCountAndMap(
-        'sol_registration.evaluatedResponses',
-        'sol_registration.evalResponses',
-      )
-      .loadRelationCountAndMap(
-        'sol_registration.totalItemResponses',
-        'sol_registration.openedItemResponses',
-      )
-      .loadRelationCountAndMap(
-        'sol_registration.evaluatedItemResponses',
-        'sol_registration.evalItemResponses',
-      );
-
-    const response = new DataResponseFormat<SolRegistration>();
-    if (query.count) {
-      response.total = await dataQuery.getCount();
-    } else {
-      const [result, total] = await dataQuery.getManyAndCount();
-
-      const newResult = result.map((item: any) => {
-        const evaluationStatus = {
-          response: false,
-          itemResponse: false,
-        };
-        if (item.totalResponses == item.evaluatedResponses) {
-          evaluationStatus.response = true;
-        }
-        if (item.totalItemResponses == item.evaluatedItemResponses) {
-          evaluationStatus.itemResponse = true;
-        }
-
-        item.evaluationStatus = evaluationStatus;
-        return item;
-      });
-      response.total = total;
-      response.items = newResult;
-    }
-    return response;
-  }
-
   async solicitationStatus(query: CollectionQuery) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 

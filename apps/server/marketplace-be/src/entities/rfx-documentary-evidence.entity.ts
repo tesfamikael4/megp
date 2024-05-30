@@ -4,10 +4,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import { RFX } from './rfx.entity';
+import { EvalResponse } from './eval-response.entity';
+import { SolResponse } from './sol-response.entity';
+import { OpenedResponse } from './opened-response.entity';
 
 @Entity({ name: 'rfx_documentary_evidence' })
 @Unique(['rfxId', 'documentTitle'])
@@ -34,4 +38,22 @@ export class RfxDocumentaryEvidence extends Audit {
 
   @Column({ default: 1 })
   order: number;
+
+  @OneToMany(
+    () => EvalResponse,
+    (evalResponse) => evalResponse.rfxDocumentaryEvidence,
+  )
+  evalResponses: EvalResponse[];
+
+  @OneToMany(
+    () => SolResponse,
+    (solResponse) => solResponse.rfxDocumentaryEvidence,
+  )
+  solResponses: SolResponse[];
+
+  @OneToMany(
+    () => OpenedResponse,
+    (solResponse) => solResponse.rfxDocumentaryEvidence,
+  )
+  openedResponses: OpenedResponse[];
 }

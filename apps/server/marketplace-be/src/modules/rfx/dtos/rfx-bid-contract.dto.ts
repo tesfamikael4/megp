@@ -18,15 +18,6 @@ export class CreateRfxBidContractConditionDTO {
 
   @ApiProperty()
   @IsInt()
-  @Min(1)
-  deliveryPeriod: number;
-
-  @ApiProperty()
-  @IsString()
-  deliverySite: string;
-
-  @ApiProperty()
-  @IsInt()
   @Min(0)
   @Max(100)
   liquidityDamage: number;

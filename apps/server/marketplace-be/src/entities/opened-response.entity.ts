@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -11,18 +12,17 @@ import { Audit } from 'megp-shared-be';
 import { RFX } from './rfx.entity';
 import { SolRegistration } from './sol-registration.entity';
 import { SolResponse } from './sol-response.entity';
+import { RfxDocumentaryEvidence } from './rfx-documentary-evidence.entity';
+import { EvalResponse } from './eval-response.entity';
 
 @Entity({ name: 'opened_responses' })
-@Unique(['rfxId', 'vendorId', 'key'])
+@Unique(['rfxId', 'vendorId', 'rfxDocumentaryEvidenceId'])
 export class OpenedResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   vendorId: string;
-
-  @Column()
-  key: string;
 
   @Column({ type: 'jsonb' })
   value: any;
@@ -37,7 +37,17 @@ export class OpenedResponse extends Audit {
   @Column('uuid')
   solRegistrationId: string;
 
+  @Column('uuid')
+  rfxDocumentaryEvidenceId: string;
+
   // Relations
+  @ManyToOne(
+    () => RfxDocumentaryEvidence,
+    (evidence) => evidence.openedResponses,
+  )
+  @JoinColumn({ name: 'rfxDocumentaryEvidenceId' })
+  rfxDocumentaryEvidence: RfxDocumentaryEvidence;
+
   @OneToOne(() => SolResponse, (solResponse) => solResponse.openedResponse)
   @JoinColumn({ name: 'solResponseId' })
   solResponse: SolResponse;
@@ -52,4 +62,7 @@ export class OpenedResponse extends Audit {
   )
   @JoinColumn({ name: 'solRegistrationId' })
   solRegistration: SolRegistration;
+
+  @OneToMany(() => EvalResponse, (evaluation) => evaluation.openedResponse)
+  evalResponses: EvalResponse[];
 }

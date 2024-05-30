@@ -3,11 +3,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { RFX, EvalResponse, EvalItemResponse } from './index';
+import { RFX } from './index';
 import { Audit } from 'megp-shared-be';
 
 @Entity({ name: 'rfx_procurement_technical_teams' })
@@ -31,10 +30,4 @@ export class RfxProcurementTechnicalTeam extends Audit {
   @ManyToOne(() => RFX, (rfx) => rfx.rfxProcurementTechnicalTeams)
   @JoinColumn({ name: 'rfxId' })
   rfx: RFX;
-
-  @OneToMany(() => EvalResponse, (evaluation) => evaluation.evaluator)
-  evalResponses: EvalResponse[];
-
-  @OneToMany(() => EvalItemResponse, (evaluation) => evaluation.evaluator)
-  evalItemResponses: EvalItemResponse[];
 }
