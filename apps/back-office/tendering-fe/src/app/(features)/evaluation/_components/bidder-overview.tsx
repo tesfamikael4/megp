@@ -2,6 +2,7 @@
 import { useCompleteEvaluationMutation } from '@/store/api/tendering/preliminary-compliance.api';
 import { useCompleteQualificationEvaluationMutation } from '@/store/api/tendering/technical-qualification';
 import { useCompleteResponsivenessEvaluationMutation } from '@/store/api/tendering/technical-responsiveness.api';
+import { useCompleteScoringEvaluationMutation } from '@/store/api/tendering/technical-scoring.api';
 import { useLazyGetBidderDetailsQuery } from '@/store/api/tendering/tendering.api';
 import { Badge, Box, Button, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
@@ -36,6 +37,8 @@ export const BidderOverView = ({
     completeResponsivenessEvaluation,
     { isLoading: isResponsivenessCompleting },
   ] = useCompleteResponsivenessEvaluationMutation();
+  const [completeScoringEvaluation, { isLoading: isScoringCompleting }] =
+    useCompleteScoringEvaluationMutation();
 
   useEffect(() => {
     getBidder({
@@ -65,6 +68,11 @@ export const BidderOverView = ({
           bidderId: bidderId as string,
           itemId: itemId as string,
           isTeamLead: pathname.includes('team-assessment'),
+        }).unwrap();
+      } else if (milestone == 'technicalScoring') {
+        await completeScoringEvaluation({
+          lotId: lotId as string,
+          bidderId: bidderId as string,
         }).unwrap();
       }
       notify('Success', 'completed successfully');
@@ -104,7 +112,8 @@ export const BidderOverView = ({
             loading={
               isCompleting ||
               isQualificationCompleting ||
-              isResponsivenessCompleting
+              isResponsivenessCompleting ||
+              isScoringCompleting
             }
           >
             Complete
