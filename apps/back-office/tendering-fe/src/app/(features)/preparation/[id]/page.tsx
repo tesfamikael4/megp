@@ -55,7 +55,7 @@ import {
   useApproveTenderMutation,
   useGenerateBidMutation,
 } from '../_api/tender/approve-tender.api';
-import { Status } from '@/models/tender/tender.model';
+import { TenderStatusEnum } from '@/models/tender/tender.model';
 import Document from '../_components/tender/document';
 import { LotFormDetail } from '../_components/lot/lot-form-detail';
 export default function TenderDetailPage() {
@@ -190,7 +190,7 @@ export default function TenderDetailPage() {
               </Flex>
             </Tooltip>
             <Box className="flex space-x-4">
-              {selected?.status === 'SUBMITTED' && (
+              {selected?.status === TenderStatusEnum.SUBMITTED && (
                 <Button
                   variant="filled"
                   className="my-auto"
@@ -210,10 +210,10 @@ export default function TenderDetailPage() {
                   Back to Draft
                 </Button>
               )}
-              {selected?.status !== 'PUBLISHED' &&
+              {selected?.status !== TenderStatusEnum.PUBLISHED &&
                 ((selected?.tenderDocument &&
-                  selected?.status === 'SUBMITTED') ||
-                  selected?.status === 'DRAFT') && (
+                  selected?.status === TenderStatusEnum.SUBMITTED) ||
+                  selected?.status === TenderStatusEnum.DRAFT) && (
                   <Button
                     variant="filled"
                     className="my-auto"
@@ -222,18 +222,18 @@ export default function TenderDetailPage() {
                       setCurrentStatus('submitted');
                       onUpdate({
                         status:
-                          selected.status === 'SUBMITTED'
-                            ? 'PUBLISHED'
-                            : 'SUBMITTED',
+                          selected.status === TenderStatusEnum.SUBMITTED
+                            ? TenderStatusEnum.SENT_FOR_REVIEW
+                            : TenderStatusEnum.SUBMITTED,
                       });
                     }}
                   >
-                    {selected?.status === 'DRAFT'
+                    {selected?.status === TenderStatusEnum.DRAFT
                       ? 'Submit to review'
-                      : 'Publish'}
+                      : 'Send for review'}
                   </Button>
                 )}
-              {selected?.status !== 'DRAFT' && (
+              {selected?.status !== TenderStatusEnum.DRAFT && (
                 <Button
                   variant="filled"
                   className="my-auto"
@@ -249,7 +249,7 @@ export default function TenderDetailPage() {
           </div>
           <div className="flex">
             <div>
-              {selected?.status === Status.DRAFT ? (
+              {selected?.status === TenderStatusEnum.DRAFT ? (
                 <div className="flex space-x-4">
                   <Text
                     className={
@@ -364,7 +364,7 @@ export default function TenderDetailPage() {
       </div>
       <Box className="container mx-auto my-4">
         {searchParams.get('tab') !== 'configuration' &&
-          selected?.status === Status.DRAFT && (
+          selected?.status === TenderStatusEnum.DRAFT && (
             <>
               <Box className="w-full flex flex-row justify-between items-center container my-2">
                 <p className="text-lg font-semibold flex">

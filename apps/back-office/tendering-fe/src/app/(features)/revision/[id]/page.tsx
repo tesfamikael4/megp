@@ -48,12 +48,8 @@ export default function DocumentPage() {
   };
 
   useEffect(() => {
-    trigger({
-      // id: '96448925-0cfa-4781-8e8b-958cdf845fd1',
-      id: id,
-      type: 'main-document',
-    });
-  }, [id]);
+    trigger(id);
+  }, [id, trigger]);
 
   return (
     <>

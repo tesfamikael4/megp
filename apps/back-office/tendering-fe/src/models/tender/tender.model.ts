@@ -12,14 +12,31 @@ export interface Tender {
   organizationId: string;
   marketEstimate: number;
   marketEstimateCurrency: string;
-  status: Status;
+  status: TenderStatusEnum;
   metadata: { [key: string]: any };
 }
 
-export enum Status {
+export enum TenderStatusEnum {
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED',
+  SENT_FOR_REVIEW = 'SENT_FOR_REVIEW',
   REVIEWED = 'REVIEWED',
-  REVISED = 'REVISED',
+  APPROVAL = 'APPROVAL',
+  APPROVED = 'APPROVED',
   PUBLISHED = 'PUBLISHED',
+  ADJUSTED = 'ADJUSTED',
+  CANCELED = 'CANCELED',
+  RE_ADVERTISED = 'RE-ADVERTISED',
+}
+
+export enum ItemStatusEnum {
+  ACTIVE = 'ACTIVE',
+  CANCELED = 'CANCELED',
+  RE_ADVERTISED = 'RE-ADVERTISED',
+}
+
+export enum LotStatusEnum {
+  ACTIVE = 'ACTIVE',
+  CANCELED = 'CANCELED',
+  RE_ADVERTISED = 'RE-ADVERTISED',
 }

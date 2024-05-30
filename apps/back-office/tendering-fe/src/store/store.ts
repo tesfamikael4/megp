@@ -17,8 +17,15 @@ import { preliminaryComplianceApi } from './api/tendering/preliminary-compliance
 import { tenderOpeningApi } from './api/tendering/tender-opening.api';
 import { technicalQualification } from './api/tendering/technical-qualification';
 import { technicalResponsiveness } from './api/tendering/technical-responsiveness.api';
-import { procurementRequisitionApi } from '@/app/(features)/preparation/_api/tender/procurement-requisition.api';
+import {
+  procurementRequisitionApi,
+  readvertTendersApi,
+} from '@/app/(features)/preparation/_api/tender/procurement-requisition.api';
 import { technicalScoring } from './api/tendering/technical-scoring.api';
+import { tenderingApprovalApi } from './api/tendering-approval/tendering-approval';
+import { tenderingIamApi } from './api/tendering-approval/tendering-iam';
+import { workflowApi } from './api/workflow/workflow.api';
+import { getSubmittedBiddersApi } from '@/app/(features)/solicitation/_api/submitted-bidders.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -44,6 +51,11 @@ export const store = configureStore({
       sorBillOfMaterialBulkCreateApi.reducer,
     [bidDocumentApi.reducerPath]: bidDocumentApi.reducer,
     [procurementRequisitionApi.reducerPath]: procurementRequisitionApi.reducer,
+    [tenderingApprovalApi.reducerPath]: tenderingApprovalApi.reducer,
+    [tenderingIamApi.reducerPath]: tenderingIamApi.reducer,
+    [workflowApi.reducerPath]: workflowApi.reducer,
+    [readvertTendersApi.reducerPath]: readvertTendersApi.reducer,
+    [getSubmittedBiddersApi.reducerPath]: getSubmittedBiddersApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -68,6 +80,11 @@ export const store = configureStore({
       bidDocumentApi.middleware,
       iamApi.middleware,
       procurementRequisitionApi.middleware,
+      tenderingIamApi.middleware,
+      tenderingApprovalApi.middleware,
+      workflowApi.middleware,
+      readvertTendersApi.middleware,
+      getSubmittedBiddersApi.middleware,
     ]),
 });
 

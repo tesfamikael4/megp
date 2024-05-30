@@ -6,6 +6,7 @@ import { IconChevronRight } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { ExpandableTable } from '../_components/expandable-table';
 import { useLazyListQuery } from './_api/tender.api';
+import { TenderStatusEnum } from '@/models/tender/tender.model';
 
 export default function Solicitation() {
   const [trigger, { data, isFetching }] = useLazyListQuery();
@@ -57,7 +58,18 @@ export default function Solicitation() {
   };
 
   const onRequestChange = (request: any) => {
-    trigger(request);
+    trigger({
+      ...request,
+      where: [
+        [
+          {
+            column: 'status',
+            value: TenderStatusEnum.PUBLISHED,
+            operator: '=',
+          },
+        ],
+      ],
+    });
   };
   return (
     <Section title="Tenders" collapsible={false}>

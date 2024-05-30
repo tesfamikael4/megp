@@ -1,4 +1,7 @@
-import { GeneralProvisionForm } from '@/models/contract-condition/contract-forms.model';
+import {
+  ContractTypeEnum,
+  GeneralProvisionForm,
+} from '@/models/contract-condition/contract-forms.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Flex,
@@ -6,6 +9,7 @@ import {
   NumberInput,
   Stack,
   Text,
+  Select,
   TextInput,
 } from '@mantine/core';
 import { logger, notify } from '@megp/core-fe';
@@ -32,6 +36,14 @@ export default function GeneralProvision() {
       .nonnegative()
       .min(1, { message: 'This field is required' }),
     deliverySite: z.string().min(1, { message: 'This field is required' }),
+    contractType: z
+      .enum([
+        ContractTypeEnum.ITEM_WISE,
+        ContractTypeEnum.LUMP_SUM,
+        ContractTypeEnum.TURN_KEY,
+        ContractTypeEnum.TIME_AND_MATERIAL,
+      ])
+      .optional(),
   });
 
   const {
@@ -82,6 +94,7 @@ export default function GeneralProvision() {
         contractDuration: selected?.contractDuration,
         commencementDay: selected?.commencementDay,
         deliverySite: selected?.deliverySite,
+        contractType: selected?.contractType,
       });
     } else {
       reset({
@@ -148,6 +161,25 @@ export default function GeneralProvision() {
               : ''
           }
           {...register('deliverySite')}
+        />
+        <Controller
+          name="contractType"
+          control={control}
+          render={({ field: { name, value, onChange } }) => (
+            <Select
+              placeholder="Contract Type"
+              className="w-1/2"
+              label="Contract Type"
+              value={value}
+              data={Object.values(ContractTypeEnum)}
+              onChange={(d) => onChange(d)}
+              error={
+                errors?.contractType
+                  ? errors?.contractType?.message?.toString()
+                  : ''
+              }
+            />
+          )}
         />
       </Flex>
       <EntityButton

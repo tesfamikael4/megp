@@ -106,13 +106,16 @@ export function LotFormDetail({
         {...register('name')}
       />
 
-      <Group>
-        <EntityButton
-          mode="detail"
-          data={selected}
-          onUpdate={handleSubmit(onUpdate)}
-          isUpdating={isUpdating}
-        />
+      <Group className="border-t pt-4">
+        <Button
+          variant="filled"
+          className="my-auto"
+          leftSection={<IconTrashX size={14} stroke={1.6} />}
+          loading={isUpdating}
+          onClick={handleSubmit(onUpdate)}
+        >
+          Update
+        </Button>
         <Button
           color="red"
           className="my-auto"
