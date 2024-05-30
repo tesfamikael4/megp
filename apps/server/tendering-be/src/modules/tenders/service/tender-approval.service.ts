@@ -115,10 +115,6 @@ export class TenderApprovalService {
       BucketNameEnum.TENDERING_DOCUMENT,
     );
 
-    await this.tenderRepository.update(tender.id, {
-      tenderInvitation: tenderInvitation as any,
-    });
-
     return tenderInvitation;
   }
 }
