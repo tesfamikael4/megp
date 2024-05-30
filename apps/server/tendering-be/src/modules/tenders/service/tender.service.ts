@@ -634,6 +634,58 @@ export class TenderService extends EntityCrudService<Tender> {
         },
       },
     });
+
+    const {
+      id,
+      procurementMechanism,
+      procurementTechnicalTeams,
+      lots,
+      ...rest
+    } = tender;
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const newTender = manager.getRepository(Tender).create({
+      ...rest,
+      name: tender.name + ' (Re-Advertised)',
+    });
+    await manager.getRepository(Tender).insert(newTender);
+
+    await manager.getRepository(ProcurementMechanism).insert({
+      ...procurementMechanism,
+      tenderId: newTender.id,
+      id: undefined,
+    });
+
+    const newProcurementTechnicalTeams = [];
+    for (const procurementTechnicalTeam of procurementTechnicalTeams) {
+      newProcurementTechnicalTeams.push(
+        manager.getRepository(ProcurementTechnicalTeam).create({
+          ...procurementTechnicalTeam,
+          tenderId: newTender.id,
+          id: undefined,
+        }),
+      );
+    }
+    await manager
+      .getRepository(ProcurementTechnicalTeam)
+      .insert(newProcurementTechnicalTeams);
+
+    const newLots = [];
+    for (const lot of lots) {
+      const { id, items, ...rest } = lot;
+      const newLot = manager.getRepository(Lot).create({
+        ...rest,
+        tenderId: newTender.id,
+        id: undefined,
+      });
+      for (const item of items) {
+        const { id, lotId, ...rest } = item;
+        newLot.items.push(rest as any);
+      }
+      newLots.push(newLot);
+    }
+    await manager.getRepository(Lot).insert(newLots);
   }
 
   private async downloadAndConvert(fileInfo: any, data: any) {

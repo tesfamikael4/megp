@@ -31,40 +31,42 @@ export class RevisionApprovalService extends ExtraCrudService<RevisionApproval> 
       throw new NotFoundException(`not_found`);
     }
 
-    try {
-      const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-      const team = await manager
-        .getRepository(ProcurementTechnicalTeam)
-        .findOneBy({ userId: req?.user?.id });
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const team = await manager
+      .getRepository(ProcurementTechnicalTeam)
+      .findOneBy({ tenderId: itemData.id, userId: req.user.userId });
 
-      if (team.isTeamLead) {
-        throw new BadRequestException('leader_cannot_approve');
-      }
-
-      const item = manager
-        .getRepository(RevisionApproval)
-        .create([{ ...itemData, userId: req?.user?.id }]) as any;
-      await manager
-        .getRepository(RevisionApproval)
-        .upsert(item, ['tenderId', 'userId']);
-
-      const [teams, revisedTeamCount] = await Promise.all([
-        manager.getRepository(ProcurementTechnicalTeam).countBy({
-          tenderId: itemData.tenderId,
-        }),
-        await manager.getRepository(RevisionApproval).countBy({
-          tenderId: itemData.tenderId,
-        }),
-      ]);
-      if (teams - 1 == revisedTeamCount) {
-        await manager.getRepository(Tender).update(itemData.tenderId, {
-          status: TenderStatusEnum.REVIEWED,
-        });
-      }
-
-      return item;
-    } catch (e) {
-      throw e;
+    if (team.isTeamLead) {
+      throw new BadRequestException('leader_cannot_approve');
     }
+
+    const item = manager
+      .getRepository(RevisionApproval)
+      .create({
+        tenderId: itemData.id,
+        status: itemData.status,
+        userId: req.user.userId,
+      });
+
+    await manager
+      .getRepository(RevisionApproval)
+      .upsert(item, ['tenderId', 'userId']);
+
+    const [teams, revisedTeamCount] = await Promise.all([
+      manager.getRepository(ProcurementTechnicalTeam).countBy({
+        tenderId: itemData.id,
+      }),
+      await manager.getRepository(RevisionApproval).countBy({
+        tenderId: itemData.id,
+      }),
+    ]);
+
+    if (teams - 1 == revisedTeamCount) {
+      await manager.getRepository(Tender).update(itemData.id, {
+        status: TenderStatusEnum.REVIEWED,
+      });
+    }
+
+    return item;
   }
 }
