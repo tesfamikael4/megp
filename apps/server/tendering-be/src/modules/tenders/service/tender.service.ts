@@ -20,8 +20,6 @@ import {
   CollectionQuery,
   FilterOperators,
   QueryConstructor,
-  decodeCollectionQuery,
-  encodeCollectionQuery,
 } from 'src/shared/collection-query';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
