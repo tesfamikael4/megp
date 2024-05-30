@@ -14,7 +14,7 @@ import {
   decodeCollectionQuery,
 } from 'src/shared/collection-query';
 import { ExtraCrudService } from 'src/shared/service';
-import { PostBudgetPlanActivity, PostBudgetPlanItem } from 'src/entities';
+import { PostBudgetPlanActivity } from 'src/entities';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { REQUEST } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
@@ -22,7 +22,7 @@ import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.
 import { DocumentService } from 'src/modules/utility/services/document.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { SubmittedPlan } from 'src/entities/submitted-plan.entity';
-import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 @Injectable()
 export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
@@ -40,6 +40,8 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
 
     @Inject('PLANNING_RMQ_SERVICE')
     private readonly planningRMQClient: ClientProxy,
+
+    private readonly amqpConnection: AmqpConnection,
 
     @Inject(REQUEST)
     private readonly request: Request,
@@ -311,12 +313,17 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       organizationId: data.organizationId,
       organizationName: data.organizationName,
     });
-    await this.planningRMQClient.emit('initiate-workflow', {
-      name: data.name,
-      id: data.id,
-      itemName: data.itemName,
-      organizationId: data.organizationId,
-    });
+    // await this.planningRMQClient.emit('initiate-workflow',);
+    this.amqpConnection.publish(
+      'workflow-broadcast-exchanges',
+      'workflow.initiate',
+      {
+        name: data.name,
+        id: data.id,
+        itemName: data.itemName,
+        organizationId: data.organizationId,
+      },
+    );
   }
 
   async pdfGenerator(
