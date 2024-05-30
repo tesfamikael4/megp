@@ -239,6 +239,22 @@ export function Items({
 
     setNewItems([...castedData, ...newItems]);
   };
+  const handelImportedItem = (items) => {
+    const castedData = items.map((item, index) => ({
+      id: index,
+      unitPrice: item.unitPrice ?? 0,
+      currency: itemsList?.items[0]?.currency ?? pr.currency,
+      quantity: item.quantity ?? 0,
+      uom: item.uOMName,
+      description: item.description,
+      procurementRequisitionId: id,
+      itemCode: item.itemCode,
+      measurement: item.measurementId,
+      classification: item.commodityCode,
+    }));
+
+    setNewItems([...castedData, ...newItems]);
+  };
 
   const handelOnDone = (data, id, collapse) => {
     const castedData = newItems.map((item) => {
@@ -360,7 +376,7 @@ export function Items({
           onClose={closeImportModal}
           title="Import Items"
         >
-          <DataImport onDone={handelAddItem} />
+          <DataImport onDone={handelImportedItem} />
           <Button className="mt-4 ml-auto" onClick={closeImportModal}>
             Done
           </Button>
