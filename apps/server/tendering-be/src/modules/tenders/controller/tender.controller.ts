@@ -11,12 +11,6 @@ import {
 } from '../dto/tender.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous } from 'src/shared/authorization';
-import {
-  MessageHandlerErrorBehavior,
-  RabbitRPC,
-  RabbitSubscribe,
-} from '@golevelup/nestjs-rabbitmq';
-import { ConsumeMessage } from 'amqplib';
 
 const options: EntityCrudOptions = {
   createDto: CreateTenderDto,
@@ -28,30 +22,6 @@ const options: EntityCrudOptions = {
 export class TenderController extends EntityCrudController<Tender>(options) {
   constructor(private readonly tenderService: TenderService) {
     super(tenderService);
-  }
-
-  // @RabbitSubscribe({
-  //   exchange: 'workflow-broadcast-exchanges',
-  //   routingKey: 'tendering-workflow.tenderApproval',
-  //   queue: 'tendering-approval-workflow',
-  //   errorHandler: (err) => {
-  //     console.error('🚀 ~ TenderController ~ err:', err);
-  //   },
-  // })
-  @RabbitRPC({
-    exchange: 'workflow-broadcast-exchanges',
-    routingKey: 'tendering-workflow.tenderApproval',
-    queue: 'tendering-approval-workflow1',
-    errorBehavior: MessageHandlerErrorBehavior.ACK,
-    errorHandler: (err) => {
-      console.log('🚀 ~ TenderController ~ err:', err);
-    },
-  })
-  @AllowAnonymous()
-  async tenderApproval(data: any, amqpMsg: ConsumeMessage) {
-    if (amqpMsg.fields.routingKey == 'tendering-workflow.tenderApproval') {
-      return this.tenderService.tenderApproval(data);
-    }
   }
 
   @Get('active-tenders')

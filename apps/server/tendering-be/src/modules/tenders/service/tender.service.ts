@@ -368,11 +368,6 @@ export class TenderService extends EntityCrudService<Tender> {
       input.status == TenderStatusEnum.SUBMITTED
     ) {
       await this.validateTender(tender.id);
-    } else if (
-      tender.status == TenderStatusEnum.SUBMITTED &&
-      input.status == TenderStatusEnum.PUBLISHED
-    ) {
-      await this.generateTenderInvitation({ id: tender.id });
     }
 
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
@@ -392,28 +387,6 @@ export class TenderService extends EntityCrudService<Tender> {
         },
       );
     }
-  }
-
-  async tenderApproval(data: any) {
-    const tender = await this.tenderRepository.findOneBy({
-      id: data.itemId,
-    });
-
-    if (!tender) {
-      throw new BadRequestException('Tender not found');
-    }
-    if (data.status == 'Approved') {
-      await this.generateTenderInvitation({ id: tender.id });
-    }
-    await this.tenderRepository.update(
-      { id: data.itemId },
-      {
-        status:
-          data.status == 'Approved'
-            ? TenderStatusEnum.APPROVED
-            : TenderStatusEnum.ADJUSTED,
-      },
-    );
   }
 
   async generateTenderDocument(input: GenerateTenderDocumentDto) {

@@ -44,6 +44,7 @@ import {
   TenderService,
 } from './service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { TenderApprovalService } from './service/tender-approval.service';
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     TenderClassificationService,
     TenderParticipationFeeService,
     TenderPersonalService,
+    TenderApprovalService,
   ],
 })
 export class TenderModule {}
