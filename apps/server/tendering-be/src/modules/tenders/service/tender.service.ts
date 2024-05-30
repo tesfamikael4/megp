@@ -618,6 +618,9 @@ export class TenderService extends EntityCrudService<Tender> {
 
     const newTender = manager.getRepository(Tender).create({
       ...rest,
+      status: TenderStatusEnum.DRAFT,
+      tenderDocument: null,
+      tenderInvitation: null,
       name: tender.name + ' (Re-Advertised)',
     });
     await manager.getRepository(Tender).insert(newTender);
@@ -642,21 +645,35 @@ export class TenderService extends EntityCrudService<Tender> {
       .getRepository(ProcurementTechnicalTeam)
       .insert(newProcurementTechnicalTeams);
 
-    const newLots = [];
     for (const lot of lots) {
       const { id, items, ...rest } = lot;
       const newLot = manager.getRepository(Lot).create({
         ...rest,
         tenderId: newTender.id,
+        status: LotStatusEnum.ACTIVE,
         id: undefined,
       });
+
+      await manager.getRepository(Lot).insert(newLot);
+
+      const newItems = [];
       for (const item of items) {
         const { id, lotId, ...rest } = item;
-        newLot.items.push(rest as any);
+        newItems.push(
+          manager.getRepository(Item).create({
+            ...rest,
+            status: ItemStatusEnum.ACTIVE,
+            lotId: newLot.id,
+          }),
+        );
       }
-      newLots.push(newLot);
+
+      await manager.getRepository(Item).insert(newItems);
     }
-    await manager.getRepository(Lot).insert(newLots);
+
+    await manager.getRepository(Tender).update(id, {
+      status: TenderStatusEnum.RE_ADVERTISED,
+    });
   }
 
   private async downloadAndConvert(fileInfo: any, data: any) {

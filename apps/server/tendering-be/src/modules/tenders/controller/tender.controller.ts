@@ -8,6 +8,7 @@ import {
   ChangeTenderStatusDto,
   CreateTenderDto,
   GenerateTenderDocumentDto,
+  ReAdvertiseTenderDto,
 } from '../dto/tender.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous } from 'src/shared/authorization';
@@ -59,6 +60,11 @@ export class TenderController extends EntityCrudController<Tender>(options) {
   async getReAdvertiseTenders(@Query('q') q?: string, @Req() req?: any) {
     const query = decodeCollectionQuery(q);
     return await this.tenderService.getReAdvertiseTenders(query, req);
+  }
+
+  @Post('re-advertise-tender')
+  async reAdvertiseTender(@Body() itemData: ReAdvertiseTenderDto) {
+    return this.tenderService.reAdvertiseTender(itemData);
   }
 
   @Post('change-status')

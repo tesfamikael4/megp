@@ -6,8 +6,6 @@ import { GenerateTenderDocumentDto } from '../dto';
 import { TenderStatusEnum } from 'src/shared/enums/tender-status.enum';
 import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
-import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
-import { REQUEST } from '@nestjs/core';
 import {
   MessageHandlerErrorBehavior,
   RabbitRPC,
