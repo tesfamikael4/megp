@@ -13,6 +13,7 @@ import {
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import {
+  ItemStatusEnum,
   LotStatusEnum,
   TenderStatusEnum,
 } from 'src/shared/enums/tender-status.enum';
@@ -173,6 +174,7 @@ export class LotService extends ExtraCrudService<Lot> {
           items: lot?.items?.map((item) => {
             return {
               ...item,
+              status: ItemStatusEnum.ACTIVE,
               lotId: undefined,
               id: undefined,
             };
