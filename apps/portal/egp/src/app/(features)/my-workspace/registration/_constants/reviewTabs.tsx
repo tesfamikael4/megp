@@ -1,3 +1,5 @@
+import { getDisplayName } from 'next/dist/shared/lib/utils';
+
 export const tab = (countryOfRegistration) => [
   {
     tabValue: 'basic',
@@ -5,11 +7,11 @@ export const tab = (countryOfRegistration) => [
   },
   {
     tabValue: 'address',
-    tabName: 'Address Information',
+    tabName: 'Company Address Information',
   },
   {
     tabValue: 'contactPersons',
-    tabName: 'Contact Persons',
+    tabName: 'Contact Persons Information',
   },
   {
     tabValue: 'businessSizeAndOwnership',
@@ -121,8 +123,7 @@ export const formatColumns = (countryOfRegistration) => ({
         preferential: [
           { name: 'type', displayName: 'Preferential Service' },
           { name: 'certiNumber', displayName: 'Certificate Number' },
-          { name: 'certificateValidityPeriod', displayName: 'Validity Period' },
-          { name: 'certificateIssuedDate', displayName: 'Issued Date' },
+          { name: 'certificateUrl', getDisplayName: 'Attachment' },
         ],
       }
     : {}),

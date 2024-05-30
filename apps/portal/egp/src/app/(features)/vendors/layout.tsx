@@ -1,21 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { JSXElementConstructor, ReactElement } from 'react';
 import { Container } from '@mantine/core';
 import StatsPage from './_components/Stats';
 import VendorListPage from './_components/VendorsList';
 
 const VendorsList = ({
-  stats,
-  vendors,
+  children,
 }: {
-  stats: React.ReactNode;
-  vendors: React.ReactNode;
+  children: ReactElement<any, string | JSXElementConstructor<any>>;
 }) => {
   return (
-    <Container size={'xl'}>
+    <Container size={'xl'} className="mt-4">
       <StatsPage />
-      <VendorListPage />
+      <VendorListPage>{children}</VendorListPage>
     </Container>
   );
 };
