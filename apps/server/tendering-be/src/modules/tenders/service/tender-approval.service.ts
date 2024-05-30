@@ -48,8 +48,9 @@ export class TenderApprovalService {
     if (!tender) {
       throw new BadRequestException('Tender not found');
     }
+    let tenderInvitation = null;
     if (data.status == 'Approved') {
-      await this.generateTenderInvitation(
+      tenderInvitation = await this.generateTenderInvitation(
         { id: tender.id },
         data.ENTITY_MANAGER,
       );
@@ -57,6 +58,7 @@ export class TenderApprovalService {
     await this.tenderRepository.update(
       { id: data.itemId },
       {
+        tenderInvitation,
         status:
           data.status == 'Approved'
             ? TenderStatusEnum.APPROVED
@@ -71,7 +73,7 @@ export class TenderApprovalService {
     input: GenerateTenderDocumentDto,
     manager: EntityManager,
   ) {
-    const tender = await manager.getRepository(Tender).findOne({
+    const tender = await this.tenderRepository.findOne({
       where: {
         id: input.id,
       },
@@ -113,13 +115,10 @@ export class TenderApprovalService {
       BucketNameEnum.TENDERING_DOCUMENT,
     );
 
-    await manager.getRepository(Tender).update(tender.id, {
+    await this.tenderRepository.update(tender.id, {
       tenderInvitation: tenderInvitation as any,
     });
 
-    return {
-      ...tender,
-      tenderInvitation,
-    };
+    return tenderInvitation;
   }
 }
