@@ -7,7 +7,7 @@ import {
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
-import { IGNORE_TENANT_INTERCEPTOR_KEY } from '../decorators';
+import { IGNORE_TENANT_INTERCEPTOR_KEY } from '../decorators/ignore-tenant-interceptor.decorator';
 
 @Injectable()
 export class TenantInterceptor implements NestInterceptor {
@@ -35,11 +35,11 @@ export class TenantInterceptor implements NestInterceptor {
     const organizationId = user.organization?.id;
     const tenantId = user.tenantId + '';
 
-    let query = req.query.q as string;
-
     if (!tenantId && !organizationId) {
       return next.handle();
     }
+
+    let query = req.query.q as string;
 
     if (query == undefined) {
       query = '';
@@ -48,8 +48,9 @@ export class TenantInterceptor implements NestInterceptor {
     const whereExist: boolean = query.includes('w=');
 
     const queryArr = query.split('&');
-    let whereQuery;
-    let whereIndex;
+    let whereQuery: string;
+    let whereIndex: number;
+
     queryArr.map((q, i) => {
       if (q.startsWith('w=')) {
         whereQuery = q;
@@ -83,6 +84,7 @@ export class TenantInterceptor implements NestInterceptor {
     queryArr[whereIndex] = whereQuery;
 
     const finalWhereQuery = queryArr.join('&');
+
     req.query.q = finalWhereQuery;
 
     return next.handle();

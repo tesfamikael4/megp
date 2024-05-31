@@ -23,9 +23,8 @@ export class JwtGuard implements CanActivate {
 
       const request = context.switchToHttp().getRequest();
       const token = this.extractTokenFromHeader(request);
-      const secret = process.env.JWT_ACCESS_TOKEN_SECRET;
 
-      const user = await this.authHelper.verify(token, secret);
+      const user = await this.authHelper.verify(token);
       const { organizations, ...rest } = user;
       let parsedUser: any = rest;
       if (organizations && organizations.length > 0) {

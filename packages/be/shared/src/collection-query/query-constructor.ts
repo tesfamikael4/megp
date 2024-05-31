@@ -1,15 +1,19 @@
 import { ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
 import { CollectionQuery, Order, Where } from './query';
 import { FilterOperators } from './filter_operators';
-import { decodeCollectionQuery, encodeCollectionQuery } from './query-mapper';
 
 const addFilterConditions = (
   op: string,
   value: any,
   queryCondition: string,
   queryParam: string,
+  isArrayField = false,
 ) => {
-  if (
+  if (isArrayField) {
+    return `${queryCondition} :${queryParam}`;
+  } else if (op == FilterOperators.ArrayFilter) {
+    return `${queryCondition} :${queryParam}`;
+  } else if (
     op === FilterOperators.Between &&
     Array.isArray(value) &&
     value.length === 2
@@ -55,8 +59,22 @@ const addFilterConditions = (
   }
 };
 
-const addFilterParams = (op: string, value: any, column: string, acc: any) => {
-  if (
+const addFilterParams = (
+  op: string,
+  value: any,
+  column: string,
+  acc: any,
+  isArrayField = false,
+) => {
+  if (isArrayField) {
+    acc[column] = JSON.stringify([{ [column]: value }]);
+  } else if (op == FilterOperators.ArrayFilter) {
+    if (Array.isArray(value)) {
+      acc[column] = JSON.stringify(value);
+    } else {
+      acc[column] = value;
+    }
+  } else if (
     op === FilterOperators.Between &&
     Array.isArray(value) &&
     value.length === 2
@@ -88,10 +106,26 @@ const applyWhereConditions = <T>(
   for (const [index, conditions] of whereConditions.entries()) {
     const operator = index === 0 ? 'where' : 'andWhere';
 
-    let count = 0;
     queryBuilder[operator]((subQuery) => {
       const orConditions = conditions.map(({ column, value, operator: op }) => {
-        if (column.includes('.')) {
+        if (column.includes('@>')) {
+          const [mainColumn, nestedColumn] = column.split('@>');
+
+          return addFilterConditions(
+            op,
+            value,
+            `${aggregate}."${mainColumn}"@>`,
+            `${nestedColumn}`,
+            true,
+          );
+        } else if (op == FilterOperators.ArrayFilter) {
+          return addFilterConditions(
+            op,
+            value,
+            `${aggregate}."${column}"@>`,
+            `${column}`,
+          );
+        } else if (column.includes('.')) {
           const [relation, field] = column.split('.'); // Assuming "relation.field" format
           if (field.includes('->>')) {
             const [mainColumn, nestedColumn] = field.split('->>');
@@ -130,7 +164,7 @@ const applyWhereConditions = <T>(
               );
             }
           } else {
-            const columnValue = `${column}_${++count}`;
+            const columnValue = `${column}_${index + 1}`;
 
             return addFilterConditions(
               op,
@@ -142,10 +176,14 @@ const applyWhereConditions = <T>(
         }
       });
 
-      count = 0;
       const queryParams = conditions.reduce(
         (acc, { column, value, operator: op }) => {
-          if (column.includes('.')) {
+          if (column.includes('@>')) {
+            const [mainColumn, nestedColumn] = column.split('@>');
+            acc = addFilterParams(op, value, `${nestedColumn}`, acc, true);
+          } else if (op == FilterOperators.ArrayFilter) {
+            acc = addFilterParams(op, value, `${column}`, acc);
+          } else if (column.includes('.')) {
             const [relation, field] = column.split('.');
             if (field.includes('->>')) {
               const [mainColumn, nestedColumn] = field.split('->>');
@@ -172,7 +210,7 @@ const applyWhereConditions = <T>(
               );
             }
           } else {
-            const columnValue = `${column}_${++count}`;
+            const columnValue = `${column}_${index + 1}`;
 
             acc = addFilterParams(op, value, columnValue, acc);
           }
@@ -187,7 +225,9 @@ const applyWhereConditions = <T>(
     });
 
     queryBuilder.expressionMap.wheres =
-      queryBuilder.expressionMap.wheres.filter((f) => f.condition);
+      queryBuilder.expressionMap.wheres.filter(
+        (f) => f.condition && f.condition !== '()',
+      );
   }
 };
 
@@ -197,7 +237,12 @@ const applyOrderBy = <T>(
   orderBy: Order[],
 ) => {
   orderBy.forEach(({ column, direction = 'ASC', nulls }) => {
-    queryBuilder.addOrderBy(`${aggregate}.${column}`, direction, nulls);
+    if (column.includes('.')) {
+      const [relation, field] = column.split('.');
+      queryBuilder.addOrderBy(`${relation}.${field}`, direction, nulls);
+    } else {
+      queryBuilder.addOrderBy(`${aggregate}.${column}`, direction, nulls);
+    }
   });
 };
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { listCommands } from 'docx-templates';
+import { listCommands, createReport } from 'docx-templates';
 
 @Injectable()
 export class DocxService {
@@ -13,5 +13,13 @@ export class DocxService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async generateDocx(template: Buffer, data: any) {
+    const buffer = await createReport({
+      template,
+      data,
+    });
+    return Buffer.from(buffer);
   }
 }

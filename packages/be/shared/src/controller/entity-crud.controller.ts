@@ -49,7 +49,7 @@ export function EntityCrudController<TEntity extends ObjectLiteral>(
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
       const query = decodeCollectionQuery(q);
-      return this.service.findAll(query, req);
+      return this.service.findAll(query);
     }
 
     @Get(':id')
@@ -57,7 +57,7 @@ export function EntityCrudController<TEntity extends ObjectLiteral>(
       @Param('id') id: string,
       @Req() req?: any,
     ): Promise<TEntity | undefined> {
-      return this.service.findOne(id, req);
+      return this.service.findOne(id);
     }
 
     @Put(':id')
@@ -72,12 +72,12 @@ export function EntityCrudController<TEntity extends ObjectLiteral>(
 
     @Delete(':id')
     async softDelete(@Param('id') id: string, @Req() req?: any): Promise<void> {
-      return this.service.softDelete(id, req);
+      return this.service.softDelete(id);
     }
 
     @Patch('restore/:id')
     async restore(@Param('id') id: string, @Req() req?: any): Promise<void> {
-      return this.service.restore(id, req);
+      return this.service.restore(id);
     }
 
     @Get('/archived/items')
@@ -92,7 +92,7 @@ export function EntityCrudController<TEntity extends ObjectLiteral>(
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
       const query = decodeCollectionQuery(q);
-      return this.service.findAllArchived(query, req);
+      return this.service.findAllArchived(query);
     }
   }
 

@@ -11,9 +11,7 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@auth": ["./src/accounts/"],
-      "@collection-query": ["./src/shared/collection-query/"],
-      "@api-data": ["./src/shared/api-data/"],
+      "@auth": ["./src/accounts/"]
     },
     "incremental": true,
     "skipLibCheck": true,
@@ -21,7 +19,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    "noFallthroughCasesInSwitch": false
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }
