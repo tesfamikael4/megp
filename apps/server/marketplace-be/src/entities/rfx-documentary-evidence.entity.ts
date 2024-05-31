@@ -13,19 +13,12 @@ import { EvalResponse } from './eval-response.entity';
 import { SolResponse } from './sol-response.entity';
 import { OpenedResponse } from './opened-response.entity';
 
-@Entity({ name: 'rfx_documentary_evidence' })
+@Entity({ name: 'rfx_documentary_evidences' })
 @Unique(['rfxId', 'documentTitle'])
 @Unique(['rfxId', 'order'])
 export class RfxDocumentaryEvidence extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column()
-  rfxId: string;
-
-  @ManyToOne(() => RFX, (rfx) => rfx.rfxDocumentaryEvidences)
-  @JoinColumn({ name: 'rfxId' })
-  rfx: RFX;
 
   @Column()
   documentTitle: string;
@@ -38,6 +31,13 @@ export class RfxDocumentaryEvidence extends Audit {
 
   @Column({ default: 1 })
   order: number;
+
+  @Column()
+  rfxId: string;
+
+  @ManyToOne(() => RFX, (rfx) => rfx.rfxDocumentaryEvidences)
+  @JoinColumn({ name: 'rfxId' })
+  rfx: RFX;
 
   @OneToMany(
     () => EvalResponse,

@@ -86,11 +86,13 @@ export class EvalItemResponseService extends ExtraCrudService<EvalItemResponse> 
     }
 
     const evaluationItem = this.evalItemResponseRepository.create(itemData);
-    await this.evalItemResponseRepository.upsert(evaluationItem, [
-      'teamMemberId',
-      'rfxProductInvitaitonId',
-      'isTeamAssesment',
-    ]);
+    await this.evalItemResponseRepository.upsert(evaluationItem, {
+      conflictPaths: {
+        isTeamAssessment: true,
+        teamMemberId: true,
+        rfxProductInvitaitonId: true,
+      },
+    });
     return evaluationItem;
   }
 

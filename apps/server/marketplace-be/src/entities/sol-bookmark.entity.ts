@@ -10,18 +10,11 @@ import {
 import { RFX } from './rfx.entity';
 import { ESolBookmarkStatus } from 'src/utils/enums/sol.enum';
 
-@Entity({ name: 'sol_bookmark' })
+@Entity({ name: 'sol_bookmarks' })
 @Unique(['rfxId', 'vendorId'])
 export class SolBookmark extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ type: 'uuid' })
-  rfxId: string;
-
-  @ManyToOne(() => RFX, (rfx) => rfx.solBookmarks)
-  @JoinColumn({ name: 'rfxId' })
-  rfx: RFX;
 
   @Column()
   vendorId: string;
@@ -32,4 +25,11 @@ export class SolBookmark extends Audit {
     default: ESolBookmarkStatus.BOOKMARKED,
   })
   status: string;
+
+  @Column({ type: 'uuid' })
+  rfxId: string;
+
+  @ManyToOne(() => RFX, (rfx) => rfx.solBookmarks)
+  @JoinColumn({ name: 'rfxId' })
+  rfx: RFX;
 }

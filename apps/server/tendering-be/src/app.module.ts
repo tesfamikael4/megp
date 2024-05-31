@@ -19,6 +19,7 @@ import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
 import { EvaluationModule } from './modules/technical-evaluation/technical-evaluation.module';
 import { BiddersComparisonModule } from './modules/bidders/bidders-comparison.module';
 import { ExchangeRateModule } from './modules/utility/exchange-rate/exchange-rate.module';
+import { FormulaModule } from './modules/utility/formula/formula.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ExchangeRateModule } from './modules/utility/exchange-rate/exchange-rat
     EvaluationModule,
     BiddersComparisonModule,
     ExchangeRateModule,
+    FormulaModule,
   ],
   providers: [
     EventEmitterModule,

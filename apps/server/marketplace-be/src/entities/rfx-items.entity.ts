@@ -24,9 +24,6 @@ export class RFXItem extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  rfxId: string;
-
   @Column({ default: false })
   isOpen: boolean;
 
@@ -75,6 +72,9 @@ export class RFXItem extends Audit {
     default: ERfxItemStatus.DRAFT,
   })
   status: ERfxItemStatus;
+
+  @Column()
+  rfxId: string;
 
   @ManyToOne(() => RFX, (rfx) => rfx.items)
   @JoinColumn({ name: 'rfxId' })

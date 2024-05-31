@@ -13,7 +13,7 @@ import { OpenedItemResponse } from './opened-item-response.entity';
 import { SolRegistration } from './sol-registration.entity';
 
 @Entity({ name: 'sol_response_items' })
-@Unique(['rfxItemId', 'vendorId', 'key'])
+@Unique(['rfxItemId', 'solRegistrationId', 'key'])
 export class SolItemResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -30,18 +30,12 @@ export class SolItemResponse extends Audit {
   @Column('uuid')
   rfxItemId: string;
 
-  @Column('uuid')
-  solRegistrationId: string;
-
   @ManyToOne(() => RFXItem, (rfx) => rfx.solItemResponses)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
 
-  @OneToOne(
-    () => OpenedItemResponse,
-    (OpenedItemResponse) => OpenedItemResponse.solItemResponse,
-  )
-  openedItemResponse: OpenedItemResponse;
+  @Column('uuid')
+  solRegistrationId: string;
 
   @ManyToOne(
     () => SolRegistration,
@@ -49,4 +43,10 @@ export class SolItemResponse extends Audit {
   )
   @JoinColumn({ name: 'solRegistrationId' })
   solRegistration: SolRegistration;
+
+  @OneToOne(
+    () => OpenedItemResponse,
+    (OpenedItemResponse) => OpenedItemResponse.solItemResponse,
+  )
+  openedItemResponse: OpenedItemResponse;
 }

@@ -28,6 +28,7 @@ import { SolResponseService } from './services/response.service';
 import { MinIOModule } from 'megp-shared-be';
 import { UtilityModule } from 'src/utils/utils.module';
 import { OpenerSerivice } from '../evaluation/services/opener.service';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 @Module({
   imports: [
@@ -45,6 +46,16 @@ import { OpenerSerivice } from '../evaluation/services/opener.service';
     ]),
     MinIOModule,
     UtilityModule,
+    RabbitMQModule.forRoot(RabbitMQModule, {
+      exchanges: [
+        {
+          name: 'rms',
+          type: 'direct',
+        },
+      ],
+      uri: process.env.RMQ_URL,
+      enableControllerDiscovery: true,
+    }),
   ],
   controllers: [
     SolBookmarkController,

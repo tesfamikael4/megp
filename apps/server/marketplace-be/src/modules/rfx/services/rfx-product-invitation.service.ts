@@ -118,9 +118,9 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
       entityManager.getRepository(RFXItem),
       query,
     )
-      .leftJoin('rfx_items.rfx', 'rfxs')
-      .where('rfxs.id = :rfxId', { rfxId })
-      .andWhere('rfxs.status = :status', { status: ERfxStatus.APPROVED })
+      .leftJoin('rfx_items.rfx', 'rfxes')
+      .where('rfxes.id = :rfxId', { rfxId })
+      .andWhere('rfxes.status = :status', { status: ERfxStatus.APPROVED })
       .leftJoin('rfx_items.rfxProductInvitations', 'rfxProductInvitations')
       .andWhere('rfxProductInvitations.vendorId = :vendorId', {
         vendorId: user.organization.id,
@@ -172,8 +172,8 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
       entityManager.getRepository(RFX),
       query,
     )
-      .where('rfxs.status = :status', { status: ERfxStatus.APPROVED })
-      .leftJoinAndSelect('rfxs.items', 'rfxItems')
+      .where('rfxes.status = :status', { status: ERfxStatus.APPROVED })
+      .leftJoinAndSelect('rfxes.items', 'rfxItems')
       .leftJoinAndSelect(
         'rfxItems.rfxProductInvitations',
         'rfxProductInvitation',
@@ -377,9 +377,9 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
         vendorId: user.organization.id,
       })
       .leftJoinAndSelect('rfx_product_invitations.rfxItem', 'rfxItems')
-      .leftJoin('rfxItems.rfx', 'rfxs')
-      .andWhere('rfxs.id = :rfxId', { rfxId })
-      .andWhere('rfxs.status = :status', { status: ERfxStatus.APPROVED });
+      .leftJoin('rfxItems.rfx', 'rfxes')
+      .andWhere('rfxes.id = :rfxId', { rfxId })
+      .andWhere('rfxes.status = :status', { status: ERfxStatus.APPROVED });
 
     return await this.giveQueryResponse<RfxProductInvitation>(query, dataQuery);
   }

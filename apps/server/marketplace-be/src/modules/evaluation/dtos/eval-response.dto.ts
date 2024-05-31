@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { EvaluationResponse } from 'src/utils/enums';
 
 export class CreateEvalResponseDto {
@@ -24,7 +30,10 @@ export class CreateEvalResponseDto {
   @IsString()
   solRegistrationId: string;
 
+  @ApiProperty()
+  @IsBoolean()
+  isTeamAssessment: boolean;
+
   openedResponseId: string;
   teamMemberId: string;
-  isTeamAssessment: boolean;
 }

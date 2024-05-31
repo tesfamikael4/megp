@@ -41,6 +41,10 @@ import { UtilityModule } from 'src/utils/utils.module';
 import { RfxRevisionApprovalController } from './controllers/rfx-revision-approval.controller';
 import { RfxRevisionApprovalService } from './services/rfx-revision-approval.service';
 import { SolicitationModule } from '../solicitation/solicitation.module';
+import { WorkflowHandlerService } from './services/workflow-handler.service';
+import { WorkflowHandlerController } from './controllers/workflow-handler.controller';
+import { OpenerSerivice } from '../evaluation/services/opener.service';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 @Module({
   imports: [
@@ -61,19 +65,16 @@ import { SolicitationModule } from '../solicitation/solicitation.module';
     MinIOModule,
     UtilityModule,
     SolicitationModule,
-    ClientsModule.register([
-      {
-        name: 'RFX_RMQ_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.RMQ_URL],
-          queue: 'work-plan-initiate',
-          queueOptions: {
-            durable: false,
-          },
+    RabbitMQModule.forRoot(RabbitMQModule, {
+      exchanges: [
+        {
+          name: 'workflow-broadcast-exchanges',
+          type: 'direct',
         },
-      },
-    ]),
+      ],
+      uri: process.env.RMQ_URL,
+      enableControllerDiscovery: true,
+    }),
   ],
   controllers: [
     RfxController,
@@ -88,6 +89,7 @@ import { SolicitationModule } from '../solicitation/solicitation.module';
     RfxDocumentaryEvidenceController,
     RfxRevisionApprovalController,
     DocumentController,
+    WorkflowHandlerController,
   ],
   providers: [
     RfxService,
@@ -101,6 +103,8 @@ import { SolicitationModule } from '../solicitation/solicitation.module';
     RfxProductInvitationService,
     RfxDocumentaryEvidenceService,
     RfxRevisionApprovalService,
+    WorkflowHandlerService,
+    OpenerSerivice,
   ],
 })
 export class RfxModule {}

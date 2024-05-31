@@ -22,18 +22,11 @@ import {
 } from '.';
 import { EvalAssessment } from './eval-assessment.entity';
 
-@Entity({ name: 'sol_registration' })
+@Entity({ name: 'sol_registrations' })
 @Unique(['rfxId', 'vendorId'])
 export class SolRegistration extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ type: 'uuid' })
-  rfxId: string;
-
-  @ManyToOne(() => RFX, (rfx) => rfx.solRegistrations)
-  @JoinColumn({ name: 'rfxId' })
-  rfx: RFX;
 
   @Column()
   vendorId: string;
@@ -53,6 +46,13 @@ export class SolRegistration extends Audit {
     default: ESolRegistrationStatus.REGISTERED,
   })
   status: string;
+
+  @Column({ type: 'uuid' })
+  rfxId: string;
+
+  @ManyToOne(() => RFX, (rfx) => rfx.solRegistrations)
+  @JoinColumn({ name: 'rfxId' })
+  rfx: RFX;
 
   @OneToMany(() => SolOffer, (offers) => offers.solRegistration)
   solOffers: SolOffer[];

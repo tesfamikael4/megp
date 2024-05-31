@@ -20,13 +20,6 @@ export class RfxBidProcedure extends Audit {
   id: string;
 
   @Column()
-  rfxId: string;
-
-  @OneToOne(() => RFX, (rfx) => rfx.rfxBidProcedure)
-  @JoinColumn({ name: 'rfxId' })
-  rfx: RFX;
-
-  @Column()
   bidValidityPeriod: number;
 
   @Column({ type: 'timestamp' })
@@ -58,4 +51,11 @@ export class RfxBidProcedure extends Audit {
 
   @Column({ nullable: true })
   idleTime: number; // in minutes
+
+  @Column()
+  rfxId: string;
+
+  @OneToOne(() => RFX, (rfx) => rfx.rfxBidProcedure)
+  @JoinColumn({ name: 'rfxId' })
+  rfx: RFX;
 }

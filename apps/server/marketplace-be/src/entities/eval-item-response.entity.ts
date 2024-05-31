@@ -17,13 +17,13 @@ import {
 import { TeamMember } from './team-member.entity';
 
 @Entity({ name: 'eval_item_responses' })
-@Unique(['teamMemberId', 'rfxProductInvitaitonId', 'isTeamAssesment'])
+@Unique(['teamMemberId', 'rfxProductInvitaitonId', 'isTeamAssessment'])
 export class EvalItemResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'boolean', default: false })
-  isTeamAssesment: boolean;
+  isTeamAssessment: boolean;
 
   @Column({
     type: 'enum',
@@ -35,27 +35,21 @@ export class EvalItemResponse extends Audit {
   remark: string;
 
   @Column('uuid')
-  openedItemResponseId: string;
-
-  @Column('uuid')
-  rfxProductInvitaitonId: string;
-
-  @Column('uuid')
   teamMemberId: string;
-
-  @Column('uuid')
-  rfxItemId: string;
-
-  @Column('uuid')
-  solRegistrationId: string;
 
   @ManyToOne(() => TeamMember, (team) => team.itemResponseEvaluations)
   @JoinColumn({ name: 'teamMemberId' })
   teamMember: TeamMember;
 
+  @Column('uuid')
+  openedItemResponseId: string;
+
   @ManyToOne(() => OpenedItemResponse, (response) => response.evalItemResponses)
   @JoinColumn({ name: 'openedItemResponseId' })
   openedItemResponse: OpenedItemResponse;
+
+  @Column('uuid')
+  rfxProductInvitaitonId: string;
 
   @ManyToOne(
     () => RfxProductInvitation,
@@ -64,9 +58,15 @@ export class EvalItemResponse extends Audit {
   @JoinColumn({ name: 'rfxProductInvitaitonId' })
   rfxProductInvitation: RfxProductInvitation;
 
+  @Column('uuid')
+  rfxItemId: string;
+
   @ManyToOne(() => RFXItem, (invitation) => invitation.evalItemResponses)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
+
+  @Column('uuid')
+  solRegistrationId: string;
 
   @ManyToOne(
     () => SolRegistration,

@@ -3,10 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { RFX } from './index';
+import { RFX, RfxRevisionApproval } from './index';
 import { Audit } from 'megp-shared-be';
 
 @Entity({ name: 'rfx_procurement_technical_teams' })
@@ -14,9 +15,6 @@ import { Audit } from 'megp-shared-be';
 export class RfxProcurementTechnicalTeam extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column()
-  rfxId: string;
 
   @Column()
   userId: string;
@@ -27,7 +25,16 @@ export class RfxProcurementTechnicalTeam extends Audit {
   @Column()
   isTeamLead: boolean;
 
+  @Column()
+  rfxId: string;
+
   @ManyToOne(() => RFX, (rfx) => rfx.rfxProcurementTechnicalTeams)
   @JoinColumn({ name: 'rfxId' })
   rfx: RFX;
+
+  @OneToMany(
+    () => RfxRevisionApproval,
+    (revisiotn) => revisiotn.rfxProcurementTechnicalTeam,
+  )
+  rfxRevisionApprovals: RfxRevisionApproval[];
 }

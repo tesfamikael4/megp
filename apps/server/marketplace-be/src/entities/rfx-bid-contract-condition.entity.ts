@@ -16,13 +16,6 @@ export class RfxBidContractCondition extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  rfxId: string;
-
-  @OneToOne(() => RFX, (rfx) => rfx.rfxBidContractCondition)
-  @JoinColumn({ name: 'rfxId' })
-  rfx: RFX;
-
   @Column({ default: 0 })
   liquidityDamage: number;
 
@@ -34,4 +27,11 @@ export class RfxBidContractCondition extends Audit {
 
   @Column()
   paymentReleasePeriod: number;
+
+  @Column()
+  rfxId: string;
+
+  @OneToOne(() => RFX, (rfx) => rfx.rfxBidContractCondition)
+  @JoinColumn({ name: 'rfxId' })
+  rfx: RFX;
 }

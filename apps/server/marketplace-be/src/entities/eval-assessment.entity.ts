@@ -13,13 +13,13 @@ import { RFX } from './rfx.entity';
 import { TeamMember } from './team-member.entity';
 
 @Entity({ name: 'eval_assessments' })
-@Unique(['teamMemberId', 'rfxId', 'isTeamAssesment'])
+@Unique(['teamMemberId', 'rfxId', 'isTeamAssessment', 'solRegistrationId'])
 export class EvalAssessment extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'boolean', default: false })
-  isTeamAssesment: boolean;
+  isTeamAssessment: boolean;
 
   @Column({
     type: 'enum',
@@ -33,19 +33,19 @@ export class EvalAssessment extends Audit {
   @Column('uuid')
   teamMemberId: string;
 
-  @Column('uuid')
-  rfxId: string;
+  @ManyToOne(() => TeamMember, (team) => team.evaluationAssessments)
+  @JoinColumn({ name: 'teamMemberId' })
+  teamMember: TeamMember;
 
   @Column('uuid')
-  solRegistrationId: string;
+  rfxId: string;
 
   @ManyToOne(() => RFX, (rfx) => rfx.evaluationAssessments)
   @JoinColumn({ name: 'rfxId' })
   rfx: RFX;
 
-  @ManyToOne(() => TeamMember, (team) => team.evaluationAssessments)
-  @JoinColumn({ name: 'teamMemberId' })
-  teamMember: TeamMember;
+  @Column('uuid')
+  solRegistrationId: string;
 
   @ManyToOne(
     () => SolRegistration,

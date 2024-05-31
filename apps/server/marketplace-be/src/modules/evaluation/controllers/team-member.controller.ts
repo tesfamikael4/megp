@@ -1,5 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   CurrentUser,
   ExtraCrudController,
@@ -26,7 +31,13 @@ export class TeamMemberController extends ExtraCrudController<TeamMember>(
   }
 
   @Get('my-evaluation-list')
-  async getMyEvaluationList(@Query('q') q: string, @CurrentUser() user: any) {
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getMyEvaluationList(@CurrentUser() user: any, @Query('q') q?: string) {
     const query = decodeCollectionQuery(q);
     return await this.teamMemberService.getMyEvaluationList(query, user);
   }
@@ -36,6 +47,12 @@ export class TeamMemberController extends ExtraCrudController<TeamMember>(
     summary: 'List of Vendors for a given RFQ for Evaluation',
     description:
       'Returns isTeamEvaluationCompleted (if isTeamAssessment) and isEvaluationCompleted with the response',
+  })
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
   })
   async getVendorsList(
     @Param('rfxId') rfxId: string,
