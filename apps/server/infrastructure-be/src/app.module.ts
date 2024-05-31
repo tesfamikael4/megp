@@ -16,10 +16,6 @@ import { PaymentGatewayModule } from './modules/payment-gateway/payment-gateway.
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-    }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     MailerModule.forRootAsync({ useClass: EmailConfig }),
     AuthorizationModule,

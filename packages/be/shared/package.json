@@ -1,6 +1,6 @@
 {
   "name": "megp-shared-be",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Shared Package",
   "author": "zolaDO",
   "license": "ISC",
@@ -14,9 +14,6 @@
     "build": "rimraf dist && nest build",
     "dev": "turbo run dev"
   },
-  "workspaces": [
-    "apps/server/*"
-  ],
   "dependencies": {
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
