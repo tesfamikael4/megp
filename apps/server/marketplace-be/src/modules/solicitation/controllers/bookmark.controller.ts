@@ -32,7 +32,7 @@ export class SolBookmarkController extends ExtraCrudController<SolBookmark>(
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
-  async getMyBookmarks(@Query('q') q: string, @Req() req?: any) {
+  async getMyBookmarks(@Query('q') q?: string, @Req() req?: any) {
     const query = decodeCollectionQuery(q);
     return this.solBookmarkService.getMyBookmarks(query, req);
   }
@@ -44,7 +44,7 @@ export class SolBookmarkController extends ExtraCrudController<SolBookmark>(
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
-  async getMyRegistered(@Query('q') q: string, @Req() req?: any) {
+  async getMyRegistered(@Query('q') q?: string, @Req() req?: any) {
     const query = decodeCollectionQuery(q);
     return this.solBookmarkService.getMyRegisteredRfx(query, req);
   }

@@ -1,5 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   ExtraCrudOptions,
   ExtraCrudController,
@@ -32,6 +37,12 @@ export class SolRegistrationController extends ExtraCrudController<SolRegistrati
   @Get('solicitation-status')
   @ApiOperation({
     summary: 'Back-Office Solicitation Status Checks',
+  })
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
   })
   async solicitationStatus(@Query('q') q?: string) {
     const query = decodeCollectionQuery(q);

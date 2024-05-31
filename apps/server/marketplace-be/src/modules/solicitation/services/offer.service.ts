@@ -110,12 +110,14 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     );
 
     const offer = offerRepo.create(itemData);
-    await offerRepo.upsert(offer, [
-      'rfxItemId',
-      'vendorId',
-      'solRoundId',
-      'rfxProductInvitationId',
-    ]);
+    await offerRepo.upsert(offer, {
+      conflictPaths: {
+        rfxItemId: true,
+        solRegistrationId: true,
+        solRoundId: true,
+        rfxProductInvitationId: true,
+      },
+    });
     return offer;
   }
 

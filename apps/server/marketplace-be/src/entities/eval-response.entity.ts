@@ -15,13 +15,13 @@ import { OpenedResponse } from './opened-response.entity';
 import { SolRegistration } from './sol-registration.entity';
 
 @Entity({ name: 'eval_responses' })
-@Unique(['teamMemberId', 'rfxId', 'isTeamAssesment', 'openedResponseId'])
+@Unique(['teamMemberId', 'rfxId', 'isTeamAssessment', 'openedResponseId'])
 export class EvalResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'boolean', default: false })
-  isTeamAssesment: boolean;
+  isTeamAssessment: boolean;
 
   @Column({
     type: 'enum',
@@ -33,35 +33,35 @@ export class EvalResponse extends Audit {
   remark: string;
 
   @Column('uuid')
-  openedResponseId: string;
-
-  @Column('uuid')
-  teamMemberId: string;
-
-  @Column('uuid')
-  rfxId: string;
-
-  @Column('uuid')
   rfxDocumentaryEvidenceId: string;
-
-  @Column('uuid')
-  solRegistrationId: string;
 
   @ManyToOne(() => RfxDocumentaryEvidence, (evidence) => evidence.evalResponses)
   @JoinColumn({ name: 'rfxDocumentaryEvidenceId' })
   rfxDocumentaryEvidence: RfxDocumentaryEvidence;
 
+  @Column('uuid')
+  rfxId: string;
+
   @ManyToOne(() => RFX, (rfx) => rfx.evalResponses)
   @JoinColumn({ name: 'rfxId' })
   rfx: RFX;
+
+  @Column('uuid')
+  teamMemberId: string;
 
   @ManyToOne(() => TeamMember, (team) => team.responseEvaluations)
   @JoinColumn({ name: 'teamMemberId' })
   teamMember: TeamMember;
 
+  @Column('uuid')
+  openedResponseId: string;
+
   @ManyToOne(() => OpenedResponse, (registration) => registration.evalResponses)
   @JoinColumn({ name: 'openedResponseId' })
   openedResponse: OpenedResponse;
+
+  @Column('uuid')
+  solRegistrationId: string;
 
   @ManyToOne(
     () => SolRegistration,

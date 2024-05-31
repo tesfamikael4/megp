@@ -19,13 +19,6 @@ export class SolRound extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid' })
-  rfxId: string;
-
-  @ManyToOne(() => RFX, (rfx) => rfx.solRounds)
-  @JoinColumn({ name: 'rfxId' })
-  rfx: RFX;
-
   @Column()
   round: number;
 
@@ -44,6 +37,13 @@ export class SolRound extends Audit {
     default: ESolRoundStatus.PENDING,
   })
   status: ESolRoundStatus;
+
+  @Column({ type: 'uuid' })
+  rfxId: string;
+
+  @ManyToOne(() => RFX, (rfx) => rfx.solRounds)
+  @JoinColumn({ name: 'rfxId' })
+  rfx: RFX;
 
   @OneToMany(() => SolOffer, (offer) => offer.solRound)
   solOffers: SolOffer[];

@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { ESolBookmarkStatus } from 'src/utils/enums/sol.enum';
 import { ERfxStatus } from 'src/utils/enums';
 import { CreateBookmarkDto } from '../dtos/bookmark.dto';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 @Injectable()
 export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
@@ -20,6 +21,7 @@ export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
     private readonly solBookmarkRepository: Repository<SolBookmark>,
     @InjectRepository(RFX)
     private readonly rfxRepository: Repository<RFX>,
+    private readonly amqpConnection: AmqpConnection,
   ) {
     super(solBookmarkRepository);
   }
@@ -60,16 +62,22 @@ export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
       throw new BadRequestException('Rfx Submission Deadline Passed');
 
     itemData.vendorId = req.user?.organization.id;
-    const register = this.solBookmarkRepository.create(itemData);
+    const boodmarkData = this.solBookmarkRepository.create(itemData);
 
-    await this.solBookmarkRepository.upsert(register, {
+    await this.solBookmarkRepository.upsert(boodmarkData, {
       conflictPaths: {
         rfxId: true,
         vendorId: true,
       },
     });
 
-    return register;
+    const bookmarkEventPayload = {
+      ...boodmarkData,
+      objectType: 'RFX',
+    };
+    this.amqpConnection.publish('rms', 'record-bookmark', bookmarkEventPayload);
+
+    return boodmarkData;
   }
 
   async getMyBookmarks(query: CollectionQuery, req?: any): Promise<any> {

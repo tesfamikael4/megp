@@ -15,17 +15,17 @@ async function bootstrap() {
     cors: true,
   });
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [process.env.RMQ_URL],
+  // app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.RMQ,
+  //   options: {
+  //     urls: [process.env.RMQ_URL],
 
-      queue: 'work-plan-approve',
-      queueOptions: {
-        durable: false,
-      },
-    },
-  });
+  //     queue: 'work-plan-approve',
+  //     queueOptions: {
+  //       durable: false,
+  //     },
+  //   },
+  // });
 
   app.enableCors();
 

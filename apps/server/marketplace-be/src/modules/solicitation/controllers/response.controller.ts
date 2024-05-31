@@ -1,11 +1,6 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import {
-  ExtraCrudOptions,
-  ExtraCrudController,
-  CurrentUser,
-  AllowAnonymous,
-} from 'megp-shared-be';
+import { Controller, Get, Param } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ExtraCrudOptions, ExtraCrudController } from 'megp-shared-be';
 import { SolResponse } from 'src/entities';
 import { SolResponseService } from '../services/response.service';
 import {
@@ -30,6 +25,9 @@ export class SolResponseController extends ExtraCrudController<SolResponse>(
   }
 
   @Get('document/:rfxId/:rfxDocumentaryEvidenceId/:solRegistrationId')
+  @ApiOperation({
+    summary: 'Get the vendor attached document on evaluation step',
+  })
   async getDocument(
     @Param('rfxId') rfxId: string,
     @Param('rfxDocumentaryEvidenceId') rfxDocumentaryEvidenceId: string,
@@ -39,26 +37,6 @@ export class SolResponseController extends ExtraCrudController<SolResponse>(
       rfxId,
       rfxDocumentaryEvidenceId,
       solRegistrationId,
-    );
-  }
-
-  @Get('responses/:rfxId/:vendorId')
-  @AllowAnonymous()
-  async reviewResonses(
-    @Param('rfxId') rfxId: string,
-    @Param('vendorId') vendorId: string,
-  ) {
-    return this.rfxRepsonseItemService.reviewResonses(rfxId, vendorId);
-  }
-
-  @Get('opened-response/:rfxDocumentaryEvidenceId/:vendorId')
-  async openedResponse(
-    @Param('rfxDocumentaryEvidenceId') rfxDocumentaryEvidenceId: string,
-    @Param('vendorId') vendorId: string,
-  ) {
-    return this.rfxRepsonseItemService.getOpenResponseByEvidenceId(
-      rfxDocumentaryEvidenceId,
-      vendorId,
     );
   }
 }

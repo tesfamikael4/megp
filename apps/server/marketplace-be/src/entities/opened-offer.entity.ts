@@ -34,38 +34,36 @@ export class OpenedOffer extends Audit {
   })
   status: ESolOfferStatus;
 
-  // Foreign keys
-  @Column('uuid')
-  solRoundId: string;
-
-  @Column('uuid')
-  rfxProductInvitationId: string;
-
   @Column('uuid')
   rfxItemId: string;
 
-  @Column('uuid')
-  solOfferId: string;
-
-  @Column('uuid')
-  solRegistrationId: string;
-
-  // Relations
   @ManyToOne(() => RFXItem, (rfxItem) => rfxItem.openedOffers)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
+
+  @Column('uuid')
+  solOfferId: string;
 
   @OneToOne(() => SolOffer, (solOffer) => solOffer.openedOffer)
   @JoinColumn({ name: 'solOfferId' })
   solOffer: SolOffer;
 
+  @Column('uuid')
+  solRoundId: string;
+
   @ManyToOne(() => SolRound, (round) => round.openedOffers)
   @JoinColumn({ name: 'solRoundId' })
   solRound: SolRound;
 
+  @Column('uuid')
+  rfxProductInvitationId: string;
+
   @ManyToOne(() => RfxProductInvitation, (round) => round.openedOffers)
   @JoinColumn({ name: 'rfxProductInvitationId' })
   rfxProductInvitation: RfxProductInvitation;
+
+  @Column('uuid')
+  solRegistrationId: string;
 
   @ManyToOne(
     () => SolRegistration,

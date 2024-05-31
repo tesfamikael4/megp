@@ -54,9 +54,9 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
       this.rfxRepository,
       query,
     )
-      .leftJoin('rfxs.rfxBidProcedure', 'rfxBidProcedure')
+      .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedure')
       .where('rfxBidProcedure.openingDate < :now', { now })
-      .leftJoin('rfxs.teamMembers', 'teamMember')
+      .leftJoin('rfxes.teamMembers', 'teamMember')
       .andWhere('teamMember.personnelId = :personnelId', {
         personnelId: user.userId,
       });
@@ -86,31 +86,37 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
     );
 
     dataQuery
-      .andWhere('sol_registration.rfxId = :rfxId', {
+      .andWhere('sol_registrations.rfxId = :rfxId', {
         rfxId,
       })
-      .andWhere('sol_registration.status = :status', {
+      .andWhere('sol_registrations.status = :status', {
         status: ESolBookmarkStatus.REGISTERED,
       })
 
       .loadRelationCountAndMap(
-        'sol_registration.isEvaluationCompleted',
-        'sol_registration.evaluationAssessments',
+        'sol_registrations.isEvaluationCompleted',
+        'sol_registrations.evaluationAssessments',
         'evaluationAssessment',
         (qb) =>
-          qb.where('evaluationAssessment.isTeamAssesment = :isTeamAssesment', {
-            isTeamAssesment: false,
-          }),
+          qb.where(
+            'evaluationAssessment.isTeamAssessment = :isTeamAssessment',
+            {
+              isTeamAssessment: false,
+            },
+          ),
       );
     if (isTeamAssessment)
       dataQuery.loadRelationCountAndMap(
-        'sol_registration.isTeamEvaluationCompleted',
-        'sol_registration.evaluationAssessments',
+        'sol_registrations.isTeamEvaluationCompleted',
+        'sol_registrations.evaluationAssessments',
         'evaluationAssessment',
         (qb) =>
-          qb.where('evaluationAssessment.isTeamAssesment = :isTeamAssesment', {
-            isTeamAssesment: true,
-          }),
+          qb.where(
+            'evaluationAssessment.isTeamAssessment = :isTeamAssessment',
+            {
+              isTeamAssessment: true,
+            },
+          ),
       );
 
     const response = new DataResponseFormat<SolRegistration>();

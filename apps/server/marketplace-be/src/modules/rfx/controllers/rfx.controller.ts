@@ -6,7 +6,7 @@ import {
 } from 'megp-shared-be';
 import { RFX } from 'src/entities';
 import { RfxService } from '../services/rfx.service';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateRFXDto, UpdateRFXDto } from '../dtos/rfx.dto';
 import { EventPattern } from '@nestjs/microservices';
 
@@ -21,7 +21,14 @@ export class RfxController extends EntityCrudController<RFX>(options) {
   constructor(private readonly rfxService: RfxService) {
     super(rfxService);
   }
+
   @Get('closed-rfxs')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
   async closedRfx(@Query('q') q?: string) {
     const query = decodeCollectionQuery(q);
     return await this.rfxService.getClosedRfx(query);
