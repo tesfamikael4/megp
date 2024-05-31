@@ -123,7 +123,6 @@ export const formatColumns = (countryOfRegistration) => ({
         preferential: [
           { name: 'type', displayName: 'Preferential Service' },
           { name: 'certiNumber', displayName: 'Certificate Number' },
-          { name: 'certificateUrl', getDisplayName: 'Attachment' },
         ],
       }
     : {}),
