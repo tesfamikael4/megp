@@ -151,6 +151,12 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   getServiceKey(item) {
     item.service.key == ServiceKeyEnum.IBM;
   }
+  private async deletePendingPreferentialData(userId: string) {
+    await this.ptRepository.createQueryBuilder()
+      .delete()
+      .where({ userId: userId, status: ApplicationStatus.PENDING })
+      .execute();
+  }
   async submitPreferential(
     dtos: CreatePTDto[],
     user: any,
@@ -194,9 +200,15 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
 
     if (!vendor) throw new HttpException('First, Register as a vendor', 404);
 
+    this.deletePendingPreferentialData(user.id);
+
     const serviceIds = dtos.map((item) => item.serviceId);
     const bps = await this.bpService.findBpWithServiceByServiceIds(serviceIds);
+
+
+
     for (const dto of dtos) {
+
       const entity = CreatePTDto.fromDto(dto);
       entity.userId = user.id;
       const wf = bps.find((item: any) => item.serviceId == dto.serviceId);

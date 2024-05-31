@@ -216,7 +216,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             await this.ptService.submitPreferentialWithInitialRegistration(
               data.preferential,
               userInfo,
-              workflowInstance.id,
+              workflowInstance.application.id,
               workflowInstance.applicationNumber,
             );
           }
@@ -693,7 +693,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
     return '';
   }
-  async setProfileSatus(vendorId: string, status: string, vendor: any) {
+  async setProfileStatus(vendorId: string, status: string, vendor: any) {
     try {
       const profile = await this.profileInfoRepository.findOne({
         where: { vendorId: vendorId, status: ApplicationStatus.SUBMITTED },
@@ -839,7 +839,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           await this.invoiceService.update(invoice.id, invoice);
         }
       } else if (row.BpService.key == ServiceKeyEnum.PROFILE_UPDATE) {
-        this.setProfileSatus(command.isrVendorId, command.status, vendor);
+        this.setProfileStatus(command.isrVendorId, command.status, vendor);
       } else if (
         this.commonService
           .getServiceCatagoryKeys(ServiceKeyEnum.PREFERENCTIAL)
@@ -869,7 +869,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         where: { isrVendorId: vendorStatusDto.isrVendorId },
       });
       if (service.key == ServiceKeyEnum.PROFILE_UPDATE) {
-        await this.setProfileSatus(
+        await this.setProfileStatus(
           vendorStatusDto.isrVendorId,
           vendorStatusDto.status,
           vendor,
@@ -881,7 +881,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           where: { instanceId: vendorStatusDto.instanceId },
           relations: { BpService: true },
         });
-
         for (const ba of businessAreas) {
           if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
             ba.status = VendorStatusEnum.APPROVED;

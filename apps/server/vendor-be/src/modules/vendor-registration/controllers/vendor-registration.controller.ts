@@ -60,8 +60,6 @@ export class VendorRegistrationsController {
     return await this.regService.getIsrVendorByUserId(userInfo.id);
   }
 
-
-
   @Get('get-application-status-by-userId')
   async getApplicationStatus(@CurrentUser() userInfo: any) {
     // return await this.regService.getVendorByUserId(userInfo.id);
