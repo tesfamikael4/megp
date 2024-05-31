@@ -16,7 +16,7 @@ import { AllowAnonymous } from 'src/shared/authorization';
 import { ApiTags } from '@nestjs/swagger';
 
 import { TechnicalScoringAssessmentDetailService } from '../service/technical-scoring-assessment-detail.service';
-import { CompleteBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
+import { CompleteScoringBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
 import { GroupMemberGuard } from 'src/shared/authorization/guards/team-member.guard';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 
@@ -91,16 +91,16 @@ export class TechnicalScoringAssessmentDetailController extends ExtraCrudControl
     );
   }
 
-  // @Put('complete-bidder-evaluation')
-  // async completeBidderEvaluation(
-  //   @Body() itemData: CompleteBidderEvaluationDto,
-  //   @Req() req,
-  // ) {
-  //   return await this.technicalScoringAssessmentDetailService.completeBidderEvaluation(
-  //     itemData,
-  //     req,
-  //   );
-  // }
+  @Put('complete-bidder-evaluation')
+  async completeBidderEvaluation(
+    @Body() itemData: CompleteScoringBidderEvaluationDto,
+    @Req() req,
+  ) {
+    return await this.technicalScoringAssessmentDetailService.completeBidderEvaluation(
+      itemData,
+      req,
+    );
+  }
 
   @Get('evaluator-report/:lotId/:itemId/:bidderId')
   async evaluatorReport(
@@ -117,13 +117,13 @@ export class TechnicalScoringAssessmentDetailController extends ExtraCrudControl
     );
   }
 
-  // @Put('submit-checklist')
-  // async submitChecklist(@Body() itemData: any, @Req() req) {
-  //   return await this.technicalScoringAssessmentDetailService.submit(
-  //     itemData,
-  //     req,
-  //   );
-  // }
+  @Put('submit-checklist')
+  async submitChecklist(@Body() itemData: any, @Req() req) {
+    return await this.technicalScoringAssessmentDetailService.submit(
+      itemData,
+      req,
+    );
+  }
 
   // @Get('members-report/:lotId/:itemId/:bidderId/:eqcEvaluationId')
   // async membersReport(
