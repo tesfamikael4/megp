@@ -18,6 +18,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
 import { EvaluationModule } from './modules/technical-evaluation/technical-evaluation.module';
 import { BiddersComparisonModule } from './modules/bidders/bidders-comparison.module';
+import { ExchangeRateModule } from './modules/utility/exchange-rate/exchange-rate.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { BiddersComparisonModule } from './modules/bidders/bidders-comparison.mo
     TeamModule,
     EvaluationModule,
     BiddersComparisonModule,
+    ExchangeRateModule,
   ],
   providers: [
     EventEmitterModule,
