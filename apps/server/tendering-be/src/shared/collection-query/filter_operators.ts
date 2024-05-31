@@ -16,4 +16,5 @@ export const FilterOperators = {
   ILike: 'ILIKE',
   All: 'All',
   NotEqual: 'NotEqual',
+  ArrayFilter: 'ArrayFilter',
 };
