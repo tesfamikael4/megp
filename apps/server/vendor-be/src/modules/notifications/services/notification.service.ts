@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from 'src/entities/notification.entity';
 import { EntityCrudService } from 'src/shared/service';
-import { IsNull, LessThanOrEqual, Not, Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { BusinessAreaEntity, VendorsEntity } from 'src/entities';
 import {
@@ -10,9 +10,7 @@ import {
   FilterOperators,
   QueryConstructor,
 } from 'src/shared/collection-query';
-import { NotificationResponseDto } from '../dto/notification.dto';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 @Injectable()
 export class NotificationsService extends EntityCrudService<Notification> {
   constructor(
@@ -57,7 +55,7 @@ export class NotificationsService extends EntityCrudService<Notification> {
       // );
       const notification: Notification = new Notification();
       notification.content = `Your license is expiring on ${vendor.expireDate}. Please renew it.`;
-      notification.userId = vendor.vendor.metaData.initial.userId;
+      notification.userId = vendor.vendor.userId;
       notification.title = 'Notification of Business Renewal';
       notification.category = "Renewal_Notification";
       this.notificationRepository.insert(notification);
@@ -88,8 +86,12 @@ export class NotificationsService extends EntityCrudService<Notification> {
     const n = Number(process.env.RENEWAL_RENOTIFICATION_INTERVAL ?? 7);
     //for testing purpose notification will be send after 3 days
     const expiryRemainingDays = Number(process.env.EXPIRY_REMAINING_DAYS ?? 363);
-
     const nDaysAgo = new Date(today.getTime() - n * 24 * 60 * 60 * 1000);
+    const notifiedVendors = await this.notificationRepository.createQueryBuilder('notification')
+      .select('notification.userId')
+      .where('(notification.category=:category AND notification.createdAt > :nDaysAgo)', { category: "Renewal_Notification", nDaysAgo: nDaysAgo })
+      .getMany();
+    const userIds = notifiedVendors.map(notification => notification.userId);
     const businessAreas = await this.businessAreaRepository
       .createQueryBuilder('ba')
       .innerJoinAndMapOne(
@@ -98,14 +100,8 @@ export class NotificationsService extends EntityCrudService<Notification> {
         'vendor',
         'vendor.id=ba.vendorId',
       )
-      .leftJoinAndMapOne(
-        'vendor.userId',
-        Notification,
-        'notif',
-        'vendor.userId=notif.userId',
-      )
-      .where('extract(day from ba.expireDate -:today) <=:expiryRemainingDays AND ba.expireDate is not null and notif.id is null', { today: today, expiryRemainingDays: expiryRemainingDays })
-      .orWhere('notif.category=:category AND notif.createdAt < :nDaysAgo', { category: "Renewal_Notification", nDaysAgo: nDaysAgo })
+      .where('extract(day from ba.expireDate -:today) <=:expiryRemainingDays AND ba.expireDate is not null AND vendor.userId NOT IN(:...notifiedVendors)',
+        { today: today, expiryRemainingDays: expiryRemainingDays, notifiedVendors: [...userIds] })
       .getMany();
     return businessAreas;
   }
