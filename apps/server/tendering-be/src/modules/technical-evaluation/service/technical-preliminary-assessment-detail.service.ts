@@ -328,6 +328,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
         where: {
           bidRegistrationDetailId,
           isTeamAssessment: itemData.isTeamAssessment,
+          evaluatorId: itemData.evaluatorId,
         },
       });
 

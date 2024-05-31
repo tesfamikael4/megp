@@ -379,6 +379,7 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
         where: {
           bidRegistrationDetailId,
           isTeamAssessment: itemData.isTeamAssessment,
+          evaluatorId: itemData.evaluatorId,
         },
       });
 

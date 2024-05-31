@@ -424,6 +424,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
           bidRegistrationDetailId,
           isTeamAssessment: itemData.isTeamAssessment,
           itemId: itemData.itemId,
+          evaluatorId: itemData.evaluatorId,
         },
       });
 
