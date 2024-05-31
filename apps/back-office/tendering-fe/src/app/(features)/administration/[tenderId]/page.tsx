@@ -1,5 +1,4 @@
-import { TenderOverView } from './../../opening/_components/tender-overview';
-
+import { TenderOverView } from '../../evaluation/_components/tender-overview';
 import { Team } from './_components/team';
 
 export default function BidAdministrationDetail() {
