@@ -16,13 +16,6 @@ export class ExchangeRateDetail extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid', nullable: true })
-  lotId: string;
-
-  @ManyToOne(() => Lot, (lot) => lot.teams)
-  @JoinColumn({ name: 'lotId' })
-  lot: Lot;
-
   @Column({ type: 'uuid' })
   exchangeRateId: string;
 
