@@ -12,9 +12,7 @@ import { ApiKeyGuard } from './guards/api-key.guard';
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt', property: 'user' }),
-    JwtModule.register({
-      secret: process.env.JWT_ACCESS_TOKEN_SECRET ?? 'MAXWS4Fw5v6Dqvomjz7s',
-    }),
+    JwtModule.register({}),
   ],
   controllers: [],
   providers: [

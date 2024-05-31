@@ -7,8 +7,8 @@ import { randomInt } from 'crypto';
 export class AuthHelper {
   constructor(private readonly jwt: JwtService) {}
 
-  public async verify(token: string) {
-    const decoded: any = this.jwt.verify(token);
+  public async verify(token: string, secret: string) {
+    const decoded: any = this.jwt.verify(token, { secret });
 
     if (!decoded) {
       throw new UnauthorizedException('invalid_token');
