@@ -441,6 +441,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
       .findOne({
         where: {
           bidRegistrationDetailId,
+          evaluatorId: itemData.evaluatorId,
         },
       });
 
