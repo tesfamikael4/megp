@@ -29,12 +29,9 @@ export class ExchangeRate extends OrgAudit {
   )
   exchangeRateDetails: ExchangeRateDetail[];
 
-  @Column()
-  localCurrency: string;
+  @Column({ type: 'timestamp' })
+  dateOfConversion: Date;
 
   @Column()
-  foreignCurrency: string;
-
-  @Column()
-  rate: number;
+  source: string;
 }
