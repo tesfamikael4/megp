@@ -11,6 +11,7 @@ import {
   EntityManager,
   In,
   JsonContains,
+  Not,
   Repository,
 } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
@@ -31,13 +32,14 @@ import {
   SorTechnicalRequirement,
 } from 'src/entities';
 import { TeamMember } from 'src/entities/team-member.entity';
-import { CompleteBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
+import { CompleteScoringBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
 import { TechnicalScoringAssessment } from 'src/entities/technical-scoring-assessments.entity';
 import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 import { DataResponseFormat } from 'src/shared/api-data';
+import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 
 @Injectable()
 export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<TechnicalScoringAssessmentDetail> {
@@ -591,120 +593,146 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
   }
 
   async completeBidderEvaluation(
-    itemData: CompleteBidderEvaluationDto,
+    itemData: CompleteScoringBidderEvaluationDto,
     req: any,
   ) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const assessment = await manager
-      .getRepository(TechnicalScoringAssessment)
-      .findOne({
+      .getRepository(TechnicalScoringAssessmentDetail)
+      .find({
         where: {
-          bidRegistrationDetail: {
-            bidRegistration: {
-              bidderId: itemData.bidderId,
+          technicalScoringAssessment: {
+            bidRegistrationDetail: {
+              bidRegistration: {
+                bidderId: itemData.bidderId,
+              },
+              lotId: itemData.lotId,
             },
-            lotId: itemData.lotId,
+            evaluatorId: req.user.userId,
           },
-          // technicalScoringAssessmentDetail: {
-
-          // },
-          evaluatorId: req.user.userId,
-        },
-        relations: {
-          technicalScoringAssessmentDetail: true,
         },
       });
-    // await manager.getRepository(TechnicalScoringAssessment).update(
-    //   {
-    //     id: assessment.id,
-    //   },
-    //   {
-    //     qualified: EvaluationStatusEnum.COMPLY,
-    //   },
-    // );
+    const root = assessment.find((x) => x.parentId == null);
+    await manager.getRepository(TechnicalScoringAssessment).update(
+      {
+        id: root.technicalScoringAssessmentId,
+      },
+      {
+        totalPoints: root.pointsAwarded,
+      },
+    );
   }
 
-  // async submit(itemData: any, req?: any): Promise<any> {
-  //   const checklist =
-  //     await this.technicalScoringAssessmentDetailRepository.find({
-  //       where: {
-  //         technicalScoringAssessment: {
-  //           bidRegistrationDetail: {
-  //             lotId: itemData.lotId,
-  //             // technicalItems: ArrayContains([itemData.itemId]),
-  //           },
-  //           evaluatorId: req.user.userId,
-  //         },
-  //       },
-  //       relations: {
-  //         technicalScoringAssessment: true,
-  //       },
-  //     });
-  //   if (checklist.length == 0) {
-  //     throw new NotFoundException('Scoring evaluation not started yet');
-  //   }
+  async submit(itemData: any, req?: any): Promise<any> {
+    const checklist =
+      await this.technicalScoringAssessmentDetailRepository.find({
+        where: {
+          technicalScoringAssessment: {
+            bidRegistrationDetail: {
+              lotId: itemData.lotId,
+              // technicalItems: ArrayContains([itemData.itemId]),
+            },
+            evaluatorId: req.user.userId,
+          },
+        },
+        relations: {
+          technicalScoringAssessment: true,
+        },
+      });
+    if (checklist.length == 0) {
+      throw new NotFoundException('Scoring evaluation not started yet');
+    }
 
-  //   const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-  //   await manager.getRepository(TechnicalScoringAssessment).update(
-  //     {
-  //       id: In(checklist.map((list) => list.technicalScoringAssessmentId)),
-  //       isTeamAssessment: itemData.isTeamLead,
-  //     },
-  //     {
-  //       submit: true,
-  //     },
-  //   );
+    const assessments = await manager
+      .getRepository(TechnicalScoringAssessment)
+      .exists({
+        where: {
+          bidRegistrationDetail: {
+            lotId: itemData.lotId,
+            // technicalItems: ArrayContains([itemData.itemId]),
+          },
+          submit: false,
+          evaluatorId: Not(req.user.userId),
+        },
+      });
 
-  //   if (itemData.isTeamLead) {
-  //     await manager.getRepository(TenderMilestone).update(
-  //       {
-  //         lotId: itemData.lotId,
-  //         tenderId: itemData.tenderId,
-  //       },
-  //       {
-  //         isCurrent: false,
-  //       },
-  //     );
-  //     await manager.getRepository(TenderMilestone).insert({
-  //       lotId: itemData.lotId,
-  //       tenderId: itemData.tenderId,
-  //       milestoneNum: TenderMilestoneEnum.TechnicalScoring,
-  //       milestoneTxt: 'TechnicalScoring',
-  //       isCurrent: true,
-  //     });
+    const assessmentCount = await manager
+      .getRepository(TechnicalScoringAssessment)
+      .count({
+        where: {
+          bidRegistrationDetail: {
+            lotId: itemData.lotId,
+            // technicalItems: ArrayContains([itemData.itemId]),
+          },
+        },
+      });
 
-  //     const technicalScoringAssessment = await manager
-  //       .getRepository(TechnicalScoringAssessment)
-  //       .find({
-  //         where: {
-  //           // bidderId: itemData.bidderId,
-  //           isTeamAssessment: true,
-  //           bidRegistrationDetail: {
-  //             lotId: itemData.lotId,
-  //             technicalItems: ArrayContains([itemData.itemId]),
-  //           },
-  //         },
-  //       });
+    const members = await manager.getRepository(TeamMember).count({
+      where: {
+        team: {
+          lotId: itemData.lotId,
+          teamType: TeamRoleEnum.TECHNICAL_EVALUATOR,
+        },
+      },
+    });
 
-  //     const biddersComparison = technicalScoringAssessment.map((list) => {
-  //       return {
-  //         bidRegistrationDetailId: list.bidRegistrationDetailId,
-  //         milestoneNum: TenderMilestoneEnum.TechnicalScoring,
-  //         milestoneTxt: 'TechnicalScoring',
-  //         bidderStatus:
-  //           list.qualified == EvaluationStatusEnum.COMPLY ? 306 : 305,
-  //         bidderStatusTxt:
-  //           list.qualified == EvaluationStatusEnum.COMPLY
-  //             ? 'TechnicalScoringSucceeded'
-  //             : 'TechnicalScoringFailed',
-  //         passFail:
-  //           list.qualified == EvaluationStatusEnum.COMPLY ? true : false,
-  //       };
-  //     });
-  //     await manager.getRepository(BiddersComparison).insert(biddersComparison);
-  //   }
-  // }
+    await manager.getRepository(TechnicalScoringAssessment).update(
+      {
+        id: In(checklist.map((list) => list.technicalScoringAssessmentId)),
+      },
+      {
+        submit: true,
+      },
+    );
+
+    if (!assessments && members == assessmentCount) {
+      await manager.getRepository(TenderMilestone).update(
+        {
+          lotId: itemData.lotId,
+          tenderId: itemData.tenderId,
+        },
+        {
+          isCurrent: false,
+        },
+      );
+      await manager.getRepository(TenderMilestone).insert({
+        lotId: itemData.lotId,
+
+        tenderId: itemData.tenderId,
+        milestoneNum: TenderMilestoneEnum.FinancialCompliance,
+        milestoneTxt: 'FinancialCompliance',
+        isCurrent: true,
+      });
+
+      const technicalScoringAssessment = await manager
+        .getRepository(TechnicalScoringAssessment)
+        .find({
+          where: {
+            // bidderId: itemData.bidderId,
+            bidRegistrationDetail: {
+              lotId: itemData.lotId,
+            },
+          },
+        });
+
+      const biddersComparison = technicalScoringAssessment.map((list) => {
+        return {
+          bidRegistrationDetailId: list.bidRegistrationDetailId,
+          milestoneNum: TenderMilestoneEnum.TechnicalScoring,
+          milestoneTxt: 'TechnicalScoring',
+          bidderStatus: list.totalPoints >= 70 ? 310 : 309,
+          bidderStatusTxt:
+            list.totalPoints >= 70
+              ? 'TechnicalScoringSucceeded'
+              : 'TechnicalScoringFailed',
+          passFail: list.totalPoints >= 70 ? true : false,
+        };
+      });
+      await manager.getRepository(BiddersComparison).insert(biddersComparison);
+    }
+  }
 
   async evaluatorReport(
     lotId: string,
