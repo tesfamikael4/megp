@@ -250,61 +250,88 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
     };
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const evaluatorId = req.user.userId;
-    const [isTeamLead, evaluationChecklist, canTeam, qualificationCount] =
-      await Promise.all([
-        manager.getRepository(TeamMember).exists({
-          where: {
-            team: {
-              tender: {
-                lots: {
-                  id: lotId,
-                },
-              },
-            },
-            personnelId: evaluatorId,
-            isTeamLead: true,
-          },
-        }),
-        manager.getRepository(TechnicalQualificationAssessmentDetail).exists({
-          where: {
-            technicalQualificationAssessment: {
-              bidRegistrationDetail: {
-                lotId,
-              },
-              evaluatorId,
-              submit: false,
-              isTeamAssessment: false,
-            },
-          },
-        }),
-        manager.getRepository(TechnicalQualificationAssessmentDetail).exists({
-          where: {
-            technicalQualificationAssessment: {
-              bidRegistrationDetail: {
-                lotId,
-              },
-              submit: false,
-              isTeamAssessment: false,
-            },
-          },
-        }),
-        manager.getRepository(TechnicalQualificationAssessmentDetail).find({
-          where: {
-            technicalQualificationAssessment: {
-              bidRegistrationDetail: {
-                lotId,
+    const [
+      isTeamLead,
+      evaluationChecklist,
+      canTeam,
+      qualificationDetailCount,
+      qualificationCount,
+      teamMemberCount,
+    ] = await Promise.all([
+      manager.getRepository(TeamMember).exists({
+        where: {
+          team: {
+            tender: {
+              lots: {
+                id: lotId,
               },
             },
           },
-        }),
-      ]);
+          personnelId: evaluatorId,
+          isTeamLead: true,
+        },
+      }),
+      manager.getRepository(TechnicalQualificationAssessmentDetail).exists({
+        where: {
+          technicalQualificationAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+            evaluatorId,
+            submit: false,
+            isTeamAssessment: false,
+          },
+        },
+      }),
+      manager.getRepository(TechnicalQualificationAssessmentDetail).exists({
+        where: {
+          technicalQualificationAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+            submit: false,
+            isTeamAssessment: false,
+          },
+        },
+      }),
+      manager.getRepository(TechnicalQualificationAssessmentDetail).find({
+        where: {
+          technicalQualificationAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+          },
+        },
+      }),
+      manager.getRepository(TechnicalQualificationAssessment).count({
+        where: {
+          bidRegistrationDetail: {
+            lotId,
+          },
+        },
+      }),
+      manager.getRepository(TeamMember).count({
+        where: {
+          team: {
+            tender: {
+              lots: {
+                id: lotId,
+              },
+            },
+          },
+          personnelId: evaluatorId,
+        },
+      }),
+    ]);
     response.isTeamLead.isTeam = isTeamLead;
     response.hasCompleted =
-      qualificationCount.length == 0 ? false : !evaluationChecklist;
-    response.canTeamAssess = qualificationCount.length == 0 ? false : !canTeam;
+      qualificationDetailCount.length == 0 ? false : !evaluationChecklist;
+    response.canTeamAssess =
+      qualificationDetailCount.length == 0 ? false : !canTeam;
+    response.canTeamAssess = teamMemberCount == qualificationCount;
 
     if (isTeamLead) {
-      const [teamCompleted, qualificationCount] = await Promise.all([
+      const [teamCompleted, qualificationDetailCount] = await Promise.all([
         this.technicalQualificationAssessmentDetailRepository.find({
           where: {
             technicalQualificationAssessment: {
@@ -331,7 +358,7 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
       ]);
       if (teamCompleted.length == 0) {
         response.isTeamLead.hasCompleted =
-          qualificationCount.length == 0 ? false : true;
+          qualificationDetailCount.length == 0 ? false : true;
       }
     }
 

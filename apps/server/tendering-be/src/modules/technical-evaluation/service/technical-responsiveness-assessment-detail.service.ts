@@ -299,61 +299,89 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
     };
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const evaluatorId = req.user.userId;
-    const [isTeamLead, evaluationChecklist, canTeam, responsivenessCount] =
-      await Promise.all([
-        manager.getRepository(TeamMember).exists({
-          where: {
-            team: {
-              tender: {
-                lots: {
-                  id: lotId,
-                },
-              },
-            },
-            personnelId: evaluatorId,
-            isTeamLead: true,
-          },
-        }),
-        manager.getRepository(TechnicalResponsivenessAssessmentDetail).exists({
-          where: {
-            technicalResponsivenessAssessment: {
-              bidRegistrationDetail: {
-                lotId,
-              },
-              evaluatorId,
-              submit: false,
-              isTeamAssessment: false,
-            },
-          },
-        }),
-        manager.getRepository(TechnicalResponsivenessAssessmentDetail).exists({
-          where: {
-            technicalResponsivenessAssessment: {
-              bidRegistrationDetail: {
-                lotId,
-              },
-              submit: false,
-              isTeamAssessment: false,
-            },
-          },
-        }),
-        manager.getRepository(TechnicalResponsivenessAssessmentDetail).find({
-          where: {
-            technicalResponsivenessAssessment: {
-              bidRegistrationDetail: {
-                lotId,
+    const [
+      isTeamLead,
+      evaluationChecklist,
+      canTeam,
+      responsivenessDetailCount,
+      scoringCount,
+      teamMemberCount,
+    ] = await Promise.all([
+      manager.getRepository(TeamMember).exists({
+        where: {
+          team: {
+            tender: {
+              lots: {
+                id: lotId,
               },
             },
           },
-        }),
-      ]);
+          personnelId: evaluatorId,
+          isTeamLead: true,
+        },
+      }),
+      manager.getRepository(TechnicalResponsivenessAssessmentDetail).exists({
+        where: {
+          technicalResponsivenessAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+            evaluatorId,
+            submit: false,
+            isTeamAssessment: false,
+          },
+        },
+      }),
+      manager.getRepository(TechnicalResponsivenessAssessmentDetail).exists({
+        where: {
+          technicalResponsivenessAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+            submit: false,
+            isTeamAssessment: false,
+          },
+        },
+      }),
+      manager.getRepository(TechnicalResponsivenessAssessmentDetail).find({
+        where: {
+          technicalResponsivenessAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+          },
+        },
+      }),
+      manager.getRepository(TechnicalResponsivenessAssessment).count({
+        where: {
+          bidRegistrationDetail: {
+            lotId,
+          },
+        },
+      }),
+      manager.getRepository(TeamMember).count({
+        where: {
+          team: {
+            tender: {
+              lots: {
+                id: lotId,
+              },
+            },
+          },
+          personnelId: evaluatorId,
+        },
+      }),
+    ]);
     response.isTeamLead.isTeam = isTeamLead;
     response.hasCompleted =
-      responsivenessCount.length == 0 ? false : !evaluationChecklist;
-    response.canTeamAssess = responsivenessCount.length == 0 ? false : !canTeam;
+      responsivenessDetailCount.length == 0 ? false : !evaluationChecklist;
+    response.canTeamAssess =
+      responsivenessDetailCount.length == 0 ? false : !canTeam;
+
+    response.canTeamAssess = teamMemberCount == scoringCount;
 
     if (isTeamLead) {
-      const [teamCompleted, responsivenessCount] = await Promise.all([
+      const [teamCompleted, responsivenessDetailCount] = await Promise.all([
         this.technicalResponsivenessAssessmentDetailRepository.find({
           where: {
             technicalResponsivenessAssessment: {
@@ -381,7 +409,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       ]);
       if (teamCompleted.length == 0) {
         response.isTeamLead.hasCompleted =
-          responsivenessCount.length == 0 ? false : true;
+          responsivenessDetailCount.length == 0 ? false : true;
       }
     }
 
