@@ -495,6 +495,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
         .findOne({
           where: {
             eqcTechnicalScoringId: treeNode.id,
+            technicalScoringAssessmentId,
           },
         });
       if (parent && !child) {

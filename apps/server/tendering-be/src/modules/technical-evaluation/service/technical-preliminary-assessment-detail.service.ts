@@ -493,59 +493,88 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     };
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const evaluatorId = req.user.userId;
-    const [isTeamLead, evaluationChecklist, canTeam, complianceCount] =
-      await Promise.all([
-        manager.getRepository(TeamMember).exists({
-          where: {
-            team: {
-              tender: {
-                lots: {
-                  id: lotId,
-                },
-              },
-            },
-            personnelId: evaluatorId,
-            isTeamLead: true,
-          },
-        }),
-        manager.getRepository(TechnicalPreliminaryAssessmentDetail).exists({
-          where: {
-            technicalPreliminaryAssessment: {
-              bidRegistrationDetail: {
-                lotId,
-              },
-              evaluatorId,
-              submit: false,
-            },
-          },
-        }),
-        manager.getRepository(TechnicalPreliminaryAssessmentDetail).exists({
-          where: {
-            technicalPreliminaryAssessment: {
-              bidRegistrationDetail: {
-                lotId,
-              },
-              submit: false,
-            },
-          },
-        }),
-        manager.getRepository(TechnicalPreliminaryAssessmentDetail).find({
-          where: {
-            technicalPreliminaryAssessment: {
-              bidRegistrationDetail: {
-                lotId,
+    const [
+      isTeamLead,
+      evaluationChecklist,
+      canTeam,
+      complianceDetailCount,
+      complianceCount,
+      teamMemberCount,
+    ] = await Promise.all([
+      manager.getRepository(TeamMember).exists({
+        where: {
+          team: {
+            tender: {
+              lots: {
+                id: lotId,
               },
             },
           },
-        }),
-      ]);
+          personnelId: evaluatorId,
+          isTeamLead: true,
+        },
+      }),
+      manager.getRepository(TechnicalPreliminaryAssessmentDetail).exists({
+        where: {
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+            evaluatorId,
+            submit: false,
+            isTeamAssessment: false,
+          },
+        },
+      }),
+      manager.getRepository(TechnicalPreliminaryAssessmentDetail).exists({
+        where: {
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+            submit: false,
+            isTeamAssessment: false,
+          },
+        },
+      }),
+      manager.getRepository(TechnicalPreliminaryAssessmentDetail).find({
+        where: {
+          technicalPreliminaryAssessment: {
+            bidRegistrationDetail: {
+              lotId,
+            },
+          },
+        },
+      }),
+      manager.getRepository(TechnicalPreliminaryAssessment).count({
+        where: {
+          bidRegistrationDetail: {
+            lotId,
+          },
+        },
+      }),
+      manager.getRepository(TeamMember).count({
+        where: {
+          team: {
+            tender: {
+              lots: {
+                id: lotId,
+              },
+            },
+          },
+          personnelId: evaluatorId,
+        },
+      }),
+    ]);
     response.isTeamLead.isTeam = isTeamLead;
     response.hasCompleted =
-      complianceCount.length == 0 ? false : !evaluationChecklist;
-    response.canTeamAssess = complianceCount.length == 0 ? false : !canTeam;
+      complianceDetailCount.length == 0 ? false : !evaluationChecklist;
+    response.canTeamAssess =
+      complianceDetailCount.length == 0 ? false : !canTeam;
+    response.canTeamAssess = teamMemberCount == complianceCount;
 
     if (isTeamLead) {
-      const [teamCompleted, complianceCount] = await Promise.all([
+      const [teamCompleted, complianceDetailCount] = await Promise.all([
         this.technicalPreliminaryAssessmentDetailRepository.find({
           where: {
             technicalPreliminaryAssessment: {
@@ -572,7 +601,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
       ]);
       if (teamCompleted.length == 0) {
         response.isTeamLead.hasCompleted =
-          complianceCount.length == 0 ? false : true;
+          complianceDetailCount.length == 0 ? false : true;
       }
     }
 
