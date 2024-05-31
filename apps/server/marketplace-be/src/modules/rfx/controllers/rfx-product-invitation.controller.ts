@@ -11,8 +11,9 @@ import {
   CollectionQuery,
   CurrentUser,
   ExtraCrudController,
+  decodeCollectionQuery,
 } from 'megp-shared-be';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RfxProductInvitation } from 'src/entities/rfx-product-invitation.entity';
 import { RfxProductInvitationService } from '../services/rfx-product-invitation.service';
 import { CreateRfxBidInvitationDto } from '../dtos/rfx-bid-invitaiton.dto';
@@ -61,11 +62,18 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
   }
 
   @Get('my-rfx-invitations/:rfxId')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
   async myRfxInvitations(
-    @Query() query: CollectionQuery,
     @Param('rfxId') rfxId: string,
     @CurrentUser() user: any,
+    @Query('q') q?: string,
   ) {
+    const query = decodeCollectionQuery(q);
     return await this.rfxBidInvitationService.myRfxInvitations(
       rfxId,
       query,
@@ -74,11 +82,18 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
   }
 
   @Get('my-item-invitations/:rfxItemId')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
   async myItemInvitations(
     @Param('rfxItemId') rfxItemId: string,
     @CurrentUser() user: any,
-    @Query() query: CollectionQuery,
+    @Query('q') q?: string,
   ) {
+    const query = decodeCollectionQuery(q);
     return await this.rfxBidInvitationService.myItemInvitations(
       query,
       rfxItemId,
@@ -95,11 +110,18 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
   }
 
   @Get('my-rfx-items/:rfxId')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
   async myRfxItems(
     @Param('rfxId') rfxId: string,
-    @Query() query: CollectionQuery,
     @CurrentUser() user: any,
+    @Query('q') q?: string,
   ) {
+    const query = decodeCollectionQuery(q);
     return await this.rfxBidInvitationService.myRfxItems(query, rfxId, user);
   }
 
@@ -109,10 +131,14 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
   }
 
   @Get('my-invitations')
-  async myInvitations(
-    @Query() query: CollectionQuery,
-    @CurrentUser() user: any,
-  ) {
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async myInvitations(@CurrentUser() user: any, @Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
     return await this.rfxBidInvitationService.myInvitations(query, user);
   }
 

@@ -13,16 +13,16 @@ export class RfxTechnicalRequirement extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'jsonb' })
+  technicalSpecification: any;
+
+  @Column({ type: 'jsonb' })
+  deliverySpecification: any;
+
   @Column()
   rfxItemId: string;
 
   @OneToOne(() => RFXItem, (item) => item.technicalRequirement)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
-
-  @Column({ type: 'jsonb' })
-  technicalSpecification: any;
-
-  @Column({ type: 'jsonb' })
-  deliverySpecification: any;
 }

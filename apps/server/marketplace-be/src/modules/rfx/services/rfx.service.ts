@@ -21,7 +21,6 @@ import { RfxProcurementMechanism } from 'src/entities/rfx-procurement-mechanism.
 import { DataSource, EntityManager, In, Repository } from 'typeorm';
 import { CreateRFXDto, UpdateRFXDto } from '../dtos/rfx.dto';
 import { RfxProductInvitation } from '../../../entities';
-import { ClientProxy } from '@nestjs/microservices';
 import { PdfGeneratorService } from 'src/utils/services/pdf-generator.service';
 import { DocumentService } from 'src/utils/services/document.service';
 import { SolRoundService } from 'src/modules/solicitation/services/round.service';
@@ -30,6 +29,7 @@ import {
   ERfxRevisionApprovalStatusEnum,
   ERfxItemStatus,
 } from 'src/utils/enums';
+import { WorkflowHandlerService } from './workflow-handler.service';
 
 @Injectable()
 export class RfxService extends EntityCrudService<RFX> {
@@ -41,13 +41,12 @@ export class RfxService extends EntityCrudService<RFX> {
     @InjectRepository(RfxBidProcedure)
     private readonly rfxBidProcedureRepository: Repository<RfxBidProcedure>,
     @Inject(REQUEST) private request: Request,
-    @Inject('RFX_RMQ_SERVICE')
-    private readonly rfxRmqClient: ClientProxy,
     private dataSource: DataSource,
     private readonly pdfGeneratorService: PdfGeneratorService,
     private readonly documentService: DocumentService,
     private readonly minIOService: MinIOService,
     private readonly solRoundServuce: SolRoundService,
+    private readonly workflowHandlerService: WorkflowHandlerService,
   ) {
     super(rfxRepository);
   }
@@ -211,9 +210,18 @@ export class RfxService extends EntityCrudService<RFX> {
 
     this.validateRfxOnSubmit(rfx);
 
-    for (let i = 0; i <= 4; i++) {
-      this.initiateWorkflow(rfx);
-    }
+    const rfxPayload = {
+      itemName: rfx.name,
+      id: rfx.id,
+      organizationId: rfx.organizationId,
+      name: 'rfxApproval',
+    };
+
+    this.workflowHandlerService.emitEvent(
+      'workflow-broadcast-exchanges',
+      'workflow.initate.local',
+      rfxPayload,
+    );
 
     rfx.status = ERfxStatus.SUBMITTED;
 
@@ -449,8 +457,8 @@ export class RfxService extends EntityCrudService<RFX> {
     );
 
     dataQuery
-      .andWhere('rfxs.status = :status', { status: ERfxStatus.APPROVED })
-      .leftJoin('rfxs.rfxBidProcedure', 'rfxBidProcedure')
+      .andWhere('rfxes.status = :status', { status: ERfxStatus.APPROVED })
+      .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedure')
       .andWhere('rfxBidProcedure.submissionDeadline < :now', {
         now: new Date(Date.now()),
       });
@@ -627,16 +635,5 @@ export class RfxService extends EntityCrudService<RFX> {
 
     if (!allItemsHaveInvitations)
       throw new BadRequestException('Item invitation has not ended');
-  }
-
-  private initiateWorkflow(rfx: RFX) {
-    const rfxPayload = {
-      itemName: rfx.name,
-      id: rfx.id,
-      organizationId: rfx.organizationId,
-      name: 'rfxApproval',
-    };
-
-    this.rfxRmqClient.emit('initiate-workflow', rfxPayload);
   }
 }

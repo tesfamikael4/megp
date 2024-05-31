@@ -1,5 +1,5 @@
-import { Controller, Get, Param, Patch, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   CurrentUser,
   ExtraCrudController,
@@ -25,7 +25,11 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
     super(evalReponseService);
   }
 
-  @Get('team-members-eval/:rfxDocumentaryEvidenceId')
+  @Get('team-members-eval/:rfxDocumentaryEvidenceId/:solRegistrationId')
+  @ApiOperation({
+    summary:
+      'Get all evaluations for the evaluated document for the team leader to make the team assessment',
+  })
   async getTeamMembersEvaluation(
     @Param('rfxDocumentaryEvidenceId') rfxDocumentaryEvidenceId: string,
     @Param('solRegistrationId') solRegistrationId: string,
@@ -39,14 +43,17 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
   }
 
   @Get('my-response/:rfxId/:rfxDocumentaryEvidenceId/:isTeamAssessment')
+  @ApiOperation({
+    summary: 'Gets my evaluation for vendor for a specific document',
+  })
   async getEvaluation(
-    @Param('rfxId') rfxId: string,
+    @Param('solRegistrationId') solRegistrationId: string,
     @Param('rfxDocumentaryEvidenceId') rfxDocumentaryEvidenceId: string,
     @Param('isTeamAssessment') isTeamAssessment: boolean,
     @CurrentUser() user: any,
   ) {
     return await this.evalReponseService.getEvaluation(
-      rfxId,
+      solRegistrationId,
       rfxDocumentaryEvidenceId,
       isTeamAssessment,
       user,
@@ -54,6 +61,11 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
   }
 
   @Get('can-submit-vendor-eval/:solRegistrationId')
+  @ApiOperation({
+    summary:
+      'Check if the team member can submit vendor evaluation after completeing all documentary evaluations',
+    description: 'enables a button on the frontend',
+  })
   async canSubmitEvaluation(
     @Param('solRegistrationId') solRegistrationId: string,
     @CurrentUser() user: any,
@@ -64,7 +76,11 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
     );
   }
 
-  @Get('submit-vendor-eval/:solRegistrationId/:isTeamAssessment')
+  @Patch('submit-vendor-eval/:solRegistrationId/:isTeamAssessment')
+  @ApiOperation({
+    summary:
+      'Submit vendor evaluation after completeing all documentary evaluations',
+  })
   async submitVendorEvaluation(
     @Param('solRegistrationId') solRegistrationId: string,
     @Param('isTeamAssessment') isTeamAssessment: boolean,
@@ -78,11 +94,16 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
   }
 
   @Get('can-submit-rfx-eval/:rfxId')
+  @ApiOperation({
+    summary:
+      'Check if the team member can submit the RFX evaluation after completeing all vendors evaluations',
+    description: 'enables a button on the frontend',
+  })
   async canSubmitRfxEvaluation(
     @Param('solRegistrationId') solRegistrationId: string,
     @CurrentUser() user: any,
   ) {
-    return await this.evalReponseService.canSubmitVendorEvaluation(
+    return await this.evalReponseService.canSubmitRfxEvaluation(
       solRegistrationId,
       user,
     );

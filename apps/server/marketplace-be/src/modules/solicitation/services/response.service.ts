@@ -91,77 +91,14 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
 
     const item = this.solResponseRepository.create(responseItem);
 
-    await this.solResponseRepository.upsert(item, [
-      'rfxDocumentaryEvidenceId',
-      'vendorId',
-      'rfxId',
-    ]);
+    await this.solResponseRepository.upsert(item, {
+      conflictPaths: {
+        solRegistrationId: true,
+        rfxDocumentaryEvidenceId: true,
+        rfxId: true,
+      },
+    });
     return preSignedResponse;
-  }
-
-  async reviewResonses(rfxId: string, vendorId: string) {
-    // Check Viewing Response is allowed - Date Validation
-
-    const solRegistration = await this.solRegistrationRepository.findOne({
-      where: {
-        rfxId,
-        vendorId,
-      },
-      relations: {
-        solResponses: true,
-      },
-    });
-
-    if (!solRegistration)
-      throw new BadRequestException('Registration Not Found');
-
-    const isPasswordValid = this.encryptionHelperService.checkPasswordValidity(
-      solRegistration,
-      '123456',
-    );
-
-    if (!isPasswordValid) throw new BadRequestException('invalid password');
-
-    const fileInfos = [];
-
-    for (const resp of solRegistration.solResponses) {
-      const fileInfo = this.encryptionHelperService.decryptedData(
-        resp.value,
-        '123456',
-        solRegistration.salt,
-      );
-      const x = JSON.parse(fileInfo);
-      const presignedUrl =
-        await this.minIoService.generatePresignedDownloadUrl(x);
-      fileInfos.push({
-        rfxDocumentaryEvidenceId: resp.rfxDocumentaryEvidenceId,
-        presignedUrl,
-      });
-    }
-
-    return fileInfos;
-  }
-
-  async getOpenResponseByEvidenceId(
-    rfxDocumentaryEvidenceId: string,
-    vendorId: string,
-  ) {
-    const response = await this.openedResponseRepository.findOne({
-      where: {
-        rfxDocumentaryEvidenceId: rfxDocumentaryEvidenceId,
-        vendorId,
-      },
-    });
-
-    if (!response) {
-      throw new BadRequestException('Response Not Found');
-    }
-
-    const presignedUrl = await this.minIoService.generatePresignedDownloadUrl(
-      response.value,
-    );
-
-    return { presignedUrl, response };
   }
 
   async getDocument(

@@ -23,6 +23,7 @@ import {
   ESolBookmarkStatus,
 } from 'src/utils/enums';
 import * as crypto from 'crypto';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 @Injectable()
 export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
@@ -30,6 +31,7 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     @InjectRepository(SolRegistration)
     private readonly solRegistrationRepository: Repository<SolRegistration>,
     private readonly encryptionHelperService: EncryptionHelperService,
+    private readonly amqpConnection: AmqpConnection,
     @Inject(REQUEST) private request: Request,
   ) {
     super(solRegistrationRepository);
@@ -107,8 +109,17 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
       salt,
       response: encryptedData,
     });
-
     await this.solRegistrationRepository.insert(rfxRegistration);
+
+    const registrationEventPayload = {
+      ...rfx,
+      objectType: 'RFX',
+    };
+    this.amqpConnection.publish(
+      'rms',
+      'record-registration',
+      registrationEventPayload,
+    );
 
     return rfxRegistration;
   }
@@ -122,10 +133,10 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     );
 
     dataQuery
-      .andWhere('rfxs.status = :status', { status: ERfxStatus.APPROVED })
+      .andWhere('rfxes.status = :status', { status: ERfxStatus.APPROVED })
       .loadRelationCountAndMap(
-        'rfxs.solRegistrationCount',
-        'rfxs.solRegistrations',
+        'rfxes.solRegistrationCount',
+        'rfxes.solRegistrations',
         'registration',
         (qb) =>
           qb.where('registration.status = :status', {

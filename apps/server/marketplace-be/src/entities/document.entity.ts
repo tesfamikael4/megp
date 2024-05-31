@@ -2,7 +2,7 @@ import { Audit } from 'megp-shared-be';
 import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity({ name: 'documents' })
-@Unique(['key', 'itemId'])
+@Unique(['key', 'itemId', 'version'])
 export class Document extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -16,9 +16,6 @@ export class RfxProductInvitation extends Audit {
   id: string;
 
   @Column()
-  rfxItemId: string;
-
-  @Column()
   productCatalogueId: string;
 
   @Column({ type: 'jsonb' })
@@ -43,15 +40,18 @@ export class RfxProductInvitation extends Audit {
   })
   status: EInvitationStatus;
 
+  @Column()
+  rfxItemId: string;
+
+  @ManyToOne(() => RFXItem, (item) => item.rfxProductInvitations)
+  @JoinColumn({ name: 'rfxItemId' })
+  rfxItem: RFXItem;
+
   @OneToMany(() => SolOffer, (offer) => offer.rfxProductInvitation)
   solOffers: SolOffer[];
 
   @OneToMany(() => OpenedOffer, (offer) => offer.rfxProductInvitation)
   openedOffers: OpenedOffer[];
-
-  @ManyToOne(() => RFXItem, (item) => item.rfxProductInvitations)
-  @JoinColumn({ name: 'rfxItemId' })
-  rfxItem: RFXItem;
 
   @OneToMany(
     () => EvalItemResponse,

@@ -56,7 +56,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         this.evalResponseRepository.count({
           where: {
             rfxId: itemData.rfxId,
-            isTeamAssesment: false,
+            isTeamAssessment: false,
             openedResponse: {
               solRegistrationId: itemData.solRegistrationId,
               // vendorId: itemData.vendorId,
@@ -88,7 +88,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     await this.evalResponseRepository.upsert(evaluationItem, [
       'teamMemberId',
       'rfxId',
-      'isTeamAssesment',
+      'isTeamAssessment',
       'openedResponseId',
     ]);
 
@@ -96,16 +96,16 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
   }
 
   async getEvaluation(
-    rfxId: string,
+    solRegistrationId: string,
     rfxDocumentaryEvidenceId: string,
-    isTeamAssesment: boolean,
+    isTeamAssessment: boolean,
     user: any,
   ) {
     const evaluation = await this.evalResponseRepository.findOne({
       where: {
-        isTeamAssesment,
-        rfxId,
+        isTeamAssessment,
         rfxDocumentaryEvidenceId,
+        solRegistrationId,
         teamMember: {
           personnelId: user.userId,
         },
@@ -176,7 +176,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         this.evalAssessmentRepository.count({
           where: {
             rfxId,
-            isTeamAssesment: false,
+            isTeamAssessment: false,
           },
         }),
       ]);
@@ -211,34 +211,31 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     if (!teamMember) throw new BadRequestException('You are not a team member');
 
     const solRegistration: any = await this.solRegistrationRepository
-      .createQueryBuilder('solRegistration')
-      .where('solRegistration.id = :solRegistrationId', { solRegistrationId })
+      .createQueryBuilder('solRegistrations')
+      .where('solRegistrations.id = :solRegistrationId', { solRegistrationId })
       .loadRelationCountAndMap(
-        'solRegistration.totalResponses',
-        'solRegistration.openedResponses',
+        'solRegistrations.totalResponses',
+        'solRegistrations.openedResponses',
       )
       .loadRelationCountAndMap(
-        'solRegistration.evaluatedResponses',
-        'solRegistration.evalResponses',
+        'solRegistrations.totalItemResponses',
+        'solRegistrations.openedItemResponses',
       )
       .loadRelationCountAndMap(
-        'solRegistration.evaluatedItemResponses',
-        'solRegistration.evalItemResponses',
-      )
-      .loadRelationCountAndMap(
-        'solRegistration.totalItemResponses',
-        'solRegistration.openedItemResponses',
+        'solRegistrations.evaluatedAsessments',
+        'solRegistrations.evaluationAssessments',
+        'eval',
+        (qb) =>
+          qb.where('eval.isTeamAssessment = :isTeamAssessment', {
+            isTeamAssessment: false,
+          }),
       )
       .getOne();
 
-    if (solRegistration.totalResponses != solRegistration.evaluatedResponses)
-      return false;
+    const totalResponses =
+      solRegistration.totalResponses + solRegistration.totalItemResponses;
 
-    if (
-      solRegistration.totalItemResponses !=
-      solRegistration.evaluatedItemResponses
-    )
-      return false;
+    if (totalResponses != solRegistration.evaluatedResponses) return false;
 
     return true;
   }
@@ -261,23 +258,33 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     if (!teamMember) throw new BadRequestException('You are not a team member');
 
     const solRegistration: any = await this.solRegistrationRepository
-      .createQueryBuilder('solRegistration')
-      .where('solRegistration.id = :solRegistrationId', { solRegistrationId })
+      .createQueryBuilder('solRegistrations')
+      .where('solRegistrations.id = :solRegistrationId', { solRegistrationId })
       .loadRelationCountAndMap(
-        'solRegistration.totalResponses',
-        'solRegistration.openedResponses',
+        'solRegistrations.totalResponses',
+        'solRegistrations.openedResponses',
       )
       .loadRelationCountAndMap(
-        'solRegistration.evaluatedResponses',
-        'solRegistration.evalResponses',
+        'solRegistrations.evaluatedResponses',
+        'solRegistrations.evalResponses',
+        'eval',
+        (qb) =>
+          qb.where('eval.isTeamAssessment = :isTeamAssessment', {
+            isTeamAssessment: false,
+          }),
       )
       .loadRelationCountAndMap(
-        'solRegistration.evaluatedItemResponses',
-        'solRegistration.evalItemResponses',
+        'solRegistrations.evaluatedItemResponses',
+        'solRegistrations.evalItemResponses',
+        'evalItem',
+        (qb) =>
+          qb.where('evalItem.isTeamAssessment = :isTeamAssessment', {
+            isTeamAssessment: false,
+          }),
       )
       .loadRelationCountAndMap(
-        'solRegistration.totalItemResponses',
-        'solRegistration.openedItemResponses',
+        'solRegistrations.totalItemResponses',
+        'solRegistrations.openedItemResponses',
       )
       .getOne();
 
@@ -298,7 +305,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     isTeamAssessment: boolean,
     user: any,
   ) {
-    const [teamMember, solRegistration] = await Promise.all([
+    const [teamMember, solRegistration, alreadyEvaluated] = await Promise.all([
       this.teamMemberRepository.findOne({
         where: {
           rfx: {
@@ -318,17 +325,32 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
           evalItemResponses: true,
         },
       }),
+      this.evalAssessmentRepository.exists({
+        where: {
+          isTeamAssessment: isTeamAssessment,
+          solRegistrationId,
+          teamMember: {
+            personnelId: user.userId,
+          },
+        },
+      }),
     ]);
 
     if (!teamMember) throw new BadRequestException('You are not a team member');
 
-    let doesNotComply = false;
-    doesNotComply = solRegistration.evalResponses.some(
+    if (alreadyEvaluated)
+      throw new BadRequestException(
+        'You have already completed this evaluation',
+      );
+
+    const doesNotComplyResponse = solRegistration.evalResponses.some(
       (ev) => ev.qualified === EvaluationResponse.NOT_COMPLY,
     );
-    doesNotComply = solRegistration.evalItemResponses.some(
+    const doesNotComplyItem = solRegistration.evalItemResponses.some(
       (ev) => ev.qualified === EvaluationResponse.NOT_COMPLY,
     );
+
+    const doesNotComply = doesNotComplyItem || doesNotComplyResponse;
 
     const evaluationAssessmentDto: CreateEvalAssessmentDto = {
       isTeamAssessment,

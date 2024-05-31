@@ -14,16 +14,10 @@ import { OpenedResponse } from './opened-response.entity';
 import { RfxDocumentaryEvidence } from './rfx-documentary-evidence.entity';
 
 @Entity({ name: 'sol_responses' })
-@Unique(['rfxId', 'vendorId', 'rfxDocumentaryEvidenceId'])
+@Unique(['rfxId', 'solRegistrationId', 'rfxDocumentaryEvidenceId'])
 export class SolResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column()
-  rfxId: string;
-
-  @Column()
-  solRegistrationId: string;
 
   @Column()
   vendorId: string;
@@ -38,14 +32,20 @@ export class SolResponse extends Audit {
   @JoinColumn({ name: 'rfxDocumentaryEvidenceId' })
   rfxDocumentaryEvidence: RfxDocumentaryEvidence;
 
-  @OneToOne(() => OpenedResponse, (rfx) => rfx.solResponse)
-  openedResponse: OpenedResponse;
+  @Column('uuid')
+  rfxId: string;
 
   @ManyToOne(() => RFX, (rfx) => rfx.openedResponses)
   @JoinColumn({ name: 'rfxId' })
   rfx: RFX;
 
+  @Column('uuid')
+  solRegistrationId: string;
+
   @ManyToOne(() => SolRegistration, (registration) => registration.solResponses)
   @JoinColumn({ name: 'solRegistrationId' })
   solRegistration: SolRegistration;
+
+  @OneToOne(() => OpenedResponse, (rfx) => rfx.solResponse)
+  openedResponse: OpenedResponse;
 }

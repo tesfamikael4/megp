@@ -15,13 +15,6 @@ export class RfxItemDocument extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  rfxItemId: string;
-
-  @OneToOne(() => RFXItem, (rfx) => rfx.rfxItemDocuments)
-  @JoinColumn({ name: 'rfxItemId' })
-  rfxItem: RFXItem;
-
   @Column({ type: 'jsonb', nullable: true })
   fileInfo: any;
 
@@ -30,4 +23,11 @@ export class RfxItemDocument extends Audit {
 
   @Column()
   key: string;
+
+  @Column()
+  rfxItemId: string;
+
+  @OneToOne(() => RFXItem, (rfx) => rfx.rfxItemDocuments)
+  @JoinColumn({ name: 'rfxItemId' })
+  rfxItem: RFXItem;
 }

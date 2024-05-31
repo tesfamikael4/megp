@@ -29,20 +29,15 @@ export class OpenedItemResponse extends Audit {
   @Column({ type: 'jsonb' })
   value: any;
 
-  // Foreign Keys
   @Column('uuid')
   rfxItemId: string;
 
-  @Column('uuid')
-  solItemResponseId: string;
-
-  @Column('uuid')
-  solRegistrationId: string;
-
-  // Relations
   @ManyToOne(() => RFXItem, (rfx) => rfx.openedItemResponses)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
+
+  @Column('uuid')
+  solItemResponseId: string;
 
   @OneToOne(
     () => SolItemResponse,
@@ -50,6 +45,9 @@ export class OpenedItemResponse extends Audit {
   )
   @JoinColumn({ name: 'solItemResponseId' })
   solItemResponse: SolItemResponse;
+
+  @Column('uuid')
+  solRegistrationId: string;
 
   @ManyToOne(
     () => SolRegistration,

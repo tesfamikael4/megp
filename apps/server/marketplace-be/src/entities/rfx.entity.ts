@@ -26,7 +26,7 @@ import { EvalResponse } from './eval-response.entity';
 import { TeamMember } from './team-member.entity';
 import { EvalAssessment } from './eval-assessment.entity';
 
-@Entity({ name: 'rfxs' })
+@Entity({ name: 'rfxes' })
 export class RFX extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -27,20 +27,9 @@ export class OpenedResponse extends Audit {
   @Column({ type: 'jsonb' })
   value: any;
 
-  // Foreign Keys
-  @Column('uuid')
-  rfxId: string;
-
-  @Column('uuid')
-  solResponseId: string;
-
-  @Column('uuid')
-  solRegistrationId: string;
-
   @Column('uuid')
   rfxDocumentaryEvidenceId: string;
 
-  // Relations
   @ManyToOne(
     () => RfxDocumentaryEvidence,
     (evidence) => evidence.openedResponses,
@@ -48,13 +37,22 @@ export class OpenedResponse extends Audit {
   @JoinColumn({ name: 'rfxDocumentaryEvidenceId' })
   rfxDocumentaryEvidence: RfxDocumentaryEvidence;
 
+  @Column('uuid')
+  solResponseId: string;
+
   @OneToOne(() => SolResponse, (solResponse) => solResponse.openedResponse)
   @JoinColumn({ name: 'solResponseId' })
   solResponse: SolResponse;
 
+  @Column('uuid')
+  rfxId: string;
+
   @ManyToOne(() => RFX, (rfx) => rfx.openedResponses)
   @JoinColumn({ name: 'rfxId' })
   rfx: RFX;
+
+  @Column('uuid')
+  solRegistrationId: string;
 
   @ManyToOne(
     () => SolRegistration,
