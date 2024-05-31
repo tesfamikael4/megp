@@ -27,6 +27,7 @@ import { PriceAdjustingFactor } from './price-adjusting-factor.entity';
 import { ExchangeRate } from './exchange-rate.entity';
 import { BidPriceEvaluation } from './bid-price-evaluation.entity';
 import { LotStatusEnum } from 'src/shared/enums/tender-status.enum';
+import { Formula } from './formula.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -133,4 +134,7 @@ export class Lot extends Audit {
     (bidPriceEvaluation) => bidPriceEvaluation.lot,
   )
   bidPriceEvaluations: BidPriceEvaluation[];
+
+  @OneToMany(() => Formula, (formula) => formula.lot)
+  formulas: Formula[];
 }
