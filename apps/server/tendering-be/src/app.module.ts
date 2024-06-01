@@ -20,6 +20,7 @@ import { EvaluationModule } from './modules/technical-evaluation/technical-evalu
 import { BiddersComparisonModule } from './modules/bidders/bidders-comparison.module';
 import { ExchangeRateModule } from './modules/utility/exchange-rate/exchange-rate.module';
 import { FormulaModule } from './modules/utility/formula/formula.module';
+import { FinancialEvaluationModule } from './modules/financial-evaluation/financial-evaluation.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { FormulaModule } from './modules/utility/formula/formula.module';
     BiddersComparisonModule,
     ExchangeRateModule,
     FormulaModule,
+    FinancialEvaluationModule,
   ],
   providers: [
     EventEmitterModule,
