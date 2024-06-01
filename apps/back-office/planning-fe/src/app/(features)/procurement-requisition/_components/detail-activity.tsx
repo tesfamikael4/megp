@@ -1,6 +1,8 @@
-import { Box, Button, Group, Text } from '@mantine/core';
+import { Badge, Box, Button, Group, Text } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 import { useState } from 'react';
+import { DetailTable } from '../../_components/detail-table';
+import { logger } from '@megp/core-fe';
 
 export const DetailActivity = ({
   activity,
@@ -49,28 +51,35 @@ export const DetailActivity = ({
     },
     { key: 'Remark', value: activity.remark },
   ];
+
   const procurementMethod = [
     {
       key: 'Procurement Type',
-      value: activity.postProcurementMechanisms?.[0]?.procurementType,
+      value: activity.postProcurementMechanism?.procurementType,
     },
     {
       key: 'Procurement Method',
-      value: activity.postProcurementMechanisms?.[0]?.procurementMethod,
+      value: activity.postProcurementMechanism?.procurementMethod,
     },
     {
       key: 'Funding Source',
-      value: activity.postProcurementMechanisms?.[0]?.fundingSource,
+      value: activity.postProcurementMechanism?.fundingSource,
     },
     {
       key: 'Procurement Process',
-      value: activity.postProcurementMechanisms?.[0]?.isOnline
-        ? 'Online'
-        : 'Offline',
+      value: activity.postProcurementMechanism?.isOnline ? (
+        <Badge color="green" size="xs">
+          Online
+        </Badge>
+      ) : (
+        <Badge color="red" size="xs">
+          Offline
+        </Badge>
+      ),
     },
     {
       key: 'Supplier Target Group',
-      value: activity.postProcurementMechanisms?.[0]?.targetGroup?.join(', '),
+      value: activity.postProcurementMechanism?.targetGroup?.join(', '),
     },
   ];
 
@@ -81,56 +90,22 @@ export const DetailActivity = ({
           {!hideMethods && (
             <Text className="font-semibold mb-2">Identification</Text>
           )}
-          <DataTable
-            withColumnBorders
-            withTableBorder
-            records={activityIdentification}
-            columns={[
-              {
-                accessor: 'key',
-                width: 200,
-                cellsStyle: () => ({
-                  background: '#DCE8F2',
-                }),
-              },
-              {
-                accessor: 'value',
-                cellsStyle: () => ({
-                  background: 'white',
-                }),
-              },
-            ]}
-            noHeader
-          />
+          <Box className="bg-white p-5" pos="relative">
+            <Text className="font-semibold mb-2">Definition</Text>
+
+            <DetailTable data={activityIdentification} />
+          </Box>
         </>
       )}
 
       {!hideMethods && (
         <>
           {!hideIdentifications && (
-            <Text className="font-semibold my-2">Procurement Methods</Text>
+            <>
+              <Text className="font-semibold my-2">Procurement Methods</Text>
+              <DetailTable data={procurementMethod} />
+            </>
           )}
-          <DataTable
-            withColumnBorders
-            withTableBorder
-            records={procurementMethod}
-            columns={[
-              {
-                accessor: 'key',
-                width: 200,
-                cellsStyle: () => ({
-                  background: '#DCE8F2',
-                }),
-              },
-              {
-                accessor: 'value',
-                cellsStyle: () => ({
-                  background: 'white',
-                }),
-              },
-            ]}
-            noHeader
-          />
         </>
       )}
       {showMore && (

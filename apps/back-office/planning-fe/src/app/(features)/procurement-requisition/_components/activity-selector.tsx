@@ -18,8 +18,8 @@ import { useAuth } from '@megp/auth';
 
 export const ActivitySelector = () => {
   const [selected, setSelected] = useState<any | any[]>([]);
-  const { user } = useAuth();
 
+  const { user } = useAuth();
   const [selectedBudgetYear, setSelectedBudgetYear] = useState<
     string | undefined
   >();
@@ -142,7 +142,7 @@ export const ActivitySelector = () => {
             [
               {
                 column: 'postBudgetRequisitioners.userId',
-                value: `${user?.organizations?.[0]?.userId}`, //todo: will replace with ${user?.id}
+                value: `${user?.organizations?.[0]?.userId}`,
                 operator: '=',
               },
             ],
