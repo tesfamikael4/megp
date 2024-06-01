@@ -25,7 +25,7 @@ import { EqcDocumentaryEvidence } from './eqc-documentary-evidence.entity';
 import { TenderMilestone } from './tender-milestone.entity';
 import { PriceAdjustingFactor } from './price-adjusting-factor.entity';
 import { ExchangeRate } from './exchange-rate.entity';
-import { BidPriceEvaluation } from './bid-price-evaluation.entity';
+import { FinancialBidPriceAssessment } from './financial-bid-price-assessment.entity';
 import { LotStatusEnum } from 'src/shared/enums/tender-status.enum';
 import { FormulaUnit } from './formula-unit.entity';
 
@@ -130,10 +130,10 @@ export class Lot extends Audit {
   exchangeRates: ExchangeRate[];
 
   @OneToMany(
-    () => BidPriceEvaluation,
-    (bidPriceEvaluation) => bidPriceEvaluation.lot,
+    () => FinancialBidPriceAssessment,
+    (financialBidPriceAssessments) => financialBidPriceAssessments.lot,
   )
-  bidPriceEvaluations: BidPriceEvaluation[];
+  financialBidPriceAssessments: FinancialBidPriceAssessment[];
 
   @OneToMany(() => FormulaUnit, (formulaUnit) => formulaUnit.lot)
   formulaUnits: FormulaUnit[];

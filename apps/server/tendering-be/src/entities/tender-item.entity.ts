@@ -19,7 +19,7 @@ import { SorDocument } from './sor-document.entity';
 import { BidResponseItem } from './bid-response-item.entity';
 import { OpenedBidResponseItem } from './opened-bid-response-item.entity';
 import { PriceAdjustingFactor } from './price-adjusting-factor.entity';
-import { BidPriceEvaluation } from './bid-price-evaluation.entity';
+import { FinancialBidPriceAssessment } from './financial-bid-price-assessment.entity';
 import { ItemStatusEnum } from 'src/shared/enums/tender-status.enum';
 
 @Entity({ name: 'items' })
@@ -123,8 +123,8 @@ export class Item extends Audit {
   priceAdjustingFactors: PriceAdjustingFactor[];
 
   @OneToMany(
-    () => BidPriceEvaluation,
-    (bidPriceEvaluation) => bidPriceEvaluation.item,
+    () => FinancialBidPriceAssessment,
+    (financialBidPriceAssessments) => financialBidPriceAssessments.item,
   )
-  bidPriceEvaluations: BidPriceEvaluation[];
+  financialBidPriceAssessments: FinancialBidPriceAssessment[];
 }
