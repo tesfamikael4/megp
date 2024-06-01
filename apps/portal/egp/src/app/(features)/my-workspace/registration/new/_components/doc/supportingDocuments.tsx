@@ -39,7 +39,7 @@ export default function SupportingDocuments() {
   const check = (key: string) =>
     docInfo.data?.preferential.some(
       (preflll: PreferentialTreatment) => preflll.category === key,
-    );
+    ) && docInfo.data?.basic.countryOfRegistration === 'Malawi';
   const supportingDocumentsSchema = z.object({
     businessRegistration_IncorporationCertificate: z
       .instanceof(File)
@@ -193,6 +193,8 @@ export default function SupportingDocuments() {
   if (requestInfo.data?.supportingDocuments === null || requestInfo.isError) {
     return null;
   }
+
+  console.log(formState.errors);
 
   return (
     <Flex className="w-full flex-col gap-2">
