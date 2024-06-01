@@ -23,7 +23,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { IconChevronDown, IconChevronUp, IconCoins } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -31,7 +31,7 @@ import { StatisticCard } from './statistic-card';
 import { useLazyGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import { useCanSubmitQuery } from '@/store/api/workflow/workflow.api';
 import { useLazyGetApprovalDocumentsQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
-
+import { useListByIdQuery } from '../_api/mechanization.api';
 const PrTab = () => {
   const badgeColor = {
     Draft: 'yellow',
@@ -48,7 +48,49 @@ const PrTab = () => {
   const router = useRouter();
 
   const { data: pr } = useReadQuery(id?.toString());
-  const [triggerAnalytics, { data: analytics }] = useLazyGetAnalyticsQuery();
+
+  const { data: mechanism } = useListByIdQuery({
+    id: id?.toString(),
+    collectionQuery: undefined,
+  });
+
+  const msmeGroups = [
+    'Medium Enterprises',
+    'Small Enterprises',
+    'Micro Enterprises',
+  ];
+  const marginalizedGroups = ['Marginalized Group'];
+  const ibmGroup = ['IBM'];
+  const othersGroup = ['Others'];
+
+  // Initialize counts
+  let countIbM = 0;
+  let countMsme = 0;
+  let countMarginalized = 0;
+  let countOthers = 0;
+
+  const selectedTargetGroups = mechanism?.items?.[0]?.targetGroup;
+
+  const totalSelected = selectedTargetGroups?.length;
+
+  // Count the occurrences of each category
+  selectedTargetGroups?.forEach((group) => {
+    if (msmeGroups?.includes(group)) {
+      countMsme += 1;
+    } else if (marginalizedGroups.includes(group)) {
+      countMarginalized += 1;
+    } else if (ibmGroup?.includes(group)) {
+      countIbM += 1;
+    } else if (othersGroup?.includes(group)) {
+      countOthers += 1;
+    }
+  });
+
+  // Calculate percentages
+  const percentageIbM = (countIbM / totalSelected) * 100;
+  const percentageMsme = (countMsme / totalSelected) * 100;
+  const percentageMarginalized = (countMarginalized / totalSelected) * 100;
+  const percentageOthers = (countOthers / totalSelected) * 100;
 
   const { data: canSubmit } = useCanSubmitQuery('procurementRequisition');
 
@@ -109,10 +151,6 @@ const PrTab = () => {
   useEffect(() => {
     if ((pr as any)?.status == 'DRAFT') getApprovalDocuments(id);
   }, [id, getApprovalDocuments, pr]);
-
-  useEffect(() => {
-    triggerAnalytics(id.toString());
-  }, [id]);
 
   return (
     <Box>
@@ -178,7 +216,7 @@ const PrTab = () => {
               <Flex align="flex-center" justify={'start'}>
                 <StatisticCard
                   title="IBM"
-                  value={pr?.targetGroupPercentages?.IBM ?? 0}
+                  value={percentageIbM.toFixed(2) ?? 0}
                   minValue={50}
                   type="targetGroup"
                 />
@@ -197,22 +235,19 @@ const PrTab = () => {
               <Flex>
                 <StatisticCard
                   title="MSME"
-                  value={analytics?.targetGroupPercentages?.MSME ?? 0}
+                  value={percentageMsme.toFixed(2) ?? 0}
                   minValue={50}
                   type="targetGroup"
                 />
                 <StatisticCard
                   title="Marginalized Group"
-                  value={
-                    analytics?.targetGroupPercentages?.['Marginalized Group'] ??
-                    0
-                  }
+                  value={percentageMarginalized.toFixed(2) ?? 0}
                   minValue={50}
                   type="targetGroup"
                 />
                 <StatisticCard
                   title="Others"
-                  value={analytics?.targetGroupPercentages?.Others ?? 0}
+                  value={percentageOthers.toFixed(2) ?? 0}
                   minValue={50}
                   type="targetGroup"
                 />
@@ -228,19 +263,13 @@ const PrTab = () => {
                     Total Calculated Amount
                   </Text>
 
-                  <Text className="font-semibold  text-end">
-                    {Object.keys(pr?.calculatedAmount ?? {}) && (
-                      <Text className="font-semibold  text-end">
-                        {pr?.calculatedAmount?.toLocaleString('en-US', {
-                          style: 'currency',
-                          currency: pr?.currency,
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                          currencyDisplay: 'code',
-                        })}
-                      </Text>
-                    )}
-                  </Text>
+                  {parseInt(pr?.calculatedAmount)?.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: pr?.currency,
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                    currencyDisplay: 'code',
+                  })}
                 </Box>
               </Flex>
             </Box>

@@ -60,6 +60,9 @@ export const administrationApi = createApi({
     getDonors: builder.query<any, any>({
       query: () => `donors`,
     }),
+    readDonor: builder.query<any, string>({
+      query: (id) => `donors/${id}`,
+    }),
   }),
 });
 
@@ -77,4 +80,6 @@ export const {
   useLazyGetClassificationPathQuery,
   useGetClassificationPathQuery,
   useGetDonorsQuery,
+
+  useLazyReadDonorQuery,
 } = administrationApi;

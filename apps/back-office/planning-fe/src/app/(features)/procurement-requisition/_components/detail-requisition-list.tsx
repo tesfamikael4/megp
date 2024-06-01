@@ -1,11 +1,20 @@
 import { Badge, Box, Text } from '@mantine/core';
 import { DetailTable } from '../../_components/detail-table';
+import { useLazyReadDonorQuery } from '@/store/api/administration/administration.api';
+import { useEffect } from 'react';
 
 export const DetailRequisition = ({ requisition }: { requisition: any }) => {
   const tempMethod =
     requisition.procurementMechanisms !== null
       ? requisition.procurementMechanisms
       : undefined;
+
+  const [trigger, { data: donor }] = useLazyReadDonorQuery();
+
+  useEffect(() => {
+    tempMethod?.donor[0] && trigger(tempMethod.donor[0]);
+  }, [tempMethod?.donor?.[0]]);
+
   const data = [
     {
       key: 'Reference',
@@ -79,7 +88,7 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
         },
         {
           key: 'Donor',
-          value: tempMethod.donor[0] ?? '',
+          value: donor?.name ?? '',
         },
       ]
     : [];
