@@ -6,7 +6,9 @@ import { ExpressionBuilder } from './expression-builder';
 import { ZodType, z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { logger } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
+import { useCreateRuleEquationMutation } from '@/store/api/tendering/bid-price-evaluation';
+import { useParams } from 'next/navigation';
 
 const ruleSchema: ZodType<any> = z.object({
   label: z.string({
@@ -20,9 +22,9 @@ export const RulesModal = () => {
     resolver: zodResolver(ruleSchema),
   });
   const rulesList = [
-    { name: 'Tax', id: 1 },
-    { name: 'Vat', id: 2 },
-    { name: 'Preferential Margin', id: 3 },
+    'Tax',
+    'Vat',
+    'Preferential Margin',
     // { name: 'Rule 4', id: 4 },
   ];
   const expressions = [
@@ -33,11 +35,17 @@ export const RulesModal = () => {
     },
   ];
   const [rule, setRule] = useState<any | undefined>(undefined);
+  const { lotId } = useParams();
 
-  const onSubmit = (data) => {
+  ///rtk
+  const [createRule, { isLoading }] = useCreateRuleEquationMutation();
+
+  const onSubmit = async (data) => {
     const castedData = {
-      ...data,
-      formula: data.formula
+      // ...data,
+      name: data.label,
+      lotId,
+      representation: data.formula
         .map((f) => {
           if (['(', ')', '*', '-', '+'].includes(f) || Number(f)) {
             return f;
@@ -48,7 +56,16 @@ export const RulesModal = () => {
         })
         .join(' '),
     };
-    logger.log({ castedData });
+    try {
+      await createRule(castedData).unwrap();
+      notify('Success', 'Created successfully');
+    } catch (err) {
+      if (err.status === 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong');
+      }
+    }
   };
   return (
     <>
@@ -61,17 +78,14 @@ export const RulesModal = () => {
             value={value}
             label="Select Rule "
             withAsterisk
-            data={rulesList.map((rule) => ({
-              label: rule.name,
-              value: rule.id.toString(),
-            }))}
+            data={rulesList}
             onChange={(val, option) => {
               if (val == null) {
                 onChange(null);
                 setRule(undefined);
               } else {
                 onChange(val);
-                setRule({ name: option.label, id: option.value });
+                setRule(val);
               }
             }}
           />
@@ -93,7 +107,9 @@ export const RulesModal = () => {
           />
 
           <Group justify="end" className="mt-2">
-            <Button onClick={handleSubmit(onSubmit)}>Save</Button>
+            <Button onClick={handleSubmit(onSubmit)} loading={isLoading}>
+              Save
+            </Button>
           </Group>
         </Box>
       )}
