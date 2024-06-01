@@ -12,22 +12,22 @@ import { Lot } from './lot.entity';
 import { ExchangeRateDetail } from './exchange-rate-detail.entity';
 import { Item } from './tender-item.entity';
 
-@Entity({ name: 'bid_price_evaluations' })
-export class BidPriceEvaluation extends OrgAudit {
+@Entity({ name: 'financial_bid_price_assessments' })
+export class FinancialBidPriceAssessment extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'uuid' })
   lotId: string;
 
-  @ManyToOne(() => Lot, (lot) => lot.bidPriceEvaluations)
+  @ManyToOne(() => Lot, (lot) => lot.financialBidPriceAssessments)
   @JoinColumn({ name: 'lotId' })
   lot: Lot;
 
   @Column({ type: 'uuid' })
   itemId: string;
 
-  @ManyToOne(() => Item, (item) => item.bidPriceEvaluations)
+  @ManyToOne(() => Item, (item) => item.financialBidPriceAssessments)
   @JoinColumn({ name: 'itemId' })
   item: Item;
 
