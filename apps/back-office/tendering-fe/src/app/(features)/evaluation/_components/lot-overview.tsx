@@ -31,15 +31,18 @@ import { useEffect, useState } from 'react';
 export const LotOverview = ({
   basePath,
   teamAssessment = false,
+  hideComplete = false,
   milestone,
 }: {
   basePath: string;
   teamAssessment?: boolean;
+  hideComplete?: boolean;
   milestone:
     | 'technicalCompliance'
     | 'technicalQualification'
     | 'technicalResponsiveness'
-    | 'technicalScoring';
+    | 'technicalScoring'
+    | 'financial';
 }) => {
   const { tenderId, lotId } = useParams();
   const router = useRouter();
@@ -169,6 +172,7 @@ export const LotOverview = ({
         action={
           <Group gap="md">
             {milestone !== 'technicalScoring' &&
+              milestone !== 'financial' &&
               lotStatus?.isTeamLead?.isTeam && (
                 <Button
                   variant="outline"
@@ -209,24 +213,26 @@ export const LotOverview = ({
                   {teamAssessment ? 'Personal Assessment' : 'Team Assessment'}
                 </Button>
               )}
-            <Button
-              onClick={onSubmit}
-              loading={
-                isPreliminaryLoading ||
-                isQualificationLoading ||
-                isResponsivenessLoading ||
-                isScoringLoading
-              }
-              disabled={
-                milestone === 'technicalScoring'
-                  ? false
-                  : teamAssessment
-                    ? lotStatus?.isTeamLead?.hasCompleted ?? true
-                    : lotStatus?.hasCompleted ?? true
-              }
-            >
-              Complete
-            </Button>
+            {!hideComplete && (
+              <Button
+                onClick={onSubmit}
+                loading={
+                  isPreliminaryLoading ||
+                  isQualificationLoading ||
+                  isResponsivenessLoading ||
+                  isScoringLoading
+                }
+                disabled={
+                  milestone === 'technicalScoring'
+                    ? false
+                    : teamAssessment
+                      ? lotStatus?.isTeamLead?.hasCompleted ?? true
+                      : lotStatus?.hasCompleted ?? true
+                }
+              >
+                Complete
+              </Button>
+            )}
           </Group>
         }
       >
