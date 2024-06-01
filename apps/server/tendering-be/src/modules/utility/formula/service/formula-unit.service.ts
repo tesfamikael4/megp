@@ -32,7 +32,7 @@ export class FormulaUnitService extends ExtraCrudService<FormulaUnit> {
     const formulaUnit = await this.findOneOrFail(formulaUnitId);
 
     const availableFormulaUnitSet = await this.getAvailableFormulaUnitSet(
-      formulaUnit.formulaId,
+      formulaUnit.lotId,
     );
 
     try {
@@ -77,7 +77,7 @@ export class FormulaUnitService extends ExtraCrudService<FormulaUnit> {
     const originalFormulaUnit = await this.findOneOrFail(id);
 
     const availableFormulaUnitSet = await this.getAvailableFormulaUnitSet(
-      originalFormulaUnit.formulaId,
+      originalFormulaUnit.lotId,
     );
 
     try {
@@ -100,7 +100,7 @@ export class FormulaUnitService extends ExtraCrudService<FormulaUnit> {
     const formulaUnit = await this.findOneOrFail(id);
 
     const availableFormulaUnitSet = await this.getAvailableFormulaUnitSet(
-      formulaUnit.formulaId,
+      formulaUnit.lotId,
     );
 
     try {
@@ -119,8 +119,8 @@ export class FormulaUnitService extends ExtraCrudService<FormulaUnit> {
     return formulaUnit;
   }
 
-  async findByGroup(formulaId: string): Promise<FormulaUnit[]> {
-    return this.formulaUnitRepository.find({ where: { formulaId } });
+  async findByGroup(lotId: string): Promise<FormulaUnit[]> {
+    return this.formulaUnitRepository.find({ where: { lotId } });
   }
 
   async getAvailableFormulaUnitSet(

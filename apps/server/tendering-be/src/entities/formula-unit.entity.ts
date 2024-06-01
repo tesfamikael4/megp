@@ -7,10 +7,10 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { OrgAudit } from 'src/shared/entities';
-import { Formula } from './formula.entity';
+import { Lot } from './lot.entity';
 
 @Entity({ name: 'formula_units' })
-@Unique(['formulaId', 'name'])
+@Unique(['lotId', 'name'])
 export class FormulaUnit extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -21,10 +21,17 @@ export class FormulaUnit extends OrgAudit {
   @Column()
   representation: string;
 
-  @Column()
-  formulaId: string;
+  @Column({ type: 'uuid' })
+  lotId: string;
 
-  @ManyToOne(() => Formula, (formula) => formula.formulaUnits)
-  @JoinColumn({ name: 'formulaId' })
-  formula: Formula;
+  @ManyToOne(() => Lot, (lot) => lot.formulaUnits)
+  @JoinColumn({ name: 'lotId' })
+  lot: Lot;
+
+  // @Column()
+  // formulaId: string;
+
+  // @ManyToOne(() => Formula, (formula) => formula.formulaUnits)
+  // @JoinColumn({ name: 'formulaId' })
+  // formula: Formula;
 }
