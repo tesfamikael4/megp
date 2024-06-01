@@ -355,6 +355,30 @@ export function Items({
         )}
         {(data.length != 0 || newItems.length === 0) && (
           <Box pos={'relative'}>
+            <Flex direction="column" align="end">
+              <Group>
+                <Text size="sm">Cal Amount:</Text>
+                {parseInt(pr?.calculatedAmount)?.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: pr?.currency,
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                  currencyDisplay: 'code',
+                })}
+              </Group>
+
+              <Group>
+                <Text size="sm">Est Amount:</Text>
+
+                {parseInt(pr?.totalEstimatedAmount)?.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: pr?.currency,
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                  currencyDisplay: 'code',
+                })}
+              </Group>
+            </Flex>
             <LoadingOverlay visible={itemLoading} />
             {!activityId && (
               <Text className="text-lg" fw="500">

@@ -143,8 +143,9 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
         opened={opened}
         size={mode == 'tree' ? '75%' : 'lg'}
         onClose={close}
+        pb={10}
       >
-        <Box>
+        <Box className="pb-4">
           {mode == 'new' && (
             <NewItem
               onDone={(data) => {
@@ -178,18 +179,18 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
                       getItemMaster(collectionQuery);
                     }}
                   />
+                  <Group justify="end" my={20} className="mb-4">
+                    <Button
+                      onClick={() => {
+                        onDone(selectedItems);
+                        close();
+                      }}
+                    >
+                      Done
+                    </Button>
+                  </Group>
                 </Box>
               </Flex>
-              <Group justify="end" mt={40}>
-                <Button
-                  onClick={() => {
-                    onDone(selectedItems);
-                    close();
-                  }}
-                >
-                  Done
-                </Button>
-              </Group>
             </>
           )}
         </Box>
