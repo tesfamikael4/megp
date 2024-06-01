@@ -11,8 +11,9 @@ export default function Financial() {
   return (
     <>
       <LotOverview
-        milestone="technicalResponsiveness"
+        milestone="financial"
         basePath={`/evaluation/${tenderId}`}
+        hideComplete
       />
       <ConversionRate />
       <Section className="mt-2" title="Item Rules" collapsible={false}>

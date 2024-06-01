@@ -39,12 +39,12 @@ export const ConversionRate = () => {
   });
   const [conversionData] = useState([
     {
-      local_currency: '1 ETB',
+      local_currency: '1 MKW',
       foreign_currency: 'USD',
       conversion_rate: 0.004,
     },
     {
-      local_currency: '1 ETB',
+      local_currency: '1 MKW',
       foreign_currency: 'EUR',
       conversion_rate: 0.004,
     },
