@@ -50,6 +50,7 @@ const prSchema: ZodType<Partial<ProcurementRequisition>> = z.object({
     required_error: 'This field is required',
     invalid_type_error: 'This field is required to be a string',
   }),
+  userReference: z.string().optional(),
 });
 
 export const FormDetail = ({
@@ -253,7 +254,7 @@ export const FormDetail = ({
                 label={'Optional Reference Number'}
                 placeholder="Optional Reference Number"
                 {...register('userReference')}
-                disabled
+                disabled={disableFields || procurementRequisition?.isPlanned}
                 error={
                   errors?.userReference
                     ? errors?.userReference?.message?.toString()

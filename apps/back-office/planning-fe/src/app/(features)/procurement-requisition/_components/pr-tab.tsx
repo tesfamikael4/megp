@@ -228,17 +228,19 @@ const PrTab = () => {
                     Total Calculated Amount
                   </Text>
 
-                  {Object.keys(pr?.calculatedAmount ?? {}) && (
-                    <Text className="font-semibold  text-end">
-                      {pr?.calculatedAmount?.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: pr?.currency,
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                        currencyDisplay: 'code',
-                      })}
-                    </Text>
-                  )}
+                  <Text className="font-semibold  text-end">
+                    {Object.keys(pr?.calculatedAmount ?? {}) && (
+                      <Text className="font-semibold  text-end">
+                        {pr?.calculatedAmount?.toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: pr?.currency,
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                          currencyDisplay: 'code',
+                        })}
+                      </Text>
+                    )}
+                  </Text>
                 </Box>
               </Flex>
             </Box>

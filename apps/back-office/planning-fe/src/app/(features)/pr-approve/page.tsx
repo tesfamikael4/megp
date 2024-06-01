@@ -66,7 +66,7 @@ export default function ProcurementRequisition() {
     isExpandable: true,
     isSearchable: true,
     isLoading: isLoading,
-    primaryColumn: 'title',
+    primaryColumn: 'name',
     expandedRowContent: (requisition) => {
       return <DetailRequisition requisition={requisition} />;
     },
