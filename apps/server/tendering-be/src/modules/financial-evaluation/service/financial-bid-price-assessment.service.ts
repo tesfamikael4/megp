@@ -14,7 +14,7 @@ import {
 } from 'src/shared/collection-query';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
-import { EntityManager, Repository } from 'typeorm';
+import { ArrayContains, EntityManager, Repository } from 'typeorm';
 
 @Injectable()
 export class FinancialBidPriceAssessmentService extends ExtraCrudService<FinancialBidPriceAssessment> {
@@ -28,7 +28,12 @@ export class FinancialBidPriceAssessmentService extends ExtraCrudService<Financi
     super(financialBidPriceAssessmentRepository);
   }
 
-  async passedBidders(lotId: string, query: CollectionQuery, req: any) {
+  async passedBidders(
+    lotId: string,
+    itemId: string,
+    query: CollectionQuery,
+    req: any,
+  ) {
     // Functionality: Checks if the current user (opener) is part of the team for the given lot,
     // then checks if the opener has completed the spd compliance for each bidder.
     //Todo check if the opener is in the team
@@ -38,6 +43,7 @@ export class FinancialBidPriceAssessmentService extends ExtraCrudService<Financi
       where: {
         bidRegistrationDetail: {
           lotId: lotId,
+          technicalItems: ArrayContains([itemId]),
         },
         milestoneNum: 305,
         bidderStatus: 308,
