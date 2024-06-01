@@ -5,7 +5,7 @@ export const bidPriceEvaluation = createApi({
   reducerPath: 'bidPriceEvaluation',
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
-  tagTypes: ['currency'],
+  tagTypes: ['currency', 'formulas'],
   endpoints: (builder) => ({
     createConversionRate: builder.mutation<any, any>({
       query: (data) => ({
@@ -21,11 +21,11 @@ export const bidPriceEvaluation = createApi({
     }),
     createRuleEquation: builder.mutation<any, any>({
       query: (data) => ({
-        url: `/exchange-rate`,
+        url: `/formula-units`,
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['currency'],
+      invalidatesTags: ['formulas'],
     }),
   }),
 });
