@@ -21,6 +21,7 @@ import { OpenedBidResponseItem } from './opened-bid-response-item.entity';
 import { PriceAdjustingFactor } from './price-adjusting-factor.entity';
 import { FinancialBidPriceAssessment } from './financial-bid-price-assessment.entity';
 import { ItemStatusEnum } from 'src/shared/enums/tender-status.enum';
+import { FormulaImplementation } from './formula-implementation.entity';
 
 @Entity({ name: 'items' })
 export class Item extends Audit {
@@ -127,4 +128,10 @@ export class Item extends Audit {
     (financialBidPriceAssessments) => financialBidPriceAssessments.item,
   )
   financialBidPriceAssessments: FinancialBidPriceAssessment[];
+
+  @OneToMany(
+    () => FormulaImplementation,
+    (formulaImplementation) => formulaImplementation.item,
+  )
+  formulaImplementations: FormulaImplementation[];
 }

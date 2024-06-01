@@ -18,7 +18,7 @@ export class UpdateFormulaDto {
   name: string;
 }
 
-export class CreateFormulaUnitDto extends OrgAudit {
+export class CreateFormulaImplementationDto extends OrgAudit {
   @ApiProperty()
   @IsString()
   name: string;
@@ -39,7 +39,7 @@ export class CreateFormulaUnitDto extends OrgAudit {
   lotId: string;
 }
 
-export class UpdateFormulaUnitDto {
+export class UpdateFormulaImplementationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
@@ -64,7 +64,7 @@ export class UpdateFormulaUnitDto {
   lotId: string;
 }
 
-export class EvaluateFormulaUnitDto {
+export class EvaluateFormulaImplementationDto {
   @ApiProperty({
     description: 'Variables to be used in the evaluation of the formula.',
     format: 'object',
