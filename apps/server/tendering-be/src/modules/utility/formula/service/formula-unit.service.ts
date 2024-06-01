@@ -46,7 +46,10 @@ export class FormulaUnitService extends ExtraCrudService<FormulaUnit> {
     }
   }
 
-  async create(formulaUnit: CreateFormulaUnitDto): Promise<FormulaUnit> {
+  async create(
+    formulaUnit: CreateFormulaUnitDto,
+    req: any,
+  ): Promise<FormulaUnit> {
     const availableFormulaUnitSet = await this.getAvailableFormulaUnitSet(
       formulaUnit.groupId,
     );
@@ -67,7 +70,11 @@ export class FormulaUnitService extends ExtraCrudService<FormulaUnit> {
       throw new BadRequestException(error.message);
     }
 
-    return this.formulaUnitRepository.save(formulaUnit);
+    return this.formulaUnitRepository.save({
+      ...formulaUnit,
+      organizationId: req.user.organization.id,
+      organizationName: req.user.organization.name,
+    });
   }
 
   async update(

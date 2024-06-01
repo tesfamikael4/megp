@@ -11,7 +11,7 @@ import { ExtraCrudController } from 'src/shared/controller';
 import { FormulaUnit } from 'src/entities/formula-unit.entity';
 
 const options: ExtraCrudOptions = {
-  entityIdName: 'formulaId',
+  entityIdName: 'lotId',
   createDto: CreateFormulaUnitDto,
   updateDto: UpdateFormulaUnitDto,
 };
