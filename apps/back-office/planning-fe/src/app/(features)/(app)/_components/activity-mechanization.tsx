@@ -7,7 +7,6 @@ import {
   MultiSelect,
   Select,
   Stack,
-  TextInput,
 } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { FrameworkSelector } from './framework-selector';
@@ -508,7 +507,7 @@ export const ActivityMechanization = ({
                 <Select
                   label="Donor"
                   data={
-                    donors.items?.map((d) => ({
+                    donors?.items?.map((d) => ({
                       value: d.id,
                       label: d.name,
                     })) ?? []
