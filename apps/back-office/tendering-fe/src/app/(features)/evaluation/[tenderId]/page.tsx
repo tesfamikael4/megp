@@ -57,6 +57,8 @@ export default function BidOpening() {
                 );
               else if (currentStage === 'TechnicalScoring')
                 router.push(`/evaluation/${tenderId}/${record.id}/scoring`);
+              else if (currentStage === 'FinancialCompliance')
+                router.push(`/evaluation/${tenderId}/${record.id}/financial`);
             }}
           >
             <IconChevronRight size={14} />
