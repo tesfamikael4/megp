@@ -22,15 +22,17 @@ export class FinancialBidPriceAssessmentController extends ExtraCrudController<F
     super(financialBidPriceAssessmentService);
   }
 
-  @Get('bidders-status/:lotId')
+  @Get('bidders-status/:lotId/:itemId')
   async passedBidders(
     @Param('lotId') lotId: string,
+    @Param('itemId') itemId: string,
     @Req() req,
     @Query('q') q: string,
   ) {
     const query = decodeCollectionQuery(q);
     return await this.financialBidPriceAssessmentService.passedBidders(
       lotId,
+      itemId,
       query,
       req,
     );
