@@ -51,7 +51,7 @@ export class FormulaUnitService extends ExtraCrudService<FormulaUnit> {
     req: any,
   ): Promise<FormulaUnit> {
     const availableFormulaUnitSet = await this.getAvailableFormulaUnitSet(
-      formulaUnit.groupId,
+      formulaUnit.lotId,
     );
 
     if (availableFormulaUnitSet[formulaUnit.name])
@@ -131,7 +131,7 @@ export class FormulaUnitService extends ExtraCrudService<FormulaUnit> {
   }
 
   async getAvailableFormulaUnitSet(
-    groupId: string,
+    lotId: string,
   ): Promise<Record<string, string>> {
     /**
          * Schema for formulaUnit set <name: mathematical expression>
@@ -142,7 +142,7 @@ export class FormulaUnitService extends ExtraCrudService<FormulaUnit> {
         */
     const formulaSet: Record<string, string> = {};
 
-    (await this.findByGroup(groupId)).forEach((f) => {
+    (await this.findByGroup(lotId)).forEach((f) => {
       formulaSet[f.name] = f.representation;
     });
 
