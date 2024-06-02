@@ -44,6 +44,9 @@ export class FinancialBidPriceAssessment extends OrgAudit {
   formulaImplementation: FormulaImplementation;
 
   @Column('uuid')
+  bidderId: string;
+
+  @Column('uuid')
   evaluatorId: string;
 
   @Column('uuid')
@@ -53,8 +56,8 @@ export class FinancialBidPriceAssessment extends OrgAudit {
   isTeamLead: boolean;
 
   @Column()
-  offeredPrice: number;
+  offeredUnitPrice: number;
 
   @Column()
-  bidPrice: number;
+  calculatedBidUnitPrice: number;
 }

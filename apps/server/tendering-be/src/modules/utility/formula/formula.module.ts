@@ -17,4 +17,4 @@ import { FormulaImplementation } from 'src/entities/formula-implementation.entit
   ],
   controllers: [FormulaUnitController, FormulaImplementationController],
 })
-export class FormulaModule {}
+export class FormulaModule { }
