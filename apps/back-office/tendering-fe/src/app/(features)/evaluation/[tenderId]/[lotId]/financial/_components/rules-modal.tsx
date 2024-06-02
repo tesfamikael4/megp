@@ -10,7 +10,7 @@ import { logger, notify } from '@megp/core-fe';
 import {
   useCreateRuleEquationMutation,
   useGetRulesByLotIdQuery,
-} from '@/store/api/tendering/bid-price-evaluation';
+} from '@/store/api/tendering/bid-price-evaluation.api';
 import { useParams } from 'next/navigation';
 
 const ruleSchema: ZodType<any> = z.object({
