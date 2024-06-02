@@ -6,7 +6,7 @@ export const bidPriceEvaluation = createApi({
   reducerPath: 'bidPriceEvaluation',
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
-  tagTypes: ['currency', 'formula'],
+  tagTypes: ['currency', 'formula', 'unitPrice', 'formula-implementation'],
   endpoints: (builder) => ({
     createConversionRate: builder.mutation<any, any>({
       query: (data) => ({
@@ -70,6 +70,67 @@ export const bidPriceEvaluation = createApi({
           body: data,
         };
       },
+      invalidatesTags: ['formula-implementation'],
+    }),
+    deleteApplicableRuleForBidder: builder.mutation<any, any>({
+      query: (id) => {
+        return {
+          url: `/formula-implementation/delete/${id}`,
+          method: 'DELETE',
+        };
+      },
+      invalidatesTags: ['formula-implementation'],
+    }),
+    getCanAssess: builder.query<any, any>({
+      query: (lotId) => `/financial-bid-price-assessment/can-assess/${lotId}`,
+      providesTags: ['currency', 'formula'],
+    }),
+    getHasUnitPrice: builder.query<any, any>({
+      query: ({ lotId, itemId, bidderId }) =>
+        `/financial-bid-price-assessment/has-formula/${lotId}/${itemId}/${bidderId}`,
+      providesTags: ['unitPrice'],
+    }),
+    createUnitPrice: builder.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: `/formula-implementation/create-unit-price`,
+          method: 'POST',
+          body: data,
+        };
+      },
+      invalidatesTags: ['unitPrice'],
+    }),
+    getRulesByBidderId: builder.query<any, any>({
+      query: ({ lotId, itemId, bidderId }) =>
+        `/formula-implementation/formula-implementation-status/${lotId}/${itemId}/${bidderId}`,
+      providesTags: ['formula-implementation'],
+    }),
+    getBidderSummary: builder.query<any, any>({
+      query: ({ lotId, itemId, bidderId }) =>
+        `/formula-implementation/get-summary/${lotId}/${itemId}/${bidderId}`,
+      providesTags: ['formula-implementation', 'unitPrice'],
+    }),
+    saveBidPrice: builder.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: '/formula-implementation/save-result',
+          method: 'POST',
+          body: data,
+        };
+      },
+    }),
+    completeBidPriceEvaluation: builder.mutation<any, any>({
+      query: (data: {
+        lotId: string;
+        bidderId: string;
+        isTeamLead: boolean;
+      }) => {
+        return {
+          url: `/technical-scoring-assessment-detail/complete-bidder-evaluation`,
+          method: 'PUT',
+          body: data,
+        };
+      },
     }),
   }),
 });
@@ -83,4 +144,13 @@ export const {
   useLazyGetItemsQuery,
   useLazyGetPassedBiddersQuery,
   useCreateApplicableRuleForBidderMutation,
+  useLazyGetCanAssessQuery,
+  useLazyGetHasUnitPriceQuery,
+  useGetHasUnitPriceQuery,
+  useCreateUnitPriceMutation,
+  useGetRulesByBidderIdQuery,
+  useDeleteApplicableRuleForBidderMutation,
+  useGetBidderSummaryQuery,
+  useCompleteBidPriceEvaluationMutation,
+  useSaveBidPriceMutation,
 } = bidPriceEvaluation;

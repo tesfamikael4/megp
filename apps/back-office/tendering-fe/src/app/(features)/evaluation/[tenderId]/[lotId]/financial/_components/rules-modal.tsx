@@ -31,12 +31,7 @@ export const RulesModal = ({ close }: any) => {
   } = useForm<any>({
     resolver: zodResolver(ruleSchema),
   });
-  const rulesList = [
-    'Tax',
-    'Vat',
-    'Preferential Margin',
-    // { name: 'Rule 4', id: 4 },
-  ];
+  const rulesList = ['Tax', 'Vat', 'Preferential_Margin', 'Other'];
 
   const [rule, setRule] = useState<any | undefined>(undefined);
   const { lotId } = useParams();
