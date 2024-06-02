@@ -228,7 +228,7 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
       throw new HttpException('There is no formula assigned yet', 430);
     }
 
-    await Promise.all(
+    const calculateImplementationResult = await Promise.all(
       formulaImplementations.map(async (x) => ({
         ...x,
         result: await this.evaluate(x.id, {
@@ -240,7 +240,14 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
         }),
       })),
     );
-    // Initialize arrays for additions and deductions
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    await manager
+      .getRepository(FormulaImplementation)
+      .upsert(calculateImplementationResult, {
+        conflictPaths: ['id'], // Specify the columns to match on for the upsert operation
+      });
+
     const totalFormula = this.constructTotalFormula(formulaImplementations);
 
     const total = await this.formulaImplementationRepository.create({
@@ -317,7 +324,7 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
       },
     );
 
-    const unitPrice = await this.getOfferedUnitPrice(manager, itemData);
+    // const unitPrice = await this.getOfferedUnitPrice(manager, itemData);
 
     const financialBidPriceAssessment = await manager
       .getRepository(FinancialBidPriceAssessment)
@@ -333,6 +340,7 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
         offeredUnitPrice: 100, // change with actual
         // offeredUnitPrice: unitPrice,
         calculatedBidUnitPrice: totalResult,
+        formulaImplementationId: totalFormula.id,
       });
 
     await manager
