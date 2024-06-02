@@ -3,7 +3,7 @@
 import {
   useCreateConversionRateMutation,
   useGetConversionRateByLotIdQuery,
-} from '@/store/api/tendering/bid-price-evaluation';
+} from '@/store/api/tendering/bid-price-evaluation.api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Button,

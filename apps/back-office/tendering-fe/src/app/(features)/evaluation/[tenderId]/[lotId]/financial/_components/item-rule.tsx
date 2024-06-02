@@ -5,7 +5,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { ExpandableTable, ExpandableTableConfig } from '@megp/core-fe';
 import { RulesModal } from './rules-modal';
 import { useParams } from 'next/navigation';
-import { useGetRulesByLotIdQuery } from '@/store/api/tendering/bid-price-evaluation';
+import { useGetRulesByLotIdQuery } from '@/store/api/tendering/bid-price-evaluation.api';
 
 export const ItemRule = () => {
   const [opened, { open, close }] = useDisclosure(false);

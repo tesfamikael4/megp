@@ -26,7 +26,7 @@ import { tenderingApprovalApi } from './api/tendering-approval/tendering-approva
 import { tenderingIamApi } from './api/tendering-approval/tendering-iam';
 import { workflowApi } from './api/workflow/workflow.api';
 import { getSubmittedBiddersApi } from '@/app/(features)/solicitation/_api/submitted-bidders.api';
-import { bidPriceEvaluation } from './api/tendering/bid-price-evaluation';
+import { bidPriceEvaluation } from './api/tendering/bid-price-evaluation.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({

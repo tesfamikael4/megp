@@ -5,7 +5,7 @@ import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight, IconUsers } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { LotOverview } from '@/app/(features)/evaluation/_components/lot-overview';
-import { useLazyGetItemsQuery } from '@/store/api/tendering/bid-price-evaluation';
+import { useLazyGetItemsQuery } from '@/store/api/tendering/bid-price-evaluation.api';
 export default function BidOpening() {
   const router = useRouter();
   const { tenderId, lotId } = useParams();
