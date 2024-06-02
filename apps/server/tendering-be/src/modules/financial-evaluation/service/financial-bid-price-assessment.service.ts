@@ -5,6 +5,7 @@ import { Item } from 'src/entities';
 import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
 import { ExchangeRate } from 'src/entities/exchange-rate.entity';
 import { FinancialBidPriceAssessment } from 'src/entities/financial-bid-price-assessment.entity';
+import { FormulaImplementation } from 'src/entities/formula-implementation.entity';
 import { FormulaUnit } from 'src/entities/formula-unit.entity';
 import { DataResponseFormat } from 'src/shared/api-data';
 import {
@@ -96,17 +97,38 @@ export class FinancialBidPriceAssessmentService extends ExtraCrudService<Financi
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
     const [hasExchangeRate, hasFormula] = await Promise.all([
-      manager.getRepository(ExchangeRate).findOne({
+      manager.getRepository(ExchangeRate).exists({
         where: {
           lotId: lotId,
         },
       }),
-      manager.getRepository(FormulaUnit).findOne({
+      manager.getRepository(FormulaUnit).exists({
         where: {
           lotId: lotId,
         },
       }),
     ]);
-    return hasExchangeRate && hasFormula;
+    return { canAssess: hasExchangeRate && hasFormula };
+  }
+
+  async hasFormula(
+    lotId: string,
+    itemId: string,
+    bidderId: string,
+    query: CollectionQuery,
+    req: any,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const hasFormula = await manager
+      .getRepository(FormulaImplementation)
+      .exists({
+        where: {
+          lotId: lotId,
+          itemId,
+          bidderId,
+        },
+      });
+    return { hasFormula };
   }
 }

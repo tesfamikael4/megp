@@ -64,4 +64,21 @@ export class FinancialBidPriceAssessmentController extends ExtraCrudController<F
       req,
     );
   }
+  @Get('has-formula/:lotId/:itemId/:bidderId')
+  async hasFormula(
+    @Param('lotId') lotId: string,
+    @Param('itemId') itemId: string,
+    @Param('bidderId') bidderId: string,
+    @Req() req,
+    @Query('q') q: string,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.financialBidPriceAssessmentService.hasFormula(
+      lotId,
+      itemId,
+      bidderId,
+      query,
+      req,
+    );
+  }
 }
