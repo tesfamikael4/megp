@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsObject, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { OrgAudit } from 'src/shared/entities';
 
 export class CreateFormulaDto extends OrgAudit {
@@ -21,6 +27,7 @@ export class UpdateFormulaDto {
 export class CreateFormulaImplementationDto extends OrgAudit {
   @ApiProperty()
   @IsString()
+  @IsOptional()
   name: string;
 
   @ApiProperty({
@@ -28,6 +35,7 @@ export class CreateFormulaImplementationDto extends OrgAudit {
       'String representation of the formula. Using mathematical operators, variables, or referencing other formulas by name.',
   })
   @IsString()
+  @IsOptional()
   representation: string;
 
   @ApiProperty({
@@ -37,6 +45,23 @@ export class CreateFormulaImplementationDto extends OrgAudit {
   })
   @IsUUID()
   lotId: string;
+
+  @IsUUID()
+  itemId: string;
+
+  @IsUUID()
+  bidderId: string;
+}
+
+export class CreateUnitPriceDto {
+  @IsUUID()
+  lotId: string;
+
+  @IsUUID()
+  itemId: string;
+
+  @IsUUID()
+  bidderId: string;
 }
 
 export class UpdateFormulaImplementationDto {
@@ -62,6 +87,9 @@ export class UpdateFormulaImplementationDto {
   @IsUUID()
   @IsOptional()
   lotId: string;
+
+  @IsNumber()
+  result: number;
 }
 
 export class EvaluateFormulaImplementationDto {
