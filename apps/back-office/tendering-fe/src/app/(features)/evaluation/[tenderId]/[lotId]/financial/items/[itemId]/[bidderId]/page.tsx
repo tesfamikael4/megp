@@ -3,7 +3,12 @@
 import { BidderOverView } from '@/app/(features)/evaluation/_components/bidder-overview';
 import {
   useCreateApplicableRuleForBidderMutation,
-  useGetRulesByLotIdQuery,
+  useCreateUnitPriceMutation,
+  useDeleteApplicableRuleForBidderMutation,
+  useGetBidderSummaryQuery,
+  useGetHasUnitPriceQuery,
+  useGetRulesByBidderIdQuery,
+  useSaveBidPriceMutation,
 } from '@/store/api/tendering/bid-price-evaluation.api';
 import {
   Alert,
@@ -12,6 +17,7 @@ import {
   Divider,
   Flex,
   Group,
+  LoadingOverlay,
   Select,
 } from '@mantine/core';
 import {
@@ -21,12 +27,19 @@ import {
   notify,
 } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function BiderDetail() {
   const { tenderId, lotId, itemId, bidderId } = useParams();
   const [createRuleForBidder, { isLoading }] =
     useCreateApplicableRuleForBidderMutation();
+  const [deleteRuleForBidder, { isLoading: isDeleting }] =
+    useDeleteApplicableRuleForBidderMutation();
+  const { data: hasUnitPrice, isLoading: isUnitPriceLoading } =
+    useGetHasUnitPriceQuery({ lotId, itemId, bidderId });
+  const [createUnitPrice, { isLoading: isCreatingUnitprice }] =
+    useCreateUnitPriceMutation();
+  const [save, { isLoading: isSaving }] = useSaveBidPriceMutation();
   const config: ExpandableTableConfig = {
     minHeight: 100,
     columns: [
@@ -41,8 +54,8 @@ export default function BiderDetail() {
             <Select
               data={['Applicable', 'Not Applicable']}
               className="w-/12"
-              value={record.status}
-              disabled={isLoading}
+              value={record.applicable ? 'Applicable' : 'Not Applicable'}
+              disabled={isLoading || isDeleting}
               onChange={(e) => onActionChanged(e, record)}
             />
           );
@@ -50,26 +63,58 @@ export default function BiderDetail() {
       },
     ],
   };
-  const [rules, setRules] = useState<any[]>([]);
-  const { data } = useGetRulesByLotIdQuery(lotId);
+  const { data } = useGetRulesByBidderIdQuery({ lotId, itemId, bidderId });
+  const { data: bidderSummary } = useGetBidderSummaryQuery({
+    lotId,
+    itemId,
+    bidderId,
+  });
 
   const onActionChanged = async (value, record) => {
     try {
-      await createRuleForBidder({
-        name: record.name,
-        type: record.type,
+      if (value === 'Applicable') {
+        await createRuleForBidder({
+          name: record.name,
+          type: record.type,
+          lotId,
+          representation: record.representation,
+          itemId,
+          bidderId,
+        }).unwrap();
+      } else {
+        await deleteRuleForBidder(record.formulaImplementationId).unwrap();
+      }
+
+      notify('Success', 'saved successfully');
+    } catch (err) {
+      if (err.status == 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong');
+      }
+    }
+  };
+
+  const initUnitPrice = async () => {
+    try {
+      createUnitPrice({ lotId, itemId, bidderId }).unwrap();
+    } catch (err) {
+      if (err.status == 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong please reload the page');
+      }
+    }
+  };
+
+  const onSave = async () => {
+    try {
+      await save({
         lotId,
-        representation: record.representation,
-        itemId,
         bidderId,
+        itemId,
       }).unwrap();
-      const newRules = rules.map((r) => {
-        if (r.id === record.id) {
-          return { ...r, status: value };
-        }
-        return r;
-      });
-      setRules(newRules);
+      notify('Success', 'Saved successfully');
     } catch (err) {
       if (err.status == 430) {
         notify('Error', err.data.message);
@@ -80,12 +125,10 @@ export default function BiderDetail() {
   };
 
   useEffect(() => {
-    if (data) {
-      const filteredData = data.items.filter((i) => i.name !== 'unit_price');
-      const castedData = filteredData.map((i) => ({ ...i, status: '' }));
-      setRules(castedData);
+    if (hasUnitPrice && !hasUnitPrice?.hasFormula) {
+      initUnitPrice();
     }
-  }, [data]);
+  }, [hasUnitPrice]);
   return (
     <Box>
       <BidderOverView
@@ -99,33 +142,64 @@ export default function BiderDetail() {
         collapsible={false}
         className="mt-2"
       >
-        <ExpandableTable config={config} data={rules} />
+        <Box pos="relative" className="min-h-36">
+          <LoadingOverlay visible={isUnitPriceLoading || isCreatingUnitprice} />
+          {hasUnitPrice?.hasFormula && (
+            <Box>
+              <ExpandableTable
+                config={config}
+                data={data?.filter((i) => i.name !== 'unit_price') ?? []}
+              />
 
-        <p className="text-center my-5 font-semibold text-2xl">Summary</p>
-        <Alert className="mt-2 w-1/2 p-5 mx-auto" color="gray">
-          <Flex justify="space-between" className="mt-1">
-            <p className="text-end">Offered Unit Price</p>
-            <p className="text-end"> 1231</p>
-          </Flex>
-          {rules
-            .filter((r) => r.status === 'Applicable')
-            .map((rule) => (
-              <Flex justify="space-between" className="mt-1" key={rule.id}>
-                <p className="text-end">{rule.name}</p>
-                <p className="text-end">
-                  {rule.type === 'DEDUCTION' && '-'} {rule.representation}
-                </p>
-              </Flex>
-            ))}
-          <Divider className="my-2" />
-          <Flex justify="space-between">
-            <p className="text-end font-semibold">Calculated Bid Unit Price</p>
-            <p className="text-end font-semibold"> 1231</p>
-          </Flex>
-        </Alert>
-        <Group justify="end" className="mt-2">
-          <Button>Save</Button>
-        </Group>
+              <p className="text-center my-5 font-semibold text-2xl">Summary</p>
+              <Alert className="mt-2 w-1/2 p-5 mx-auto mb-10" color="gray">
+                {bidderSummary?.map((rule) => (
+                  <Flex justify="space-between" className="mt-1" key={rule.id}>
+                    <p className="text-end">
+                      {rule.name === 'unit_price'
+                        ? 'Offered Unit Price'
+                        : rule.name}
+                    </p>
+                    <p className="text-end">
+                      {rule.type === 'DEDUCTION' && '-'} {rule.result}
+                    </p>
+                  </Flex>
+                ))}
+                <Divider className="my-2" />
+                <Flex justify="space-between">
+                  <p className="text-end font-semibold">
+                    Calculated Bid Unit Price
+                  </p>
+                  <p className="text-end font-semibold">
+                    {' '}
+                    {bidderSummary
+                      ?.reduce((sum, item) => {
+                        if (item.type === 'ADDITION' || item.type === 'TAXES') {
+                          return sum + item.result;
+                        } else if (item.type === 'DEDUCTION') {
+                          return sum - item.result;
+                        } else {
+                          return sum;
+                        }
+                      }, 0)
+                      ?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'MKW',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                        currencyDisplay: 'code',
+                      }) ?? 0}
+                  </p>
+                </Flex>
+              </Alert>
+              <Group justify="end" className="mt-2 w-1/2 mx-auto">
+                <Button loading={isSaving} onClick={onSave}>
+                  Save
+                </Button>
+              </Group>
+            </Box>
+          )}
+        </Box>
       </Section>
     </Box>
   );

@@ -1,24 +1,34 @@
 'use client';
-import { useParams } from 'next/navigation';
-import { LotOverview } from '../../../_components/lot-overview';
-import { Section } from '@megp/core-fe';
-import { ItemRule } from './_components/item-rule';
-import { ConversionRate } from './_components/conversion-rate';
+import { useLazyGetCanAssessQuery } from '@/store/api/tendering/bid-price-evaluation.api';
+import { Flex, Loader } from '@mantine/core';
+import { logger, notify } from '@megp/core-fe';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Financial() {
-  const { tenderId } = useParams();
+  const { lotId, tenderId } = useParams();
+  const [getCanAssess] = useLazyGetCanAssessQuery();
+  const router = useRouter();
 
+  const canAssess = async () => {
+    try {
+      const res = await getCanAssess(lotId).unwrap();
+      if (res.canAssess)
+        router.push(`/evaluation/${tenderId}/${lotId}/financial/items`);
+      else router.push(`/evaluation/${tenderId}/${lotId}/financial/config`);
+    } catch {
+      notify('Error', 'Something went wrong please reload your page');
+    }
+  };
+
+  useEffect(() => {
+    canAssess();
+  }, []);
   return (
     <>
-      <LotOverview
-        milestone="financial"
-        basePath={`/evaluation/${tenderId}`}
-        hideComplete
-      />
-      <ConversionRate />
-      <Section className="mt-2" title="Item Rules" collapsible={false}>
-        <ItemRule />
-      </Section>
+      <Flex className="h-[90vh] w-full" justify={'center'} align={'center'}>
+        <Loader />
+      </Flex>
     </>
   );
 }
