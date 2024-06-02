@@ -49,7 +49,7 @@ export class FinancialBidPriceAssessment extends OrgAudit {
   @Column('uuid')
   evaluatorId: string;
 
-  @Column('uuid')
+  @Column()
   evaluatorName: string;
 
   @Column()
