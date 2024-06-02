@@ -19,6 +19,7 @@ import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { FormulaImplementation } from 'src/entities/formula-implementation.entity';
 import { AllowAnonymous } from 'src/shared/authorization';
+import { CompleteFinancialBidderEvaluationDto } from 'src/modules/financial-evaluation/dto/financial-assessment.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',
@@ -26,7 +27,6 @@ const options: ExtraCrudOptions = {
   updateDto: UpdateFormulaImplementationDto,
 };
 
-@AllowAnonymous()
 @ApiTags('Formula Implementation Controller')
 @Controller('formula-implementation')
 export class FormulaImplementationController extends ExtraCrudController<FormulaImplementation>(
@@ -81,20 +81,26 @@ export class FormulaImplementationController extends ExtraCrudController<Formula
       req,
     );
   }
-  @Get('save-result/:lotId/:itemId/:bidderId')
-  async saveResult(
-    @Param('lotId') lotId: string,
-    @Param('itemId') itemId: string,
-    @Param('bidderId') bidderId: string,
-    @Req() req,
-  ) {
+  @Post('save-result')
+  async saveResult(@Body() itemData: any, @Req() req) {
     return await this.formulaImplementationService.saveResult(
-      lotId,
-      itemId,
-      bidderId,
+      itemData.lotId,
+      itemData.itemId,
+      itemData.bidderId,
       req,
     );
   }
+  @Post('complete-bidder-evaluation')
+  async completeBidderEvaluation(
+    @Body() itemData: CompleteFinancialBidderEvaluationDto,
+    @Req() req,
+  ) {
+    return await this.formulaImplementationService.completeBidderEvaluation(
+      itemData,
+      req,
+    );
+  }
+
   @Delete('delete/:id')
   async delete(@Param('id') id: string) {
     return await this.formulaImplementationService.delete(id);

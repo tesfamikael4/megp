@@ -21,6 +21,8 @@ import { REQUEST } from '@nestjs/core';
 import { OpenedBidResponseItem } from 'src/entities';
 import { PriceAdjustingFactorEnum } from 'src/shared/enums/price-adjusting-factor.enum';
 import { FormulaUnit } from 'src/entities/formula-unit.entity';
+import { CompleteFinancialBidderEvaluationDto } from 'src/modules/financial-evaluation/dto/financial-assessment.dto';
+import { FinancialBidPriceAssessment } from 'src/entities/financial-bid-price-assessment.entity';
 
 @Injectable()
 export class FormulaImplementationService extends ExtraCrudService<FormulaImplementation> {
@@ -108,31 +110,46 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
       });
 
     if (!hasUnitPrice) {
-      // const response = await manager
-      //   .getRepository(OpenedBidResponseItem)
-      //   .findOne({
-      //     where: {
-      //       bidRegistrationDetail: {
-      //         lotId: formulaImplementation.lotId,
-      //       },
-      //       key: 'rate',
-      //     },
-      //   });
-      // if (!response) {
-      //   throw new BadRequestException('Rate is required');
-      // }
-      // const unitPrice = response.value?.vale?.rate;
+      const unitPrice = await this.getOfferedUnitPrice(
+        manager,
+        formulaImplementation,
+      );
       await manager.getRepository(FormulaImplementation).save({
         name: 'unit_price',
         lotId: formulaImplementation.lotId,
         itemId: formulaImplementation.itemId,
         bidderId: formulaImplementation.bidderId,
         representation: `100`,
+        // representation: unitPrice,
         organizationId: req.user.organization.id,
         organizationName: req.user.organization.name,
         type: PriceAdjustingFactorEnum.ADDITION,
       });
     }
+  }
+
+  private async getOfferedUnitPrice(
+    manager: EntityManager,
+    itemData: { lotId: string; itemId: string; bidderId: string },
+  ) {
+    const response = await manager
+      .getRepository(OpenedBidResponseItem)
+      .findOne({
+        where: {
+          bidRegistrationDetail: {
+            lotId: itemData.lotId,
+            bidRegistration: {
+              bidderId: itemData.bidderId,
+            },
+          },
+          itemId: itemData.itemId,
+          key: 'rate',
+        },
+      });
+    if (!response) {
+      throw new BadRequestException('Rate is required');
+    }
+    return response.value?.vale?.rate;
   }
 
   async formulaImplementationStatus(
@@ -267,6 +284,60 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
       formula += deductions.join(' - ');
     }
     return formula;
+  }
+
+  async completeBidderEvaluation(
+    itemData: CompleteFinancialBidderEvaluationDto,
+    req: any,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const totalFormula = await manager
+      .getRepository(FormulaImplementation)
+      .findOne({
+        where: {
+          lotId: itemData.lotId,
+          itemId: itemData.itemId,
+          bidderId: itemData.bidderId,
+          name: 'Total',
+        },
+      });
+    const totalResult = await this.evaluate(totalFormula.id, {
+      variables: {
+        x: 1,
+        y: 2,
+        z: 3,
+      },
+    });
+    await manager.getRepository(FormulaImplementation).update(
+      {
+        id: totalFormula.id,
+      },
+      {
+        result: totalResult,
+      },
+    );
+
+    const unitPrice = await this.getOfferedUnitPrice(manager, itemData);
+
+    const financialBidPriceAssessment = await manager
+      .getRepository(FinancialBidPriceAssessment)
+      .create({
+        lotId: itemData.lotId,
+        itemId: itemData.itemId,
+        bidderId: itemData.bidderId,
+        organizationName: req.user.organization.name,
+        organizationId: req.user.organization.id,
+        evaluatorId: req.user.userId,
+        evaluatorName: req.user.firstName + ' ' + req.user.lastName,
+        isTeamLead: true,
+        offeredUnitPrice: 100, // change with actual
+        // offeredUnitPrice: unitPrice,
+        calculatedBidUnitPrice: totalResult,
+      });
+
+    await manager
+      .getRepository(FinancialBidPriceAssessment)
+      .save(financialBidPriceAssessment);
   }
 
   async update(
