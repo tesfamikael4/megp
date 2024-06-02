@@ -126,8 +126,18 @@ export const bidPriceEvaluation = createApi({
         isTeamLead: boolean;
       }) => {
         return {
-          url: `/technical-scoring-assessment-detail/complete-bidder-evaluation`,
-          method: 'PUT',
+          url: `/formula-implementation/complete-bidder-evaluation`,
+          method: 'POST',
+          body: data,
+        };
+      },
+    }),
+
+    submitBidPriceEvaluation: builder.mutation<any, any>({
+      query: (data: { tenderId: string; isTeamLead: boolean }) => {
+        return {
+          url: `/financial-bid-price-assessment/submit`,
+          method: 'POST',
           body: data,
         };
       },
@@ -153,4 +163,5 @@ export const {
   useGetBidderSummaryQuery,
   useCompleteBidPriceEvaluationMutation,
   useSaveBidPriceMutation,
+  useSubmitBidPriceEvaluationMutation,
 } = bidPriceEvaluation;

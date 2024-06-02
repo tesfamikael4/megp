@@ -133,7 +133,7 @@ export default function BiderDetail() {
     <Box>
       <BidderOverView
         basePath={`/evaluation/${tenderId}/${lotId}/financial/items/${itemId}`}
-        milestone="technicalResponsiveness"
+        milestone="financial"
       />
 
       <Section
