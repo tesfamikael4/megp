@@ -1,4 +1,5 @@
 'use client';
+import { useSubmitBidPriceEvaluationMutation } from '@/store/api/tendering/bid-price-evaluation.api';
 import {
   useLazyGetCanPreliminaryCompleteQuery,
   useSubmitPreliminaryEvaluationMutation,
@@ -56,6 +57,8 @@ export const LotOverview = ({
     useSubmitResponsivenessEvaluationMutation();
   const [submitScoring, { isLoading: isScoringLoading }] =
     useSubmitScoringEvaluationMutation();
+  const [submitBidPriceEvaluation, { isLoading: isBidPriceLoading }] =
+    useSubmitBidPriceEvaluationMutation();
   const [getCanPreliminaryComplete, { data: preliminaryCanSubmitData }] =
     useLazyGetCanPreliminaryCompleteQuery();
   const [getCanQualificationComplete, { data: qualificationCanSubmitData }] =
@@ -101,6 +104,11 @@ export const LotOverview = ({
         }).unwrap();
       } else if (milestone === 'technicalScoring') {
         await submitScoring({
+          lotId: lotId as string,
+          tenderId: tenderId as string,
+        }).unwrap();
+      } else if (milestone === 'financial') {
+        await submitBidPriceEvaluation({
           lotId: lotId as string,
           tenderId: tenderId as string,
         }).unwrap();
@@ -220,14 +228,16 @@ export const LotOverview = ({
                   isPreliminaryLoading ||
                   isQualificationLoading ||
                   isResponsivenessLoading ||
-                  isScoringLoading
+                  isScoringLoading ||
+                  isBidPriceLoading
                 }
                 disabled={
-                  milestone === 'technicalScoring'
+                  (milestone === 'technicalScoring'
                     ? false
                     : teamAssessment
                       ? lotStatus?.isTeamLead?.hasCompleted ?? true
-                      : lotStatus?.hasCompleted ?? true
+                      : lotStatus?.hasCompleted ?? true) &&
+                  milestone !== 'financial'
                 }
               >
                 Complete
