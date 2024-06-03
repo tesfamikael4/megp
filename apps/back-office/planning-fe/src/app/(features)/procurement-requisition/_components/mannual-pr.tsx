@@ -6,6 +6,7 @@ import {
   Checkbox,
   Flex,
   LoadingOverlay,
+  NumberInput,
   Select,
   Stack,
   TextInput,
@@ -218,15 +219,23 @@ export const FormDetail = ({
               {...register('isMultiYear')}
               disabled={disableFields}
             />
-            <TextInput
-              label="Estimated Amount"
-              className="w-full"
-              {...register('totalEstimatedAmount')}
-              error={errors?.totalEstimatedAmount?.message}
-              withAsterisk
-              placeholder="Estimated Amount"
-              type="number"
-              disabled={disableFields}
+            <Controller
+              name="totalEstimatedAmount"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  label="Estimated Amount"
+                  className="w-full"
+                  onChange={onChange}
+                  value={value}
+                  error={errors?.totalEstimatedAmount?.message}
+                  withAsterisk
+                  placeholder="Estimated Amount"
+                  thousandSeparator=","
+                  disabled={disableFields}
+                  allowNegative={false}
+                />
+              )}
             />
 
             <BudgetSelector
