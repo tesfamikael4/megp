@@ -26,14 +26,22 @@ interface DeliverDays {
   district: string;
 }
 export const DeliverDaysForm = () => {
-  const schema: ZodType<Partial<DeliverDays>> = z.object({
-    quantity: z.coerce.number().optional(),
-    deliverDays: z.coerce.number(),
-    district: z.string({
-      required_error: 'This field is required',
-      invalid_type_error: 'This field is required',
-    }),
-  });
+  const [deliverDays, setDeliverDays] = useState<any[]>([]);
+  const generateSchema = (numEntries: number) => {
+    const shape = {};
+    for (let i = 0; i < numEntries; i++) {
+      shape[`quantity_${i}`] = z.number().optional();
+      shape[`deliverDays_${i}`] = z.number();
+      shape[`district_${i}`] = z
+        .string()
+        .min(1, { message: 'This field is required' });
+      // shape[`region_${i}`] = z
+      //   .string()
+      //   .min(1, { message: 'This field is required' });
+    }
+    return z.object(shape);
+  };
+  const schema = generateSchema(deliverDays.length);
 
   const [selectedRegion, setSelectedRegion] = useState<any>();
   const { data: regions } = useGetRegionsQuery(undefined);
@@ -47,24 +55,12 @@ export const DeliverDaysForm = () => {
     resolver: zodResolver(schema),
   });
 
-  const [deliverDays, setDeliverDays] = useState<any[]>([]);
-
-  function onCreate() {
-    throw new Error('Function not implemented.');
-  }
-
-  function OnDelete(): void {
-    throw new Error('Function not implemented.');
-  }
-
-  // setSelectedRegion(catalog?.deliveryValues?.[0]?.region);
-
   useEffect(() => {
     selectedRegion !== undefined && triggerDistrict(selectedRegion);
   }, [selectedRegion, triggerDistrict]);
+
   return (
     <>
-      <Divider my={'sm'} />
       <Box mih={'80vh'} className="w-full">
         <Group
           className="ml-auto"
@@ -81,22 +77,20 @@ export const DeliverDaysForm = () => {
           </Button>
         </Group>
         <Stack className="w-full ml-2 min">
-          {/* <Flex gap={'xl'} mih={'40vh'}> */}
           {deliverDays?.map((deliv, index) => {
             return (
               <>
-                {/* <Box className="w-full" key={index}> */}
                 <Flex gap={'lg'}>
                   <Box key={index} className="grid grid-cols-2 gap-3 w-5/6">
                     <Controller
-                      name="region"
+                      name={`region_${index}`}
                       control={control}
-                      render={() => (
+                      render={({ field: { value, onChange } }) => (
                         <Select
                           defaultValue="MW"
                           required
                           label={'Region'}
-                          value={selectedRegion}
+                          value={value}
                           onChange={(value) => setSelectedRegion(value)}
                           error={
                             (selectedRegion === null ||
@@ -114,7 +108,7 @@ export const DeliverDaysForm = () => {
                       )}
                     />
                     <Controller
-                      name="district"
+                      name={`district_${index}`}
                       control={control}
                       render={({ field: { onChange, value } }) => (
                         <Select
@@ -135,7 +129,7 @@ export const DeliverDaysForm = () => {
                       )}
                     />
                     <Controller
-                      name={'deliverDays'}
+                      name={`deliverDays_${index}`}
                       control={control}
                       render={({ field: { name, value, onChange } }) => (
                         <NumberInput
@@ -148,7 +142,7 @@ export const DeliverDaysForm = () => {
                       )}
                     />
                     <Controller
-                      name={'quantity'}
+                      name={`quantity_${index}`}
                       control={control}
                       render={({ field: { value, onChange } }) => (
                         <NumberInput
@@ -165,19 +159,16 @@ export const DeliverDaysForm = () => {
                   </Flex>
                 </Flex>
                 <Divider my={'md'} />
-                {/* </Box> */}
               </>
             );
           })}
 
           {deliverDays.length > 0 && (
-            <Group className="ml-auto">
+            <Group className="ml-auto pe-4">
               <>
                 {' '}
-                <Button onClick={handleSubmit(onCreate)}>Update</Button>
-                <Button color="red" onClick={OnDelete}>
-                  Delete
-                </Button>
+                <Button>Update</Button>
+                <Button color="red">Delete</Button>
               </>
             </Group>
           )}

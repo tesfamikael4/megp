@@ -52,7 +52,7 @@ export default function CatalogForm({ mode }: any) {
           loc[nameToValidate] = z
             .string({
               required_error: 'This field is required',
-              invalid_type_error: 'This field is required to be a string',
+              invalid_type_error: 'This field is required',
             })
             .min(item.validation.min, {
               message: `Provide at least ${item.validation.min} characters`,
@@ -113,23 +113,19 @@ export default function CatalogForm({ mode }: any) {
         itemMasterId: itemId.toString(),
         itemMasterCode: itemMaster?.itemCode,
         specificationTemplateId: template.id.toString(),
-        deliveryValues: [
-          {
-            location: data.location,
-            deliverDays: data.deliverDays,
-          },
-        ],
+        deliveryValues: [],
         specificationValues: template.properties.map((item) => {
           const nameToValidate = item.displayName
             .toLowerCase()
             .replace(' ', '');
+          const uomFieldName = `${nameToValidate}_uom`;
           return {
             key: item.key,
             value: data[nameToValidate],
             label: item.displayName,
             category: item.category,
             type: typeof data[nameToValidate],
-            uom: item.uom,
+            uom: data[uomFieldName] ?? '',
           };
         }),
         specifications: template.properties.reduce((acc, item) => {
@@ -166,7 +162,7 @@ export default function CatalogForm({ mode }: any) {
             value: data[nameToValidate],
             label: item.displayName,
             category: item.category,
-            uom: data[`${nameToValidate}_uom`] || '',
+            uom: data[`${nameToValidate}_uom`] ?? '',
           };
         }),
 
@@ -223,7 +219,6 @@ export default function CatalogForm({ mode }: any) {
     }
     logger.log(catalog?.deliveryValues?.[0]?.region);
   }, [catalog, reset, id]);
-  // logger.log(selectedRegion);
 
   useEffect(() => {
     triggerReadItem(itemId.toString());
@@ -246,7 +241,6 @@ export default function CatalogForm({ mode }: any) {
         </Section>
       ) : (
         <Flex direction={'column'}>
-          <Divider my={'sm'} />
           <Group>
             <Text>{itemMaster?.description}</Text>
           </Group>
@@ -258,6 +252,7 @@ export default function CatalogForm({ mode }: any) {
               isLoading={templateLoading}
               onCreate={onCreate}
               onUpdate={onUpdate}
+              onError={onError}
               OnDelete={handleDelete}
               catalog={catalog}
             />
