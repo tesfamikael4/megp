@@ -18,6 +18,7 @@ import {
   Flex,
   Group,
   LoadingOverlay,
+  NumberFormatter,
   Select,
   Text,
 } from '@mantine/core';
@@ -263,13 +264,11 @@ const PrTab = () => {
                     Total Calculated Amount
                   </Text>
 
-                  {parseInt(pr?.calculatedAmount)?.toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: pr?.currency,
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                    currencyDisplay: 'code',
-                  })}
+                  <NumberFormatter
+                    value={pr?.calculatedAmount}
+                    thousandSeparator
+                    prefix={`${pr?.currency} `}
+                  />
                 </Box>
               </Flex>
             </Box>
