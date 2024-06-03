@@ -5,7 +5,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const getCatalogApi = createApi({
   reducerPath: 'getCatalogApi',
-  tagTypes: ['catalog', 'specificationTemplate', 'files'],
+  tagTypes: ['catalog', 'specificationTemplate', 'files', 'delivery-days'],
   refetchOnFocus: true,
   baseQuery: baseQuery(
     process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
@@ -108,6 +108,40 @@ export const getCatalogApi = createApi({
     getDistricts: builder.query<any, string>({
       query: (id: string) => `districts/list/${id}`,
     }),
+
+    getDeliveryLocation: builder.query<any, any>({
+      query: () => 'delivery-days',
+      providesTags: ['delivery-days'],
+    }),
+
+    readDeliveryLocation: builder.query<any, string>({
+      query: (id: string) => `delivery-days/${id}`,
+      providesTags: ['delivery-days'],
+    }),
+    createDeliveryLocation: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `delivery-days`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['delivery-days'],
+    }),
+    updateDeliveryLocation: builder.mutation<any, any>({
+      query: ({ id, ...data }) => ({
+        url: `delivery-days/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['delivery-days'],
+    }),
+
+    deleteDeliveryLocation: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `delivery-days/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['delivery-days'],
+    }),
   }),
 });
 
@@ -138,4 +172,13 @@ export const {
   useLazyGetDistrictsQuery,
   useGetRegionsQuery,
   useLazyGetRegionsQuery,
+
+  // delivery days
+  useGetDeliveryLocationQuery,
+  useLazyGetDeliveryLocationQuery,
+  useReadDeliveryLocationQuery,
+  useLazyReadDeliveryLocationQuery,
+  useCreateDeliveryLocationMutation,
+  useUpdateDeliveryLocationMutation,
+  useDeleteDeliveryLocationMutation,
 } = getCatalogApi;

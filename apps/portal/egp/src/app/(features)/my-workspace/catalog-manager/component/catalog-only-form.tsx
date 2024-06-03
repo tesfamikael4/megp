@@ -12,6 +12,7 @@ import {
   Stack,
   TextInput,
 } from '@mantine/core';
+import { logger } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -23,6 +24,7 @@ export const CatalogDetalForm = ({
   OnDelete,
   mode,
   catalog,
+  onError,
 }: {
   template;
   schema;
@@ -32,6 +34,7 @@ export const CatalogDetalForm = ({
   onUpdate;
   OnDelete;
   mode;
+  onError?;
 }) => {
   const {
     handleSubmit,
@@ -47,7 +50,11 @@ export const CatalogDetalForm = ({
       const temp = {};
       catalog?.specificationValues?.map((item) => {
         const nameToValidate = item?.label?.toLowerCase().replace(' ', '');
+        const uomFieldName = `${nameToValidate}_uom`;
+
         temp[nameToValidate] = item?.value;
+        temp[uomFieldName] = item?.uom;
+        logger.log(item?.uom);
       });
 
       reset({
@@ -58,6 +65,7 @@ export const CatalogDetalForm = ({
       });
     }
   }, [catalog, reset]);
+  onError = (err) => logger.error(err);
 
   return (
     <>
@@ -71,7 +79,7 @@ export const CatalogDetalForm = ({
               const uomFieldName = `${nameToValidate}_uom`;
 
               return item.dataType == 'string' ? (
-                <Flex gap={'sm'} className="w-full">
+                <Flex gap={'sm'} className={'w-full'}>
                   <Controller
                     key={index}
                     name={nameToValidate}
@@ -81,6 +89,7 @@ export const CatalogDetalForm = ({
                         label={item?.displayName}
                         value={value}
                         onChange={onChange}
+                        className={`${item.uom.length !== 0 ? 'w-2/4' : 'w-3/4'}`}
                         placeholder={item?.displayName}
                         required={item?.validation?.min}
                         error={
@@ -99,7 +108,7 @@ export const CatalogDetalForm = ({
                           name={uomFieldName}
                           onChange={onChange}
                           value={value}
-                          className="w-1/2"
+                          className="w-1/4"
                           error={errors?.uom?.message?.toString() ?? ''}
                           data={item?.uom?.map((uom) => {
                             return {
@@ -121,7 +130,7 @@ export const CatalogDetalForm = ({
                     render={({ field: { value, onChange } }) => (
                       <NumberInput
                         label={item?.displayName}
-                        className={`${item.uom ? 'w-1/2' : 'w-full'}`}
+                        className={`${item.uom.length !== 0 ? 'w-2/4' : 'w-3/4'}`}
                         value={value}
                         onChange={onChange}
                         placeholder={item?.displayName}
@@ -142,7 +151,7 @@ export const CatalogDetalForm = ({
                           name={uomFieldName}
                           onChange={onChange}
                           value={value}
-                          className="w-1/2"
+                          className="w-1/4"
                           error={errors?.uom?.message?.toString() ?? ''}
                           data={item?.uom?.map((uom) => {
                             return {
@@ -183,7 +192,7 @@ export const CatalogDetalForm = ({
                     render={({ field: { value, onChange } }) => (
                       <Select
                         name="name"
-                        className={`${item.uom ? 'w-1/2' : 'w-full'}`}
+                        className={`${item.uom.length !== 0 ? 'w-2/4' : 'w-3/4'}`}
                         label={item?.displayName}
                         value={value}
                         data={
@@ -214,7 +223,7 @@ export const CatalogDetalForm = ({
                           name={uomFieldName}
                           onChange={onChange}
                           value={value}
-                          className="w-1/2"
+                          className="w-1/4"
                           error={errors?.uom?.message?.toString() ?? ''}
                           data={item?.uom?.map((uom) => {
                             return {
@@ -237,6 +246,7 @@ export const CatalogDetalForm = ({
                       <MultiSelect
                         name="name"
                         label={item?.displayName}
+                        className={`${item.uom.length !== 0 ? 'w-2/4' : 'w-3/4'}`}
                         value={value}
                         data={
                           item?.validation?.enum?.map((i) => {
@@ -265,7 +275,7 @@ export const CatalogDetalForm = ({
                           name={uomFieldName}
                           onChange={onChange}
                           value={value}
-                          className="w-1/2"
+                          className="w-1/4"
                           error={errors?.uom?.message?.toString() ?? ''}
                           data={item?.uom?.map((uom) => {
                             return {
@@ -285,7 +295,7 @@ export const CatalogDetalForm = ({
               control={control}
               render={({ field: { name, value, onChange } }) => (
                 <NumberInput
-                  className="w-1/2"
+                  className="w-3/4"
                   label={'Quantity'}
                   value={value}
                   onChange={onChange}
@@ -295,13 +305,15 @@ export const CatalogDetalForm = ({
             />
           </Flex>
           {template?.properties?.length > 0 && (
-            <Group className="ml-auto">
+            <Group className="ml-auto pe-4">
               {mode == 'new' ? (
                 <Button onClick={handleSubmit(onCreate)}>Save</Button>
               ) : (
                 <>
                   {' '}
-                  <Button onClick={handleSubmit(onUpdate)}>Update</Button>
+                  <Button onClick={handleSubmit(onUpdate, onError ?? onError)}>
+                    Update
+                  </Button>
                   <Button color="red" onClick={OnDelete}>
                     Delete
                   </Button>
