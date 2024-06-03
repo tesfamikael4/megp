@@ -7,12 +7,10 @@ import {
 } from 'typeorm';
 import { OrgAudit } from 'src/shared/entities';
 import { Lot } from './lot.entity';
-import { ExchangeRate } from './exchange-rate.entity';
 import { Item } from './tender-item.entity';
-import { PriceAdjustingFactorEnum } from 'src/shared/enums/price-adjusting-factor.enum';
 
-@Entity({ name: 'price_adjusting_factors' })
-export class PriceAdjustingFactor extends OrgAudit {
+@Entity({ name: 'financial_price_analyses' })
+export class FinancialPriceAnalysis extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -30,18 +28,21 @@ export class PriceAdjustingFactor extends OrgAudit {
   @JoinColumn({ name: 'itemId' })
   item: Item;
 
-  @Column()
-  name: string;
+  @Column('uuid')
+  evaluatorId: string;
 
   @Column()
-  description: string;
+  evaluatorName: string;
 
   @Column()
-  amount: number;
+  currency: string;
 
-  @Column({
-    type: 'enum',
-    enum: PriceAdjustingFactorEnum,
-  })
-  type: string;
+  @Column()
+  calculatedBidUnitPrice: number;
+
+  @Column()
+  marketUnitPrice: number;
+
+  @Column()
+  difference: number;
 }

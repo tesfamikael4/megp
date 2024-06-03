@@ -1,18 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Item } from 'src/entities';
+import { BidRegistrationDetail, Item } from 'src/entities';
 import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
 import { ExchangeRate } from 'src/entities/exchange-rate.entity';
 import { FinancialBidPriceAssessment } from 'src/entities/financial-bid-price-assessment.entity';
 import { FormulaImplementation } from 'src/entities/formula-implementation.entity';
 import { FormulaUnit } from 'src/entities/formula-unit.entity';
+import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { DataResponseFormat } from 'src/shared/api-data';
 import {
   CollectionQuery,
   FilterOperators,
   QueryConstructor,
 } from 'src/shared/collection-query';
+import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
 import { ArrayContains, EntityManager, Repository } from 'typeorm';
@@ -91,6 +93,76 @@ export class FinancialBidPriceAssessmentService extends ExtraCrudService<Financi
       response.items = result;
     }
     return response;
+  }
+
+  async submit(itemData) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const financialBidPriceAssessment = await manager
+      .getRepository(FinancialBidPriceAssessment)
+      .find({
+        where: {
+          // bidderId: itemData.bidderId,
+          lotId: itemData.lotId,
+        },
+      });
+
+    await manager.getRepository(TenderMilestone).update(
+      {
+        lotId: itemData.lotId,
+        tenderId: itemData.tenderId,
+      },
+      {
+        isCurrent: false,
+      },
+    );
+    await manager.getRepository(TenderMilestone).insert({
+      lotId: itemData.lotId,
+
+      tenderId: itemData.tenderId,
+      milestoneNum: TenderMilestoneEnum.PriceAnalysis,
+      milestoneTxt: 'PriceAnalysis',
+      isCurrent: true,
+    });
+
+    const elementWithLeastPrice = financialBidPriceAssessment.reduce(
+      (min, current) => {
+        return current.calculatedBidUnitPrice < min.calculatedBidUnitPrice
+          ? current
+          : min;
+      },
+      financialBidPriceAssessment[0],
+    );
+
+    const biddersComparison = await Promise.all(
+      financialBidPriceAssessment.map(async (list) => {
+        const bidRegistrationDetail = await manager
+          .getRepository(BidRegistrationDetail)
+          .findOne({
+            where: {
+              lotId: list.lotId,
+              bidRegistration: {
+                bidderId: list.bidderId,
+              },
+              technicalItems: ArrayContains([list.itemId]),
+            },
+          });
+
+        return {
+          bidRegistrationDetailId: bidRegistrationDetail.id,
+          milestoneNum: TenderMilestoneEnum.FinancialBidPriceValuation,
+          milestoneTxt: 'FinancialBidPriceValuation',
+          bidderStatus: list.id == elementWithLeastPrice.id ? 326 : 325,
+          bidderStatusTxt:
+            list.id == elementWithLeastPrice.id
+              ? 'FinancialBidPriceValuationSucceeded'
+              : 'FinancialBidPriceValuationFailed',
+          passFail: list.id == elementWithLeastPrice.id ? true : false,
+        };
+      }),
+    );
+
+    await manager.getRepository(BiddersComparison).insert(biddersComparison);
   }
 
   async canAssess(lotId: string, query: CollectionQuery, req: any) {
