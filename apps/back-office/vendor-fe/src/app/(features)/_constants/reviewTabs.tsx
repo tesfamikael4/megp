@@ -121,6 +121,7 @@ export const formatColumns = (countryOfRegistration) => ({
     { name: 'branchAddress' },
     { name: 'IBAN' },
     { name: 'isDefualt' },
+    { name: 'authorityToAppointGov' },
   ],
 
   service: [{ name: 'name', displayName: 'Service Type' }],
@@ -129,7 +130,6 @@ export const formatColumns = (countryOfRegistration) => ({
         preferential: [
           { name: 'type', displayName: 'Preferential Service' },
           { name: 'certiNumber', displayName: 'Certificate Number' },
-          { name: 'certificateUrl', displayName: 'Certificate' },
         ],
       }
     : {}),
