@@ -55,6 +55,7 @@ export const procurementRequisitionApi = createApi({
 export const {
   useLazyGetApprovedPRQuery,
   useLazyGetPRDetailQuery,
+  useGetPRDetailQuery,
   useLazyGetAnalyticsQuery,
 } = procurementRequisitionApi;
 
@@ -79,7 +80,36 @@ export const readvertTendersApi = createApi({
       },
       providesTags: ['readvert-tender'],
     }),
+    createFromTender: builder.mutation<any, any>({
+      query: (data: { id: string }) => ({
+        url: `/tenders/re-advertise-tender`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['readvert-tender'],
+    }),
+    createFromLot: builder.mutation<any, any>({
+      query: (data: { id: string; name: string }) => ({
+        url: `/lots/re-advertise-lot`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['readvert-tender'],
+    }),
+    createFromItem: builder.mutation<any, any>({
+      query: (data: { id: string; name: string }) => ({
+        url: `/items/re-advertise-item`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['readvert-tender'],
+    }),
   }),
 });
 
-export const { useLazyGetReAdvertTenderQuery } = readvertTendersApi;
+export const {
+  useLazyGetReAdvertTenderQuery,
+  useCreateFromTenderMutation,
+  useCreateFromLotMutation,
+  useCreateFromItemMutation,
+} = readvertTendersApi;

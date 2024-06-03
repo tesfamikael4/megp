@@ -33,9 +33,7 @@ export default function Approval() {
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(
-                `/preparation/${tender.id}?tab=${tender.status === TenderStatusEnum.DRAFT ? 'configuration' : 'document'}`,
-              );
+              router.push(`/approval/${tender.id}?tab=document`);
             }}
           >
             <IconChevronRight />

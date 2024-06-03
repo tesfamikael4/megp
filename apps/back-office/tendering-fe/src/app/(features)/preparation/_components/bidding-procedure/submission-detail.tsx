@@ -14,7 +14,11 @@ import { notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { DateTimePicker } from '@mantine/dates';
 
-export default function SubmissionDetail() {
+export default function SubmissionDetail({
+  fromExtension,
+}: {
+  fromExtension: boolean | null;
+}) {
   const { id } = useParams();
   const SubmissionSchema: ZodType<Partial<ITenderSubmission>> = z
     .object({
@@ -114,19 +118,21 @@ export default function SubmissionDetail() {
       <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
 
       <div className="flex gap-3">
-        <NativeSelect
-          placeholder="Envelope Type"
-          withAsterisk
-          label="Envelope Type"
-          className="w-1/2"
-          data={['single envelop', 'two envelop']}
-          error={
-            errors['envelopType']
-              ? errors['envelopType']?.message?.toString()
-              : ''
-          }
-          {...register('envelopType')}
-        />
+        {!fromExtension && (
+          <NativeSelect
+            placeholder="Envelope Type"
+            withAsterisk
+            label="Envelope Type"
+            className="w-1/2"
+            data={['single envelop', 'two envelop']}
+            error={
+              errors['envelopType']
+                ? errors['envelopType']?.message?.toString()
+                : ''
+            }
+            {...register('envelopType')}
+          />
+        )}
         <Controller
           name="invitationDate"
           control={control}
@@ -134,7 +140,7 @@ export default function SubmissionDetail() {
             <DateTimePicker
               name={name}
               value={value}
-              minDate={new Date()}
+              minDate={fromExtension ? undefined : new Date()}
               withAsterisk
               className="w-1/2"
               onChange={onChange}

@@ -1,119 +1,97 @@
-import { Box, LoadingOverlay, Text, rgba } from '@mantine/core';
+import { Button, LoadingOverlay, Stack, Text, Box } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
-
+import { useRouter } from 'next/navigation';
+import { notify } from '@megp/core-fe';
+import ProcurmentMechanism from './procurment-mechanism.component';
+import { useCreateMutation } from '../preparation/_api/tender/tender.api';
+import { useLazyGetPRDetailQuery } from '../preparation/_api/tender/procurement-requisition.api';
 import { useEffect, useState } from 'react';
-import { useLazyListByIdQuery } from '../_api/mechanization.api';
+import { Tender, TenderStatusEnum } from '@/models/tender/tender.model';
+import Lot from './lots';
 
-export const DetailRequisition = ({ requisition }: { requisition: any }) => {
-  const requisitionId = requisition.id;
-  const [methods, setMethods] = useState<any[]>([]);
-  const data = [
-    {
-      key: 'Reference',
-      value: requisition.requisitionReferenceNumber,
-      titleStyle: (theme) => ({ color: theme.colors.green[6] }),
-    },
-    {
-      key: 'Title',
-      value: requisition.title,
-    },
-    {
-      key: 'Description',
-      value: requisition.description,
-    },
-
-    {
-      key: 'Calculated Amount',
-      value: parseInt(requisition.calculatedAmount).toLocaleString('en-US', {
-        style: 'currency',
-        currency: requisition.currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-        currencyDisplay: 'code',
-      }),
-    },
-  ];
-
-  // const isMounted = useIsMounted();
-
-  //rtk
-  const [
-    getMechanism,
-    {
-      data: mechanism,
-      isLoading: isGetMechanismLoading,
-      isSuccess: isGetMechanismSuccess,
-    },
-  ] = useLazyListByIdQuery();
-
-  //use effect
+export const DetailRequisition = ({
+  id,
+  tender,
+}: {
+  id: any;
+  tender?: Tender;
+}) => {
+  const [trigger, { data: requisition, isLoading: isGettingDetail }] =
+    useLazyGetPRDetailQuery();
+  const [data, setData] = useState<any[]>([]);
   useEffect(() => {
-    getMechanism({
-      id: requisitionId,
-      collectionQuery: undefined,
-    });
-  }, [getMechanism, requisitionId]);
+    if (id) {
+      trigger(id);
+    }
+  }, [id, trigger]);
 
   useEffect(() => {
-    if (isGetMechanismSuccess && mechanism?.total != 0) {
-      const temp = mechanism?.items[0];
-      setMethods([
+    if (requisition) {
+      setData([
         {
-          key: 'Procurement Type',
-          value: temp.procurementType,
+          key: 'Reference',
+          value: requisition.procurementReference,
+          titleStyle: (theme) => ({ color: theme.colors.green[6] }),
         },
         {
-          key: 'Procurement Method',
-          value: temp.procurementMethod,
+          key: 'Title',
+          value: requisition.name,
         },
         {
-          key: 'Funding Source',
-          value: temp.fundingSource,
+          key: 'Description',
+          value: requisition.description,
         },
+
         {
-          key: 'Procurement Process',
-          value: temp.isOnline ? 'Online' : 'Offline',
-        },
-        {
-          key: 'Supplier Target Group',
-          value: temp.targetGroup.join(', '),
+          key: 'Calculated Amount',
+          value: parseInt(requisition.calculatedAmount).toLocaleString(
+            'en-US',
+            {
+              style: 'currency',
+              currency: requisition.currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            },
+          ),
         },
       ]);
     }
-  }, [isGetMechanismSuccess, mechanism]);
+  }, [requisition]);
+
+  const [convert, { isLoading: isConverting }] = useCreateMutation();
+  const router = useRouter();
+
+  const onClickPRSelection = async () => {
+    try {
+      const result = await convert({ prId: requisition?.id }).unwrap();
+      if (result) router.push(`/tender/${result?.id}?tab=configuration`);
+      notify('Success', 'Converted to Tender successfully.');
+    } catch (err) {
+      notify('Error', err?.data?.message ?? 'Error while creating Tender.');
+    }
+  };
+
   return (
-    <Box className="bg-white p-5" pos="relative">
-      <LoadingOverlay visible={isGetMechanismLoading} />
+    <Stack className="bg-white p-5" pos="relative">
+      <LoadingOverlay visible={isGettingDetail} />
+      {((tender && tender.status === TenderStatusEnum.CANCELED) || !tender) && (
+        <Button
+          className="ml-auto"
+          onClick={onClickPRSelection}
+          loading={isConverting}
+        >
+          Convert to Tender
+        </Button>
+      )}
       <Text className="font-semibold mb-2">Definition</Text>
-      <DataTable
-        withColumnBorders
-        withTableBorder
-        records={data}
-        striped={false}
-        columns={[
-          {
-            accessor: 'key',
-            width: 200,
-            cellsStyle: () => ({
-              background: '#DCE8F2',
-            }),
-          },
-          {
-            accessor: 'value',
-            cellsStyle: () => ({
-              background: 'white',
-            }),
-          },
-        ]}
-        noHeader
-      />
-      {methods.length !== 0 && (
+      {requisition && (
         <>
-          <Text className="font-semibold my-2">Procurement Method</Text>
           <DataTable
             withColumnBorders
             withTableBorder
-            records={methods}
+            records={data}
+            striped={false}
             columns={[
               {
                 accessor: 'key',
@@ -131,8 +109,23 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
             ]}
             noHeader
           />
+          <Text className="font-semibold mb-2">Procurment Mechanism</Text>
+          <ProcurmentMechanism
+            procurementMechanisms={requisition.procurementMechanisms}
+          />
+          {tender && (
+            <>
+              <Text className="font-semibold mb-2">Lots</Text>
+
+              {tender.lots?.map((lot) => (
+                <Box key={lot.id}>
+                  <Lot lot={lot} />
+                </Box>
+              ))}
+            </>
+          )}
         </>
       )}
-    </Box>
+    </Stack>
   );
 };
