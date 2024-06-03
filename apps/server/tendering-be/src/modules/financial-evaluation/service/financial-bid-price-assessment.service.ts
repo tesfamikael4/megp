@@ -48,6 +48,7 @@ export class FinancialBidPriceAssessmentService extends ExtraCrudService<Financi
           lotId: lotId,
           technicalItems: ArrayContains([itemId]),
         },
+
         milestoneNum: 305,
         bidderStatus: 308,
         isCurrent: true,
