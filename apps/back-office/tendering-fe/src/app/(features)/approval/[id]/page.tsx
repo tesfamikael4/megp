@@ -7,35 +7,23 @@ import { useEffect, useState } from 'react';
 import { logger } from '@megp/core-fe';
 import { WorkflowHandling } from '../_components/workflow';
 import { useReadQuery } from '../_api/tender/tender.api';
+import { useLazyGetFilesQuery } from '../../revision/_api/bid-document.api';
 
 export default function WorkflowPage() {
   const { id } = useParams();
-  const { data, isLoading } = useReadQuery(id.toString());
-  const [fileUrl, setFileUrl] = useState<string>('');
-
+  const [trigger, { data: url, isLoading }] = useLazyGetFilesQuery();
   useEffect(() => {
-    const getFile = async () => {
-      fetch(data.presignedUrl)
-        .then((response) => response.blob())
-        .then((blob) => {
-          const objectURL = URL.createObjectURL(blob);
-          setFileUrl(objectURL);
-        })
-        .catch((error) => {
-          logger.error('Error fetching PDF:', error);
-        });
-    };
-    if (data) getFile();
-  }, [data]);
+    trigger(id);
+  }, [id]);
 
   return (
     <Box className="min-h-screen">
       <LoadingOverlay visible={isLoading} />
-      {data && (
+      {url && (
         <PDFHighlighter
-          title={data?.document.fileInfo.originalname}
-          objectId={data?.document?.id as string}
-          pdfUrl={fileUrl}
+          title="Bid Document"
+          objectId={id as string}
+          pdfUrl={url?.presignedDownload}
           workflow={
             <WorkflowHandling
               itemId={id as string}

@@ -14,6 +14,7 @@ export interface Tender {
   marketEstimateCurrency: string;
   status: TenderStatusEnum;
   metadata: { [key: string]: any };
+  lots?: Lot[];
 }
 
 export enum TenderStatusEnum {

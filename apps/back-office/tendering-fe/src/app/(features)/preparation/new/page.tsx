@@ -1,35 +1,19 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Section, notify } from '@megp/core-fe';
+import { Section } from '@megp/core-fe';
 import {
   useLazyGetApprovedPRQuery,
   useLazyGetReAdvertTenderQuery,
 } from '../_api/tender/procurement-requisition.api';
-import { ActionIcon, Box, Select, Text } from '@mantine/core';
-import { IconChevronRight } from '@tabler/icons-react';
+import { Box, Select, Text } from '@mantine/core';
 import { ExpandableTable } from '../../_components/expandable-table';
 import { DetailRequisition } from '../../_components/detail-requisition-list';
-import { useCreateMutation } from '../_api/tender/tender.api';
-import { useRouter } from 'next/navigation';
-import TenderDetail from '../_components/tender/tender-detail';
 
 export default function TenderingPage() {
-  const router = useRouter();
   const [trigger, { data, isLoading }] = useLazyGetApprovedPRQuery();
   const [triggerReAdvert, { data: readverts, isLoading: reAdvertLoading }] =
     useLazyGetReAdvertTenderQuery();
   const [selectFrom, setSelectFrom] = useState('Procurement Requisition');
-  const [create, { isLoading: isSaving }] = useCreateMutation();
-  const onClickPRSelection = async (value: any) => {
-    create({ prId: value.id })
-      .unwrap()
-      .then((result) => {
-        router.push(`/preparation/${result.id}?tab=configuration`);
-      })
-      .catch((err) => {
-        notify('Error', err.data.message);
-      });
-  };
 
   const config = {
     columns: [
@@ -56,30 +40,13 @@ export default function TenderingPage() {
         ),
         width: 150,
       },
-      {
-        accessor: 'id',
-        title: '',
-        render: (pr) => (
-          <ActionIcon
-            loading={isSaving}
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              onClickPRSelection(pr);
-            }}
-          >
-            <IconChevronRight />
-          </ActionIcon>
-        ),
-        width: 50,
-      },
     ],
     isExpandable: true,
     isSearchable: true,
     isLoading: isLoading,
     primaryColumn: 'title',
     expandedRowContent: (requisition) => {
-      return <DetailRequisition requisition={requisition} />;
+      return <DetailRequisition id={requisition.id} />;
     },
   };
 
@@ -94,30 +61,13 @@ export default function TenderingPage() {
       { accessor: 'budgetAmount', title: 'Budget Amount' },
       { accessor: 'budgetCode', title: 'Budget Code' },
       { accessor: 'status', title: 'Status' },
-      {
-        accessor: 'id',
-        title: '',
-        render: (pr) => (
-          <ActionIcon
-            loading={isSaving}
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              onClickPRSelection(pr);
-            }}
-          >
-            <IconChevronRight />
-          </ActionIcon>
-        ),
-        width: 50,
-      },
     ],
     isExpandable: true,
     isSearchable: true,
     primaryColumn: 'title',
     isFetching: reAdvertLoading,
     expandedRowContent: (tender) => {
-      return <TenderDetail tender={tender} />;
+      return <DetailRequisition id={tender.prId} tender={tender} />;
     },
   };
   useEffect(() => {

@@ -58,6 +58,7 @@ import {
 import { TenderStatusEnum } from '@/models/tender/tender.model';
 import Document from '../_components/tender/document';
 import { LotFormDetail } from '../_components/lot/lot-form-detail';
+import InvitationDocument from '../_components/tender/invitation/invitation-document';
 export default function TenderDetailPage() {
   const router = useRouter();
   const pathname = usePathname();
@@ -233,6 +234,53 @@ export default function TenderDetailPage() {
                       : 'Send for review'}
                   </Button>
                 )}
+              {selected?.status === TenderStatusEnum.REVIEWED && (
+                <>
+                  <Button
+                    variant="filled"
+                    className="my-auto"
+                    loading={isUpdating && currentStatus === 'draft'}
+                    onClick={() => {
+                      setCurrentStatus('draft');
+                      onUpdate({
+                        status: TenderStatusEnum.DRAFT,
+                      });
+                    }}
+                  >
+                    Back to Draft
+                  </Button>
+                  <Button
+                    variant="filled"
+                    className="my-auto"
+                    loading={isUpdating && currentStatus === 'approval'}
+                    onClick={() => {
+                      setCurrentStatus('approval');
+                      onUpdate({
+                        status: TenderStatusEnum.APPROVAL,
+                      });
+                    }}
+                  >
+                    Sent for Approval
+                  </Button>
+                </>
+              )}
+              {selected?.status === TenderStatusEnum.APPROVED && (
+                <>
+                  <Button
+                    variant="filled"
+                    className="my-auto"
+                    loading={isUpdating && currentStatus === 'publish'}
+                    onClick={() => {
+                      setCurrentStatus('publish');
+                      onUpdate({
+                        status: TenderStatusEnum.PUBLISHED,
+                      });
+                    }}
+                  >
+                    Publish
+                  </Button>
+                </>
+              )}
               {selected?.status !== TenderStatusEnum.DRAFT && (
                 <Button
                   variant="filled"
@@ -340,6 +388,57 @@ export default function TenderDetailPage() {
                     Invitation
                   </Text>
                 </div>
+              ) : selected?.status === TenderStatusEnum.PUBLISHED ? (
+                <>
+                  <div className="flex space-x-4">
+                    <Text
+                      className={
+                        searchParams.get('tab') === 'document'
+                          ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                          : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                      }
+                      onClick={() => {
+                        router.push(
+                          pathname + '?' + createQueryString('tab', 'document'),
+                        );
+                      }}
+                    >
+                      Review
+                    </Text>
+                    <Text
+                      className={
+                        searchParams.get('tab') === 'invitation-document'
+                          ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                          : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                      }
+                      onClick={() => {
+                        router.push(
+                          pathname +
+                            '?' +
+                            createQueryString('tab', 'invitation-document'),
+                        );
+                      }}
+                    >
+                      Invitation
+                    </Text>
+                    <Text
+                      className={
+                        searchParams.get('tab') === 'extension'
+                          ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                          : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                      }
+                      onClick={() => {
+                        router.push(
+                          pathname +
+                            '?' +
+                            createQueryString('tab', 'extension'),
+                        );
+                      }}
+                    >
+                      Extension
+                    </Text>
+                  </div>
+                </>
               ) : (
                 <div className="flex space-x-4">
                   <Text
@@ -535,7 +634,7 @@ export default function TenderDetailPage() {
                     defaultCollapsed={true}
                     className="capitalize my-2"
                   >
-                    <SubmissionDetail />
+                    <SubmissionDetail fromExtension={false} />
                   </Section>
                   <Section
                     title="Evaluation"
@@ -646,6 +745,30 @@ export default function TenderDetailPage() {
                 className="capitalize my-2"
               >
                 <ParticipationFee />
+              </Section>
+            </>
+          )}
+          {searchParams.get('tab') === 'invitation-document' && (
+            <>
+              <Section
+                title="Invitation Document"
+                collapsible={false}
+                defaultCollapsed={false}
+                className="capitalize my-2"
+              >
+                <InvitationDocument />
+              </Section>
+            </>
+          )}
+          {searchParams.get('tab') === 'extension' && (
+            <>
+              <Section
+                title="Extension"
+                collapsible={false}
+                defaultCollapsed={false}
+                className="capitalize my-2"
+              >
+                <SubmissionDetail fromExtension={true} />
               </Section>
             </>
           )}

@@ -27,6 +27,7 @@ import { tenderingIamApi } from './api/tendering-approval/tendering-iam';
 import { workflowApi } from './api/workflow/workflow.api';
 import { getSubmittedBiddersApi } from '@/app/(features)/solicitation/_api/submitted-bidders.api';
 import { bidPriceEvaluation } from './api/tendering/bid-price-evaluation.api';
+import { invitationDocumentApi } from '@/app/(features)/preparation/_api/tender/invitation-document.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -58,6 +59,7 @@ export const store = configureStore({
     [workflowApi.reducerPath]: workflowApi.reducer,
     [readvertTendersApi.reducerPath]: readvertTendersApi.reducer,
     [getSubmittedBiddersApi.reducerPath]: getSubmittedBiddersApi.reducer,
+    [invitationDocumentApi.reducerPath]: invitationDocumentApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -88,6 +90,7 @@ export const store = configureStore({
       workflowApi.middleware,
       readvertTendersApi.middleware,
       getSubmittedBiddersApi.middleware,
+      invitationDocumentApi.middleware,
     ]),
 });
 
