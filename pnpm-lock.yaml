@@ -2090,8 +2090,8 @@ importers:
         specifier: ^1.5.1
         version: 1.5.1
       megp-shared-be:
-        specifier: 1.0.1
-        version: 1.0.1(amqp-connection-manager@4.1.14)(amqplib@0.10.4)(express@4.19.2)(ts-node@10.9.2)
+        specifier: 2.0.4
+        version: 2.0.4(amqp-connection-manager@4.1.14)(amqplib@0.10.4)(express@4.19.2)(ts-node@10.9.2)
       nestjs-minio-client:
         specifier: ^2.2.0
         version: 2.2.0(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)
@@ -2705,8 +2705,8 @@ importers:
         specifier: ^1.5.1
         version: 1.5.1
       megp-shared-be:
-        specifier: 1.0.1
-        version: 1.0.1(amqp-connection-manager@4.1.14)(amqplib@0.10.4)(express@4.19.2)(ts-node@10.9.2)
+        specifier: 2.0.4
+        version: 2.0.4(amqp-connection-manager@4.1.14)(amqplib@0.10.4)(express@4.19.2)(ts-node@10.9.2)
       nestjs-minio-client:
         specifier: ^2.2.0
         version: 2.2.0(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)
@@ -17426,8 +17426,8 @@ packages:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
     engines: {node: '>= 0.6'}
 
-  /megp-shared-be@1.0.1(amqp-connection-manager@4.1.14)(amqplib@0.10.4)(express@4.19.2)(ts-node@10.9.2):
-    resolution: {integrity: sha512-/rxkjoi+V+fyX8FgW5SMziepjgbhVetogj1HuF/04XeIwuAa7K7E9vwWKrJCrbPkCYC2ySnoSEAmE3IpEF3WoQ==}
+  /megp-shared-be@2.0.4(amqp-connection-manager@4.1.14)(amqplib@0.10.4)(express@4.19.2)(ts-node@10.9.2):
+    resolution: {integrity: sha512-V0tjwu/LOHGsTcuIvbIvzOGsyPin4QoTLBfMFpI98vwi1YCAV5aCv4yyiwXRT3c7FB3pb7JhMcPLM9q/I/F1PQ==}
     dependencies:
       '@nestjs-modules/mailer': 1.11.2(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(nodemailer@6.9.13)
       '@nestjs/common': 9.4.3(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.1.14)(rxjs@7.8.1)
