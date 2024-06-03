@@ -24,13 +24,17 @@ export default function ReadSpec() {
             </Box>
             <Box className="w-2/3 border shadow-sm p-4">
               <Tooltip
-                label="List Activities"
+                label="List Product Catalog"
                 className="cursor-pointer"
                 onClick={() => router.back()}
+                position="left-start"
+                offset={5}
               >
                 <Flex align="center" mb={'sm'}>
                   <IconChevronLeft size={14} />
-                  <Text className="font-semibold text-lg">Product</Text>
+                  <Text className="font-semibold text-lg">
+                    Product Catalog Detail
+                  </Text>
                 </Flex>
               </Tooltip>
               <Tabs defaultValue="gallery">
