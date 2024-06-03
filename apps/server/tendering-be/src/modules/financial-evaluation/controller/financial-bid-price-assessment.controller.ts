@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
@@ -80,5 +80,10 @@ export class FinancialBidPriceAssessmentController extends ExtraCrudController<F
       query,
       req,
     );
+  }
+
+  @Post('submit')
+  async submit(@Body() itemData: any, @Req() req, @Query('q') q: string) {
+    return await this.financialBidPriceAssessmentService.submit(itemData);
   }
 }
