@@ -20,6 +20,7 @@ export class MinIOService {
         BucketNameEnum.MEGP,
         bucketName ? bucketName + filepath : filepath,
         file.buffer,
+        file.size,
         { ...metaData, 'Content-Type': file.mimetype },
       );
       return {
