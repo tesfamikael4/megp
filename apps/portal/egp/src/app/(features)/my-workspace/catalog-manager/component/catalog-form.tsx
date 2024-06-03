@@ -1,5 +1,5 @@
 'use client';
-import { Box, Group, Flex, Text, Divider } from '@mantine/core';
+import { Box, Group, Flex, Text, Divider, Title } from '@mantine/core';
 
 import { Section, logger, notify } from '@megp/core-fe';
 import {
@@ -228,16 +228,29 @@ export default function CatalogForm({ mode }: any) {
     <>
       {mode == 'new' ? (
         <Section collapsible={false}>
-          <CatalogDetalForm
-            mode={'new'}
-            template={template}
-            schema={productCatalogSchema}
-            isLoading={templateLoading}
-            onCreate={onCreate}
-            onUpdate={onUpdate}
-            OnDelete={handleDelete}
-            catalog={catalog}
-          />
+          {mode == 'new' && (
+            <Title order={4} className="mb-4">
+              New Product Catalog
+            </Title>
+          )}
+          <Flex direction={'column'}>
+            <Group>
+              <Text>{itemMaster?.description}</Text>
+            </Group>
+            <Box mt={'md'}>
+              <CatalogDetalForm
+                mode={'new'}
+                template={template}
+                schema={productCatalogSchema}
+                isLoading={templateLoading}
+                onCreate={onCreate}
+                onUpdate={onUpdate}
+                onError={onError}
+                OnDelete={handleDelete}
+                catalog={catalog}
+              />
+            </Box>
+          </Flex>
         </Section>
       ) : (
         <Flex direction={'column'}>

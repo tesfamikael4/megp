@@ -110,17 +110,17 @@ export const getCatalogApi = createApi({
     }),
 
     getDeliveryLocation: builder.query<any, any>({
-      query: () => 'delivery-days',
+      query: () => 'product_catalog_deliveries',
       providesTags: ['delivery-days'],
     }),
 
     readDeliveryLocation: builder.query<any, string>({
-      query: (id: string) => `delivery-days/${id}`,
+      query: (id: string) => `product_catalog_deliveries/${id}`,
       providesTags: ['delivery-days'],
     }),
     createDeliveryLocation: builder.mutation<any, any>({
       query: (data) => ({
-        url: `delivery-days`,
+        url: `product_catalog_deliveries`,
         method: 'POST',
         body: data,
       }),
@@ -128,7 +128,7 @@ export const getCatalogApi = createApi({
     }),
     updateDeliveryLocation: builder.mutation<any, any>({
       query: ({ id, ...data }) => ({
-        url: `delivery-days/${id}`,
+        url: `product_catalog_deliveries/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -137,7 +137,7 @@ export const getCatalogApi = createApi({
 
     deleteDeliveryLocation: builder.mutation<any, string>({
       query: (id) => ({
-        url: `delivery-days/${id}`,
+        url: `product_catalog_deliveries/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['delivery-days'],
