@@ -40,13 +40,11 @@ export class RevisionApprovalService extends ExtraCrudService<RevisionApproval> 
       throw new BadRequestException('leader_cannot_approve');
     }
 
-    const item = manager
-      .getRepository(RevisionApproval)
-      .create({
-        tenderId: itemData.id,
-        status: itemData.status,
-        userId: req.user.userId,
-      });
+    const item = manager.getRepository(RevisionApproval).create({
+      tenderId: itemData.id,
+      status: itemData.status,
+      userId: req.user.userId,
+    });
 
     await manager
       .getRepository(RevisionApproval)
@@ -61,7 +59,7 @@ export class RevisionApprovalService extends ExtraCrudService<RevisionApproval> 
       }),
     ]);
 
-    if (teams - 1 == revisedTeamCount) {
+    if (teams - 1 <= revisedTeamCount) {
       await manager.getRepository(Tender).update(itemData.id, {
         status: TenderStatusEnum.REVIEWED,
       });
