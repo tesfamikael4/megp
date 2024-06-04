@@ -53,7 +53,7 @@ export class BidRegistrationDetail extends Audit {
   @Column({ type: 'text', array: true, nullable: true })
   technicalItems: string[];
 
-  @Column({ type: 'simple-array', nullable: true })
+  @Column({ type: 'text', array: true, nullable: true })
   financialItems: string[];
 
   @Column({ type: 'jsonb', nullable: true })

@@ -22,19 +22,31 @@ export class FinancialPriceAnalysisController extends ExtraCrudController<Financ
     super(financialPriceAnalysisService);
   }
 
-  @Get('bidders-status/:lotId/:itemId')
+  @Get('bidders-status/:lotId')
   async passedBidders(
     @Param('lotId') lotId: string,
-    @Param('itemId') itemId: string,
     @Req() req,
     @Query('q') q: string,
   ) {
     const query = decodeCollectionQuery(q);
     return await this.financialPriceAnalysisService.passedBidders(
       lotId,
-      itemId,
       query,
       req,
+    );
+  }
+
+  @Get('bidder-offered-items/:lotId/:bidderId')
+  async bidderOfferedItems(
+    @Param('lotId') lotId: string,
+    @Param('bidderId') bidderId: string,
+    @Req() req,
+    @Query('q') q: string,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.financialPriceAnalysisService.getOfferedBidderItems(
+      lotId,
+      bidderId,
     );
   }
 }
