@@ -5,7 +5,6 @@ import { Workflow } from 'src/entities';
 import { EntityCrudService } from 'megp-shared-be';
 import { XMachineService } from './xMachine.service';
 import { createActor } from 'xstate';
-import { State } from 'src/entities/state.entity';
 import { Instance } from 'src/entities/instance.entity';
 
 @Injectable()
