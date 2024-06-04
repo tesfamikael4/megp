@@ -37,4 +37,11 @@ export class OfflinePaymentController {
     console.log('🚀 ~ OfflinePaymentController ~ log ~ payload:', payload);
     return payload;
   }
+
+  @Post('log-token')
+  async tokenLog(@Body() payload: any, @Req() req: any) {
+    console.log('🚀 ~ OfflinePaymentController ~ tokenLog ~ req:', req);
+    console.log('🚀 ~ OfflinePaymentController ~ log ~ payload:', payload);
+    return payload;
+  }
 }
