@@ -22,6 +22,7 @@ import { PriceAdjustingFactor } from './price-adjusting-factor.entity';
 import { FinancialBidPriceAssessment } from './financial-bid-price-assessment.entity';
 import { ItemStatusEnum } from 'src/shared/enums/tender-status.enum';
 import { FormulaImplementation } from './formula-implementation.entity';
+import { FinancialPriceAnalysisDetail } from './financial-price-analysis-detail.entity';
 
 @Entity({ name: 'items' })
 export class Item extends Audit {
@@ -134,4 +135,10 @@ export class Item extends Audit {
     (formulaImplementation) => formulaImplementation.item,
   )
   formulaImplementations: FormulaImplementation[];
+
+  @OneToMany(
+    () => FinancialPriceAnalysisDetail,
+    (financialPriceAnalysisDetail) => financialPriceAnalysisDetail.item,
+  )
+  financialPriceAnalysisDetails: FinancialPriceAnalysisDetail[];
 }

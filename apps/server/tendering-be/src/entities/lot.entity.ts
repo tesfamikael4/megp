@@ -28,6 +28,7 @@ import { ExchangeRate } from './exchange-rate.entity';
 import { FinancialBidPriceAssessment } from './financial-bid-price-assessment.entity';
 import { LotStatusEnum } from 'src/shared/enums/tender-status.enum';
 import { FormulaUnit } from './formula-unit.entity';
+import { FinancialPriceAnalysis } from './financial-price-analysis.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -137,4 +138,10 @@ export class Lot extends Audit {
 
   @OneToMany(() => FormulaUnit, (formulaUnit) => formulaUnit.lot)
   formulaUnits: FormulaUnit[];
+
+  @OneToMany(
+    () => FinancialPriceAnalysis,
+    (financialPriceAnalysis) => financialPriceAnalysis.lot,
+  )
+  financialPriceAnalyses: FinancialPriceAnalysis[];
 }
