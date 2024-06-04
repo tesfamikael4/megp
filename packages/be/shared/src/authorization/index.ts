@@ -6,5 +6,6 @@ export * from './guards/permissions.guard';
 export * from './helper/auth.helper';
 export * from './guards/jwt-refresh.guard';
 export * from './guards/api-key.guard';
+export * from './guards/vendor.guard';
 export * from './strategy/jwt-refresh-token.strategy';
 export * from './strategy/jwt.strategy';
