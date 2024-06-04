@@ -23,7 +23,8 @@ export const BidderOverView = ({
     | 'technicalQualification'
     | 'technicalResponsiveness'
     | 'technicalScoring'
-    | 'financial';
+    | 'financial'
+    | 'priceAnalysis';
 }) => {
   const { tenderId, lotId, bidderId, itemId } = useParams();
   const router = useRouter();

@@ -59,6 +59,10 @@ export default function BidOpening() {
                 router.push(`/evaluation/${tenderId}/${record.id}/scoring`);
               else if (currentStage === 'FinancialCompliance')
                 router.push(`/evaluation/${tenderId}/${record.id}/financial`);
+              else if (currentStage === 'PriceAnalysis')
+                router.push(
+                  `/evaluation/${tenderId}/${record.id}/price-analysis`,
+                );
             }}
           >
             <IconChevronRight size={14} />

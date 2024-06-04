@@ -43,7 +43,8 @@ export const LotOverview = ({
     | 'technicalQualification'
     | 'technicalResponsiveness'
     | 'technicalScoring'
-    | 'financial';
+    | 'financial'
+    | 'priceAnalysis';
 }) => {
   const { tenderId, lotId } = useParams();
   const router = useRouter();

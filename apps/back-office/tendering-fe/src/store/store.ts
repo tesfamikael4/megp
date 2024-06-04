@@ -28,6 +28,7 @@ import { workflowApi } from './api/workflow/workflow.api';
 import { getSubmittedBiddersApi } from '@/app/(features)/solicitation/_api/submitted-bidders.api';
 import { bidPriceEvaluation } from './api/tendering/bid-price-evaluation.api';
 import { invitationDocumentApi } from '@/app/(features)/preparation/_api/tender/invitation-document.api';
+import { priceAnalysis } from './api/tendering/price-analysis.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -40,6 +41,7 @@ export const store = configureStore({
     [technicalResponsiveness.reducerPath]: technicalResponsiveness.reducer,
     [technicalScoring.reducerPath]: technicalScoring.reducer,
     [bidPriceEvaluation.reducerPath]: bidPriceEvaluation.reducer,
+    [priceAnalysis.reducerPath]: priceAnalysis.reducer,
     [tenderOpeningApi.reducerPath]: tenderOpeningApi.reducer,
     [iamApi.reducerPath]: iamApi.reducer,
     [technicalScoringTreeApi.reducerPath]: technicalScoringTreeApi.reducer,
@@ -81,6 +83,7 @@ export const store = configureStore({
       technicalResponsiveness.middleware,
       technicalScoring.middleware,
       bidPriceEvaluation.middleware,
+      priceAnalysis.middleware,
       tenderOpeningApi.middleware,
       bidDocumentApi.middleware,
       iamApi.middleware,
