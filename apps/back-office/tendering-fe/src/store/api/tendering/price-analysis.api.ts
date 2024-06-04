@@ -16,14 +16,14 @@ export const priceAnalysis = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/financial-price-analysis/bidders-status/${lotId}${q}`,
+          url: `/financial-price-analysis-detail/bidders-status/${lotId}${q}`,
         };
       },
     }),
     getBidderItems: builder.query<any, any>({
       query: ({ lotId, bidderId }) => {
         return {
-          url: `/financial-price-analysis/bidder-offered-items/${lotId}/${bidderId}`,
+          url: `/financial-price-analysis-detail/bidder-offered-items/${lotId}/${bidderId}`,
         };
       },
     }),
@@ -31,7 +31,7 @@ export const priceAnalysis = createApi({
     saveMarketPriceAnalysis: builder.mutation<any, any>({
       query: (data) => {
         return {
-          url: `/financial-price-analysis/bulk-create`,
+          url: `/financial-price-analysis-detail/bulk-create`,
           method: 'POST',
           body: data,
         };
