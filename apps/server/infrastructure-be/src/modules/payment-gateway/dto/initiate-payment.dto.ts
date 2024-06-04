@@ -49,18 +49,11 @@ export class PaymentCompletedDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  @Min(1)
-  amount: number;
-  @ApiProperty({
-    default: 'MWK',
-  })
-  @IsNotEmpty()
   @IsString()
-  currency: string;
+  bankReferenceNumber: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  bankReferenceNumber: string;
+  status: string;
 }

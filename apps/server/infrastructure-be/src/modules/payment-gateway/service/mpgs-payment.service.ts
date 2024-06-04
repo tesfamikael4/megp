@@ -5,6 +5,7 @@ import { PaymentInvoice } from 'src/entities/payment-invoice.entity';
 import { Repository } from 'typeorm';
 import { InitiatePaymentDto } from '../dto/initiate-payment.dto';
 import { randomUUID } from 'crypto';
+import { PaymentInvoiceStatusEnum } from 'src/shared/enums/payment-invoice-status.enum';
 
 @Injectable()
 export class MpgsPaymentService {
@@ -74,7 +75,7 @@ export class MpgsPaymentService {
         orderId: orderId,
         notificationUrl: notificationUrl,
         callbackUrl: request.callbackUrl,
-        status: 'PENDING',
+        status: PaymentInvoiceStatusEnum.PENDING,
       });
 
       await this.paymentInvoiceRepository.insert(invoice);

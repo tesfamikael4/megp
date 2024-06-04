@@ -8,6 +8,7 @@ import {
   PaymentCompletedDto,
 } from '../dto/initiate-payment.dto';
 import { randomUUID } from 'crypto';
+import { PaymentInvoiceStatusEnum } from 'src/shared/enums/payment-invoice-status.enum';
 
 @Injectable()
 export class OfflinePaymentService {
@@ -22,7 +23,7 @@ export class OfflinePaymentService {
 
       const invoice = this.paymentInvoiceRepository.create({
         applicationKey: request.applicationKey,
-        type: 'ONLINE',
+        type: 'OFFLINE',
         service: request.service,
         description: request.description,
         amount: request.amount,
@@ -30,7 +31,7 @@ export class OfflinePaymentService {
         invoiceReference: request.invoiceReference,
         orderId: orderId,
         callbackUrl: request.callbackUrl,
-        status: 'PENDING',
+        status: PaymentInvoiceStatusEnum.PENDING,
       });
 
       await this.paymentInvoiceRepository.insert(invoice);
@@ -46,17 +47,54 @@ export class OfflinePaymentService {
       throw new BadRequestException('invoice_reference_not_found');
     }
 
+    if (invoiceReference == 'TI-0001') {
+      throw new BadRequestException('payment_invoice_not_found');
+    } else if (invoiceReference == 'TI-0002') {
+      throw new BadRequestException('payment_invoice_paid');
+    } else if (invoiceReference == 'TI-0003') {
+      const result = await this.paymentInvoiceRepository.findOneBy({
+        invoiceReference: invoiceReference,
+      });
+
+      return result;
+    }
+
     const result = await this.paymentInvoiceRepository.findOneBy({
       invoiceReference: invoiceReference,
     });
     if (!result) {
       throw new BadRequestException('payment_invoice_not_found');
+    } else if (result.status == PaymentInvoiceStatusEnum.SUCCESS) {
+      throw new BadRequestException('payment_invoice_paid');
+    } else if (result.status == PaymentInvoiceStatusEnum.FAILED) {
+      throw new BadRequestException('payment_invoice_failed_request_new');
     }
     return result;
   }
 
   async paymentCompleted(payload: PaymentCompletedDto) {
     try {
+      if (payload.invoiceReference == 'TI-0001') {
+        throw new BadRequestException('payment_invoice_not_found');
+      } else if (payload.invoiceReference == 'TI-0002') {
+        throw new BadRequestException('payment_invoice_paid');
+      } else if (payload.invoiceReference == 'TI-0003') {
+        const paymentInvoice = await this.paymentInvoiceRepository.findOneBy({
+          invoiceReference: payload.invoiceReference,
+        });
+
+        const status = payload.status ?? PaymentInvoiceStatusEnum.SUCCESS;
+
+        await this.paymentInvoiceRepository.update(paymentInvoice.id, {
+          status: status,
+          bankReferenceNumber: payload.bankReferenceNumber,
+        });
+
+        return {
+          ...paymentInvoice,
+          status,
+        };
+      }
       const paymentInvoice = await this.paymentInvoiceRepository.findOneBy({
         invoiceReference: payload.invoiceReference,
       });
@@ -65,13 +103,15 @@ export class OfflinePaymentService {
         throw new BadRequestException('payment_invoice_not_found');
       }
 
+      const status = payload.status ?? PaymentInvoiceStatusEnum.SUCCESS;
+
       await this.paymentInvoiceRepository.update(paymentInvoice.id, {
-        status: 'SUCCESS',
+        status: status,
         bankReferenceNumber: payload.bankReferenceNumber,
       });
 
       const requestPayload = {
-        status: 'SUCCESS',
+        status: status,
         invoiceReference: paymentInvoice.invoiceReference,
       };
       await axios.post(paymentInvoice.callbackUrl, requestPayload);
