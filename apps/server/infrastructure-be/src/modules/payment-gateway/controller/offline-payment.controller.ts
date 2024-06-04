@@ -6,6 +6,7 @@ import {
   InitiatePaymentDto,
   PaymentCompletedDto,
 } from '../dto/initiate-payment.dto';
+import { Request } from 'express';
 
 @Controller('offline-payments')
 @ApiTags('offline Payment')
@@ -32,14 +33,18 @@ export class OfflinePaymentController {
     return await this.mpgsPaymentService.paymentCompleted(payload);
   }
 
-  @Post('log')
+  @Post('request/log')
   async log(@Body() payload: any) {
     console.log('🚀 ~ OfflinePaymentController ~ log ~ payload:', payload);
     return payload;
   }
 
-  @Post('log-token')
-  async tokenLog(@Body() payload: any, @Req() req: any) {
+  @Get('token/log')
+  async tokenLog(@Body() payload: any, @Req() req: Request) {
+    console.log(
+      '🚀 ~ OfflinePaymentController ~ authorization ~ req:',
+      req.headers.authorization,
+    );
     console.log('🚀 ~ OfflinePaymentController ~ tokenLog ~ req:', req);
     console.log('🚀 ~ OfflinePaymentController ~ log ~ payload:', payload);
     return payload;
