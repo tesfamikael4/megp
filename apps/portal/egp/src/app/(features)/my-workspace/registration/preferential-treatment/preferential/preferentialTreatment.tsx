@@ -88,8 +88,6 @@ export const PreferentialTreatment: React.FC<Props> = ({
               type: category !== 'msme' ? category : '',
               certiNumber: '',
               certificateUrl: '' as any,
-              certificateIssuedDate: '',
-              certificateValidityPeriod: '',
               serviceId:
                 category !== 'msme' ? findServiceIdByType(data, category) : '',
             });
@@ -153,7 +151,7 @@ export const PreferentialTreatment: React.FC<Props> = ({
                       />
                     </Grid.Col>
                   )}
-                  <Grid.Col span={5}>
+                  <Grid.Col span={6}>
                     <Input.Wrapper
                       label="Certificate Number"
                       withAsterisk
@@ -166,72 +164,6 @@ export const PreferentialTreatment: React.FC<Props> = ({
                         {...register(`preferential.${index}.certiNumber`)}
                       />
                     </Input.Wrapper>
-                  </Grid.Col>
-                  <Grid.Col span={5}>
-                    <Controller
-                      name={`preferential.${index}.certificateValidityPeriod`}
-                      control={control}
-                      render={({ field }) => (
-                        <DatePickerInput
-                          valueFormat="YYYY/MM/DD"
-                          required
-                          label="Certificate Validity Period"
-                          placeholder="Certificate Validity Period"
-                          leftSection={
-                            <IconCalendar size={'1.2rem'} stroke={1.5} />
-                          }
-                          maxDate={dayjs(new Date()).toDate()}
-                          // {...register(`${name}.${index}.activationDate`)}
-                          onChange={async (value: any) =>
-                            value &&
-                            field.onChange(
-                              dayjs(value)
-                                .format('YYYY/MM/DD')
-                                .toString()
-                                .replace(/\//g, '-'),
-                            )
-                          }
-                          error={
-                            register(
-                              `preferential.${index}.certificateValidityPeriod`,
-                            ).error
-                          }
-                        />
-                      )}
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={5}>
-                    <Controller
-                      name={`preferential.${index}.certificateIssuedDate`}
-                      control={control}
-                      render={({ field }) => (
-                        <DatePickerInput
-                          valueFormat="YYYY/MM/DD"
-                          required
-                          label="Certificate Issued Date"
-                          placeholder="Certificate Issued Date"
-                          leftSection={
-                            <IconCalendar size={'1.2rem'} stroke={1.5} />
-                          }
-                          maxDate={dayjs(new Date()).toDate()}
-                          // {...register(`${name}.${index}.activationDate`)}
-                          onChange={async (value: any) =>
-                            value &&
-                            field.onChange(
-                              dayjs(value)
-                                .format('YYYY/MM/DD')
-                                .toString()
-                                .replace(/\//g, '-'),
-                            )
-                          }
-                          error={
-                            register(
-                              `preferential.${index}.certificateIssuedDate`,
-                            ).error
-                          }
-                        />
-                      )}
-                    />
                   </Grid.Col>
                   <Grid.Col>
                     <Controller

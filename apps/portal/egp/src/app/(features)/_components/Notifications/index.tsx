@@ -15,8 +15,8 @@ const Notification = () => {
   return (
     <>
       <div
-        className={`w-full max-w-sm bg-white divide-y divide-gray-100 rounded-lg shadow `}
-        style={{ minWidth: '300px' }}
+        className={`w-full max-w-sm bg-white divide-y divide-gray-100 rounded-lg shadow`}
+        style={{ minWidth: '300px', maxHeight: '400px', overflowY: 'auto' }}
       >
         <div className="block px-4 py-2 font-medium text-center text-gray-700 rounded-t-lg bg-gray-50 ">
           Notifications
@@ -38,7 +38,7 @@ const Notification = () => {
                       ></div>
                     </div>
                     <div className="w-full ps-3">
-                      <div className="text-gray-500 text-sm mb-1.5 dark:text-gray-400">
+                      <div className="text-gray-500 text-sm mb-1.5 dark:text-gray-400 line-clamp-2">
                         {notification.content}
                       </div>
                       <div className="text-xs text-blue-600 ">
