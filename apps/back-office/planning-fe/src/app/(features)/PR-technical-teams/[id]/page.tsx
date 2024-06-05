@@ -9,22 +9,11 @@ import { Requisitioner } from '../../(app)/_components/requisitioner';
 export default function PrDetailPage() {
   const router = useRouter();
   const { id } = useParams();
-  const { data, isSuccess: succeed } = useReadQuery(id?.toString());
+  const { data } = useReadQuery(id?.toString());
   const [currentTab, setCurrentTab] = useState('Technical Team');
-  const [disableFields, setDisableFields] = useState<any>(false);
 
   const activeTabStyle =
     'bg-gray-100 cursor-pointer border-l border-r border-t py-2 px-10 rounded-t text-gray-700 font-medium';
-
-  useEffect(() => {
-    succeed &&
-      setDisableFields(
-        data?.status.toLowerCase() != 'draft' &&
-          data?.status.toLowerCase() != 'Adjust'
-          ? true
-          : false,
-      );
-  }, [data, succeed]);
 
   return (
     <>
@@ -57,7 +46,7 @@ export default function PrDetailPage() {
       <Container size="xl">
         <Box className="mt-5 -mx-4  ">
           {currentTab === 'Technical Team' && (
-            <Requisitioner page="pr" disableFields={disableFields} />
+            <Requisitioner page="pr" disableFields={false} />
           )}
         </Box>
       </Container>

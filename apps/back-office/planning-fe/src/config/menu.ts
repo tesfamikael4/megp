@@ -44,7 +44,7 @@ export const Menu: MenuItem[] = [
     link: '/procurement-requisition',
   },
   {
-    label: 'PR Technical Teams',
+    label: 'PR Technical Team',
     icon: IconUsers,
     link: '/PR-technical-teams',
   },
