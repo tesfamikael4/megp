@@ -46,7 +46,7 @@ export const bidPriceEvaluation = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/financial-bid-price-assessment-detail/get-items-by-lotId/${lotId}${q}`,
+          url: `/financial-bid-price-assessment/get-items-by-lotId/${lotId}${q}`,
         };
       },
     }),
@@ -58,7 +58,7 @@ export const bidPriceEvaluation = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/financial-bid-price-assessment-detail/bidders-status/${lotId}/${itemId}?${q}`,
+          url: `/financial-bid-price-assessment/bidders-status/${lotId}/${itemId}?${q}`,
         };
       },
     }),
@@ -82,13 +82,12 @@ export const bidPriceEvaluation = createApi({
       invalidatesTags: ['formula-implementation'],
     }),
     getCanAssess: builder.query<any, any>({
-      query: (lotId) =>
-        `/financial-bid-price-assessment-detail/can-assess/${lotId}`,
+      query: (lotId) => `/financial-bid-price-assessment/can-assess/${lotId}`,
       providesTags: ['currency', 'formula'],
     }),
     getHasUnitPrice: builder.query<any, any>({
       query: ({ lotId, itemId, bidderId }) =>
-        `/financial-bid-price-assessment-detail/has-formula/${lotId}/${itemId}/${bidderId}`,
+        `/financial-bid-price-assessment/has-formula/${lotId}/${itemId}/${bidderId}`,
       providesTags: ['unitPrice'],
     }),
     createUnitPrice: builder.mutation<any, any>({
@@ -137,7 +136,7 @@ export const bidPriceEvaluation = createApi({
     submitBidPriceEvaluation: builder.mutation<any, any>({
       query: (data: { tenderId: string; isTeamLead: boolean }) => {
         return {
-          url: `/financial-bid-price-assessment-detail/submit`,
+          url: `/financial-bid-price-assessment/submit`,
           method: 'POST',
           body: data,
         };
