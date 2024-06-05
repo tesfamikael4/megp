@@ -6,14 +6,12 @@ FROM base AS builder
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 RUN apk update
-
+RUN apk update
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo pnpm
-RUN yarn global add @nestjs/cli
 
-CMD [ "nest build", "packages/be/shared" ]
-
+RUN npm install -g pnpm
+RUN npm install -g turbo
 COPY . .
 RUN turbo prune --scope=infrastructure-be --docker
 
@@ -24,7 +22,7 @@ RUN apk update
 WORKDIR /app
 
 # Install pnpm
-RUN yarn global add pnpm
+RUN npm install -g pnpm
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
@@ -42,24 +40,21 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN yarn turbo run build --filter=infrastructure-be...
 
+RUN npx turbo run build --filter=infrastructure-be
+# RUN npm turbo run build --filter=infrastructure-be...
 FROM base AS runner
-WORKDIR /app
+WORKDIR /
+
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs
 RUN adduser --system --uid 1001 nestjs
 USER nestjs
 COPY --from=installer /app .
 
-# ENV DATABASE_HOST=196.189.44.47
-# ENV DATABASE_NAME=infrastructure
-# ENV DATABASE_USER=postgres
-# ENV DATABASE_PASSWORD=P@ssw0rd@P
-# ENV DATABASE_PORT=5432
-# ENV NODE_ENV=production
-# ENV APP_NAME=infrastructure-be
-# ENV RMQ_URL=amqp://guest:guest@196.189.118.110:32700/
+ARG VERSION_ARG
+ENV VERSION=$VERSION_ARG
+ENV NODE_ENV=production
+
 
 CMD node apps/server/infrastructure-be/dist/main.js
-
