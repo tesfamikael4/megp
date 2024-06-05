@@ -9,7 +9,9 @@ RUN apk update
 RUN apk update
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo pnpm
+
+RUN npm install -g pnpm
+RUN npm install -g turbo
 COPY . .
 RUN turbo prune --scope=rms-be --docker
 
@@ -20,8 +22,7 @@ RUN apk update
 WORKDIR /app
 
 # Install pnpm
-RUN yarn global add pnpm
-
+RUN npm install -g pnpm
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
@@ -39,12 +40,11 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN yarn turbo run build --filter=rms-be...
+
+RUN npx turbo run build --filter=rms-be
+# RUN npm turbo run build --filter=rms-be...
 FROM base AS runner
 WORKDIR /
-
-# Install pnpm
-RUN yarn global add pnpm
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs
