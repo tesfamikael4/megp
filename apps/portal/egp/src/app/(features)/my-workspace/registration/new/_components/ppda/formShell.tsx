@@ -306,7 +306,7 @@ export const AreasOfBusinessInterestForm = ({
                       leftSection={
                         <IconCalendar size={'1.2rem'} stroke={1.5} />
                       }
-                      maxDate={dayjs(new Date()).toDate()}
+                      minDate={dayjs(new Date()).toDate()}
                       {...extendedRegister(`expiryDate`)}
                       onChange={async (value: any) =>
                         value &&
