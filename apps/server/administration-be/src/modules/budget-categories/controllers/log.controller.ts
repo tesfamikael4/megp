@@ -14,7 +14,6 @@ export class LogController {
     );
     console.log('🚀 ~ OfflinePaymentController ~ tokenLog ~ req:', req);
     console.log('🚀 ~ OfflinePaymentController ~ log ~ payload:', payload);
-
     return payload;
   }
 }
