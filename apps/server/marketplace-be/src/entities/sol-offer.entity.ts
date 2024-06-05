@@ -14,6 +14,7 @@ import { RfxProductInvitation } from './rfx-product-invitation.entity';
 import { ESolOfferStatus } from 'src/utils/enums';
 import { SolRegistration } from './sol-registration.entity';
 import { OpenedOffer } from './opened-offer.entity';
+import { SolRoundAward } from './sol-round-award.entity';
 
 @Entity({ name: 'sol_offers' })
 @Unique([
@@ -31,6 +32,9 @@ export class SolOffer extends Audit {
 
   @Column()
   encryptedPrice: string;
+
+  @Column()
+  encryptedTax: string;
 
   @Column({
     type: 'enum',
@@ -69,4 +73,7 @@ export class SolOffer extends Audit {
 
   @OneToOne(() => OpenedOffer, (openedOffer) => openedOffer.solOffer)
   openedOffer: OpenedOffer;
+
+  @OneToOne(() => SolRoundAward, (roundAward) => roundAward.solOffer)
+  solRoundAwards: SolRoundAward[];
 }

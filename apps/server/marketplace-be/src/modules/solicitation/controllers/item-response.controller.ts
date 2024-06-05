@@ -1,9 +1,10 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   ExtraCrudOptions,
   ExtraCrudController,
   CurrentUser,
+  JwtGuard,
 } from 'megp-shared-be';
 import { SolItemResponse } from 'src/entities/sol-item-response.entity';
 import { SolItemResponseService } from '../services/item-response.service';
@@ -11,6 +12,7 @@ import {
   CreateSolItemResponseDto,
   UpdateSolItemResponseDto,
 } from '../dtos/item-response.dto';
+// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxItemId',
@@ -21,6 +23,7 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('sol-item-responses')
 @ApiTags('Sol Response Items')
+// @UseGuards(JwtGuard, VendorGuard())
 export class SolItemResponseController extends ExtraCrudController<SolItemResponse>(
   options,
 ) {

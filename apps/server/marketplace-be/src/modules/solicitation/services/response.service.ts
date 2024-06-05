@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  BucketNameEnum,
   ENTITY_MANAGER_KEY,
   ExtraCrudService,
   MinIOService,
@@ -64,7 +65,7 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
     for (const item of itemData.responses) {
       const url = await this.minIoService.generatePresignedUploadUrl(
         item.fileInfo,
-        'marketplace',
+        'marketplace/',
       );
 
       preSignedResponse.push({
@@ -106,7 +107,7 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
     rfxDocumentaryEvidenceId: string,
     solRegistrationId: string,
   ) {
-    const resposne = await this.openedResponseRepository.findOne({
+    const response = await this.openedResponseRepository.findOne({
       where: {
         rfxId,
         rfxDocumentaryEvidenceId: rfxDocumentaryEvidenceId,
@@ -118,14 +119,54 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
       },
     });
 
-    if (!resposne) {
+    if (!response) {
       throw new BadRequestException('Document Not Found');
     }
 
     const presignedUrl = await this.minIoService.generatePresignedDownloadUrl(
-      resposne.value,
+      response.value,
     );
 
-    return { presignedUrl };
+    return { presignedUrl, fileInfo: response.value };
+  }
+
+  async getDocumentWithOrganizationId(
+    rfxId: string,
+    rfxDocumentaryEvidenceId: string,
+    user: any,
+  ) {
+    const response = await this.solResponseRepository.findOne({
+      where: {
+        rfxId,
+        rfxDocumentaryEvidenceId: rfxDocumentaryEvidenceId,
+        solRegistration: {
+          vendorId: user.organization.id,
+        },
+      },
+      select: {
+        id: true,
+        value: true,
+      },
+      relations: {
+        solRegistration: true,
+      },
+    });
+
+    if (!response) {
+      return;
+    }
+
+    const fileInfoString = this.encryptionHelperService.decryptedData(
+      response.value,
+      '123456',
+      response.solRegistration.salt,
+    );
+
+    const fileInfo = JSON.parse(fileInfoString);
+
+    const presignedUrl =
+      await this.minIoService.generatePresignedDownloadUrl(fileInfo);
+
+    return { presignedUrl, fileInfo };
   }
 }

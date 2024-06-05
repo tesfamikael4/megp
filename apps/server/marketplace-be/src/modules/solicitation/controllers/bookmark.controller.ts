@@ -1,13 +1,15 @@
-import { Controller, Get, Query, Req } from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import {
   ExtraCrudOptions,
   ExtraCrudController,
   decodeCollectionQuery,
+  JwtGuard,
 } from 'megp-shared-be';
 import { SolBookmarkService } from '../services/bookmark.service';
 import { SolBookmark } from 'src/entities';
 import { CreateBookmarkDto, UpdateBookmarkDto } from '../dtos/bookmark.dto';
+// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxId',
@@ -18,6 +20,7 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('sol-bookmarks')
 @ApiTags('Sol Bookmarks')
+// @UseGuards(JwtGuard, VendorGuard())
 export class SolBookmarkController extends ExtraCrudController<SolBookmark>(
   options,
 ) {

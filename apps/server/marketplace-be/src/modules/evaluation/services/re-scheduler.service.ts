@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SolRound } from 'src/entities';
 import { ESolRoundStatus } from 'src/utils/enums';
 import { SchedulerService } from 'src/utils/services/scheduler.service';
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { In, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { OpenerSerivice } from './opener.service';
 
 @Injectable()
@@ -25,7 +25,7 @@ export class ReSchedulerService implements OnModuleInit {
     const rounds = await this.solRoundRepository.find({
       where: {
         end: MoreThanOrEqual(now),
-        status: ESolRoundStatus.STARTED,
+        status: In([ESolRoundStatus.STARTED, ESolRoundStatus.PENDING]),
       },
     });
 

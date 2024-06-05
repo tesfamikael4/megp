@@ -10,6 +10,7 @@ export * from './rfx-product-invitation.entity';
 export * from './rfx-item-document.entity';
 export * from './document.entity';
 export * from './rfx-revision-approval.entity';
+export * from './rfx-contract-term.entity';
 
 export * from './sol-registration.entity';
 export * from './sol-offer.entity';
@@ -17,6 +18,7 @@ export * from './sol-round.entity';
 export * from './sol-item-response.entity';
 export * from './sol-response.entity';
 export * from './sol-bookmark.entity';
+export * from './sol-round-award.entity';
 
 export * from './opened-item-response.entity';
 export * from './opened-response.entity';

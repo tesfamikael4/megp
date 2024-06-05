@@ -21,7 +21,7 @@ export class RfxItemDocumentService extends ExtraCrudService<RfxItemDocument> {
   async create(itemData: CreateRfxItemDocumentDto): Promise<any> {
     const file = await this.minIOService.generatePresignedUploadUrl(
       itemData.fileInfo as any,
-      'marketplace',
+      'marketplace/',
     );
 
     const item = this.rfxItemDocumentRepository.create(itemData);

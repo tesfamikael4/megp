@@ -30,6 +30,11 @@ export class TeamMemberController extends ExtraCrudController<TeamMember>(
     super(teamMemberService);
   }
 
+  @Get('is-team-lead/:rfxId')
+  async isTeamLead(@Param('rfxId') rfxId: string, @CurrentUser() user: any) {
+    return await this.teamMemberService.isTeamLead(rfxId, user);
+  }
+
   @Get('my-evaluation-list')
   @ApiQuery({
     name: 'q',
@@ -57,10 +62,11 @@ export class TeamMemberController extends ExtraCrudController<TeamMember>(
   async getVendorsList(
     @Param('rfxId') rfxId: string,
     @Param('isTeamAssessment') isTeamAssessment: boolean,
+    @CurrentUser() user: any,
     @Query('q') q?: string,
   ) {
     const query = decodeCollectionQuery(q);
     const isTeam = isTeamAssessment ? true : false;
-    return await this.teamMemberService.vendorsList(rfxId, isTeam, query);
+    return await this.teamMemberService.vendorsList(rfxId, isTeam, user, query);
   }
 }

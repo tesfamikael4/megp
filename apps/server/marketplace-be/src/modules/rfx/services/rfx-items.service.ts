@@ -14,7 +14,7 @@ import {
 } from 'megp-shared-be';
 import { RFXItem } from 'src/entities';
 import { EInvitationStatus, ERfxItemStatus } from 'src/utils/enums';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { RfxService } from './rfx.service';
 
 @Injectable()
@@ -84,7 +84,7 @@ export class RFXItemService extends ExtraCrudService<RFXItem> {
         rfxId,
         rfxProductInvitations: {
           vendorId,
-          status: EInvitationStatus.ACCEPTED,
+          status: In([EInvitationStatus.ACCEPTED, EInvitationStatus.COMPLY]),
         },
       },
     });

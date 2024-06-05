@@ -24,6 +24,7 @@ import { EvalItemResponseController } from './controllers/eval-item-response.con
 import { TeamMemberController } from './controllers/team-member.controller';
 import { TeamMemberService } from './services/team-member.service';
 import { EvalAssessment } from 'src/entities/eval-assessment.entity';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 @Module({
   imports: [
@@ -42,6 +43,16 @@ import { EvalAssessment } from 'src/entities/eval-assessment.entity';
     ScheduleModule.forRoot(),
     MinIOModule,
     UtilityModule,
+    RabbitMQModule.forRoot(RabbitMQModule, {
+      exchanges: [
+        {
+          name: 'workflow-broadcast-exchanges',
+          type: 'direct',
+        },
+      ],
+      uri: process.env.RMQ_URL,
+      enableControllerDiscovery: true,
+    }),
   ],
   controllers: [
     EvalResponseController,

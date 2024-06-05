@@ -28,6 +28,8 @@ import {
   ERfxStatus,
   ERfxRevisionApprovalStatusEnum,
   ERfxItemStatus,
+  ERfxOpenProductsStatus,
+  EInvitationStatus,
 } from 'src/utils/enums';
 import { WorkflowHandlerService } from './workflow-handler.service';
 
@@ -214,12 +216,12 @@ export class RfxService extends EntityCrudService<RFX> {
       itemName: rfx.name,
       id: rfx.id,
       organizationId: rfx.organizationId,
-      name: 'rfxApproval',
+      name: 'RFQApproval',
     };
 
     this.workflowHandlerService.emitEvent(
       'workflow-broadcast-exchanges',
-      'workflow.initate.local',
+      'workflow.initate',
       rfxPayload,
     );
 
@@ -404,13 +406,14 @@ export class RfxService extends EntityCrudService<RFX> {
     return doc;
   }
 
-  async findOne(id: any, req?: any): Promise<RFX | undefined> {
+  async findOne(id: any, req?: any): Promise<any> {
     const rfx = await this.rfxRepository.findOne({
       where: {
         id,
       },
       relations: {
         rfxProcurementMechanism: true,
+        rfxBidProcedure: true,
       },
     });
     if (!rfx) throw new BadRequestException('RFQ not found');
@@ -419,23 +422,25 @@ export class RfxService extends EntityCrudService<RFX> {
   }
 
   async makeOpenRfx(rfxId: string) {
-    const rfxExists = await this.rfxRepository.exists({
-      where: {
-        id: rfxId,
-        status: In([ERfxStatus.DRAFT, ERfxStatus.ADJUSTEDMENT]),
-      },
-    });
+    const rfx = await this.rfxRepository
+      .createQueryBuilder('rfxes')
+      .where('rfxes.id = :rfxId', { rfxId })
+      .andWhere('rfxes.status IN (:...status)', {
+        status: [ERfxStatus.DRAFT, ERfxStatus.ADJUSTEDMENT],
+      })
+      .loadAllRelationIds({
+        relations: ['items'],
+      })
+      .getOne();
 
-    if (!rfxExists) throw new BadRequestException('Draft RFQ not found');
+    if (!rfx) throw new BadRequestException('Draft RFQ not found');
 
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
     await Promise.all([
-      entityManager.getRepository(RfxProductInvitation).delete({
-        rfxItem: {
-          rfxId,
-        },
-      }),
+      entityManager
+        .getRepository(RfxProductInvitation)
+        .delete({ rfxItemId: In(rfx.items) }),
       entityManager.getRepository(RFX).update(rfxId, {
         isOpen: true,
       }),

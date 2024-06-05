@@ -8,7 +8,14 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { EInvitationStatus } from 'src/utils/enums/rfx.enum';
-import { EvalItemResponse, OpenedOffer, RFXItem, SolOffer } from '.';
+import {
+  EvalItemResponse,
+  OpenedOffer,
+  RFXItem,
+  SolOffer,
+  SolRegistration,
+  SolRoundAward,
+} from '.';
 
 @Entity({ name: 'rfx_product_invitations' })
 export class RfxProductInvitation extends Audit {
@@ -47,6 +54,13 @@ export class RfxProductInvitation extends Audit {
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
 
+  @Column({ nullable: true })
+  solRegistrationId: string;
+
+  @ManyToOne(() => SolRegistration, (reg) => reg.rfxProductInvitations)
+  @JoinColumn({ name: 'solRegistrationId' })
+  solRegistration: SolRegistration;
+
   @OneToMany(() => SolOffer, (offer) => offer.rfxProductInvitation)
   solOffers: SolOffer[];
 
@@ -58,4 +72,10 @@ export class RfxProductInvitation extends Audit {
     (evaluation) => evaluation.rfxProductInvitation,
   )
   evalItemResponses: EvalItemResponse[];
+
+  @OneToMany(
+    () => SolRoundAward,
+    (roundAward) => roundAward.rfxProductInvitation,
+  )
+  solRoundAwards: SolRoundAward[];
 }
