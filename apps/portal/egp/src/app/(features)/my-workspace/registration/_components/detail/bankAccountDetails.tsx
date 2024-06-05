@@ -68,7 +68,7 @@ export const BankAccountDetails: React.FC<Props> = ({
         title="Bank Account Information"
         initialValues={{
           bankId: '',
-          bankType: 'International', // Assuming default to "International"
+          bankType: 'Local', // Assuming default to "International"
           bankName: '',
           branchName: '',
           accountType: 'Saving', // Assuming default to "Saving"
