@@ -10,7 +10,7 @@ import {
 
 import { Activity } from './activity.entity';
 import { Instance } from './instance.entity';
-import { OrgAudit } from 'megp-shared-be';
+import { OrgAudit } from 'src/shared/entities/org-audit.entity';
 
 type approver = {
   id: string;

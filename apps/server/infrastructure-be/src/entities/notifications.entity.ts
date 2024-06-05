@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { OrgAudit } from 'megp-shared-be';
+import { OrgAudit } from 'src/shared/entities/org-audit.entity';
 import { NotificationTypeEnum, NotificationStatusEnum } from 'megp-shared-be';
 
 @Entity({ name: 'notifications' })

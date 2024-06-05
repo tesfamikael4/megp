@@ -12,8 +12,8 @@ import { Workflow } from './workflow.entity';
 import { Permission } from './permission.entity';
 import { Instance } from './instance.entity';
 import { DefaultStep } from './default-step.entity';
-import { OrgAudit } from 'megp-shared-be';
 import { State } from './state.entity';
+import { OrgAudit } from 'src/shared/entities/org-audit.entity';
 
 @Entity({ name: 'activities' })
 export class Activity extends OrgAudit {

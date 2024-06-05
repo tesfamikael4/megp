@@ -5,15 +5,11 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
-  OneToMany,
 } from 'typeorm';
-
 import { Activity } from './activity.entity';
-import { Step } from './step.entity';
-import { OrgAudit } from 'megp-shared-be';
+import { OrgAudit } from 'src/shared/entities/org-audit.entity';
 import { State } from './state.entity';
 import { InstanceStep } from './instance-step.entity';
-import { Workflow } from './workflow.entity';
 
 @Entity({ name: 'instances' })
 export class Instance extends OrgAudit {

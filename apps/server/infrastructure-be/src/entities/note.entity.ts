@@ -1,4 +1,4 @@
-import { OrgAudit } from 'megp-shared-be';
+import { OrgAudit } from 'src/shared/entities/org-audit.entity';
 import {
   Column,
   Entity,
