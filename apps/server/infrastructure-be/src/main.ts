@@ -80,6 +80,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
   await app.listen(port, () => {
     console.log('[WEB]', process.env.BASE_URL + '/docs');
   });
