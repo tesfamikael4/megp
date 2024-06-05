@@ -6,23 +6,27 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   CollectionQuery,
   CurrentUser,
   ExtraCrudController,
+  JwtGuard,
   decodeCollectionQuery,
 } from 'megp-shared-be';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RfxProductInvitation } from 'src/entities/rfx-product-invitation.entity';
 import { RfxProductInvitationService } from '../services/rfx-product-invitation.service';
 import { CreateRfxBidInvitationDto } from '../dtos/rfx-bid-invitaiton.dto';
+// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
 
 const option = {
   entityIdName: 'rfxItemId',
   createDto: CreateRfxBidInvitationDto,
 };
 
+// @UseGuards(JwtGuard, VendorGuard())
 @Controller('rfx-product-invitations')
 @ApiTags('Rfx Product Invitations')
 export class RfxProductInvitationController extends ExtraCrudController<RfxProductInvitation>(
@@ -35,6 +39,7 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
   }
 
   @Post('apply-on-invitation')
+  @ApiBody({})
   async applyOnInvtitation(@Body() itemData: any, @CurrentUser() user: any) {
     return await this.rfxBidInvitationService.applyOnInvitation(itemData, user);
   }
@@ -50,7 +55,7 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
     );
   }
 
-  @Patch('accpet-invitation/:rfxInvitationId')
+  @Patch('accept-invitation/:rfxInvitationId')
   async acceptInvitation(
     @Param('rfxInvitationId') rfxInvitationId: string,
     @CurrentUser() user: any,

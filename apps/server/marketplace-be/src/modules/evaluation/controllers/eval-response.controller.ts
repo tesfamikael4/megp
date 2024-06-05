@@ -25,6 +25,18 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
     super(evalReponseService);
   }
 
+  @Get('can-start-team-assessment/:rfxId')
+  @ApiOperation({
+    summary:
+      'Can start team assessment if all the team members including the team lead have evaluated the RFX',
+  })
+  async canStartTeamAssessment(
+    @Param('rfxId') rfxId: string,
+    @CurrentUser() user: any,
+  ) {
+    return await this.evalReponseService.canStartTeamAssessment(rfxId, user);
+  }
+
   @Get('team-members-eval/:rfxDocumentaryEvidenceId/:solRegistrationId')
   @ApiOperation({
     summary:
@@ -60,7 +72,24 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
     );
   }
 
-  @Get('can-submit-vendor-eval/:solRegistrationId')
+  @Patch('submit-rfx-eval/:rfxId/:isTeamAssessment')
+  @ApiOperation({
+    summary:
+      'Submit venRFXdor evaluation after completeing all Vendors evaluations',
+  })
+  async submitRfxEvaluation(
+    @Param('rfxId') rfxId: string,
+    @Param('isTeamAssessment') isTeamAssessment: boolean,
+    @CurrentUser() user: any,
+  ) {
+    return await this.evalReponseService.submitRfxEvaluation(
+      rfxId,
+      isTeamAssessment,
+      user,
+    );
+  }
+
+  @Get('can-submit-vendor-eval/:solRegistrationId/:isTeamAssessment')
   @ApiOperation({
     summary:
       'Check if the team member can submit vendor evaluation after completeing all documentary evaluations',
@@ -68,10 +97,12 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
   })
   async canSubmitEvaluation(
     @Param('solRegistrationId') solRegistrationId: string,
+    @Param('isTeamAssessment') isTeamAssessment: boolean,
     @CurrentUser() user: any,
   ) {
     return await this.evalReponseService.canSubmitVendorEvaluation(
       solRegistrationId,
+      isTeamAssessment,
       user,
     );
   }
@@ -86,25 +117,46 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
     @Param('isTeamAssessment') isTeamAssessment: boolean,
     @CurrentUser() user: any,
   ) {
-    return await this.evalReponseService.submitVendorEvalitaion(
+    return await this.evalReponseService.submitVendorEvaluataion(
       solRegistrationId,
       isTeamAssessment,
       user,
     );
   }
 
-  @Get('can-submit-rfx-eval/:rfxId')
+  @Get('can-submit-rfx-eval/:rfxId/:isTeamAssessment')
   @ApiOperation({
     summary:
       'Check if the team member can submit the RFX evaluation after completeing all vendors evaluations',
     description: 'enables a button on the frontend',
   })
   async canSubmitRfxEvaluation(
-    @Param('solRegistrationId') solRegistrationId: string,
+    @Param('rfxId') rfxId: string,
+    @Param('isTeamAssessment') isTeamAssessment: boolean,
     @CurrentUser() user: any,
   ) {
     return await this.evalReponseService.canSubmitRfxEvaluation(
+      rfxId,
+      isTeamAssessment,
+      user,
+    );
+  }
+
+  @Get('my-responses/:rfxId/:solRegistrationId/:isTeamAssessment')
+  @ApiOperation({
+    summary:
+      'List of documentary evidences together with their evaluation assessment result indicator of a vendor',
+  })
+  async getMyResponses(
+    @Param('rfxId') rfxId: string,
+    @Param('solRegistrationId') solRegistrationId: string,
+    @Param('isTeamAssessment') isTeamAssessment: boolean,
+    @CurrentUser() user: any,
+  ) {
+    return await this.evalReponseService.myResponses(
+      rfxId,
       solRegistrationId,
+      isTeamAssessment,
       user,
     );
   }

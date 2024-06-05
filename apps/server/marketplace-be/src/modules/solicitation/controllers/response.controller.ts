@@ -1,12 +1,18 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ExtraCrudOptions, ExtraCrudController } from 'megp-shared-be';
+import {
+  ExtraCrudOptions,
+  ExtraCrudController,
+  CurrentUser,
+  JwtGuard,
+} from 'megp-shared-be';
 import { SolResponse } from 'src/entities';
 import { SolResponseService } from '../services/response.service';
 import {
   CreateSolResponseDto,
   UpdateSolResponseDto,
 } from '../dtos/response.dto';
+// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxItemId',
@@ -17,6 +23,7 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('sol-responses')
 @ApiTags('Sol Response')
+// @UseGuards(JwtGuard, VendorGuard())
 export class SolResponseController extends ExtraCrudController<SolResponse>(
   options,
 ) {
@@ -37,6 +44,21 @@ export class SolResponseController extends ExtraCrudController<SolResponse>(
       rfxId,
       rfxDocumentaryEvidenceId,
       solRegistrationId,
+    );
+  }
+  @Get('my-documents/:rfxId/:rfxDocumentaryEvidenceId')
+  @ApiOperation({
+    summary: 'Get the vendors attached document on portal',
+  })
+  async getDocumentWithUserId(
+    @Param('rfxId') rfxId: string,
+    @Param('rfxDocumentaryEvidenceId') rfxDocumentaryEvidenceId: string,
+    @CurrentUser() user: any,
+  ) {
+    return this.rfxRepsonseItemService.getDocumentWithOrganizationId(
+      rfxId,
+      rfxDocumentaryEvidenceId,
+      user,
     );
   }
 }

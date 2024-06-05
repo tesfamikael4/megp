@@ -8,7 +8,14 @@ import {
   SolRegistration,
   SolRound,
 } from 'src/entities';
-import { EntityManager, MoreThan, Repository } from 'typeorm';
+import {
+  EntityManager,
+  In,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { CreateOfferDto } from '../dtos/offer.dto';
 import { EInvitationStatus, ERfxItemStatus } from 'src/utils/enums';
 import { EncryptionHelperService } from '../../../utils/services/encryption-helper.service';
@@ -38,9 +45,11 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     const [rfxItem, rfxInvitation] = await Promise.all([
       itemsRepo.findOne({
         where: {
+          id: itemData.rfxItemId,
           status: ERfxItemStatus.APPROVED,
           rfxProductInvitations: {
             vendorId: user?.organization.id,
+            status: In([EInvitationStatus.ACCEPTED, EInvitationStatus.COMPLY]),
           },
         },
         relations: {
@@ -72,20 +81,20 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
       throw new BadRequestException('Invitaion response is not comply');
 
     if (
-      rfxInvitation.status !== EInvitationStatus.ACCEPTED ||
-      currentRound.round !== 0
+      rfxInvitation.status !== EInvitationStatus.ACCEPTED &&
+      currentRound.round == 0
     )
       throw new BadRequestException(
         'Invitaiton is not Accepted. Please Accept First',
       );
 
-    if (currentRound.round >= 1) {
-      await this.checkPreviousRoundOfferExists(
-        currentRound.round,
-        itemData,
-        user,
-      );
-    }
+    // if (currentRound.round >= 1) {
+    //   await this.checkPreviousRoundOfferExists(
+    //     currentRound.round,
+    //     itemData,
+    //     user,
+    //   );
+    // }
 
     const registration = await registrationRepo.findOne({
       where: {
@@ -108,6 +117,10 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
       `${itemData.price}`,
       registration.salt,
     );
+    itemData.encryptedTax = this.encryptPrice(
+      `${itemData.tax}`,
+      registration.salt,
+    );
 
     const offer = offerRepo.create(itemData);
     await offerRepo.upsert(offer, {
@@ -121,13 +134,49 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     return offer;
   }
 
+  async getLatestOfferWithOrganizationId(
+    rfxProductInvitationId: string,
+    user: any,
+  ) {
+    const offer = await this.solOfferRepository.findOne({
+      where: {
+        rfxProductInvitationId,
+        solRegistration: {
+          vendorId: user.organization.id,
+        },
+      },
+      relations: {
+        solRegistration: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    if (!offer) return;
+
+    const price = this.encryptionHelperService.decryptedData(
+      offer.encryptedPrice,
+      '123456',
+      offer.solRegistration.salt,
+    );
+    const tax = this.encryptionHelperService.decryptedData(
+      offer.encryptedTax,
+      '123456',
+      offer.solRegistration.salt,
+    );
+
+    return { ...offer, price: +price, tax: +tax };
+  }
+
   private async getValidRound(rfxId: string) {
     const now = new Date(Date.now());
 
     const round = await this.solRoundRepository.findOne({
       where: {
         rfxId,
-        end: MoreThan(now),
+        start: LessThanOrEqual(now),
+        end: MoreThanOrEqual(now),
       },
       order: {
         round: 'ASC',

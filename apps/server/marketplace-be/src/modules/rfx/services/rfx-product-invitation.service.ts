@@ -13,7 +13,14 @@ import {
   ExtraCrudService,
   QueryConstructor,
 } from 'megp-shared-be';
-import { RFX, RFXItem, RfxProductInvitation } from 'src/entities';
+import {
+  RFX,
+  RFXItem,
+  RfxProductInvitation,
+  SolRegistration,
+  SolRound,
+  SolRoundAward,
+} from 'src/entities';
 import {
   EntityManager,
   Repository,
@@ -21,6 +28,7 @@ import {
   SelectQueryBuilder,
   MoreThan,
   MoreThanOrEqual,
+  LessThanOrEqual,
 } from 'typeorm';
 import { CreateRfxBidInvitationDto } from '../dtos/rfx-bid-invitaiton.dto';
 import { ProductCatalogueDto } from '../dtos/product-catalogue.dto';
@@ -68,6 +76,7 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
     if (!item)
       throw new BadRequestException('No Solicitation Registration Found');
 
+    itemData.status = EInvitationStatus.ACCEPTED;
     const invitaion = this.rfxBidInvitationRepository.create(itemData);
     await this.rfxBidInvitationRepository.insert(invitaion);
     return invitaion;
@@ -130,24 +139,45 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
   }
 
   async myRfxDetail(rfxId: string, user: any) {
-    const rfx = await this.rfxRepository.findOne({
-      where: {
-        id: rfxId,
-        status: ERfxStatus.APPROVED,
-        items: {
-          rfxProductInvitations: {
-            vendorId: user.organization.id,
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const now = new Date();
+
+    const [rfx, activeRound, nextRound] = await Promise.all([
+      this.rfxRepository.findOne({
+        where: {
+          id: rfxId,
+          status: In([ERfxStatus.APPROVED, ERfxStatus.AUCTION]),
+          items: {
+            rfxProductInvitations: {
+              vendorId: user.organization.id,
+            },
           },
         },
-      },
-      relations: {
-        rfxBidProcedure: true,
-      },
-    });
+        relations: {
+          rfxBidProcedure: true,
+        },
+      }),
+      entityManager.getRepository(SolRound).findOne({
+        where: {
+          rfxId,
+          start: LessThanOrEqual(now),
+          end: MoreThanOrEqual(now),
+        },
+      }),
+      entityManager.getRepository(SolRound).findOne({
+        where: {
+          rfxId,
+          start: MoreThanOrEqual(now),
+        },
+        order: {
+          start: 'ASC',
+        },
+      }),
+    ]);
 
-    if (!rfx) throw new NotFoundException('Rfx not found');
+    if (!rfx) throw new NotFoundException('Your Requested RFQ is not found');
 
-    return rfx;
+    return { ...rfx, activeRound, nextRound };
   }
 
   async giveQueryResponse<T>(
@@ -172,7 +202,9 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
       entityManager.getRepository(RFX),
       query,
     )
-      .where('rfxes.status = :status', { status: ERfxStatus.APPROVED })
+      .where('rfxes.status IN (:...status)', {
+        status: [ERfxStatus.APPROVED, ERfxStatus.AUCTION],
+      })
       .leftJoinAndSelect('rfxes.items', 'rfxItems')
       .leftJoinAndSelect(
         'rfxItems.rfxProductInvitations',
@@ -311,32 +343,38 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
   }
 
   async acceptInvitation(rfxBidInvitationId: string, user: any) {
-    const rfxProductInvitation = await this.rfxBidInvitationRepository.findOne({
-      where: {
-        id: rfxBidInvitationId,
-        rfxItem: {
-          status: ERfxItemStatus.APPROVED,
-          rfx: {
-            solRegistrations: {
-              vendorId: user.organization.id,
-              status: ESolRegistrationStatus.REGISTERED,
-            },
-          },
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const rfxProductInvitationRepo =
+      entityManager.getRepository(RfxProductInvitation);
+
+    const [registration, invitationExists] = await Promise.all([
+      entityManager.getRepository(SolRegistration).findOne({
+        where: {
+          status: ESolRegistrationStatus.REGISTERED,
+          vendorId: user.organization.id,
         },
-      },
-      select: {
-        id: true,
-      },
-    });
+        select: {
+          id: true,
+        },
+      }),
+      rfxProductInvitationRepo.exists({
+        where: {
+          id: rfxBidInvitationId,
+        },
+      }),
+    ]);
 
-    if (!rfxProductInvitation)
-      throw new NotFoundException('RFQ Porduct invitation not found');
+    if (!invitationExists)
+      throw new NotFoundException('RFQ Porduct invitation is not found');
 
-    await this.rfxBidInvitationRepository.update(rfxBidInvitationId, {
+    if (!registration)
+      throw new NotFoundException('Solicitation Registration is not found');
+
+    await rfxProductInvitationRepo.update(rfxBidInvitationId, {
       status: EInvitationStatus.ACCEPTED,
+      solRegistrationId: registration.id,
     });
-
-    return rfxProductInvitation;
   }
 
   async withdrawInvitation(rfxBidInvitationId: string, user: any) {
@@ -369,6 +407,25 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
   }
 
   async myRfxInvitations(rfxId: string, query: CollectionQuery, user: any) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const latestAward = await entityManager
+      .getRepository(SolRoundAward)
+      .findOne({
+        where: {
+          rfxItem: {
+            rfxId,
+          },
+        },
+        select: {
+          id: true,
+          createdAt: true,
+        },
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+
     const dataQuery = QueryConstructor.constructQuery<RfxProductInvitation>(
       this.rfxBidInvitationRepository,
       query,
@@ -377,9 +434,17 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
         vendorId: user.organization.id,
       })
       .leftJoinAndSelect('rfx_product_invitations.rfxItem', 'rfxItems')
+      .leftJoinAndSelect(
+        'rfx_product_invitations.solRoundAwards',
+        'roundAwards',
+        'roundAwards.id = :awardId',
+        { awardId: latestAward?.id },
+      )
       .leftJoin('rfxItems.rfx', 'rfxes')
       .andWhere('rfxes.id = :rfxId', { rfxId })
-      .andWhere('rfxes.status = :status', { status: ERfxStatus.APPROVED });
+      .andWhere('rfxes.status IN (:...status)', {
+        status: [ERfxStatus.APPROVED, ERfxStatus.AUCTION],
+      });
 
     return await this.giveQueryResponse<RfxProductInvitation>(query, dataQuery);
   }

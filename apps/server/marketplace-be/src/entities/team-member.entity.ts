@@ -29,6 +29,9 @@ export class TeamMember extends Audit {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({ default: false })
+  hasEvaluated: boolean;
+
   @Column({ type: 'uuid' })
   organizationId: string;
 

@@ -22,6 +22,10 @@ export class CreateOfferDto {
   @IsNumber()
   price: number;
 
+  @ApiProperty()
+  @IsNumber()
+  tax: number;
+
   solRoundId: string;
 
   vendorId: string;
@@ -29,6 +33,7 @@ export class CreateOfferDto {
   solRegistrationId: string;
 
   encryptedPrice: string;
+  encryptedTax: string;
 }
 
 export class UpdateOferDto extends CreateOfferDto {

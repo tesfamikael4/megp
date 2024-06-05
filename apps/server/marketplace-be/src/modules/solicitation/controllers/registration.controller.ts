@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -10,6 +10,7 @@ import {
   ExtraCrudController,
   decodeCollectionQuery,
   CurrentUser,
+  JwtGuard,
 } from 'megp-shared-be';
 import { SolRegistrationService } from '../services/registration.service';
 import { SolRegistration } from 'src/entities';
@@ -17,6 +18,7 @@ import {
   CreateRegistrationDto,
   UpdateRegistrationDto,
 } from '../dtos/registration.dto';
+// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxId',
@@ -25,8 +27,9 @@ const options: ExtraCrudOptions = {
 };
 
 @ApiBearerAuth()
-@Controller('sol-registration')
+@Controller('sol-registrations')
 @ApiTags('Sol Registration')
+// @UseGuards(JwtGuard, VendorGuard())
 export class SolRegistrationController extends ExtraCrudController<SolRegistration>(
   options,
 ) {

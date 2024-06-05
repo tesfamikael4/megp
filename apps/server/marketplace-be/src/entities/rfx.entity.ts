@@ -25,6 +25,7 @@ import { SolBookmark } from './sol-bookmark.entity';
 import { EvalResponse } from './eval-response.entity';
 import { TeamMember } from './team-member.entity';
 import { EvalAssessment } from './eval-assessment.entity';
+import { RfxContractTerm } from './rfx-contract-term.entity';
 
 @Entity({ name: 'rfxes' })
 export class RFX extends Audit {
@@ -98,6 +99,9 @@ export class RFX extends Audit {
     (rfxProcurementTechnicalTeam) => rfxProcurementTechnicalTeam.rfx,
   )
   rfxProcurementTechnicalTeams: RfxProcurementTechnicalTeam[];
+
+  @OneToMany(() => RfxContractTerm, (terms) => terms.rfx)
+  rfxContractTerms: RfxContractTerm[];
 
   @OneToOne(
     () => RfxBidContractCondition,

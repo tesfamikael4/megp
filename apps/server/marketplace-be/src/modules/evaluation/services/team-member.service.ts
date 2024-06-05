@@ -4,12 +4,13 @@ import {
   CollectionQuery,
   DataResponseFormat,
   ExtraCrudService,
+  FilterOperators,
   QueryConstructor,
 } from 'megp-shared-be';
 import { RFX, SolRegistration, TeamMember } from 'src/entities';
 import { Repository } from 'typeorm';
 import { CreateTeamMemberDto } from '../dtos/team-member.dto';
-import { ESolBookmarkStatus } from 'src/utils/enums';
+import { ERfxStatus, ESolBookmarkStatus } from 'src/utils/enums';
 
 @Injectable()
 export class TeamMemberService extends ExtraCrudService<TeamMember> {
@@ -24,6 +25,15 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
     super(teamMemberRepository);
   }
 
+  async isTeamLead(rfxId: string, user: any) {
+    return await this.teamMemberRepository.exists({
+      where: {
+        isTeamLead: true,
+        rfxId,
+        personnelId: user.userId,
+      },
+    });
+  }
   async create(itemData: CreateTeamMemberDto, req?: any): Promise<any> {
     const [rfx, teamMemberCount] = await Promise.all([
       this.rfxRepository.exists({ where: { id: itemData.rfxId } }),
@@ -33,7 +43,9 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
     if (!rfx) throw new Error('RFQ Not Found');
 
     if (itemData.members.length + teamMemberCount > 3)
-      throw new Error('Team Member Limit Exceeded');
+      throw new Error(
+        'Team Member Limit Exceeded: Maximum number allowed team members for a given RFQs is 3',
+      );
 
     const members = itemData.members.map((item: any) => {
       item.rfxId = itemData.rfxId;
@@ -48,21 +60,15 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
   }
 
   async getMyEvaluationList(query: CollectionQuery, user: any) {
-    const now = new Date(Date.now()).toISOString();
-
     const dataQuery = QueryConstructor.constructQuery<RFX>(
       this.rfxRepository,
       query,
     )
-      .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedure')
-      .where('rfxBidProcedure.openingDate < :now', { now })
       .leftJoin('rfxes.teamMembers', 'teamMember')
+      .where('teamMember.hasEvaluated = :hasEvaluated', { hasEvaluated: false })
       .andWhere('teamMember.personnelId = :personnelId', {
         personnelId: user.userId,
       });
-    // .leftJoin('teamMember.teamMemberEvaluations', 'teamMemberEvaluation',
-    //   'teamMemberEvaluation.status = :status',
-    //   { status: ETeamMemberEvaluationStatus.DRAFT })
 
     const response = new DataResponseFormat<RFX>();
     if (query.count) {
@@ -78,8 +84,18 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
   async vendorsList(
     rfxId: string,
     isTeamAssessment: boolean,
+    user: any,
     query: CollectionQuery,
   ) {
+    const teamMember = await this.teamMemberRepository.findOne({
+      where: {
+        rfxId,
+        personnelId: user.userId,
+      },
+      select: {
+        id: true,
+      },
+    });
     const dataQuery = QueryConstructor.constructQuery<SolRegistration>(
       this.solRegistrationRepository,
       query,
@@ -98,25 +114,16 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
         'sol_registrations.evaluationAssessments',
         'evaluationAssessment',
         (qb) =>
-          qb.where(
-            'evaluationAssessment.isTeamAssessment = :isTeamAssessment',
-            {
-              isTeamAssessment: false,
-            },
-          ),
-      );
-    if (isTeamAssessment)
-      dataQuery.loadRelationCountAndMap(
-        'sol_registrations.isTeamEvaluationCompleted',
-        'sol_registrations.evaluationAssessments',
-        'evaluationAssessment',
-        (qb) =>
-          qb.where(
-            'evaluationAssessment.isTeamAssessment = :isTeamAssessment',
-            {
-              isTeamAssessment: true,
-            },
-          ),
+          qb
+            .where(
+              'evaluationAssessment.isTeamAssessment = :isTeamAssessment',
+              {
+                isTeamAssessment,
+              },
+            )
+            .andWhere('evaluationAssessment.teamMemberId = :teamMemberId', {
+              teamMemberId: teamMember.id,
+            }),
       );
 
     const response = new DataResponseFormat<SolRegistration>();

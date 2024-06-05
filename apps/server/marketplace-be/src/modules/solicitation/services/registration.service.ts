@@ -21,6 +21,7 @@ import {
   EInvitationStatus,
   ERfxStatus,
   ESolBookmarkStatus,
+  ESolRegistrationStatus,
 } from 'src/utils/enums';
 import * as crypto from 'crypto';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
@@ -39,6 +40,7 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
 
   async create(itemData: CreateRegistrationDto, req?: any) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const registrationReo = manager.getRepository(SolRegistration);
 
     const rfx = await manager.getRepository(RFX).findOne({
       where: {
@@ -102,14 +104,14 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
       salt,
     );
 
-    const rfxRegistration = this.solRegistrationRepository.create({
+    const rfxRegistration = registrationReo.create({
       rfxId: itemData.rfxId,
       vendorId,
       vendorName,
       salt,
       response: encryptedData,
     });
-    await this.solRegistrationRepository.insert(rfxRegistration);
+    await registrationReo.insert(rfxRegistration);
 
     const registrationEventPayload = {
       ...rfx,
@@ -133,14 +135,17 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     );
 
     dataQuery
-      .andWhere('rfxes.status = :status', { status: ERfxStatus.APPROVED })
+      .where('rfxes.status = :status', { status: ERfxStatus.APPROVED })
       .loadRelationCountAndMap(
         'rfxes.solRegistrationCount',
         'rfxes.solRegistrations',
         'registration',
         (qb) =>
-          qb.where('registration.status = :status', {
-            status: ESolBookmarkStatus.REGISTERED,
+          qb.where('registration.status IN (:...status)', {
+            status: [
+              ESolRegistrationStatus.REGISTERED,
+              ESolRegistrationStatus.SUBMITTED,
+            ],
           }),
       );
 

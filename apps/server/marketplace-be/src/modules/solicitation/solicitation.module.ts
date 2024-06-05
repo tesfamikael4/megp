@@ -12,6 +12,7 @@ import {
   SolRegistration,
   SolResponse,
   SolRound,
+  SolRoundAward,
 } from 'src/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SolRoundService } from './services/round.service';
@@ -39,6 +40,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
       SolOffer,
       SolResponse,
       SolItemResponse,
+      SolRoundAward,
       RFX,
       RFXItem,
       OpenedResponse,
@@ -64,6 +66,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     SolOfferController,
     SolItemResponseController,
     SolResponseController,
+    SolRoundController,
   ],
   providers: [
     SolBookmarkService,
@@ -74,6 +77,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     SolResponseService,
     EncryptionHelperService,
     OpenerSerivice,
+    SolRoundService,
   ],
   exports: [SolRoundService],
 })

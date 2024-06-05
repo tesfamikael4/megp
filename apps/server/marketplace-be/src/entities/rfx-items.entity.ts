@@ -18,6 +18,7 @@ import { SolItemResponse } from './sol-item-response.entity';
 import { OpenedItemResponse } from './opened-item-response.entity';
 import { OpenedOffer } from './opened-offer.entity';
 import { EvalItemResponse } from './eval-item-response.entity';
+import { SolRoundAward } from './sol-round-award.entity';
 
 @Entity({ name: 'rfx_items' })
 export class RFXItem extends Audit {
@@ -118,4 +119,7 @@ export class RFXItem extends Audit {
     (rfxItemResponse) => rfxItemResponse.rfxItem,
   )
   evalItemResponses: EvalItemResponse[];
+
+  @OneToMany(() => SolRoundAward, (roundAward) => roundAward.rfxItem)
+  solRoundAwards: SolRoundAward[];
 }

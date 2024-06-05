@@ -16,6 +16,7 @@ import {
   OpenedOffer,
   OpenedResponse,
   RFX,
+  RfxProductInvitation,
   SolItemResponse,
   SolOffer,
   SolResponse,
@@ -92,4 +93,10 @@ export class SolRegistration extends Audit {
     (itemResponse) => itemResponse.solRegistration,
   )
   evaluationAssessments: EvalAssessment[];
+
+  @OneToMany(
+    () => RfxProductInvitation,
+    (invitiaton) => invitiaton.solRegistration,
+  )
+  rfxProductInvitations: RfxProductInvitation[];
 }
