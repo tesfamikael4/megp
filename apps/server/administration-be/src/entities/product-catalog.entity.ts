@@ -14,6 +14,7 @@ import {
   ProductCatalogApprovalStatus,
   ProductCatalogStatus,
 } from 'src/shared/enums/product-catalog-enum';
+import { ProductCatalogDelivery } from './product-catalog-delivery.entity';
 
 @Entity({ name: 'product_catalogs' })
 export class ProductCatalog extends Audit {
@@ -37,9 +38,6 @@ export class ProductCatalog extends Audit {
 
   @Column({ type: 'jsonb', nullable: true, default: [] })
   specifications: any[];
-
-  @Column({ type: 'jsonb' })
-  deliveryValues: any[];
 
   @Column({ type: 'numeric', precision: 14, scale: 2, default: 0 })
   quantity: number;
@@ -85,4 +83,13 @@ export class ProductCatalog extends Audit {
     },
   )
   productCatalogImages: ProductCatalogImage[];
+
+  @OneToMany(
+    () => ProductCatalogDelivery,
+    (productCatalogDeliveries) => productCatalogDeliveries.productCatalog,
+    {
+      cascade: true,
+    },
+  )
+  productCatalogDeliveries: ProductCatalogDelivery[];
 }

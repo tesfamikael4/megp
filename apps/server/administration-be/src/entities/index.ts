@@ -19,6 +19,7 @@ export * from './item-meta-data.entity';
 export * from './specification-template.entity';
 export * from './product-catalog.entity';
 export * from './product-catalog-image.entity';
+export * from './product-catalog-delivery.entity';
 
 //contract catalog
 export * from './contract-catalog.entity';

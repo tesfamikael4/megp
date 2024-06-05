@@ -66,6 +66,7 @@ export class MinIOService {
     mimetype: string,
     bucketName: string,
     metaData = {},
+    size?: number,
   ): Promise<{
     filepath: string;
     bucketName: string;
@@ -78,6 +79,7 @@ export class MinIOService {
         BucketNameEnum.MEGP,
         bucketName ? bucketName + filepath : filepath,
         buffer,
+        size,
         { ...metaData, 'Content-Type': mimetype },
       );
       return {
