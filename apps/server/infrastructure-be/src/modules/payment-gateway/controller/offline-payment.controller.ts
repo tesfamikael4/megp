@@ -42,11 +42,11 @@ export class OfflinePaymentController {
   @Get('token/log')
   async tokenLog(@Body() payload: any, @Req() req: Request) {
     console.log(
-      '🚀 ~ OfflinePaymentController ~ authorization ~ req:',
+      '🚀 ~ OfflinePaymentController ~ tokenLog ~ req:',
       req.headers.authorization,
     );
     console.log('🚀 ~ OfflinePaymentController ~ tokenLog ~ req:', req);
-    console.log('🚀 ~ OfflinePaymentController ~ log ~ payload:', payload);
+    console.log('🚀 ~ OfflinePaymentController ~ tokenLog ~ payload:', payload);
 
     return payload;
   }
