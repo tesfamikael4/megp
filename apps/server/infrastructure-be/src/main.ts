@@ -68,7 +68,7 @@ async function bootstrap() {
     app,
     new DocumentBuilder()
       .setTitle('Infrastructure  API')
-      .setDescription('My Infrastructure API Description')
+      .setDescription('My Infrastructure API')
       .addBearerAuth()
       .build(),
   );
