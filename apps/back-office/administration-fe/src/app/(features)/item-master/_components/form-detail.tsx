@@ -38,6 +38,7 @@ import ClassificationSelector from './classification-selector';
 import { useLazyListQuery } from '../../item-category/_api/item-category';
 import { useDisclosure } from '@mantine/hooks';
 import { useListQuery as useListItemSubCatQuery } from '../../item-sub-category/_api/item-sub-category';
+import { useLazyGetACategoryQuery, useLazyGetParentQuery } from '../../item-category/_api/custom-item-category';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -101,13 +102,15 @@ export function FormDetail({ mode }: FormDetailProps) {
   const router = useRouter();
   const [itemCode, setItemCode] = useState<string>('');
   const itemCategoryId = watch('itemCategoryId');
-  const [itemCategoryName, setItemCategoryName] = useState<string>('');
 
   // Fetching data
   const { data: measurements, isLoading: isMeasurementLoading } =
     useGetMeasurementsQuery({} as any);
   const [getCategories, { data: categories, isLoading: isCategoriesLoading }] =
-    useLazyListQuery();
+    useLazyGetParentQuery({});
+ const [getItemCategoryById, { data: itemCategory}] = useLazyGetACategoryQuery();
+  const [getItemCatChildren, {isLoading: isCategoriesChildLoading }] = useLazyListQuery();
+  
   const { data: tags, isLoading: isTagLoading } = useGetTagsQuery({} as any);
   const [
     getUnitOfMeasurements,
@@ -138,8 +141,8 @@ export function FormDetail({ mode }: FormDetailProps) {
       setSelectedCategories(data);
     },
     load: async (data) => {
-      logger.log({ data });
-      const res = await getCategories({
+      logger.log("item category",data );
+      const res = await getItemCatChildren({
         where: [
           [
             {
@@ -156,7 +159,7 @@ export function FormDetail({ mode }: FormDetailProps) {
             itemCategoryName: c.name,
             itemCategoryId: c.id,
           })) ?? [],
-        loading: isCategoriesLoading,
+        loading: isCategoriesChildLoading,
       };
     },
   };
@@ -279,11 +282,15 @@ export function FormDetail({ mode }: FormDetailProps) {
   }, [selectedCategories, setValue]);
 
   useEffect(() => {
-    if (categories) {
-      const temp = categories.items.filter((c) => c.id == itemCategoryId);
-      setItemCategoryName(temp?.[0]?.name ?? '');
+    const fetchSelectedCategory = async () => {
+      logger.log('itemCategoryId', itemCategoryId);
+      if(itemCategoryId){
+        const item = await getItemCategoryById(itemCategoryId);
+        logger.log('item', item);
+      }
     }
-  }, [categories, itemCategoryId]);
+    fetchSelectedCategory();
+  }, [itemCategoryId]);
 
   return (
     <Box pos="relative">
@@ -292,7 +299,8 @@ export function FormDetail({ mode }: FormDetailProps) {
           isMeasurementLoading ||
           isTagLoading ||
           isCategoriesLoading ||
-          isItemSubCatLoading
+          isItemSubCatLoading || 
+          isCategoriesChildLoading
         }
       />
       <Stack>
@@ -320,7 +328,7 @@ export function FormDetail({ mode }: FormDetailProps) {
           label="Item Category"
           withAsterisk
           readOnly
-          value={itemCategoryName}
+          value={itemCategory?.name}
           error={errors.itemCategoryId?.message as string}
           onClick={open}
         />

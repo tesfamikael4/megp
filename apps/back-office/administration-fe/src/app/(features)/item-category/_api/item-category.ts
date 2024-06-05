@@ -14,4 +14,5 @@ export const {
   useUpdateMutation,
   useDeleteMutation,
   useLazyListQuery,
+  useLazyReadQuery,
 } = itemCategorySliceApi;

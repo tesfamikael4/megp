@@ -46,7 +46,7 @@ export function FormDetail({ mode }: FormDetailPropType) {
         },
       ),
     shortName: z.string().min(1, { message: 'This field is required' }),
-    percentage: z.number().min(1, { message: 'This field is required' }),
+    percentage: z.number().min(1, { message: 'This field is required' }).max(100),
   });
   const {
     handleSubmit,
