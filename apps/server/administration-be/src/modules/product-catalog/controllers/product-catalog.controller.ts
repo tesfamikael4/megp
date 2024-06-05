@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ProductCatalogsService } from '../services/product-catalog.service';
 import {
   ApiExtraModels,
@@ -26,8 +34,22 @@ export class ProductCatalogsController extends EntityCrudController<ProductCatal
     super(productCatalogService);
   }
 
-
-  approveCatalog(id: string, approvalStatus: ProductCatalogApprovalStatus, req?: any) {
+  @Get('/:vendorId')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  getById(@Param('vendorId') vendorId: string, @Query('q') q: string) {
+    const query = decodeCollectionQuery(q);
+    return this.productCatalogService.getById(vendorId, query);
+  }
+  approveCatalog(
+    id: string,
+    approvalStatus: ProductCatalogApprovalStatus,
+    req?: any,
+  ) {
     return this.productCatalogService.approveCatalog(id, approvalStatus, req);
   }
 
