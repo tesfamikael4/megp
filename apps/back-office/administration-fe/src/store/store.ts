@@ -14,6 +14,7 @@ import { specApi } from '@/app/(features)/item-master/_api/template.api';
 import { itemSubCategorySliceApi } from '@/app/(features)/item-sub-category/_api/item-sub-category';
 import { administrationApi } from './api/administration/administration.api';
 import { contractCatalogApi } from './api/contract-catalog/contract-catalog.api';
+import { getParentApi } from '@/app/(features)/item-category/_api/custom-item-category';
 
 const { reducers, middleware } = entityApi;
 
@@ -34,6 +35,7 @@ export const store = configureStore({
     [specApi.reducerPath]: specApi.reducer,
     [administrationApi.reducerPath]: administrationApi.reducer,
     [contractCatalogApi.reducerPath]: contractCatalogApi.reducer,
+    [getParentApi.reducerPath]: getParentApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -53,6 +55,7 @@ export const store = configureStore({
       specApi.middleware,
       administrationApi.middleware,
       contractCatalogApi.middleware,
+      getParentApi.middleware,
     ]),
 });
 
