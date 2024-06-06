@@ -189,8 +189,8 @@ export class Tender extends Audit {
   )
   bidRegistrations: BidRegistration[];
 
-  // @OneToOne(() => Opening, (opening) => opening.tender)
-  // opening: Opening;
+  @OneToOne(() => Opening, (opening) => opening.tender)
+  opening: Opening;
 
   @OneToMany(
     () => RevisionApproval,

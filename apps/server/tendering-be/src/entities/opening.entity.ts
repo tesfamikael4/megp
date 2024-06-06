@@ -15,19 +15,19 @@ export class Opening extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @Column('uuid')
-  // tenderId: string;
+  @Column('uuid')
+  tenderId: string;
 
-  // @OneToOne(() => Tender, (tender) => tender.opening)
-  // @JoinColumn({ name: 'tenderId' })
-  // tender: Tender;
+  @OneToOne(() => Tender, (tender) => tender.opening)
+  @JoinColumn({ name: 'tenderId' })
+  tender: Tender;
 
-  // @Column('uuid')
-  // teamId: string;
+  @Column('uuid')
+  teamId: string;
 
-  // @OneToOne(() => Team, (team) => team.opening)
-  // @JoinColumn({ name: 'teamId' })
-  // team: Team;
+  @OneToOne(() => Team, (team) => team.opening)
+  @JoinColumn({ name: 'teamId' })
+  team: Team;
 
   @Column()
   openingType: string;
