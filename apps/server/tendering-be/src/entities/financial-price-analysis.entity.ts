@@ -26,9 +26,6 @@ export class FinancialPriceAnalysis extends OrgAudit {
   @Column('uuid')
   bidderId: string;
 
-  @Column()
-  bidderName: string;
-
   @OneToMany(
     () => FinancialPriceAnalysisDetail,
     (financialPriceAnalysisDetail) =>
