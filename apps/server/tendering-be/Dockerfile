@@ -77,4 +77,3 @@ ENV VERSION=$VERSION_ARG
 ENV NODE_ENV=production
 
 CMD node apps/server/tendering-be/dist/main.js
-
