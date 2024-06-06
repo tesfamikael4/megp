@@ -158,10 +158,10 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
       });
     if (assessment.length > 0) {
       await this.financialPriceAnalysisDetailRepository.delete({
-        financialPriceAnalyses: {
-          lotId: items.priceAnalysis[0].lotId,
-          bidderId: items.priceAnalysis[0].bidderId,
-        },
+        financialPriceAnalysisId: assessment[0].id,
+      });
+      priceAnalyses.map((x) => {
+        x.financialPriceAnalysisId = assessment[0].id;
       });
       await this.financialPriceAnalysisDetailRepository.insert(priceAnalyses);
     } else {

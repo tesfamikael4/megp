@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
@@ -11,8 +11,8 @@ const options: ExtraCrudOptions = {
 };
 
 @ApiBearerAuth()
-@Controller('financial-price-analysis')
-@ApiTags('Financial Price Analysis Controller')
+@Controller('financial-price-analysis-detail')
+@ApiTags('Financial Price Analysis Detail Controller')
 export class FinancialPriceAnalysisDetailController extends ExtraCrudController<FinancialPriceAnalysisDetail>(
   options,
 ) {
@@ -50,6 +50,7 @@ export class FinancialPriceAnalysisDetailController extends ExtraCrudController<
     );
   }
 
+  @ApiBody({})
   @Post('bulk-create')
   async bulkCreate(@Body() items: any, @Req() req?: any): Promise<any> {
     return await this.financialPriceAnalysisDetailService.bulkCreate(

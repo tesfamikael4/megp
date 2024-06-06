@@ -36,8 +36,8 @@ export class Team extends OrgAudit {
   @JoinColumn({ name: 'tenderId' })
   tender: Tender;
 
-  @OneToOne(() => Opening, (opening) => opening.team)
-  opening: Opening;
+  // @OneToOne(() => Opening, (opening) => opening.team)
+  // opening: Opening;
 
   @OneToMany(() => TeamMember, (teamMember) => teamMember.team)
   teamMembers: TeamMember[];
