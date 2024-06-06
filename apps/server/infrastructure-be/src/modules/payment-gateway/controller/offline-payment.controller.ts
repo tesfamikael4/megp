@@ -1,7 +1,15 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { OfflinePaymentService } from '../service/offline-payment.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AllowAnonymous } from 'megp-shared-be';
+import { AllowAnonymous, ApiKeyGuard } from 'megp-shared-be';
 import {
   InitiatePaymentDto,
   PaymentCompletedDto,
@@ -15,6 +23,7 @@ export class OfflinePaymentController {
   constructor(private readonly mpgsPaymentService: OfflinePaymentService) {}
 
   @Get(':invoiceReference')
+  @UseGuards(ApiKeyGuard)
   async getPaymentDetailByInvoiceReference(
     @Param('invoiceReference') invoiceReference: string,
   ) {
@@ -29,6 +38,7 @@ export class OfflinePaymentController {
   }
 
   @Post('payment-completed')
+  @UseGuards(ApiKeyGuard)
   async paymentCompleted(@Body() payload: PaymentCompletedDto) {
     return await this.mpgsPaymentService.paymentCompleted(payload);
   }
