@@ -217,7 +217,12 @@ export const Members = ({ team, collapse, envelopeType, lotId }: any) => {
         </Button>
       </Group>
 
-      <Modal opened={opened} onClose={close} title="Add Bid Openers" size="lg">
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Add Bid Evaluator"
+        size="lg"
+      >
         <ExpandableTable
           config={usersConfig}
           onRequestChange={(req) =>
