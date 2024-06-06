@@ -8,7 +8,6 @@ import {
   SwaggerModule,
 } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
