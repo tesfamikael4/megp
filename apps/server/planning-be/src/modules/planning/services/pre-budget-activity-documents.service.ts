@@ -33,6 +33,8 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
       bucketName,
       name,
       file.buffer,
+      file.size,
+      { 'Content-Type': file.mimetype },
       // {
       //   test: 'test',
       // },
