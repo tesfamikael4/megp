@@ -36,7 +36,7 @@ async function bootstrap() {
     app,
     new DocumentBuilder()
       .setTitle('Tendering API')
-      .setDescription('My Tendering API')
+      .setDescription('My Tendering API Description')
       .addBearerAuth()
       .build(),
     {
