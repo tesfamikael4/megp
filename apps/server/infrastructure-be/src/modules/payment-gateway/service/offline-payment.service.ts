@@ -110,11 +110,11 @@ export class OfflinePaymentService {
         bankReferenceNumber: payload.bankReferenceNumber,
       });
 
-      const requestPayload = {
-        status: status,
-        invoiceReference: paymentInvoice.invoiceReference,
-      };
-      await axios.post(paymentInvoice.callbackUrl, requestPayload);
+      // const requestPayload = {
+      //   status: status,
+      //   invoiceReference: paymentInvoice.invoiceReference,
+      // };
+      // await axios.post(paymentInvoice.callbackUrl, requestPayload);
     } catch (error) {
       throw error;
     }
