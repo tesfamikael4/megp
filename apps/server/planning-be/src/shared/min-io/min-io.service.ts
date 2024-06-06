@@ -7,6 +7,7 @@ import { BucketNameEnum } from './bucket-name.enum';
 
 @Injectable()
 export class MinIOService {
+  //
   constructor(private readonly minioService: MinioService) {}
 
   async upload(
