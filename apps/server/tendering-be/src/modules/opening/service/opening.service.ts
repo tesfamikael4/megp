@@ -35,12 +35,12 @@ export class OpeningService extends ExtraCrudService<Opening> {
       itemData.organizationId = req.user.organization.id;
       itemData.organizationName = req.user.organization.name;
     }
-
+    //change tenderId
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const teamMember = await manager.getRepository(TeamMember).findOne({
       where: {
         team: {
-          tender: itemData.tender,
+          // tender: itemData.tender,
         },
       },
       relations: {
@@ -52,7 +52,7 @@ export class OpeningService extends ExtraCrudService<Opening> {
       },
     });
 
-    itemData.teamId = teamMember.team.id;
+    // itemData.teamId = teamMember.team.id;
     itemData.openingType = teamMember.team.tender.bdsSubmission.envelopType;
 
     const item = this.openingRepository.create(itemData);
@@ -64,7 +64,8 @@ export class OpeningService extends ExtraCrudService<Opening> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     await Promise.all([
       this.openingRepository.update(
-        { tenderId: itemData.tenderId },
+        { id: itemData.tenderId },
+        // { tenderId: itemData.tenderId },
         {
           status: OpeningStatusEnum.COMPLETED,
         },
