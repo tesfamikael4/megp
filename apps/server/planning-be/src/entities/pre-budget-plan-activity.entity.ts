@@ -9,6 +9,7 @@ import {
   BeforeInsert,
   Unique,
   Check,
+  PrimaryColumn,
 } from 'typeorm';
 
 import { PreBudgetPlan } from './pre-budget-plan.entity';
@@ -19,6 +20,7 @@ import { PreProcurementMechanism } from './pre-procurement-mechanism.entity';
 import { OrgAudit } from 'src/shared/entities';
 import { PreBudgetActivityDocument } from './pre-budget-activity-document.entity';
 import { Reason } from './reason.entity';
+import { IsOptional } from 'class-validator';
 
 @Unique(['procurementReference'])
 @Entity({ name: 'pre_budget_plan_activities' })
@@ -104,9 +106,4 @@ export class PreBudgetPlanActivity extends OrgAudit {
   @Column({ nullable: true, unique: true })
   userReference: string;
 
-  @BeforeInsert()
-  generateRandomNumber(): void {
-    const randomNum = Math.floor(10000 + Math.random() * 90000); // Generates a random 5-digit number
-    this.procurementReference = 'REF-' + randomNum.toString();
-  }
 }
