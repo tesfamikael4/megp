@@ -17,7 +17,8 @@ RUN apk update
 
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo pnpm
+RUN npm install -g pnpm
+RUN npm install -g turbo
 COPY . .
 RUN turbo prune --scope=tendering-be --docker
 
@@ -28,7 +29,7 @@ RUN apk update
 WORKDIR /app
 
 # Install pnpm
-RUN yarn global add pnpm
+RUN npm install -g pnpm
  
 
 # First install the dependencies (as they change less often)
@@ -47,7 +48,8 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN yarn turbo run build --filter=tendering-be...
+RUN npx turbo run build --filter=tendering-be
+# RUN yarn turbo run build --filter=tendering-be...
 
 FROM base AS runner
 
