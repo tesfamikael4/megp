@@ -115,6 +115,11 @@ export class OfflinePaymentService {
       //   invoiceReference: paymentInvoice.invoiceReference,
       // };
       // await axios.post(paymentInvoice.callbackUrl, requestPayload);
+
+      return {
+        ...paymentInvoice,
+        status,
+      };
     } catch (error) {
       throw error;
     }
