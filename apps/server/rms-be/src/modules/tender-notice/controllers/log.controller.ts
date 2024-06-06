@@ -7,7 +7,7 @@ import { AllowAnonymous } from 'megp-shared-be';
 @Controller('log')
 @ApiTags('Log')
 export class LogController {
-  constructor(private readonly categoriesService: TenderNoticeService) { }
+  constructor(private readonly categoriesService: TenderNoticeService) {}
 
   @Get('token')
   @AllowAnonymous()
@@ -17,7 +17,7 @@ export class LogController {
       req.headers.authorization,
     );
     console.log(
-      '🚀 ~ OfflinePaymentController ~ tokenLog ~ header:',
+      '🚀 ~ OfflinePaymentController ~ tokenLog ~ headers:',
       req.headers,
     );
 
