@@ -16,13 +16,34 @@ export class PreBudgetPlanActivityService extends ExtraCrudService<PreBudgetPlan
   ) {
     super(repositoryPreBudgetPlanActivity);
   }
+  
 
   async create(itemData: any, req: any): Promise<any> {
     if (req?.user?.organization) {
       itemData.organizationId = req.user.organization.id;
     }
+    
+
+    const refer = await this.repositoryPreBudgetPlanActivity.findOne({
+      where: {
+        organizationId: req.user.organization.id
+      },
+      order: { 
+        procurementReference: 'DESC'
+       },
+    });
+    let lastIncrement = refer ? parseInt(refer.procurementReference.split('-')[1]) : 0;
+    lastIncrement++
+    const newRefCode = `${String(lastIncrement).padStart(5, '0')}`;
+    // get the organizationcode from somewhere
+    const Orgcode=''
+   const ref=`${Orgcode}` ? `${Orgcode}-`:"REF-" 
+   const current =ref+newRefCode
+   itemData.procurementReference=current
+  
+
     const activity =
-      await this.repositoryPreBudgetPlanActivity.create(itemData);
+       this.repositoryPreBudgetPlanActivity.create(itemData);
     const plan = await this.repositoryPreBudgetPlan.findOne({
       where: {
         id: itemData.preBudgetPlanId,
