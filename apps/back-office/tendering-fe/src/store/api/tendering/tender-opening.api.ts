@@ -34,7 +34,7 @@ export const tenderOpeningApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/bid-opening-checklist/bidders-status/${lotId}/${team}${q}`,
+          url: `/bid-opening-checklist-assessment-detail/bidders-status/${lotId}/${team}${q}`,
         };
       },
     }),
@@ -49,7 +49,7 @@ export const tenderOpeningApi = createApi({
         team: string;
       }) => {
         return {
-          url: `/bid-opening-checklist/checklist-status/${lotId}/${bidderId}/${team}`,
+          url: `/bid-opening-checklist-assessment-detail/checklist-status/${lotId}/${bidderId}/${team}`,
         };
       },
       providesTags: ['bidAttribute'],
@@ -64,7 +64,7 @@ export const tenderOpeningApi = createApi({
     }),
     checkBidAttribute: builder.mutation<any, any>({
       query: (data) => ({
-        url: `/bid-opening-checklist`,
+        url: `/bid-opening-checklist-assessment-detail`,
         method: 'POST',
         body: data,
       }),
@@ -73,7 +73,7 @@ export const tenderOpeningApi = createApi({
     submitOpening: builder.mutation<any, any>({
       query: (data: { tenderId: string; isTeamLead: boolean }) => {
         return {
-          url: `/bid-opening-checklist/submit-checklist`,
+          url: `/bid-opening-checklist-assessment-detail/submit-checklist`,
           method: 'PUT',
           body: data,
         };
@@ -83,14 +83,15 @@ export const tenderOpeningApi = createApi({
     getTenderOpeningStatus: builder.query<any, any>({
       query: (tenderId) => {
         return {
-          url: `/bid-opening-checklist/can-complete/${tenderId}`,
+          url: `/bid-opening-checklist-assessment-detail/can-complete/${tenderId}`,
           method: 'GET',
         };
       },
       providesTags: ['opening'],
     }),
     getOpeningMinutes: builder.query<any, any>({
-      query: (tenderId) => `/bid-opening-checklist/opening-minutes/${tenderId}`,
+      query: (tenderId) =>
+        `/bid-opening-checklist-assessment-detail/opening-minutes/${tenderId}`,
     }),
     getOpeningAssessments: builder.query<any, any>({
       query: ({
@@ -101,12 +102,13 @@ export const tenderOpeningApi = createApi({
         lotId: string;
         bidderId: string;
         team: string;
-      }) => `/bid-opening-checklist/opener-report/${lotId}/${bidderId}/${team}`,
+      }) =>
+        `/bid-opening-checklist-assessment-detail/opener-report/${lotId}/${bidderId}/${team}`,
     }),
     completeOpening: builder.mutation<any, any>({
       query: (data: { tenderId: string; isTeamLead: boolean }) => {
         return {
-          url: `/bid-opening-checklist/complete-checklist`,
+          url: `/bid-opening-checklist-assessment-detail/complete-checklist`,
           method: 'PUT',
           body: data,
         };
@@ -123,7 +125,7 @@ export const tenderOpeningApi = createApi({
         bidderId: string;
         checklistId: string;
       }) =>
-        `/bid-opening-checklist/members-report/${lotId}/${bidderId}/${checklistId}`,
+        `/bid-opening-checklist-assessment-detail/members-report/${lotId}/${bidderId}/${checklistId}`,
     }),
     getSpdDetail: builder.query<any, any>({
       query: (spdId) => `/spd-opening-checklists/${spdId}`,

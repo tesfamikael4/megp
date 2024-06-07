@@ -31,7 +31,7 @@ export const ChecklistAssessment = () => {
       lotId,
       bidderId,
       tenderId,
-      isTeamLead: true,
+      isTeamAssessment: true,
     };
     try {
       await checkBidAttribute(tempData).unwrap();
