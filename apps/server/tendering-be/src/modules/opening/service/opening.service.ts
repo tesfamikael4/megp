@@ -6,7 +6,7 @@ import { Opening } from 'src/entities/opening.entity';
 import { CompleteOpeningDto, CreateOpeningDto } from '../dto/opening.dto';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
-import { BdsEvaluation, Lot, Tender } from 'src/entities';
+import { BdsEvaluation, Lot, SharedBidderKey, Tender } from 'src/entities';
 import { TeamMember } from 'src/entities/team-member.entity';
 import { MilestonesTracker } from 'src/entities/milestones-tracker.entity';
 import { OpeningStatusEnum } from 'src/shared/enums/opening.enum';
@@ -18,12 +18,16 @@ import {
   QueryConstructor,
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
+import { BidResponseOpeningService } from 'src/modules/bid/service';
+import { DocumentTypeEnum } from 'src/shared/enums';
 
 @Injectable()
 export class OpeningService extends ExtraCrudService<Opening> {
   constructor(
     @InjectRepository(Opening)
     private readonly openingRepository: Repository<Opening>,
+
+    private readonly bidResponseOpeningService: BidResponseOpeningService,
 
     @Inject(REQUEST) private request: Request,
   ) {
@@ -55,6 +59,22 @@ export class OpeningService extends ExtraCrudService<Opening> {
     itemData.teamId = teamMember.team.id;
     itemData.openingType = teamMember.team.tender.bdsSubmission.envelopType;
 
+    const keySharedBidders = await manager.getRepository(SharedBidderKey).find({
+      where: {
+        bidRegistration: {
+          tenderId: itemData.tenderId,
+        },
+      },
+    });
+
+    keySharedBidders.map(async (x) => {
+      await this.bidResponseOpeningService.openBidResponse({
+        tenderId: itemData.tenderId,
+        bidderId: x.bidRegistration.bidderId,
+        documentType: DocumentTypeEnum.RESPONSE,
+        password: 'P@ssw0rd',
+      });
+    });
     const item = this.openingRepository.create(itemData);
     await this.openingRepository.insert(item);
     return item;
@@ -109,6 +129,10 @@ export class OpeningService extends ExtraCrudService<Opening> {
       query,
     )
       .leftJoin('tenders.tenderMilestones', 'tenderMilestones')
+      .andWhere('tenderMilestones.milestoneNum IN (:...milestoneNums)', {
+        milestoneNums: [301, 320],
+      })
+
       // .leftJoin('tenders.lots', 'lots')
       // .leftJoin('lots.teams', 'teams')
       .leftJoin('tenders.teams', 'teams')
