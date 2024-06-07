@@ -487,16 +487,13 @@ export const ActivityMechanization = ({
               name="isOnline"
               placeholder="Select Procurement Process"
               control={control}
-              data={
-                page == 'pr'
-                  ? [{ label: 'Online', value: 'true' }]
-                  : [
-                      { label: 'Online', value: 'true' },
-                      { label: 'Offline', value: 'false' },
-                    ]
-              }
+              data={[
+                { label: 'Online', value: 'true' },
+                { label: 'Offline', value: 'false' },
+              ]}
               errors={errors}
-              disableFields={disableFields}
+              disableFields={page === 'pr' ? true : disableFields}
+              defaultValue={page === 'pr' ? 'true' : ''}
             />
           </Flex>
           {(fundingSource == 'Loan' || fundingSource == 'Donor') && (
