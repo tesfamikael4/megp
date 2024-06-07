@@ -127,7 +127,11 @@ export const TenderOverView = ({
               <Button
                 onClick={onSubmit}
                 loading={isSubmitting}
-                disabled={tenderStatus?.hasCompleted}
+                disabled={
+                  teamAssessment
+                    ? tenderStatus?.isTeamLead?.hasCompleted
+                    : tenderStatus?.hasCompleted
+                }
               >
                 Complete
               </Button>
