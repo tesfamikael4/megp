@@ -8,7 +8,8 @@ import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { REQUEST } from '@nestjs/core';
 import { TeamMember } from 'src/entities/team-member.entity';
-import { BidOpeningChecklist } from 'src/entities';
+import { BidOpeningChecklistAssessmentDetail } from 'src/entities';
+import { BidOpeningChecklistAssessment } from 'src/entities/bid-opening-checklist-assessment.entity';
 
 @Injectable()
 export class BidOpeningMinuteService extends ExtraCrudService<BidOpeningMinute> {
@@ -42,7 +43,7 @@ export class BidOpeningMinuteService extends ExtraCrudService<BidOpeningMinute> 
         },
       }),
 
-      manager.getRepository(BidOpeningChecklist).find({
+      manager.getRepository(BidOpeningChecklistAssessment).find({
         where: {
           lotId,
         },

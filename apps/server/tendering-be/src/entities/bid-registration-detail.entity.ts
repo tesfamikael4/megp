@@ -18,7 +18,7 @@ import { OpenedBidResponseItem } from './opened-bid-response-item.entity';
 import { OpenedBidResponseLot } from './opened-bid-response-lot.entity';
 import { TechnicalPreliminaryAssessment } from './technical-preliminary-assessment.entity';
 import { BiddersComparison } from './bidders-comparison.entity';
-import { BidOpeningChecklist } from './bid-opening-checklist.entity';
+import { BidOpeningChecklistAssessmentDetail } from './bid-opening-checklist-assessment-detail.entity';
 import { TechnicalQualificationAssessment } from './technical-qualification-assessments.entity';
 import { TechnicalResponsivenessAssessment } from './technical-responsiveness-assessments.entity';
 import { TechnicalScoringAssessment } from './technical-scoring-assessments.entity';
@@ -118,8 +118,9 @@ export class BidRegistrationDetail extends Audit {
   biddersComparisons: BiddersComparison[];
 
   @OneToMany(
-    () => BidOpeningChecklist,
-    (bidOpeningChecklist) => bidOpeningChecklist.bidRegistrationDetails,
+    () => BidOpeningChecklistAssessmentDetail,
+    (bidOpeningChecklistAssessmentDetail) =>
+      bidOpeningChecklistAssessmentDetail.bidOpeningChecklistAssessment,
   )
-  bidOpeningChecklists: BidOpeningChecklist[];
+  bidOpeningChecklistAssessmentDetails: BidOpeningChecklistAssessmentDetail[];
 }

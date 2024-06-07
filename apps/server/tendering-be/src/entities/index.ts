@@ -47,7 +47,7 @@ export * from './note.entity';
 export * from './revision-approval.entity';
 
 export * from './bid-opening-minute.entity';
-export * from './bid-opening-checklist.entity';
+export * from './bid-opening-checklist-assessment-detail.entity';
 export * from './opening.entity';
 export * from './shared-bidder-keys.entity';
 export * from './bid-guarantee.entity';

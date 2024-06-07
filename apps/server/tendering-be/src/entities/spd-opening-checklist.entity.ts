@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Spd } from './spd.entity';
-import { BidOpeningChecklist } from './bid-opening-checklist.entity';
+import { BidOpeningChecklistAssessmentDetail } from './bid-opening-checklist-assessment-detail.entity';
 
 @Entity({ name: 'spd_opening_checklists' })
 export class SpdOpeningChecklist extends Audit {
@@ -32,8 +32,9 @@ export class SpdOpeningChecklist extends Audit {
   spd: Spd;
 
   @OneToMany(
-    () => BidOpeningChecklist,
-    (bidOpeningCheckList) => bidOpeningCheckList.spdOpeningChecklistId,
+    () => BidOpeningChecklistAssessmentDetail,
+    (bidOpeningChecklistAssessmentDetail) =>
+      bidOpeningChecklistAssessmentDetail.spdOpeningChecklistId,
   )
-  bidOpeningCheckLists: BidOpeningChecklist[];
+  bidOpeningChecklistAssessmentDetails: BidOpeningChecklistAssessmentDetail[];
 }

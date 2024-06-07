@@ -17,7 +17,7 @@ import { EqcDueDiligence } from './eqc-due-diligence.entity';
 import { Item } from './tender-item.entity';
 import { BdsBidSecurity } from './bds-bid-security.entity';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
-import { BidOpeningChecklist } from './bid-opening-checklist.entity';
+import { BidOpeningChecklistAssessmentDetail } from './bid-opening-checklist-assessment-detail.entity';
 import { Team } from './team.entity';
 import { MilestonesTracker } from './milestones-tracker.entity';
 import { BidGuarantee } from './bid-guarantee.entity';
@@ -29,6 +29,7 @@ import { FinancialBidPriceAssessment } from './financial-bid-price-assessment.en
 import { LotStatusEnum } from 'src/shared/enums/tender-status.enum';
 import { FormulaUnit } from './formula-unit.entity';
 import { FinancialPriceAnalysis } from './financial-price-analysis.entity';
+import { BidOpeningChecklistAssessment } from './bid-opening-checklist-assessment.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -97,10 +98,10 @@ export class Lot extends Audit {
   bidRegistrationDetails: BidRegistrationDetail[];
 
   @OneToMany(
-    () => BidOpeningChecklist,
-    (bidOpeningCheckList) => bidOpeningCheckList.lot,
+    () => BidOpeningChecklistAssessment,
+    (bidOpeningChecklistAssessment) => bidOpeningChecklistAssessment.lot,
   )
-  bidOpeningCheckLists: BidOpeningChecklist[];
+  bidOpeningChecklistAssessments: BidOpeningChecklistAssessment[];
 
   @OneToMany(() => Team, (team) => team.lot)
   teams: Team[];

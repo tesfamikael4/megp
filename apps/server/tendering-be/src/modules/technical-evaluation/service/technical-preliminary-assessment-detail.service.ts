@@ -12,7 +12,7 @@ import {
   QueryConstructor,
 } from 'src/shared/collection-query';
 import {
-  BidOpeningChecklist,
+  BidOpeningChecklistAssessmentDetail,
   EqcPreliminaryExamination,
   SpdOpeningChecklist,
   SpdPreliminaryEvaluation,
@@ -59,7 +59,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
 
     const [bidders, spdChecklistCount] = await Promise.all([
       manager
-        .getRepository(BidOpeningChecklist)
+        .getRepository(BidOpeningChecklistAssessmentDetail)
         .createQueryBuilder('BidOpeningChecklist')
         .select('BidOpeningChecklist.bidderId', 'bidderId')
         .addSelect('COUNT(*)', 'count')

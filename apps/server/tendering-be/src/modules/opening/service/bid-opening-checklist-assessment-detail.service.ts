@@ -2,11 +2,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
-import { BidOpeningChecklist } from 'src/entities/bid-opening-checklist.entity';
+
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { EntityManager } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
-import { Spd, SpdOpeningChecklist, Tender } from 'src/entities';
+import {
+  BidOpeningChecklistAssessmentDetail,
+  Spd,
+  SpdOpeningChecklist,
+  Tender,
+} from 'src/entities';
 import {
   CompleteBidChecklistDto,
   OpenerResultDto,
@@ -20,18 +25,19 @@ import {
 } from 'src/shared/collection-query';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
+import { BidOpeningChecklistAssessment } from 'src/entities/bid-opening-checklist-assessment.entity';
 
 @Injectable()
-export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningChecklist> {
+export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService<BidOpeningChecklistAssessmentDetail> {
   constructor(
-    @InjectRepository(BidOpeningChecklist)
-    private readonly bidOpeningChecklistsRepository: Repository<BidOpeningChecklist>,
+    @InjectRepository(BidOpeningChecklistAssessmentDetail)
+    private readonly bidOpeningChecklistAssessmentDetailRepository: Repository<BidOpeningChecklistAssessmentDetail>,
 
     private readonly bidRegistrationService: BidRegistrationService,
 
     @Inject(REQUEST) private request: Request,
   ) {
-    super(bidOpeningChecklistsRepository);
+    super(bidOpeningChecklistAssessmentDetailRepository);
   }
 
   async create(itemData: any, req?: any): Promise<any> {
@@ -69,53 +75,58 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     itemData.submit = false;
     itemData.complete = false;
 
-    const item = this.bidOpeningChecklistsRepository.create(itemData);
-    await this.bidOpeningChecklistsRepository.insert(item);
+    const item =
+      this.bidOpeningChecklistAssessmentDetailRepository.create(itemData);
+    await this.bidOpeningChecklistAssessmentDetailRepository.insert(item);
     return item;
   }
 
   async complete(itemData: CompleteBidChecklistDto, req?: any): Promise<any> {
-    const checklist = await this.bidOpeningChecklistsRepository.find({
-      where: {
-        tenderId: itemData.tenderId,
-        openerId: req.user.userId,
-        bidderId: itemData.bidderId,
-        isTeamLead: itemData.isTeamLead,
-      },
-    });
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const checklist = await manager
+      .getRepository(BidOpeningChecklistAssessment)
+      .find({
+        where: {
+          tenderId: itemData.tenderId,
+          openerId: req.user.userId,
+          bidderId: itemData.bidderId,
+          isTeamAssessment: itemData.isTeamLead,
+        },
+      });
     if (checklist.length == 0) {
       throw new NotFoundException('Bid Opening Checklist not found');
     }
 
-    await this.bidOpeningChecklistsRepository.update(
+    await manager.getRepository(BidOpeningChecklistAssessmentDetail).update(
       {
-        tenderId: itemData.tenderId,
-        openerId: req.user.userId,
-        isTeamLead: itemData.isTeamLead,
+        bidOpeningChecklistAssessmentId: checklist[0].id,
       },
       {
-        submit: true,
+        complete: true,
       },
     );
   }
 
   async submit(itemData: SubmitChecklistDto, req?: any): Promise<any> {
-    const checklist = await this.bidOpeningChecklistsRepository.find({
-      where: {
-        tenderId: itemData.tenderId,
-        openerId: req.user.userId,
-        isTeamLead: itemData.isTeamLead,
-      },
-    });
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const checklist = await manager
+      .getRepository(BidOpeningChecklistAssessment)
+      .find({
+        where: {
+          tenderId: itemData.tenderId,
+          openerId: req.user.userId,
+          // bidderId: itemData.bidderId,
+          isTeamAssessment: itemData.isTeamLead,
+        },
+      });
     if (checklist.length == 0) {
       throw new NotFoundException('Bid Opening Checklist not found');
     }
 
-    await this.bidOpeningChecklistsRepository.update(
+    await manager.getRepository(BidOpeningChecklistAssessment).update(
       {
-        tenderId: itemData.tenderId,
-        openerId: req.user.userId,
-        isTeamLead: itemData.isTeamLead,
+        id: checklist[0].id,
       },
       {
         submit: true,
@@ -146,12 +157,15 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
         },
       }),
       // Todo: check if the opener is the team member
-      this.bidOpeningChecklistsRepository.find({
+      manager.getRepository(BidOpeningChecklistAssessmentDetail).find({
         where: {
-          lotId,
-          bidderId,
-          openerId,
+          bidOpeningChecklistAssessment: {
+            lotId,
+            bidderId,
+            openerId,
+          },
         },
+        relations: { bidOpeningChecklistAssessment: true },
       }),
     ]);
     const response = spdChecklist.map((spdChecklist) => ({
@@ -159,7 +173,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       check: checklists.find(
         (x) =>
           x.spdOpeningChecklistId == spdChecklist.id &&
-          x.isTeamLead == isTeamAssessment,
+          x.bidOpeningChecklistAssessment.isTeamAssessment == isTeamAssessment,
       )
         ? true
         : false,
@@ -226,27 +240,31 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       total: bidders.total,
     };
 
-    const checklists = await this.bidOpeningChecklistsRepository.find({
-      where: {
-        lotId: lotId,
-        bidderId: In(bidders.items.map((bidder) => bidder.bidderId)),
-        openerId,
-      },
-    });
+    const checklists = await manager
+      .getRepository(BidOpeningChecklistAssessment)
+      .find({
+        where: {
+          lotId: lotId,
+          bidderId: In(bidders.items.map((bidder) => bidder.bidderId)),
+          openerId,
+        },
+      });
 
     for (const bidder of bidders.items) {
       if (
         spdChecklist.length ===
         checklists.filter(
           (x) =>
-            x.bidderId == bidder.bidderId && x.isTeamLead == isTeamAssessment,
+            x.bidderId == bidder.bidderId &&
+            x.isTeamAssessment == isTeamAssessment,
         ).length
       ) {
         response.items.push({ bidder, status: 'completed' });
       } else if (
         checklists.filter(
           (x) =>
-            x.bidderId == bidder.bidderId && x.isTeamLead == isTeamAssessment,
+            x.bidderId == bidder.bidderId &&
+            x.isTeamAssessment == isTeamAssessment,
         ).length == 0
       ) {
         response.items.push({ bidder, status: 'not started' });
@@ -260,7 +278,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
 
   // async complete(itemData: CompleteBidChecklistDto) {
   //   const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-  //   await this.bidOpeningChecklistsRepository.update(
+  //   await this.bidOpeningChecklistAssessmentDetailRepository.update(
   //     { tenderId: itemData.tenderId },
   //     {
   //       submit: true,
@@ -303,15 +321,15 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
             isTeamLead: true,
           },
         }),
-        manager.getRepository(BidOpeningChecklist).exists({
+        manager.getRepository(BidOpeningChecklistAssessment).exists({
           where: {
             tenderId,
             openerId,
-            isTeamLead: false,
+            isTeamAssessment: false,
             submit: false,
           },
         }),
-        manager.getRepository(BidOpeningChecklist).find({
+        manager.getRepository(BidOpeningChecklistAssessment).find({
           where: {
             tenderId,
           },
@@ -345,7 +363,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
             (x) =>
               x.openerId === teamMember.personnelId &&
               !x.submit &&
-              x.isTeamLead == false,
+              x.isTeamAssessment == false,
           )
         ) {
           response.canTeamAssess = false; // If any item is not submitted, team can't assess
@@ -358,14 +376,16 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     }
 
     if (isTeamLead) {
-      const teamCompleted = await this.bidOpeningChecklistsRepository.find({
-        where: {
-          tenderId,
-          openerId,
-          isTeamLead: true,
-          submit: false,
-        },
-      });
+      const teamCompleted = await manager
+        .getRepository(BidOpeningChecklistAssessment)
+        .find({
+          where: {
+            tenderId,
+            openerId,
+            isTeamAssessment: true,
+            submit: false,
+          },
+        });
       if (teamCompleted.length == 0) {
         response.isTeamLead.hasCompleted = true;
       }
@@ -380,13 +400,17 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     lotId: string,
   ) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const report = await manager.getRepository(BidOpeningChecklist).find({
-      where: {
-        spdOpeningChecklistId: spdOpeningChecklistId,
-        bidderId: bidderId,
-        lotId: lotId,
-      },
-    });
+    const report = await manager
+      .getRepository(BidOpeningChecklistAssessment)
+      .find({
+        where: {
+          bidOpeningChecklistAssessmentDetails: {
+            spdOpeningChecklistId: spdOpeningChecklistId,
+          },
+          bidderId: bidderId,
+          lotId: lotId,
+        },
+      });
     return report;
   }
 
@@ -399,7 +423,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       openingDate: any;
     };
     spdOpeningChecklists: any;
-    bidOpeningCheckLists: any[];
+    bidOpeningChecklists: any[];
     bidders: any[];
     lots: any[];
   }> {
@@ -411,7 +435,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       relations: {
         bdsSubmission: true,
         lots: {
-          bidOpeningCheckLists: true,
+          bidOpeningChecklistAssessments: true,
           teams: {
             teamMembers: true,
           },
@@ -427,8 +451,8 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       },
     });
 
-    const bidOpeningCheckLists = await manager
-      .getRepository(BidOpeningChecklist)
+    const bidOpeningChecklists = await manager
+      .getRepository(BidOpeningChecklistAssessment)
       .find({
         where: {
           tenderId: tenderId,
@@ -452,7 +476,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       spdOpeningChecklists: tender.spd.spd.spdOpeningChecklists,
       bidders: [],
       lots: [],
-      bidOpeningCheckLists,
+      bidOpeningChecklists,
     };
 
     for (const lot of tender.lots) {
@@ -478,19 +502,24 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
 
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const [bidOpeningCheckLists, spdChecklist] = await Promise.all([
-      manager.getRepository(BidOpeningChecklist).find({
+    const [bidOpeningChecklists, spdChecklist] = await Promise.all([
+      manager.getRepository(BidOpeningChecklistAssessment).find({
         where: {
           lotId: lotId,
           bidderId: bidderId,
           openerId: req.user.userId,
         },
+        relations: {
+          bidOpeningChecklistAssessmentDetails: true,
+        },
         select: {
           id: true,
-          spdOpeningChecklistId: true,
-          isTeamLead: true,
-          checked: true,
-          remark: true,
+          bidOpeningChecklistAssessmentDetails: {
+            spdOpeningChecklistId: true,
+            checked: true,
+            remark: true,
+          },
+          isTeamAssessment: true,
         },
       }),
 
@@ -511,10 +540,10 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
 
     const response = spdChecklist.map((spdChecklist) => ({
       ...spdChecklist,
-      check: bidOpeningCheckLists.find(
+      check: bidOpeningChecklists.find(
         (x) =>
-          x.spdOpeningChecklistId == spdChecklist.id &&
-          x.isTeamLead == isTeamAssessment,
+          x.bidOpeningChecklistAssessmentDetails[0].spdOpeningChecklistId ==
+            spdChecklist.id && x.isTeamAssessment == isTeamAssessment,
       ),
     }));
     return response;

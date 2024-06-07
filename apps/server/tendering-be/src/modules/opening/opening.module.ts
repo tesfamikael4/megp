@@ -1,26 +1,30 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
-  BidOpeningChecklist,
+  BidOpeningChecklistAssessmentDetail,
   BidOpeningMinute,
   Opening,
   SharedBidderKey,
 } from 'src/entities';
 import { OpeningService } from './service/opening.service';
-import { BidOpeningChecklistService } from './service/bid-opening-checklist.service';
+import { BidOpeningChecklistAssessmentDetailService } from './service/bid-opening-checklist-assessment-detail.service';
 import { BidOpeningMinuteService } from './service/bid-opening-minute.service';
 import { SharedBidderKeyService } from './service/shared-bidder-key.service';
-import { BidOpeningChecklistController } from './controller/bid-opening-checklist.controller';
+import { BidOpeningChecklistAssessmentDetailController } from './controller/bid-opening-checklist-assessment-detail.controller';
 import { BidOpeningMinuteController } from './controller/bid-opening-minute.controller';
 import { OpeningController } from './controller/opening.controller';
 import { SharedBidderKeyController } from './controller/shared-bidder-key.controller';
 import { BidModule } from '../bid/bid.module';
+import { BidOpeningChecklistAssessmentController } from './controller/bid-opening-checklist-assessment.controller';
+import { BidOpeningChecklistAssessment } from 'src/entities/bid-opening-checklist-assessment.entity';
+import { BidOpeningChecklistAssessmentService } from './service/bid-opening-checklist-assessment.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Opening,
-      BidOpeningChecklist,
+      BidOpeningChecklistAssessmentDetail,
+      BidOpeningChecklistAssessment,
       BidOpeningMinute,
       SharedBidderKey,
     ]),
@@ -28,13 +32,15 @@ import { BidModule } from '../bid/bid.module';
   ],
   providers: [
     OpeningService,
-    BidOpeningChecklistService,
+    BidOpeningChecklistAssessmentDetailService,
+    BidOpeningChecklistAssessmentService,
     BidOpeningMinuteService,
     SharedBidderKeyService,
   ],
   controllers: [
     OpeningController,
-    BidOpeningChecklistController,
+    BidOpeningChecklistAssessmentDetailController,
+    BidOpeningChecklistAssessmentController,
     BidOpeningMinuteController,
     SharedBidderKeyController,
   ],

@@ -2,8 +2,8 @@ import { Body, Controller, Get, Param, Put, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { BidOpeningChecklist } from 'src/entities';
-import { BidOpeningChecklistService } from '../service/bid-opening-checklist.service';
+import { BidOpeningChecklistAssessmentDetail } from 'src/entities';
+import { BidOpeningChecklistAssessmentDetailService } from '../service/bid-opening-checklist-assessment-detail.service';
 import {
   CompleteBidChecklistDto,
   CreateBidOpeningCheckList,
@@ -17,13 +17,13 @@ const options: ExtraCrudOptions = {
   createDto: CreateBidOpeningCheckList,
 };
 
-@Controller('bid-opening-checklist')
-@ApiTags('Bid opening checklist Controller')
-export class BidOpeningChecklistController extends ExtraCrudController<BidOpeningChecklist>(
+@Controller('bid-opening-checklist-assessment-detail')
+@ApiTags('Bid opening checklist Assessment Detail Controller')
+export class BidOpeningChecklistAssessmentDetailController extends ExtraCrudController<BidOpeningChecklistAssessmentDetail>(
   options,
 ) {
   constructor(
-    private readonly bidOpeningChecklistService: BidOpeningChecklistService,
+    private readonly bidOpeningChecklistService: BidOpeningChecklistAssessmentDetailService,
   ) {
     super(bidOpeningChecklistService);
   }
