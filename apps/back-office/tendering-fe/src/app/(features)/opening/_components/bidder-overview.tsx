@@ -33,10 +33,14 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
             className="cursor-pointer"
           >
             <IconChevronLeft size={14} />
-            <Text className="font-semibold">{data?.name ?? ''}</Text>
+            <Text className="font-semibold text-lg">
+              Bidder :
+              <Text span className="font-normal text-lg">
+                {data?.bidRegistrations?.[0]?.bidderName ?? ''}
+              </Text>
+            </Text>
           </Flex>
         }
-        subTitle={data?.procurementReferenceNumber ?? ''}
         collapsible={false}
         action={
           <Button
@@ -54,7 +58,7 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
             <Flex gap={5}>
               <Box>
                 <Text fw={500} size="sm">
-                  Lot :
+                  Tender :
                 </Text>
                 <Text fw={500} size="sm">
                   Envelope :
@@ -64,7 +68,7 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
                 </Text>
               </Box>
               <Box>
-                {data?.lots?.[0]?.name && <p>{data?.lots?.[0]?.name}</p>}
+                <p>{data?.name ?? ''}</p>
                 {data?.bdsSubmission?.envelopType && (
                   <Badge variant="outline" size="xs" color="gray">
                     {data?.bdsSubmission?.envelopType}
@@ -84,19 +88,17 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
             <Flex gap={5}>
               <Box>
                 <Text fw={500} size="sm">
-                  Bidder :
+                  Lot :
                 </Text>
                 <Text fw={500} size="sm">
                   Evaluation method :
                 </Text>
                 <Text fw={500} size="sm">
-                  Status :
+                  Milestone :
                 </Text>
               </Box>
               <Box>
-                {data?.bidRegistrations?.[0]?.bidderName && (
-                  <p>{data?.bidRegistrations?.[0]?.bidderName}</p>
-                )}
+                {data?.lots?.[0]?.name && <p>{data?.lots?.[0]?.name}</p>}
                 <Text size="sm">
                   {data?.bdsEvaluation?.evaluationMethod && (
                     <Badge variant="outline" size="xs" color="gray">
@@ -107,7 +109,10 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
                 <Text size="sm">
                   {data?.status && (
                     <Badge variant="outline" size="xs" color="gray">
-                      {data?.status}
+                      {data?.lots?.[0]?.tenderMilestones?.[0]?.milestoneTxt?.replace(
+                        /([a-z])([A-Z])/g,
+                        '$1 $2',
+                      )}
                     </Badge>
                   )}
                 </Text>

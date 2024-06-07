@@ -57,7 +57,7 @@ export default function Administration() {
   //rtk
   const [getActiveTenders, { data: tenders }] = useLazyGetTendersQuery();
   return (
-    <Section title="Tenders List (Opening)" collapsible={false}>
+    <Section title="Tenders List" collapsible={false}>
       <ExpandableTable
         config={config}
         data={tenders?.items ?? []}

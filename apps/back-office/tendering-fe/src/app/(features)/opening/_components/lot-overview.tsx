@@ -26,10 +26,14 @@ export const LotOverview = ({ basePath }: { basePath: string }) => {
             className="cursor-pointer"
           >
             <IconChevronLeft size={14} />
-            <Text className="font-semibold">{data?.name ?? ''}</Text>
+            <Text className="font-semibold text-lg">
+              Lot :{' '}
+              <Text span className="font-normal text-lg">
+                {data?.lots?.[0]?.name ?? ''}
+              </Text>
+            </Text>
           </Flex>
         }
-        subTitle={data?.procurementReferenceNumber ?? ''}
         collapsible={false}
       >
         <Flex gap={20}>
@@ -37,17 +41,17 @@ export const LotOverview = ({ basePath }: { basePath: string }) => {
             <Flex gap={5}>
               <Box>
                 <Text fw={500} size="sm">
-                  Lot :
+                  Tender :
                 </Text>
                 <Text fw={500} size="sm">
                   Envelope :
                 </Text>
                 <Text fw={500} size="sm">
-                  Bid :
+                  Award Type :
                 </Text>
               </Box>
               <Box>
-                {data?.lots?.[0]?.name && <p>{data?.lots?.[0]?.name}</p>}
+                <p>{data?.name}</p>
                 {data?.bdsSubmission?.envelopType && (
                   <Badge variant="outline" size="xs" color="gray">
                     {data?.bdsSubmission?.envelopType}
@@ -70,7 +74,7 @@ export const LotOverview = ({ basePath }: { basePath: string }) => {
                   Evaluation method :
                 </Text>
                 <Text fw={500} size="sm">
-                  Status :
+                  Milestone :
                 </Text>
               </Box>
               <Box>
@@ -84,7 +88,10 @@ export const LotOverview = ({ basePath }: { basePath: string }) => {
                 <Text size="sm">
                   {data?.status && (
                     <Badge variant="outline" size="xs" color="gray">
-                      {data?.status}
+                      {data?.lots?.[0]?.tenderMilestones?.[0]?.milestoneTxt?.replace(
+                        /([a-z])([A-Z])/g,
+                        '$1 $2',
+                      )}
                     </Badge>
                   )}
                 </Text>
