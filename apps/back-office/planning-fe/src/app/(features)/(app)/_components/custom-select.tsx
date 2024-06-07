@@ -9,6 +9,7 @@ export const CustomSelect = ({
   errors,
   disableFields,
   placeholder,
+  defaultValue,
   actions,
 }: {
   control: any;
@@ -18,6 +19,7 @@ export const CustomSelect = ({
   placeholder?: string;
   errors: any;
   disableFields?: boolean;
+  defaultValue?: any;
   actions?: (val: any) => void;
 }) => {
   return (
@@ -39,6 +41,7 @@ export const CustomSelect = ({
           placeholder={placeholder ?? ''}
           error={errors?.[name] ? errors?.[name]?.message?.toString() : ''}
           disabled={disableFields}
+          defaultValue={defaultValue}
         />
       )}
     />
