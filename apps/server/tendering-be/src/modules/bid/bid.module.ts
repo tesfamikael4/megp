@@ -120,6 +120,6 @@ import { DocumentManipulatorModule } from 'src/shared/document-manipulator/docum
     BidGuaranteeExtensionService,
     BidGuaranteeCancellationService,
   ],
-  exports: [BidRegistrationService],
+  exports: [BidRegistrationService, BidResponseOpeningService],
 })
 export class BidModule {}
