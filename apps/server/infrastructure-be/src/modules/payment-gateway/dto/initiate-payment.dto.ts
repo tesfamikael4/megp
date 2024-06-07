@@ -54,6 +54,12 @@ export class PaymentCompletedDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
+  amount: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
   @IsString()
   status: string;
 }

@@ -79,6 +79,8 @@ export class OfflinePaymentService {
       } else if (payload.invoiceReference == 'TI-0002') {
         throw new BadRequestException('payment_invoice_paid');
       } else if (payload.invoiceReference == 'TI-0003') {
+        throw new BadRequestException('incorrect_amount');
+      } else if (payload.invoiceReference == 'TI-0004') {
         const paymentInvoice = await this.paymentInvoiceRepository.findOneBy({
           invoiceReference: payload.invoiceReference,
         });
@@ -95,12 +97,17 @@ export class OfflinePaymentService {
           status,
         };
       }
+
       const paymentInvoice = await this.paymentInvoiceRepository.findOneBy({
         invoiceReference: payload.invoiceReference,
       });
 
       if (!paymentInvoice) {
         throw new BadRequestException('payment_invoice_not_found');
+      } else if (paymentInvoice.status == PaymentInvoiceStatusEnum.PAID) {
+        throw new BadRequestException('payment_invoice_paid');
+      } else if (paymentInvoice.amount != payload.amount) {
+        throw new BadRequestException('incorrect_amount');
       }
 
       const status = payload.status ?? PaymentInvoiceStatusEnum.SUCCESS;
