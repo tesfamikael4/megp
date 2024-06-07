@@ -13,9 +13,9 @@ export class BidOpeningChecklist1717759726030 implements MigrationInterface {
     await queryRunner.query(
       `CREATE TABLE "bid_opening_checklist_assessment_details" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "organizationId" uuid NOT NULL, "organizationName" character varying NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "bidOpeningChecklistAssessmentId" uuid NOT NULL, "spdOpeningChecklistId" uuid NOT NULL, "checked" boolean NOT NULL, "remark" character varying, "complete" boolean NOT NULL DEFAULT false, CONSTRAINT "PK_999d421c2e7e7ac4efa03632660" PRIMARY KEY ("id"))`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "financial_price_analyses" ADD "bidderName" character varying NOT NULL`,
-    );
+    // await queryRunner.query(
+    //   `ALTER TABLE "financial_price_analyses" ADD "bidderName" character varying NOT NULL`,
+    // );
     await queryRunner.query(
       `ALTER TABLE "bid_opening_checklist_assessments" ADD CONSTRAINT "FK_098740b5162819c9c065c9a26a9" FOREIGN KEY ("tenderId") REFERENCES "tenders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
@@ -49,9 +49,9 @@ export class BidOpeningChecklist1717759726030 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "bid_opening_checklist_assessments" DROP CONSTRAINT "FK_098740b5162819c9c065c9a26a9"`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "financial_price_analyses" DROP COLUMN "bidderName"`,
-    );
+    // await queryRunner.query(
+    //   `ALTER TABLE "financial_price_analyses" DROP COLUMN "bidderName"`,
+    // );
     await queryRunner.query(
       `DROP TABLE "bid_opening_checklist_assessment_details"`,
     );
