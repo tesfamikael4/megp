@@ -2,8 +2,11 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { BidOpeningChecklist, BidOpeningMinute } from 'src/entities';
-import { BidOpeningChecklistService } from '../service/bid-opening-checklist.service';
+import {
+  BidOpeningChecklistAssessmentDetail,
+  BidOpeningMinute,
+} from 'src/entities';
+import { BidOpeningChecklistAssessmentDetailService } from '../service/bid-opening-checklist-assessment-detail.service';
 import { BidOpeningMinuteService } from '../service/bid-opening-minute.service';
 import { AllowAnonymous } from 'src/shared/authorization';
 
