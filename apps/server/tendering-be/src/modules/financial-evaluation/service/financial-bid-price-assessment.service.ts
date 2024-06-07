@@ -184,6 +184,7 @@ export class FinancialBidPriceAssessmentService extends ExtraCrudService<Financi
     return { canAssess: hasExchangeRate && hasFormula };
   }
 
+  // check if the lot has a formula assigned before
   async hasFormula(
     lotId: string,
     itemId: string,
