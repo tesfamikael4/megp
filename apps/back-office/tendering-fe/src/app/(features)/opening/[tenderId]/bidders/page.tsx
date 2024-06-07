@@ -57,7 +57,7 @@ export default function BidOpening() {
   };
   return (
     <>
-      <TenderOverView basePath="/opening" />
+      <TenderOverView basePath="/opening" hideActions />
       <Section
         title="Bidders List"
         collapsible={false}
