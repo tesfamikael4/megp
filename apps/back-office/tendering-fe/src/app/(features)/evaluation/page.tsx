@@ -20,7 +20,7 @@ export default function BidEvaluation() {
     columns: [
       {
         accessor: 'procurementReferenceNumber',
-        title: '#Ref',
+        title: 'Reference No',
         width: 100,
         sortable: true,
       },
@@ -76,7 +76,7 @@ export default function BidEvaluation() {
 const DetailTender = ({ tender }: any) => {
   const data = [
     {
-      key: 'Reference',
+      key: 'Reference No',
       value: tender.procurementReferenceNumber,
     },
     {
