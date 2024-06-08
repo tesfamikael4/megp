@@ -1,25 +1,8 @@
-import {
-  useLazyReadItemQuery,
-  useReadItemQuery,
-} from '@/store/api/item-master/item-master.api';
-import {
-  Card,
-  Group,
-  Text,
-  Menu,
-  ActionIcon,
-  Image,
-  rem,
-  Box,
-  Badge,
-  Button,
-} from '@mantine/core';
+import { useLazyReadItemQuery } from '@/store/api/item-master/item-master.api';
+import { Card, Group, Text, Image, Box, Badge } from '@mantine/core';
 import { IconPencil } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import {
-  useLazyDownloadFilesQuery,
-  useLazyGetFilesQuery,
-} from '../_api/catalog.api';
+
 import { useEffect } from 'react';
 
 export default function ProductCard({ data }) {
@@ -36,8 +19,11 @@ export default function ProductCard({ data }) {
       radius="md"
       withBorder
       key={data.id}
-      className={`w-full`}
+      className={`w-full cursor-pointer`}
       h={290}
+      onClick={() => {
+        route.push(`catalog-manager/${data.itemMasterId}/product/${data.id}`);
+      }}
     >
       <Card.Section>
         <Image
@@ -45,6 +31,7 @@ export default function ProductCard({ data }) {
           className="h-48 mt-2 object-cover"
           fit="contain"
           w="auto"
+          h="auto"
           alt="product image"
         />
       </Card.Section>
