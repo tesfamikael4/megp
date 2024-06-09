@@ -12,6 +12,7 @@ import { Lot } from './lot.entity';
 import { BidRegistration } from './bid-registration.entity';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { BidOpeningChecklistAssessment } from './bid-opening-checklist-assessment.entity';
+import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 
 @Entity({ name: 'bid_opening_checklist_assessment_details' })
 export class BidOpeningChecklistAssessmentDetail extends OrgAudit {
@@ -40,13 +41,13 @@ export class BidOpeningChecklistAssessmentDetail extends OrgAudit {
   @JoinColumn({ name: 'spdOpeningChecklistId' })
   spdOpeningChecklistEntity: SpdOpeningChecklist;
 
-  @Column()
-  checked: boolean;
+  @Column({
+    type: 'enum',
+    enum: EvaluationStatusEnum,
+    default: EvaluationStatusEnum.NOT_DONE,
+  })
+  qualified: string;
 
   @Column({ nullable: true })
   remark: string;
-
-  // complete when one bidder's criteria are done
-  @Column({ default: false })
-  complete: boolean;
 }

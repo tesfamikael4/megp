@@ -77,4 +77,7 @@ export class BidOpeningChecklistAssessment extends OrgAudit {
   //complete when all bidders criteria are done
   @Column({ default: false })
   submit: boolean;
+
+  @Column({ default: 1 })
+  version: number;
 }
