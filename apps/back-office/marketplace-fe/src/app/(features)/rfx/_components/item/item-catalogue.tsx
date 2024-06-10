@@ -129,78 +129,6 @@ export default function ItemCatalogue() {
           direction: 'DESC',
         },
       ],
-      // where: [
-      //   [
-      //     {
-      //       column: 'specifications->>ram',
-      //       operator: '=',
-      //       value: 500,
-      //     },
-      //   ],
-      //   [
-      //     {
-      //       column: 'specifications->>size',
-      //       operator: '=',
-      //       value: '40',
-      //     },
-      //   ],
-      //   [
-      //     {
-      //       column: 'specifications->>model',
-      //       operator: '=',
-      //       value: 'X123',
-      //     },
-      //   ],
-      //   // [
-      //   //   {
-      //   //     column: 'specifications->>quantity',
-      //   //     operator: '=',
-      //   //     value: 62,
-      //   //   },
-      //   // ],
-      //   // [
-      //   //   {
-      //   //     column: 'specifications->>5gnetwork',
-      //   //     operator: '=',
-      //   //     value: false,
-      //   //   },
-      //   // ],
-      //   [
-      //     {
-      //       column: 'specifications->>processor',
-      //       operator: '=',
-      //       value: 'Intel Core i7-10700',
-      //     },
-      //   ],
-      //   [
-      //     {
-      //       column: 'specifications->>memorysize',
-      //       operator: '=',
-      //       value: 16,
-      //     },
-      //   ],
-      //   [
-      //     {
-      //       column: 'specifications->>batterylife',
-      //       operator: '=',
-      //       value: '12',
-      //     },
-      //   ],
-      //   [
-      //     {
-      //       column: 'specifications->>processormodel',
-      //       operator: '=',
-      //       value: 'Core i7-11800H',
-      //     },
-      //   ],
-      //   [
-      //     {
-      //       column: 'specifications->>operatingsystem',
-      //       operator: '=',
-      //       value: 'Windows 10',
-      //     },
-      //   ],
-      // ],
       where: where,
     });
   }, [technicalRequirments, isCancelSuccess]);
@@ -248,26 +176,26 @@ export default function ItemCatalogue() {
         }).unwrap();
       else if (invitationMode == 'all') {
         const res = await getCatalogueItems({
-          where: [],
+          where: filterConditions,
           select: ['id'],
-        });
+        }).unwrap();
         await invitedSelected({
           productCatalogueIds: res?.data?.items?.map((item) => item.id),
           id: itemId.toString(),
-        });
+        }).unwrap();
       } else if (invitationMode == 'random') {
         const res = await getCatalogueItems({
-          where: [],
+          where: filterConditions,
           select: ['id'],
-        });
+        }).unwrap();
         const ids = selectRandomElements(
-          res?.data?.items?.map((item) => item.id),
+          res?.items?.map((item) => item.id),
           noOfSuppliers,
         );
         await invitedSelected({
           productCatalogueIds: ids,
           id: itemId.toString(),
-        });
+        }).unwrap();
       } else if (invitationMode == 'open') {
         await makeOpenInvitation({ id: itemId.toString() }).unwrap();
       }
@@ -279,7 +207,7 @@ export default function ItemCatalogue() {
     } catch (err: any) {
       notifications.show({
         title: 'Error',
-        message: err.data.message,
+        message: err?.data?.message,
         color: 'red',
       });
     }
@@ -297,7 +225,7 @@ export default function ItemCatalogue() {
     } catch (err: any) {
       notifications.show({
         title: 'Error',
-        message: err.data.message,
+        message: err?.data?.message,
         color: 'red',
       });
     }

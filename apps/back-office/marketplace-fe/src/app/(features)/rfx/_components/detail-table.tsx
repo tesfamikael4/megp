@@ -12,7 +12,7 @@ export const DetailTable = ({ data }: DetailTableItem) => {
           {data.map((d) => (
             <>
               <Table.Tr>
-                <Table.Td className="bg-slate-100 text-slate-600 w-1/3">
+                <Table.Td className="bg-slate-200 text-slate-600 w-1/3">
                   {d.key}
                 </Table.Td>
                 <Table.Td>{d.value}</Table.Td>

@@ -5,7 +5,7 @@ import { Skeleton, Stack } from '@mantine/core';
 import { useGetActivitiesQuery } from '@/store/api/rfx-approval/workflow.api';
 
 export default function WorkflowPage() {
-  const { data: activites } = useGetActivitiesQuery({});
+  const { data: activites } = useGetActivitiesQuery({ key: 'marketplace' });
   if (!activites)
     return (
       <>

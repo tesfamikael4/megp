@@ -8,7 +8,6 @@ import {
   NumberInput,
   Stack,
   Switch,
-  TextInput,
 } from '@mantine/core';
 import { logger } from '@megp/core-fe';
 import { IconDeviceFloppy } from '@tabler/icons-react';
@@ -22,24 +21,19 @@ import {
 } from '../../_api/rfx/contract-conditions.api';
 import { useParams } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
-import { IconPercentage } from '@tabler/icons-react';
 
 const schema = z.object({
-  deliveryPeriod: z.number(),
-  deliverySite: z.string().min(1, { message: 'Delivery Site is required' }),
-  warrantyPeriod: z.number(),
   liquidityDamage: z.number(),
   liquidityDamageLimit: z.number(),
   isPartialAllowed: z.boolean().default(false),
-  paymentMode: z.array(z.string()),
   paymentReleasePeriod: z.number(),
+  contractTerms: z.array(z.string()).optional(),
 });
 
 type ContractConditionsSchema = z.infer<typeof schema>;
 
 export default function ContractConditionsForm() {
   const {
-    register,
     handleSubmit,
     control,
     reset,
@@ -98,34 +92,7 @@ export default function ContractConditionsForm() {
       <Stack>
         <LoadingOverlay visible={isGettingConditions} />
         <Flex className="gap-4">
-          <Controller
-            name="deliveryPeriod"
-            control={control}
-            render={({ field: { name, value, onChange } }) => (
-              <NumberInput
-                name={name}
-                label="Delivery Period (in days)"
-                placeholder="Delivery Period (in days)"
-                value={value}
-                className="w-full"
-                suffix=" days"
-                onChange={onChange}
-                error={errors?.deliveryPeriod?.message}
-                allowNegative={false}
-                withAsterisk
-              />
-            )}
-          />
-          <TextInput
-            label="Delivery Site"
-            placeholder="Delivery Site"
-            {...register('deliverySite')}
-            error={errors?.deliverySite?.message}
-            className="w-full"
-          />
-        </Flex>
-        <Flex className="gap-4">
-          <Controller
+          {/* <Controller
             name="warrantyPeriod"
             control={control}
             render={({ field: { name, value, onChange } }) => (
@@ -142,7 +109,7 @@ export default function ContractConditionsForm() {
                 withAsterisk
               />
             )}
-          />
+          /> */}
           <Controller
             name="liquidityDamage"
             control={control}
@@ -151,7 +118,6 @@ export default function ContractConditionsForm() {
                 name={name}
                 label="Liquidity Damage (in %)"
                 placeholder="Liquidity Damage (in %)"
-                leftSection={<IconPercentage />}
                 value={value}
                 className="w-full"
                 suffix=" %"
@@ -163,8 +129,6 @@ export default function ContractConditionsForm() {
               />
             )}
           />
-        </Flex>
-        <Flex className="gap-4">
           <Controller
             name="liquidityDamageLimit"
             control={control}
@@ -173,7 +137,6 @@ export default function ContractConditionsForm() {
                 name={name}
                 label="Liquidity Damage Limit (in %)"
                 placeholder="Liquidity Damage Limit (in %)"
-                leftSection={<IconPercentage />}
                 value={value}
                 className="w-full"
                 suffix=" %"
@@ -185,7 +148,9 @@ export default function ContractConditionsForm() {
               />
             )}
           />
-          <Controller
+        </Flex>
+        <Flex className="gap-4">
+          {/* <Controller
             name="paymentMode"
             control={control}
             render={({ field: { name, value, onChange } }) => (
@@ -201,7 +166,7 @@ export default function ContractConditionsForm() {
                 withAsterisk
               />
             )}
-          />
+          /> */}
         </Flex>
         <Flex className="gap-4">
           <Controller
@@ -219,6 +184,26 @@ export default function ContractConditionsForm() {
                 allowNegative={false}
                 error={errors?.paymentReleasePeriod?.message}
                 withAsterisk
+              />
+            )}
+          />
+          <Controller
+            name="contractTerms"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <MultiSelect
+                label="Contract terms"
+                placeholder="Please select contract terms"
+                name={name}
+                value={value}
+                onChange={onChange}
+                className="w-[calc(50%-0.5rem)]"
+                data={[
+                  'Payment will be 30 days after delivery.',
+                  'Vendor shall provide 1 year warranty.',
+                  'Vendor shall provide item at specified date.',
+                ]}
+                error={errors?.contractTerms?.message}
               />
             )}
           />

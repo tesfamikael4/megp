@@ -1,55 +1,52 @@
 'use client';
 
-import { ActionIcon, Box, Button } from '@mantine/core';
+import { ActionIcon, Box } from '@mantine/core';
 import { Section } from '@megp/core-fe';
-import { IconChevronRight, IconPlus } from '@tabler/icons-react';
+import { IconChevronRight } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
 import { ExpandableTable } from '@megp/core-fe';
 import { useLazyListQuery } from '../rfx/_api/rfx/rfx.api';
 import RFXDetail from '../rfx/_components/configuration/rfx-detail';
 
-export default function Revision() {
+export default function Preparation() {
   const [trigger, { data, isFetching }] = useLazyListQuery();
   const router = useRouter();
-
-  useEffect(() => {
-    trigger({
-      where: [
-        [
-          {
-            column: 'status',
-            value: 'SUBMITTED',
-            operator: '=',
-          },
-        ],
-      ],
-    });
-  }, []);
 
   const config = {
     columns: [
       { accessor: 'name', title: 'Name', width: 200 },
       {
         accessor: 'procurementReferenceNumber',
-        title: 'Procurement Reference Number',
+        title: 'Ref',
         width: 200,
       },
-      { accessor: 'budgetAmount', title: 'Budget Amount' },
-      { accessor: 'budgetCode', title: 'Budget Code' },
-      { accessor: 'status', title: 'Status' },
+      {
+        accessor: 'budgetAmount',
+        title: 'Budget Amount',
+        render: (rfx) => (
+          <>
+            {parseInt(rfx.budgetAmount).toLocaleString('en-US', {
+              style: 'currency',
+              currency: rfx?.budgetAmountCurrency ?? 'MKW',
+            })}
+          </>
+        ),
+      },
+      {
+        accessor: 'procurementCategory',
+      },
       {
         accessor: 'id',
         title: '',
         render: (rfx) => (
           <ActionIcon
-            variant="outline"
+            variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/approval/${rfx.id}`);
+              router.push(`/assignment/${rfx.id}`);
             }}
           >
-            <IconChevronRight />
+            <IconChevronRight size={14} />
           </ActionIcon>
         ),
         width: 50,
@@ -58,18 +55,20 @@ export default function Revision() {
     isExpandable: true,
     isSearchable: true,
     primaryColumn: 'name',
-    isFetching: isFetching,
+    isLoading: isFetching,
     expandedRowContent: (rfx) => {
       return <RFXDetail rfx={rfx} />;
     },
   };
 
   const onRequestChange = (request: any) => {
-    trigger(request);
+    trigger({
+      ...request,
+      where: [[{ column: 'status', operator: '=', value: 'EVALUATION' }]],
+    });
   };
-
   return (
-    <Section title="RFQs Submitted For Approval" collapsible={false}>
+    <Section title="RFQs (Evaluation Team Assignment)" collapsible={false}>
       <Box className="">
         <ExpandableTable
           config={config}

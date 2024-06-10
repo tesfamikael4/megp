@@ -64,6 +64,7 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
               onChange={setReviewDeadline}
               label="Select Review Deadline"
               placeholder="Select Review Dealine"
+              minDate={new Date()}
               defaultValue={new Date()}
             />
             <Button
@@ -96,7 +97,7 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
               }
               onClick={() => router.push(`/rfx/${id}/configuration`)}
             >
-              Configuration
+              Definition
             </Box>
             <Box
               className={

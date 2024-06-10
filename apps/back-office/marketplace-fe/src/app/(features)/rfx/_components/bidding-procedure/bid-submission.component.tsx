@@ -14,7 +14,7 @@ import { useForm } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { DateTimePicker } from '@mantine/dates';
-import { IconDeviceFloppy, IconPercentage } from '@tabler/icons-react';
+import { IconDeviceFloppy } from '@tabler/icons-react';
 import {
   useCreateMutation,
   useLazyListByIdQuery,
@@ -199,9 +199,8 @@ export default function BidSubmission() {
             render={({ field: { name, value, onChange } }) => (
               <NumberInput
                 name={name}
-                label="Percentage Quantity Change (in %)"
-                placeholder="Percentage Quantity Change (in %)"
-                leftSection={<IconPercentage />}
+                label="Allowed Percentage Quantity Change (in %)"
+                placeholder="Allowed Percentage Quantity Change (in %)"
                 value={value}
                 className="w-[calc(50%-0.5rem)]"
                 suffix=" %"
@@ -239,8 +238,8 @@ export default function BidSubmission() {
                     render={({ field: { name, value, onChange } }) => (
                       <NumberInput
                         name={name}
-                        label="Round"
-                        placeholder="Round"
+                        label="No Of Rounds"
+                        placeholder="No Of Rounds"
                         value={value}
                         className="w-[calc(50%-0.5rem)]"
                         onChange={onChange}
@@ -296,7 +295,6 @@ export default function BidSubmission() {
                         name={name}
                         label="Minimum Bid Decerement (in %)"
                         placeholder="Minimum Bid Decerement (in %)"
-                        leftSection={<IconPercentage />}
                         value={value}
                         className="w-[calc(50%-0.5rem)]"
                         onChange={onChange}

@@ -50,10 +50,10 @@ export default function DocumentaryForm({
       .unwrap()
       .then(() => {
         close();
-        notify('Success', 'Documentary Evidence created successfully');
+        notify('Success', 'Criterion created successfully');
       })
       .catch((err) => {
-        notify('Error', `Error in creating Documentary Evidence Error: ${err}`);
+        notify('Error', `Error in creating Criterion Error: ${err}`);
       });
   };
 
@@ -63,10 +63,10 @@ export default function DocumentaryForm({
         ...data,
         rfxId: id,
       });
-      notify('Success', 'Qualification updated successfully');
+      notify('Success', 'Criterion updated successfully');
       close();
     } catch {
-      notify('Error', 'Error in updating qualification');
+      notify('Error', 'Error in updating criterion');
     }
   };
 
@@ -80,7 +80,7 @@ export default function DocumentaryForm({
       <Flex direction={'column'} gap={'lg'}>
         <Stack>
           <TextInput
-            label="Title"
+            label="Criterion"
             withAsterisk
             {...register('documentTitle')}
             className="w-full"

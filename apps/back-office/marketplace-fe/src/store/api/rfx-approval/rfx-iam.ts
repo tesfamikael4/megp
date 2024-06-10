@@ -1,4 +1,5 @@
 import { baseQuery } from '@/store/base-query';
+import { encodeCollectionQuery } from '@megp/entity';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const rfxIamApi = createApi({
@@ -18,6 +19,16 @@ export const rfxIamApi = createApi({
     getGroup: builder.query<any, { userId: string }>({
       query: (payload) => `user-groups/${payload.userId}/group`,
     }),
+    getUsersList: builder.query<any, any>({
+      query: ({ organizationId, collectionQuery }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `user/list/${organizationId}${q}` };
+      },
+    }),
   }),
 });
 
@@ -26,4 +37,5 @@ export const {
   useLazyGetRolesQuery,
   useLazyGetUsersQuery,
   useLazyGetGroupQuery,
+  useLazyGetUsersListQuery,
 } = rfxIamApi;
