@@ -75,9 +75,40 @@ export class OpeningService extends ExtraCrudService<Opening> {
         password: 'P@ssw0rd',
       });
     });
+
+    await this.createMilestoneRecord(manager, itemData);
+
     const item = this.openingRepository.create(itemData);
     await this.openingRepository.insert(item);
     return item;
+  }
+
+  private async createMilestoneRecord(
+    manager: EntityManager,
+    itemData: Opening,
+  ) {
+    const lots = await manager.getRepository(Lot).find({
+      where: {
+        tenderId: itemData.tenderId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const milestone = [];
+    lots.forEach((lot) => {
+      milestone.push(
+        manager.getRepository(TenderMilestone).create({
+          tenderId: itemData.tenderId,
+          lotId: lot.id,
+          milestoneNum: TenderMilestoneEnum.TechnicalOpening,
+          milestoneTxt: 'TechnicalOpening',
+          isCurrent: true,
+        }),
+      );
+    });
+    await manager.getRepository(TenderMilestone).save(milestone);
   }
 
   async complete(itemData: CompleteOpeningDto) {
@@ -143,8 +174,8 @@ export class OpeningService extends ExtraCrudService<Opening> {
       .leftJoin('tenders.bdsSubmission', 'bdsSubmission')
       .andWhere('bdsSubmission.submissionDeadline <= :submissionDeadline', {
         submissionDeadline: new Date(),
-      });
-    // .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true })
+      })
+      .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true });
     // .andWhere('tenderMilestones.milestoneNum = :milestoneNum', {
     //   milestoneNum: 303,
     // });

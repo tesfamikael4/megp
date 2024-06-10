@@ -5,12 +5,14 @@ import {
   Column,
   OneToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { Tender } from './tender.entity';
 import { Team } from './team.entity';
 import { OpeningStatusEnum } from 'src/shared/enums/opening.enum';
 
 @Entity({ name: 'openings' })
+@Unique(['teamId', 'tenderId'])
 export class Opening extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

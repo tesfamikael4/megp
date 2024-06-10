@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
@@ -200,16 +200,27 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
   async complete(itemData: CompleteBidChecklistDto, req?: any): Promise<any> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const checklist = await manager
-      .getRepository(BidOpeningChecklistAssessment)
-      .find({
+    const [checklist, notQualified] = await Promise.all([
+      manager.getRepository(BidOpeningChecklistAssessment).find({
         where: {
           tenderId: itemData.tenderId,
           openerId: req.user.userId,
           bidderId: itemData.bidderId,
           isTeamAssessment: itemData.isTeamLead,
         },
-      });
+      }),
+      manager.getRepository(BidOpeningChecklistAssessment).find({
+        where: {
+          tenderId: itemData.tenderId,
+          openerId: req.user.userId,
+          bidderId: itemData.bidderId,
+          isTeamAssessment: itemData.isTeamLead,
+          bidOpeningChecklistAssessmentDetails: {
+            qualified: Not(EvaluationStatusEnum.COMPLY),
+          },
+        },
+      }),
+    ]);
     if (checklist.length == 0) {
       throw new NotFoundException('Bid Opening Checklist not found');
     }
@@ -220,6 +231,9 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
       },
       {
         submit: true,
+        qualified: notQualified
+          ? EvaluationStatusEnum.NOT_COMPLY
+          : EvaluationStatusEnum.COMPLY,
       },
     );
   }
@@ -282,8 +296,8 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
       const biddersComparison = bidOpeningChecklistAssessment.map((list) => {
         return {
           bidRegistrationDetailId: list.bidRegistrationDetailId,
-          milestoneNum: TenderMilestoneEnum.TechnicalQualification,
-          milestoneTxt: 'TechnicalQualification',
+          milestoneNum: TenderMilestoneEnum.TechnicalOpening,
+          milestoneTxt: 'TechnicalOpening',
           bidderStatus:
             list.qualified == EvaluationStatusEnum.COMPLY
               ? BidderStatusEnum.TechnicalOpeningSucceeded
@@ -718,6 +732,7 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
           select: {
             id: true,
             spdOpeningChecklistId: true,
+            qualified: true,
             remark: true,
             bidOpeningChecklistAssessment: {
               isTeamAssessment: true,
@@ -747,5 +762,40 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
       ),
     }));
     return response;
+  }
+
+  async getAssessment(
+    tenderId: string,
+    lotId: string,
+    criteriaId: string,
+    bidderId: string,
+    isTeamLead: string,
+    req: any,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const isTeamAssessment = isTeamLead === 'teamLeader';
+    const assessment = await manager
+      .getRepository(BidOpeningChecklistAssessment)
+      .findOne({
+        where: {
+          tenderId,
+          lotId,
+          openerId: req.user.userId,
+          bidderId,
+          isTeamAssessment,
+          bidOpeningChecklistAssessmentDetails: {
+            spdOpeningChecklistId: criteriaId,
+          },
+        },
+        select: {
+          id: true,
+          bidOpeningChecklistAssessmentDetails: {
+            id: true,
+            qualified: true,
+            remark: true,
+          },
+        },
+      });
+    return assessment;
   }
 }
