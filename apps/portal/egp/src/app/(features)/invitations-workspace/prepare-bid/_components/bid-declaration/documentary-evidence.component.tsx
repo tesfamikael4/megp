@@ -10,15 +10,40 @@ import {
 } from '@mantine/core';
 import { Section, logger } from '@megp/core-fe';
 import React, { useEffect, useState } from 'react';
-import { useLazyGetDocumentaryEvidencesQuery } from '../../../_api/items.api';
+import {
+  useLazyGetDocumentaryEvidencesQuery,
+  useLazyGetUploadedEvidencesQuery,
+  useUploadDocumentaryEvidenceMutation,
+} from '../../../_api/items.api';
 import { useParams } from 'next/navigation';
-import { IconDeviceFloppy, IconPdf } from '@tabler/icons-react';
+import { IconDeviceFloppy, IconPaperclip, IconPdf } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
 
 const DocumentaryEvidence = () => {
-  const [file, setFile] = useState<{ [key: string]: File | null }>({});
-  function onFileChange(file: File | null, key: string) {
-    const value = { [key]: file };
-    setFile(value);
+  const [files, setFiles] = useState<any>([]);
+  function onFileChange(file: File | null, rfxDocumentaryEvidenceId: string) {
+    const filteredFiles = files.filter(
+      (fileItem: any) => fileItem?.id !== rfxDocumentaryEvidenceId,
+    );
+    setFiles([
+      ...filteredFiles,
+      {
+        rfxDocumentaryEvidenceId,
+        fileInfo: { originalname: file?.name, contentType: file?.type },
+      },
+    ]);
+    const filteredUploadedFiles = uploadedFiles.filter(
+      (file: any) =>
+        file?.originalArgs?.rfxDoumentaryEvidenceId !==
+        rfxDocumentaryEvidenceId,
+    );
+    setUploadedFiles([
+      ...filteredUploadedFiles,
+      {
+        data: { fileInfo: { originalname: file?.name } },
+        originalArgs: { rfxDoumentaryEvidenceId: rfxDocumentaryEvidenceId },
+      },
+    ]);
   }
 
   const { rfxId } = useParams();
@@ -27,29 +52,11 @@ const DocumentaryEvidence = () => {
     getDocumentaryEvidences,
     { data: documentaryEvidences, isLoading: isGettingEvidences },
   ] = useLazyGetDocumentaryEvidencesQuery();
-
-  // const documentaryEvidences = [
-  //   {
-  //     title: 'Document 1',
-  //     description: 'This is a description of document 1',
-  //     key: 'document-1',
-  //   },
-  //   {
-  //     title: 'Document 2',
-  //     descripition: 'This is a description of document 2',
-  //     key: 'document-2',
-  //   },
-  //   {
-  //     title: 'Document 3',
-  //     description: 'This is a description of document 3',
-  //     key: 'document-3',
-  //   },
-  //   {
-  //     title: 'Document 4',
-  //     description: 'This is a description of document 4',
-  //     key: 'document-4',
-  //   },
-  // ];
+  const [uploadEvidences, { isLoading: isUploadingEvidences }] =
+    useUploadDocumentaryEvidenceMutation();
+  const [getUploadedEvidences, { isLoading: isGettingUploadedEvidences }] =
+    useLazyGetUploadedEvidencesQuery();
+  const [uploadedFiles, setUploadedFiles] = useState<any>([]);
 
   useEffect(() => {
     getDocumentaryEvidences({
@@ -58,11 +65,48 @@ const DocumentaryEvidence = () => {
     });
   }, [rfxId]);
 
-  logger.log();
+  const uploadDocumentaryEvidences = async () => {
+    try {
+      await uploadEvidences({ rfxId, responses: files }).unwrap();
+      notifications.show({
+        title: 'Documentary Evidences',
+        message: 'Documentary evidences uploaded successfully',
+        color: 'green',
+      });
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: err?.data?.message,
+        color: 'red',
+      });
+    }
+  };
+
+  useEffect(() => {
+    const fetchUploadedEvidences = async () => {
+      if (documentaryEvidences) {
+        const results = await Promise.all(
+          documentaryEvidences?.items?.map((evidence) =>
+            getUploadedEvidences({
+              rfxId: rfxId.toString(),
+              rfxDoumentaryEvidenceId: evidence.id,
+            }),
+          ),
+        );
+        setUploadedFiles(results);
+      }
+    };
+
+    fetchUploadedEvidences();
+  }, [rfxId, documentaryEvidences]);
+
+  logger.log(files);
+  logger.log(documentaryEvidences?.items);
+  logger.log(uploadedFiles);
 
   return (
     <>
-      <Section title="Attach Documentary Evidence" defaultCollapsed={true}>
+      <Section title="Attach Documentary Evidence" defaultCollapsed={false}>
         <Stack>
           <Box className="w-full">
             <LoadingOverlay visible={isGettingEvidences} />
@@ -86,7 +130,7 @@ const DocumentaryEvidence = () => {
                   <Box className="w-3/4 p-2 group-hover:bg-slate-50">
                     <FileButton
                       onChange={(event) => {
-                        onFileChange(event, evidence.key);
+                        onFileChange(event, evidence.id);
                       }}
                       accept=".pdf"
                     >
@@ -98,16 +142,27 @@ const DocumentaryEvidence = () => {
                     </FileButton>
                   </Box>
                   <Paper withBorder className="rounded-sm">
-                    <Flex>
-                      <IconPdf />
-                      {}
+                    <Flex className="justify-center">
+                      <IconPaperclip />
+                      {
+                        uploadedFiles?.find(
+                          (file: any) =>
+                            file?.originalArgs?.rfxDoumentaryEvidenceId ===
+                            evidence.id,
+                        )?.data?.fileInfo?.originalname
+                      }
                     </Flex>
                   </Paper>
                 </Flex>
               ))}
             </Flex>
           </Box>
-          <Button leftSection={<IconDeviceFloppy />} className="ml-auto">
+          <Button
+            leftSection={<IconDeviceFloppy />}
+            className="ml-auto"
+            onClick={uploadDocumentaryEvidences}
+            loading={isUploadingEvidences}
+          >
             Upload Files
           </Button>
         </Stack>

@@ -35,7 +35,6 @@ export default function PriceSchedulePage() {
 
   return (
     <Section title="Financial Offer" collapsible={false}>
-      {/* <Items layout="partition" viewMode="list" /> */}
       <LoadingOverlay visible={isGettingInvitations} />
       <Stack className="gap-6">
         {invitationsList?.items?.map((product, index) => (
