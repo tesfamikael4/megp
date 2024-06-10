@@ -218,6 +218,12 @@ export const formDataSchema = z
           const registeredAmount = Number(
             obj.registeredCapital.amount.replace(/,/g, ''),
           );
+          console.log(
+            paidUpAmount,
+            registeredAmount,
+            obj.paidUpCapital,
+            obj.registeredCapital,
+          );
 
           return registeredAmount >= paidUpAmount;
         },
