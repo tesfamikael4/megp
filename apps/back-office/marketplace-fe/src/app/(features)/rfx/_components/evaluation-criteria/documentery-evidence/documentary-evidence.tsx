@@ -32,7 +32,7 @@ export default function DocumentaryEvidence() {
     columns: [
       {
         accessor: 'documentTitle',
-        title: 'Evidence Title',
+        title: 'Criteria Title',
         sortable: true,
       },
       {
@@ -70,9 +70,7 @@ export default function DocumentaryEvidence() {
         title: `Delete qualification`,
         centered: true,
         children: (
-          <Text size="sm">
-            {`Are you sure you want to delete this documentary evidence? `}
-          </Text>
+          <Text size="sm">{`Are you sure you want to delete this criterion? `}</Text>
         ),
         labels: { confirm: 'Yes', cancel: 'No' },
         confirmProps: { color: 'red' },
@@ -84,7 +82,7 @@ export default function DocumentaryEvidence() {
         await remove(documentaryEvidence.id).unwrap();
         notifications.show({
           title: 'Success',
-          message: `Documentary Evidence Deleted Successfully`,
+          message: `Criterion Deleted Successfully`,
           color: 'green',
         });
       } catch (err) {
@@ -133,7 +131,7 @@ export default function DocumentaryEvidence() {
 
   return (
     <Section
-      title="Documentary Evidence"
+      title="List Of Criteria"
       collapsible={false}
       action={
         <Button onClick={open}>
@@ -150,9 +148,7 @@ export default function DocumentaryEvidence() {
 
       <Modal opened={opened} onClose={close} withCloseButton={false} size="lg">
         <div className="flex justify-between">
-          <h2 className="font-medium text-lg capitalize">
-            Create A Documentary Evidence
-          </h2>
+          <h2 className="font-medium text-lg capitalize">Create A Criteria</h2>
           <IconX onClick={close} />
         </div>
         <Divider mt={'md'} mb={'md'} />

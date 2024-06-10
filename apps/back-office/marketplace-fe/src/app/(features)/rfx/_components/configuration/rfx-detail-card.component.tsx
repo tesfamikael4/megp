@@ -35,7 +35,7 @@ export default function RFXDetailCard() {
     },
   ];
   return (
-    <Section title="RFX Detail" collapsible={true} defaultCollapsed>
+    <Section title="RFQ Detail" collapsible={true} defaultCollapsed>
       <Box className="w-full">
         <DetailTable data={rfxDetail} />
       </Box>

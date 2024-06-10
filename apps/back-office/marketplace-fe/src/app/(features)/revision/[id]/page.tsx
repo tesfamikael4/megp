@@ -41,21 +41,21 @@ export default function WorkflowPage() {
 
   const handleSubmitForApproval = async (mode: string) => {
     try {
-      mode == 'ADJUST' &&
-        (await handleApprove({
+      if (mode == 'ADJUST') {
+        await handleApprove({
           rfxId: id as string,
           status: 'ADJUST',
-        }).unwrap());
-      mode == 'APPROVED' &&
-        (await handleSubmit({
+        }).unwrap();
+      } else if (mode == 'APPROVED')
+        await handleSubmit({
           id: id as string,
-        }).unwrap());
-      router.push('/rfx');
+        }).unwrap();
       notifications.show({
         title: 'Success',
-        message: 'Submitted for approval successfully',
+        message: 'Submitted for approval successfully.',
         color: 'green',
       });
+      router.push('/revision');
     } catch (err: any) {
       notifications.show({
         title: 'Error',
@@ -71,14 +71,14 @@ export default function WorkflowPage() {
       <Flex className="ml-auto gap-4">
         <Button
           className="bg-yellow-500"
-          loading={isSubmitting}
+          loading={isApproving}
           onClick={async () => await handleSubmitForApproval('ADJUST')}
         >
           Adjust
         </Button>
         <Button
           className=""
-          loading={isApproving}
+          loading={isSubmitting}
           onClick={async () => await handleSubmitForApproval('APPROVED')}
         >
           Submit for approval

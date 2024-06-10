@@ -58,8 +58,8 @@ export const workflowApi = createApi({
       providesTags: ['Approval'],
     }),
 
-    getActivities: builder.query<any, any>({
-      query: () => `activities`,
+    getActivities: builder.query<any, { key: string }>({
+      query: (data) => `activities/${data.key}`,
     }),
     canSubmit: builder.query<any, string>({
       query: (key: string) => `instance/canSubmit/${key}`,

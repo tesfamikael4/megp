@@ -1,5 +1,11 @@
 import { MenuItem } from '@megp/core-fe';
-import { IconAdjustmentsHorizontal } from '@tabler/icons-react';
+import {
+  IconAdjustmentsHorizontal,
+  IconBuildingBank,
+  IconChecklist,
+  IconList,
+  IconListCheck,
+} from '@tabler/icons-react';
 import { IconArrowFork, IconVersions } from '@tabler/icons-react';
 import { IconClipboardCheck, IconPageBreak } from '@tabler/icons-react';
 
@@ -15,11 +21,39 @@ export const Menu: MenuItem[] = [
     link: '/revision',
   },
   {
+    label: 'Solicitation',
+    icon: IconList,
+    link: '/solicitation',
+  },
+  {
+    label: 'Evaluation',
+    icon: IconListCheck,
+    link: '/evaluation',
+  },
+  {
+    label: 'Adminstration',
+    icon: IconBuildingBank,
+    links: [
+      {
+        label: 'Assignment',
+        link: '/assignment',
+      },
+    ],
+  },
+  {
     label: 'Approval',
     icon: IconArrowFork,
-    link: '/approval',
+    links: [
+      {
+        label: 'RFQ Approval',
+        link: '/approval',
+      },
+      {
+        label: 'Evaluation Approval',
+        link: '/evaluation-approval',
+      },
+    ],
   },
-
   {
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,

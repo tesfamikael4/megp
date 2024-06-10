@@ -19,7 +19,7 @@ export default function Revision() {
         [
           {
             column: 'status',
-            value: 'SUBMITTED',
+            value: 'SUBMITTED_EVALUATION',
             operator: '=',
           },
         ],
@@ -32,7 +32,7 @@ export default function Revision() {
       { accessor: 'name', title: 'Name', width: 200 },
       {
         accessor: 'procurementReferenceNumber',
-        title: 'Procurement Reference Number',
+        title: 'Ref No',
         width: 200,
       },
       { accessor: 'budgetAmount', title: 'Budget Amount' },
@@ -46,7 +46,7 @@ export default function Revision() {
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/approval/${rfx.id}`);
+              router.push(`/evaluation-approval/${rfx.id}`);
             }}
           >
             <IconChevronRight />
@@ -69,7 +69,7 @@ export default function Revision() {
   };
 
   return (
-    <Section title="RFQs Submitted For Approval" collapsible={false}>
+    <Section title="RFQ Evaluations Submitted For Approval" collapsible={false}>
       <Box className="">
         <ExpandableTable
           config={config}

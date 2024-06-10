@@ -5,13 +5,13 @@ import { useCreateMutation } from '../_api/rfx/rfx.api';
 import { useRouter } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
 import ProcurmentMechanism from './procurment-mechanism.component';
+import { DetailTable } from './detail-table';
 
 export const DetailRequisition = ({ requisition }: { requisition: any }) => {
-  const data = [
+  const definitionConfig = [
     {
       key: 'Reference',
       value: requisition.procurementReference,
-      titleStyle: (theme) => ({ color: theme.colors.green[6] }),
     },
     {
       key: 'Title',
@@ -21,7 +21,6 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
       key: 'Description',
       value: requisition.description,
     },
-
     {
       key: 'Calculated Amount',
       value: parseInt(requisition.calculatedAmount).toLocaleString('en-US', {
@@ -33,7 +32,6 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
       }),
     },
   ];
-
   const [convert, { isLoading: isConverting }] = useCreateMutation();
   const router = useRouter();
 
@@ -57,28 +55,7 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
         Convert to RFQ
       </Button>
       <Text className="font-semibold mb-2">Definition</Text>
-      <DataTable
-        withColumnBorders
-        withTableBorder
-        records={data}
-        striped={false}
-        columns={[
-          {
-            accessor: 'key',
-            width: 200,
-            cellsStyle: () => ({
-              background: '#DCE8F2',
-            }),
-          },
-          {
-            accessor: 'value',
-            cellsStyle: () => ({
-              background: 'white',
-            }),
-          },
-        ]}
-        noHeader
-      />
+      <DetailTable data={definitionConfig} />
       <Text className="font-semibold mb-2">Procurment Mechanism</Text>
       <ProcurmentMechanism id={requisition?.id} />
     </Stack>
