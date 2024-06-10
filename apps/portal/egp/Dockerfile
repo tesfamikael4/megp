@@ -10,7 +10,8 @@ RUN apk update
 
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo pnpm
+RUN npm install -g pnpm
+RUN npm install -g turbo
 COPY . .
 RUN turbo prune --scope=egp --docker
 
@@ -21,7 +22,7 @@ RUN apk update
 WORKDIR /app
 
 # Install pnpm
-RUN yarn global add pnpm
+RUN npm install -g pnpm
  
 
 # First install the dependencies (as they change less often)
@@ -46,7 +47,7 @@ ENV NEXT_PUBLIC_VERSION=$VERSION_ARG
 
 ENV NEXT_PUBLIC_IAM_API="/iam/api"
 
-RUN pnpm turbo run build --filter=egp...
+RUN npx turbo run build --filter=egp...
 
 FROM base AS runner
 WORKDIR /app
