@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Badge,
   Button,
   Flex,
@@ -18,14 +19,18 @@ import {
   IconDeviceFloppy,
 } from '@tabler/icons-react';
 import {
+  useAcceptInvitationMutation,
   useAddItemOfferMutation,
   useGetItemOfferQuery,
   useModifyItemOfferMutation,
+  useWithdrawInvitationMutation,
 } from '../../../_api/items.api';
 import { useParams } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
 import { useEffect, useState } from 'react';
-import { logger } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
+import { useRfxDetailQuery } from '@/app/(features)/my-workspace/_api/invitation-registration.api';
+import { IconAward } from '@tabler/icons-react';
 
 const schema = z.object({
   price: z.number(),
@@ -54,6 +59,7 @@ export default function InvitationDetail({
     resolver: zodResolver(schema),
   });
   const { rfxId } = useParams();
+  const { data: selected } = useRfxDetailQuery(rfxId?.toString());
 
   const { data: itemOffer } = useGetItemOfferQuery({
     id: product?.id.toString(),
@@ -62,6 +68,10 @@ export default function InvitationDetail({
     useAddItemOfferMutation();
   const [updateItemOffer, { isLoading: isUpdatingItemOffer }] =
     useModifyItemOfferMutation();
+  const [acceptInvitation, { isLoading: isAcceptingInvitation }] =
+    useAcceptInvitationMutation();
+  const [withdrawInvitation, { isLoading: isWithdrawingInvitation }] =
+    useWithdrawInvitationMutation();
   const [showDetail, setShowDetail] = useState(false);
 
   const specificationDetails = Object.entries(
@@ -127,10 +137,7 @@ export default function InvitationDetail({
 
   useEffect(() => {
     if (itemOffer) {
-      const offer = itemOffer?.[0]?.items?.find(
-        (item) => item?.id == product?.id,
-      );
-      if (offer) reset(offer);
+      reset(itemOffer);
     }
   }, [itemOffer]);
 
@@ -141,15 +148,124 @@ export default function InvitationDetail({
     }
   }, [watch('price'), watch('tax')]);
 
+  const handleAccept = async () => {
+    try {
+      await acceptInvitation({ invitationId: product?.id }).unwrap();
+      notify('Success', 'Invitation accepted successfully.');
+    } catch (err) {
+      notify('Error', 'Invitation acceptance failed.');
+    }
+  };
+  const handleWithdraw = async () => {
+    try {
+      await withdrawInvitation({ invitationId: product?.id }).unwrap();
+      notify('Success', 'Invitation withdrawn successfully.');
+    } catch (err) {
+      notify('Error', 'Invitation withdrawn failed.');
+    }
+  };
+
+  const lastOffer = product?.openedOffers?.length - 1;
+  const openedOffer = product?.openedOffers;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Paper withBorder shadow="sm" className="bg-neutral-100">
         <Stack className="p-4">
-          {showAction == false ? null : (
-            <Button className="bg-red-600 ml-auto">Withdraw</Button>
+          {showAction == false ? null : product?.status == 'APPROVED' ||
+            product?.status == 'WITHDRAWN' ? (
+            <Button
+              onClick={handleAccept}
+              loading={isAcceptingInvitation}
+              className="ml-auto"
+            >
+              Accept Invitation
+            </Button>
+          ) : product?.status == 'ACCEPTED' ? (
+            <Button
+              className="bg-red-600 ml-auto"
+              loading={isWithdrawingInvitation}
+              onClick={handleWithdraw}
+            >
+              Withdraw
+            </Button>
+          ) : null}
+          {selected?.status == 'ENDED' &&
+            openedOffer?.[lastOffer]?.rank == 1 && (
+              <Paper className="p-y-2 px-6 rounded-sm" withBorder>
+                <Flex className="items-center gap-4">
+                  <IconAward color="green" />
+                  <Text c="green">
+                    Congratulations! You have been announced winner for this
+                    item.
+                  </Text>
+                </Flex>
+              </Paper>
+            )}
+          {selected?.status == 'ENDED' && (
+            <Paper withBorder className="py-2 px-4 rounded-sm">
+              <Flex className="items-center gap-2">
+                <Avatar color="blue">{openedOffer?.[lastOffer]?.rank}</Avatar>
+                You ranked at {openedOffer?.[lastOffer]?.rank} with price of{' '}
+                {openedOffer?.[lastOffer]?.price?.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'MKW',
+                })}{' '}
+                .
+              </Flex>
+            </Paper>
           )}
+          {product?.rfxItem.solRoundAwards?.[0] &&
+            selected?.status != 'ENDED' && (
+              <Stack>
+                <Flex className="gap-2 items-center">
+                  <Avatar>{openedOffer?.[lastOffer]?.rank}</Avatar>
+                  <Text className="text-gray-600">You ranked at: </Text>
+                  <Text>
+                    {openedOffer?.[lastOffer]?.rank}
+                    with price of:{' '}
+                  </Text>
+                  <Text>
+                    {openedOffer?.[lastOffer]?.price?.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'MKW',
+                    })}{' '}
+                    at the previous round.
+                  </Text>
+                </Flex>
+                <Flex className="gap-2">
+                  <Text className="text-gray-600">
+                    Last Round winning price:
+                  </Text>
+                  <Text>
+                    MKW{' '}
+                    {product?.rfxItem?.solRoundAwards?.[0]?.winnerPrice?.toLocaleString(
+                      'en-US',
+                      { style: 'currency', currency: 'MKW' },
+                    )}
+                  </Text>
+                </Flex>
+                <Flex className="gap-2">
+                  <Text className="text-gray-600">
+                    Next Round starting price:
+                  </Text>
+                  <Text>
+                    MKW{' '}
+                    {product?.rfxItem?.solRoundAwards?.[0]?.nextRoundStartingPrice?.toLocaleString(
+                      'en-US',
+                      { style: 'currency', currency: 'MKW' },
+                    )}
+                  </Text>
+                </Flex>
+              </Stack>
+            )}
           <DetailTable data={config} />
-          {showAction == false ? null : (
+          {product?.status == 'NOT_COMPLY' && (
+            <Text>You have failed one or more compliance check.</Text>
+          )}
+          {showAction == false ||
+          selected?.status == 'ENDED' ? null : product?.status == 'ACCEPTED' ||
+            product?.status == 'COMPLY' ? (
             <Stack>
               <Flex className="gap-4">
                 <Controller
@@ -164,6 +280,11 @@ export default function InvitationDetail({
                       value={value}
                       className="w-full"
                       onChange={onChange}
+                      max={parseInt(
+                        product?.solRoundAwards?.[0]?.nextRoundStartingPrice ??
+                          100000000000,
+                      )}
+                      clampBehavior="strict"
                       thousandSeparator=","
                       error={errors?.price?.message}
                       withAsterisk
@@ -202,6 +323,7 @@ export default function InvitationDetail({
                       className="w-[calc(50%-0.5rem)]"
                       onChange={onChange}
                       error={errors?.totalPrice?.message}
+                      thousandSeparator=","
                       withAsterisk
                       disabled
                     />
@@ -217,7 +339,7 @@ export default function InvitationDetail({
                 Save Changes
               </Button>
             </Stack>
-          )}
+          ) : null}
           <Badge
             className="mx-auto cursor-pointer"
             onClick={() => setShowDetail(!showDetail)}

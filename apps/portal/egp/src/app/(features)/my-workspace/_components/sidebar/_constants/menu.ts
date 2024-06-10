@@ -5,6 +5,7 @@ import {
   IconGavel,
   IconListDetails,
   IconMail,
+  IconMailCheck,
   IconUserCog,
 } from '@tabler/icons-react';
 import { MenuLinks } from '../models';
@@ -34,6 +35,11 @@ export const managementLinks: MenuLinks.SidebarLinks[] = [
     label: 'My Invitations',
     icon: IconMail,
     link: '/my-workspace/my-invitations',
+  },
+  {
+    label: 'Registered Invitations',
+    icon: IconMailCheck,
+    link: '/my-workspace/registered-invitations',
   },
   {
     label: 'Vendor Service',

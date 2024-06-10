@@ -81,7 +81,7 @@ export const invitationItemsApi = createApi({
     getItemOffer: builder.query<any, { id: string }>({
       query: ({ id }) => {
         return {
-          url: `/sol-offers/list/${id}`,
+          url: `sol-offers/my-latest-offer/${id}`,
           method: 'GET',
         };
       },
@@ -92,6 +92,48 @@ export const invitationItemsApi = createApi({
         return {
           url: `/sol-offers/${data.id}`,
           method: 'PUT',
+          body: data,
+        };
+      },
+      invalidatesTags: ['invitation-items'],
+    }),
+    uploadDocumentaryEvidence: builder.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: `/sol-responses`,
+          method: 'POST',
+          body: data,
+        };
+      },
+      invalidatesTags: ['invitation-items'],
+    }),
+    getUploadedEvidences: builder.query<
+      any,
+      { rfxId: string; rfxDoumentaryEvidenceId: string }
+    >({
+      query: ({ rfxId, rfxDoumentaryEvidenceId }) => {
+        return {
+          url: `/sol-responses/my-documents/${rfxId}/${rfxDoumentaryEvidenceId}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['invitation-items'],
+    }),
+    acceptInvitation: builder.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: `/rfx-product-invitations/accept-invitation/${data.invitationId}`,
+          method: 'PATCH',
+          body: data,
+        };
+      },
+      invalidatesTags: ['invitation-items'],
+    }),
+    withdrawInvitation: builder.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: `/rfx-product-invitations/withdraw-invitation/${data.invitationId}`,
+          method: 'PATCH',
           body: data,
         };
       },
@@ -109,4 +151,8 @@ export const {
   useModifyItemOfferMutation,
   useAddItemOfferMutation,
   useLazyGetDocumentaryEvidencesQuery,
+  useUploadDocumentaryEvidenceMutation,
+  useLazyGetUploadedEvidencesQuery,
+  useAcceptInvitationMutation,
+  useWithdrawInvitationMutation,
 } = invitationItemsApi;

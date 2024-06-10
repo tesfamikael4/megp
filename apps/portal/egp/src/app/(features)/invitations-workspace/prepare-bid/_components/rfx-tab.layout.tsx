@@ -107,6 +107,16 @@ export default function RfxDetailTabs({
     },
   ];
 
+  useEffect(() => {
+    if (
+      (selected?.activeRound && selected?.activeRound?.round != 0) ||
+      selected?.status == 'ENDED'
+    )
+      router.push(`/invitations-workspace/prepare-bid/${rfxId}/price-schedule`);
+    else if (selected?.status == 'AUCTION' && !selected?.activeRound)
+      router.push(`/invitations-workspace/prepare-bid/${rfxId}`);
+  }, [selected, rfxId]);
+
   return (
     <>
       <LoadingOverlay visible={isLoading} />
@@ -117,15 +127,25 @@ export default function RfxDetailTabs({
               <Flex className="items-center gap-2">
                 <IconChevronLeft
                   className="cursor-pointer"
-                  onClick={() => router.push(`/my-workspace/my-invitations`)}
+                  onClick={() => router.push(`/invitations-workspace/${rfxId}`)}
                 />
                 <Box>{selected?.name}</Box>
               </Flex>
-              <Flex className="gap-4">
-                {selected?.rfxBidProcedure && (
+              <Flex className="gap-4 items-center">
+                {selected?.status == 'AUCTION' && !selected?.activeRound && (
+                  <Text>Opens in: </Text>
+                )}
+                {selected?.status == 'AUCTION' && selected?.activeRound && (
+                  <Text>Closes in: </Text>
+                )}
+                {selected?.status == 'ENDED' && <Text>Auction Closed</Text>}
+                {selected?.status == 'AUCTION' && (
                   <Timer
                     targetDate={
-                      new Date(selected?.rfxBidProcedure?.submissionDeadline)
+                      new Date(
+                        selected?.activeRound?.end ??
+                          selected?.nextRound?.start,
+                      )
                     }
                   />
                 )}
@@ -145,9 +165,18 @@ export default function RfxDetailTabs({
             </div>
             <Stack className="ml-8 mb-6">
               <Flex className="items-center gap-4">
+                <Text>
+                  Round {selected?.activeRound?.round} of{' '}
+                  {selected?.rfxBidProcedure?.round}
+                </Text>
+              </Flex>
+              <Flex className="items-center gap-4">
                 <Text>Submission Deadline: </Text>
                 <Badge variant="outline">{submissionDeadline}</Badge>
               </Flex>
+              {selected?.status == 'AUCTION' && !selected?.activeRound && (
+                <Text className="mx-auto">RFQ in Idle Time</Text>
+              )}
               <Badge
                 onClick={() => {
                   handleShowMore(!showMore);
@@ -165,34 +194,42 @@ export default function RfxDetailTabs({
               <div className="flex space-x-4">
                 {
                   <>
-                    <Text
-                      className={
-                        paths.includes('bid-declaration')
-                          ? activeTabStyle
-                          : inactiveTabStyle
-                      }
-                      onClick={() => {
-                        router.push(
-                          `/invitations-workspace/prepare-bid/${rfxId}/bid-declaration`,
-                        );
-                      }}
-                    >
-                      Documentary Evidences
-                    </Text>
-                    <Text
-                      className={
-                        paths.includes('price-schedule')
-                          ? activeTabStyle
-                          : inactiveTabStyle
-                      }
-                      onClick={() => {
-                        router.push(
-                          `/invitations-workspace/prepare-bid/${rfxId}/price-schedule`,
-                        );
-                      }}
-                    >
-                      Price Schedule
-                    </Text>
+                    {selected?.activeRound &&
+                      selected?.activeRound?.round == 0 && (
+                        <Text
+                          className={
+                            paths.includes('bid-declaration')
+                              ? activeTabStyle
+                              : inactiveTabStyle
+                          }
+                          onClick={() => {
+                            router.push(
+                              `/invitations-workspace/prepare-bid/${rfxId}/bid-declaration`,
+                            );
+                          }}
+                        >
+                          Documentary Evidences
+                        </Text>
+                      )}
+                    {(selected?.status == 'AUCTION' ||
+                      selected?.status == 'APPROVED') &&
+                      selected?.activeRound && (
+                        <Text
+                          className={
+                            paths.includes('price-schedule')
+                              ? activeTabStyle
+                              : inactiveTabStyle
+                          }
+                          onClick={() => {
+                            router.push(
+                              `/invitations-workspace/prepare-bid/${rfxId}/price-schedule`,
+                            );
+                          }}
+                        >
+                          Price Schedule
+                        </Text>
+                      )}
+                    {}
                   </>
                 }
               </div>

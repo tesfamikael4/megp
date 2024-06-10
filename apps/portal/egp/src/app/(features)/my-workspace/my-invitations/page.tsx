@@ -56,7 +56,6 @@ export default function MyInvitationsPage() {
               setSelected(record);
               open();
               getInvitations({ id: record.id, collectionQuery: {} });
-              // router.push(`/invitations-workspace/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />
@@ -84,10 +83,6 @@ export default function MyInvitationsPage() {
       value: selected?.procurementCategory,
     },
     {
-      key: 'Procurement Category',
-      value: selected?.procurementCategory,
-    },
-    {
       key: 'Procurement Reference Number',
       value: selected?.procurementReferenceNumber,
     },
@@ -95,17 +90,18 @@ export default function MyInvitationsPage() {
 
   const handleRegister = async () => {
     try {
-      await register(selected?.id);
+      await register({ rfxId: selected?.id }).unwrap();
       notifications.show({
         title: 'Success',
-        message: 'Invitation registered successfully',
+        message: 'Invitation registered successfully.',
         color: 'green',
       });
       router.push(`/invitations-workspace/${selected.id}`);
     } catch (err) {
       notifications.show({
         title: 'Error',
-        message: 'Invitation registration failed',
+        message: err?.data?.message,
+        color: 'red',
       });
     }
   };

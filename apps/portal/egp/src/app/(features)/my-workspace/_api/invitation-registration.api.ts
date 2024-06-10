@@ -34,7 +34,7 @@ export const getInvitationsApi = createApi({
     register: builder.mutation<any, any>({
       query: (data) => {
         return {
-          url: `/rfx-product-invitations/my-rfx-detail`,
+          url: `/sol-registrations`,
           method: 'POST',
           body: data,
         };
