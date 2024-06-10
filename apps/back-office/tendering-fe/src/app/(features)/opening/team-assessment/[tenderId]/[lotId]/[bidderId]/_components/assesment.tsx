@@ -8,7 +8,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 
 const checklistSchema: ZodType<any> = z.object({
-  checked: z.boolean({
+  qualified: z.string({
     required_error: 'Assessment is required',
   }),
   remark: z.string().optional(),
@@ -44,22 +44,19 @@ export const ChecklistAssessment = () => {
     <Section title="Bidder Checklist" collapsible={false} className="h-full">
       <Controller
         control={control}
-        name="checked"
+        name="qualified"
         render={({ field: { name, value, onChange } }) => (
           <Select
             label="Assessment"
             name={name}
-            value={value?.toString()}
+            value={value}
             data={[
-              { label: 'Yes', value: 'true' },
-              { label: 'No', value: 'false' },
+              { label: 'Comply', value: 'COMPLY' },
+              { label: 'Not Comply', value: 'NOT_COMPLY' },
             ]}
             withAsterisk
-            onChange={(val) => {
-              if (val === 'true') onChange(true);
-              else if (val === 'false') onChange(false);
-            }}
-            error={errors.checked?.message?.toString()}
+            onChange={onChange}
+            error={errors.qualified?.message?.toString()}
           />
         )}
       />

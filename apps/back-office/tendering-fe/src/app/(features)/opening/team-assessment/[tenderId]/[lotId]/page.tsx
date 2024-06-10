@@ -10,6 +10,7 @@ import {
   useLazyGetOpeningAssessmentsQuery,
 } from '@/store/api/tendering/tender-opening.api';
 import { LotOverview } from '../../../_components/lot-overview';
+import { OPENING_ASSESSMENT } from '../../../_constants/data';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -107,9 +108,7 @@ const BidderDetail = ({ bidder }: any) => {
               width: 200,
               render: (record) =>
                 record.check
-                  ? record?.check?.checked
-                    ? 'Yes'
-                    : 'No'
+                  ? OPENING_ASSESSMENT[record?.check?.qualified]
                   : 'Not Evaluated Yet',
             },
           ],
