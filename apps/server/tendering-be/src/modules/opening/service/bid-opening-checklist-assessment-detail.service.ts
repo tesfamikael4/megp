@@ -1,5 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { In, Not, Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 
@@ -52,6 +57,7 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
       itemData.openerId = req.user.userId;
       itemData.openerName = req.user.firstName + ' ' + req.user.lastName;
     }
+
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
     const bidder = await manager.getRepository(BidRegistration).findOne({
@@ -75,14 +81,83 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
     if (!bidder) {
       throw new NotFoundException('Bidder not found');
     }
-    itemData.bidRegistrationDetailId = bidder.bidRegistrationDetails[0]?.id;
-    itemData.bidderName = bidder.bidderName;
+
     itemData.submit = false;
-    itemData.complete = false;
+
+    // const bidRegistrationDetail = await manager
+    //   .getRepository(BidRegistrationDetail)
+    //   .findOne({
+    //     where: {
+    //       bidRegistration: {
+    //         tenderId: itemData.tenderId,
+    //         bidderId: itemData.bidderId,
+    //       },
+
+    //       lotId: itemData.lotId,
+    //     },
+    //   });
+
+    // if (!bidRegistrationDetail) {
+    //   throw new Error('Bid Registration Detail not found');
+    // }
+
+    const bidRegistrationDetailId = bidder.bidRegistrationDetails[0]?.id;
+    const bidOpeningChecklistAssessment = await manager
+      .getRepository(BidOpeningChecklistAssessment)
+      .findOne({
+        where: {
+          bidRegistrationDetailId,
+          isTeamAssessment: itemData.isTeamAssessment,
+          openerId: itemData.openerId,
+        },
+      });
+
+    if (!bidOpeningChecklistAssessment) {
+      const item = manager.getRepository(BidOpeningChecklistAssessment).create({
+        bidRegistrationDetailId: bidder.bidRegistrationDetails[0]?.id,
+        openerId: req.user.userId,
+        openerName: req.user.firstName + ' ' + req.user.lastName,
+        isTeamAssessment: itemData.isTeamAssessment,
+        submit: false,
+        tenderId: itemData.tenderId,
+        lotId: itemData.lotId,
+        bidderId: itemData.bidderId,
+        bidderName: bidder.bidderName,
+        organizationName: req.user.organization.name,
+        organizationId: req.user.organization.id,
+        // bidOpeningChecklistAssessmentDetail: [itemD]
+      });
+
+      const savedItem = await manager
+        .getRepository(BidOpeningChecklistAssessment)
+        .save(item);
+
+      const itemD = manager
+        .getRepository(BidOpeningChecklistAssessmentDetail)
+        .create({
+          ...itemData,
+          bidOpeningChecklistAssessmentId: savedItem.id,
+        }) as any;
+      await manager
+        .getRepository(BidOpeningChecklistAssessmentDetail)
+        .save(itemD);
+    } else {
+      const itemD = manager
+        .getRepository(BidOpeningChecklistAssessmentDetail)
+        .create({
+          ...itemData,
+          bidOpeningChecklistAssessmentId: bidOpeningChecklistAssessment.id,
+        }) as any;
+      await manager
+        .getRepository(BidOpeningChecklistAssessmentDetail)
+        .save(itemD);
+    }
+
+    itemData.bidRegistrationDetailId = bidder.bidRegistrationDetails[0]?.id;
 
     const item =
       this.bidOpeningChecklistAssessmentDetailRepository.create(itemData);
-    await this.bidOpeningChecklistAssessmentDetailRepository.insert(item);
+    // await this.technicalPreliminaryAssessmentDetailRepository.insert(item);
     return item;
   }
 
@@ -209,7 +284,7 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
           isTeamAssessment: itemData.isTeamLead,
         },
       }),
-      manager.getRepository(BidOpeningChecklistAssessment).find({
+      manager.getRepository(BidOpeningChecklistAssessment).exists({
         where: {
           tenderId: itemData.tenderId,
           openerId: req.user.userId,
@@ -222,7 +297,7 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
       }),
     ]);
     if (checklist.length == 0) {
-      throw new NotFoundException('Bid Opening Checklist not found');
+      throw new HttpException('Bid Opening Checklist not found', 430);
     }
 
     await manager.getRepository(BidOpeningChecklistAssessment).update(
@@ -230,7 +305,6 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
         id: checklist[0].id,
       },
       {
-        submit: true,
         qualified: notQualified
           ? EvaluationStatusEnum.NOT_COMPLY
           : EvaluationStatusEnum.COMPLY,

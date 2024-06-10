@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { TeamMember } from 'src/entities/team-member.entity';
 import { BulkTeamMemberDto } from '../dto/team-member.dto';
@@ -10,6 +10,7 @@ import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { truncate } from 'fs';
 import { Tender } from 'src/entities';
 import { TeamService } from './team.service';
+import { Team } from 'src/entities/team.entity';
 
 @Injectable()
 export class TeamMembersService extends ExtraCrudService<TeamMember> {
@@ -76,20 +77,45 @@ export class TeamMembersService extends ExtraCrudService<TeamMember> {
 
   // * bulk create team member with team
   async bulkCreateWithTeam(itemData: any, req?: any): Promise<any> {
-    const teams = await this.teamService.create(itemData.team, req);
-    if (!this.hasOneTeamLead(itemData.members))
-      throw new Error('More than one team lead found');
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const prevTeam = await manager.getRepository(Team).find({
+      where: {
+        ...itemData.team,
+      },
+    });
     const createdMembers = [];
-    for (const team of teams) {
-      const members = itemData.members.map((item) => {
-        item.teamId = team.id;
-        item.organizationId = req.user.organization.id;
-        item.organizationName = req.user.organization.name;
-        return item;
+    if (prevTeam.length == 0) {
+      const teams = await this.teamService.create(itemData.team, req);
+      if (!this.hasOneTeamLead(itemData.members))
+        throw new Error('More than one team lead found');
+      for (const team of teams) {
+        const members = itemData.members.map((item) => {
+          item.teamId = team.id;
+          item.organizationId = req.user.organization.id;
+          item.organizationName = req.user.organization.name;
+          return item;
+        });
+        const createdMembersForTeam = this.teamMemberRepository.create(members);
+        createdMembers.push(...createdMembersForTeam);
+      }
+    } else {
+      const prevTeamIds = prevTeam.map((x) => x.id);
+      await manager.getRepository(TeamMember).delete({
+        teamId: In(prevTeamIds),
       });
-      const createdMembersForTeam =
-        await this.teamMemberRepository.create(members);
-      createdMembers.push(...createdMembersForTeam);
+      if (!this.hasOneTeamLead(itemData.members))
+        throw new Error('More than one team lead found');
+      for (const team of prevTeam) {
+        const members = itemData.members.map((item) => {
+          item.teamId = team.id;
+          item.organizationId = req.user.organization.id;
+          item.organizationName = req.user.organization.name;
+          return item;
+        });
+        const createdMembersForTeam = this.teamMemberRepository.create(members);
+        createdMembers.push(...createdMembersForTeam);
+      }
     }
 
     await this.teamMemberRepository.insert(createdMembers);

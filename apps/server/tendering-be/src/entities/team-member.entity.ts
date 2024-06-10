@@ -5,6 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  Unique,
 } from 'typeorm';
 import { OrgAudit } from 'src/shared/entities';
 import { Team } from './team.entity';
@@ -12,6 +13,7 @@ import { TechnicalPreliminaryAssessmentDetail } from './technical-preliminary-as
 import { TechnicalPreliminaryAssessment } from './technical-preliminary-assessment.entity';
 
 @Entity({ name: 'team_members' })
+@Unique(['teamId', 'personnelId'])
 export class TeamMember extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
