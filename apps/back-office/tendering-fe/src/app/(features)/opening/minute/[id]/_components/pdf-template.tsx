@@ -1,6 +1,8 @@
 import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 import { ReactPdfTable, ReactPdfTableGrid3 } from './pdf-table';
-import { bidders, openers } from '../../../_constants/data';
+
+const bidders: any[] = [];
+const openers: any[] = [];
 
 // Create styles
 const styles = StyleSheet.create({

@@ -106,7 +106,12 @@ export const tenderOpeningApi = createApi({
         `/bid-opening-checklist-assessment-detail/opener-report/${lotId}/${bidderId}/${team}`,
     }),
     completeOpening: builder.mutation<any, any>({
-      query: (data: { tenderId: string; isTeamLead: boolean }) => {
+      query: (data: {
+        tenderId: string;
+        lotId: string;
+        bidderId: string;
+        isTeamLead: boolean;
+      }) => {
         return {
           url: `/bid-opening-checklist-assessment-detail/complete-checklist`,
           method: 'PUT',
@@ -136,6 +141,7 @@ export const tenderOpeningApi = createApi({
 export const {
   useCheckBidAttributeMutation,
   useSubmitOpeningMutation,
+  useCompleteOpeningMutation,
   useGetTenderOpeningStatusQuery,
   useGetOpeningMinutesQuery,
   useLazyGetAllbiddersByLotIdQuery,
