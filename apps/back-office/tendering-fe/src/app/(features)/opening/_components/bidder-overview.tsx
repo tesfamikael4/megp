@@ -1,18 +1,38 @@
 'use client';
-import {
-  useLazyGetBidderDetailsQuery,
-  useLazyGetLotDetailQuery,
-} from '@/store/api/tendering/tendering.api';
+import { useCompleteOpeningMutation } from '@/store/api/tendering/tender-opening.api';
+import { useLazyGetBidderDetailsQuery } from '@/store/api/tendering/tendering.api';
 import { Badge, Box, Button, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { Section, notify } from '@megp/core-fe';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export const BidderOverView = ({ basePath }: { basePath: string }) => {
+export const BidderOverView = ({
+  basePath,
+  teamAssessment = false,
+}: {
+  basePath: string;
+  teamAssessment?: boolean;
+}) => {
   const { tenderId, lotId, bidderId } = useParams();
   const router = useRouter();
   const [getBidder, { data, isLoading }] = useLazyGetBidderDetailsQuery();
+  const [complete, { isLoading: isCompleting }] = useCompleteOpeningMutation();
+
+  const onComplete = async () => {
+    try {
+      await complete({
+        tenderId: tenderId as string,
+        lotId: lotId as string,
+        bidderId: bidderId as string,
+        isTeamLead: teamAssessment,
+      }).unwrap();
+      notify('Success', 'completed successfully');
+      router.push(basePath);
+    } catch {
+      notify('Error', 'Something went wrong');
+    }
+  };
 
   useEffect(() => {
     getBidder({
@@ -43,12 +63,7 @@ export const BidderOverView = ({ basePath }: { basePath: string }) => {
         }
         collapsible={false}
         action={
-          <Button
-            onClick={() => {
-              notify('Success', 'completed successfully');
-              router.push(basePath);
-            }}
-          >
+          <Button onClick={onComplete} loading={isCompleting}>
             Complete
           </Button>
         }
