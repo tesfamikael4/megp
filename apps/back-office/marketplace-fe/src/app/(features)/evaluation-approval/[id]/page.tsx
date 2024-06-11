@@ -22,7 +22,7 @@ export default function WorkflowPage() {
           setFileUrl(objectURL);
         })
         .catch((error) => {
-          logger.error('Error fetching PDF:', error);
+          logger.error('Error Fetching PDF:', error);
         });
     };
     if (data) getFile();
