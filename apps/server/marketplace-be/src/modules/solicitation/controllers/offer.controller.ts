@@ -8,13 +8,12 @@ import {
 } from 'megp-shared-be';
 import { SolOfferService } from '../services/offer.service';
 import { SolOffer } from 'src/entities';
-import { CreateOfferDto, UpdateOferDto } from '../dtos/offer.dto';
-// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
+import { CreateOfferDto, UpdateOfferDto } from '../dtos/offer.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxProductInvitationId',
   createDto: CreateOfferDto,
-  updateDto: UpdateOferDto,
+  updateDto: UpdateOfferDto,
 };
 
 @ApiBearerAuth()

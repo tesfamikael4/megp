@@ -16,7 +16,7 @@ import {
 import { ReSchedulerService } from './services/re-scheduler.service';
 import { EncryptionHelperService } from '../../utils/services/encryption-helper.service';
 import { UtilityModule } from 'src/utils/utils.module';
-import { OpenerSerivice } from './services/opener.service';
+import { OpenerService } from './services/opener.service';
 import { EvalResponseController } from './controllers/eval-response.controller';
 import { EvalResponseService } from './services/eval-response.service';
 import { EvalItemResponseService } from './services/eval-item-response.service';
@@ -62,11 +62,11 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
   providers: [
     ReSchedulerService,
     EncryptionHelperService,
-    OpenerSerivice,
+    OpenerService,
     EvalResponseService,
     EvalItemResponseService,
     TeamMemberService,
   ],
-  exports: [OpenerSerivice, ReSchedulerService],
+  exports: [OpenerService, ReSchedulerService],
 })
 export class EvaluationModule {}

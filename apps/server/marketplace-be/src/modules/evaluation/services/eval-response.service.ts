@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import {
+  EvalItemResponse,
   EvalResponse,
   OpenedResponse,
   RFX,
@@ -29,6 +30,8 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
   constructor(
     @InjectRepository(EvalResponse)
     private readonly evalResponseRepository: Repository<EvalResponse>,
+    @InjectRepository(EvalItemResponse)
+    private readonly evalItemResponseRepository: Repository<EvalItemResponse>,
     @InjectRepository(EvalAssessment)
     private readonly evalAssessmentRepository: Repository<EvalAssessment>,
     @InjectRepository(SolRegistration)
@@ -45,7 +48,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     super(evalResponseRepository);
   }
 
-  async create(itemData: CreateEvalResponseDto, req?: any) {
+  async create(itemData: CreateEvalResponseDto, version: number, req?: any) {
     const [teamMember, numberOfTeam, evaluationsCount, openedResponse] =
       await Promise.all([
         this.teamMemberRepository.findOne({
@@ -67,9 +70,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
           where: {
             rfxId: itemData.rfxId,
             isTeamAssessment: false,
+            version,
             openedResponse: {
               solRegistrationId: itemData.solRegistrationId,
-              // vendorId: itemData.vendorId,
             },
           },
         }),
@@ -78,7 +81,6 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
             solRegistrationId: itemData.solRegistrationId,
             rfxId: itemData.rfxId,
             rfxDocumentaryEvidenceId: itemData.rfxDocumentaryEvidenceId,
-            // vendorId: itemData.vendorId,
           },
           select: {
             id: true,
@@ -93,6 +95,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
 
     itemData.teamMemberId = teamMember.id;
     itemData.openedResponseId = openedResponse.id;
+    itemData.version = version;
 
     const evaluationItem = this.evalResponseRepository.create(itemData);
     await this.evalResponseRepository.upsert(evaluationItem, [
@@ -100,6 +103,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
       'rfxId',
       'isTeamAssessment',
       'openedResponseId',
+      'version',
     ]);
 
     return evaluationItem;
@@ -109,6 +113,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     solRegistrationId: string,
     rfxDocumentaryEvidenceId: string,
     isTeamAssessment: boolean,
+    version: number,
     user: any,
   ) {
     const evaluation = await this.evalResponseRepository.findOne({
@@ -116,6 +121,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         isTeamAssessment,
         rfxDocumentaryEvidenceId,
         solRegistrationId,
+        version,
         teamMember: {
           personnelId: user.userId,
         },
@@ -128,6 +134,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
   async getTeamMembersEvaluations(
     rfxDocumentaryEvidenceId: string,
     solRegistrationId: string,
+    version: number,
     user: any,
   ) {
     const [evaluations, teamLead] = await Promise.all([
@@ -135,6 +142,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         where: {
           rfxDocumentaryEvidenceId,
           solRegistrationId,
+          version,
         },
         relations: {
           teamMember: true,
@@ -161,6 +169,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
   async canSubmitRfxEvaluation(
     rfxId: string,
     isTeamAssessment: boolean,
+    version: number,
     user: any,
   ): Promise<{ canSubmit: boolean; reason?: string }> {
     const teamMember = await this.teamMemberRepository.findOne({
@@ -205,6 +214,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
             })
             .andWhere('eval.isTeamAssessment = :isTeamAssessment', {
               isTeamAssessment,
+            })
+            .andWhere('eval.version = :version', {
+              version,
             }),
       )
       .getOne();
@@ -280,6 +292,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     const canSubmit = await this.canSubmitRfxEvaluation(
       rfxId,
       isTeamEvaluation,
+      rfx.version,
       user,
     );
     if (!canSubmit.canSubmit)
@@ -320,6 +333,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
   async canSubmitVendorEvaluation(
     solRegistrationId: string,
     isTeamAssessment: boolean,
+    version: number,
     user: any,
   ): Promise<{ canSubmit: boolean; reason?: string }> {
     const [teamMember, alreadySubmitted] = await Promise.all([
@@ -373,6 +387,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
             })
             .andWhere('eval.teamMemberId = :teamMemberId', {
               teamMemberId: teamMember.id,
+            })
+            .andWhere('eval.version = :version', {
+              version,
             }),
       )
       .loadRelationCountAndMap(
@@ -383,6 +400,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
           qb
             .where('evalItem.isTeamAssessment = :isTeam', {
               isTeam: isTeamAssessment,
+            })
+            .where('evalItem.version = :evalVersion', {
+              evalVersion: version,
             })
             .andWhere('evalItem.teamMemberId = :teamId', {
               teamId: teamMember.id,
@@ -415,44 +435,62 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
   async submitVendorEvaluataion(
     solRegistrationId: string,
     isTeamAssessment: boolean,
+    version: number,
     user: any,
   ) {
-    const [teamMember, solRegistration, alreadyEvaluated, canSubmit] =
-      await Promise.all([
-        this.teamMemberRepository.findOne({
-          where: {
-            rfx: {
-              solRegistrations: {
-                id: solRegistrationId,
-              },
-            },
-            personnelId: user.userId,
-          },
-        }),
-        this.solRegistrationRepository.findOne({
-          where: {
-            id: solRegistrationId,
-          },
-          relations: {
-            evalResponses: true,
-            evalItemResponses: true,
-          },
-        }),
-        this.evalAssessmentRepository.exists({
-          where: {
-            isTeamAssessment: isTeamAssessment,
-            solRegistrationId,
-            teamMember: {
-              personnelId: user.userId,
+    const [
+      teamMember,
+      evalResponses,
+      evalItemResponses,
+      alreadyEvaluated,
+      canSubmit,
+    ] = await Promise.all([
+      this.teamMemberRepository.findOne({
+        where: {
+          rfx: {
+            solRegistrations: {
+              id: solRegistrationId,
             },
           },
-        }),
-        this.canSubmitVendorEvaluation(
+          personnelId: user.userId,
+        },
+      }),
+      this.evalResponseRepository.find({
+        where: {
           solRegistrationId,
           isTeamAssessment,
-          user,
-        ),
-      ]);
+          version,
+          teamMember: {
+            personnelId: user.userId,
+          },
+        },
+      }),
+      this.evalItemResponseRepository.find({
+        where: {
+          solRegistrationId,
+          isTeamAssessment,
+          version,
+          teamMember: {
+            personnelId: user.userId,
+          },
+        },
+      }),
+      this.evalAssessmentRepository.exists({
+        where: {
+          isTeamAssessment: isTeamAssessment,
+          solRegistrationId,
+          teamMember: {
+            personnelId: user.userId,
+          },
+        },
+      }),
+      this.canSubmitVendorEvaluation(
+        solRegistrationId,
+        isTeamAssessment,
+        version,
+        user,
+      ),
+    ]);
 
     if (!teamMember) throw new BadRequestException('You are not a team member');
 
@@ -466,11 +504,15 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         'Complete all vendors assessment. You can not submit this RFQ evaluation.',
       );
 
-    const doesNotComplyResponse = solRegistration.evalResponses.some(
-      (ev) => ev.qualified === EvaluationResponse.NOT_COMPLY,
+    const doesNotComplyResponse = evalResponses.some(
+      (ev) =>
+        ev.qualified === EvaluationResponse.NOT_COMPLY &&
+        ev.version === version,
     );
-    const doesNotComplyItem = solRegistration.evalItemResponses.some(
-      (ev) => ev.qualified === EvaluationResponse.NOT_COMPLY,
+    const doesNotComplyItem = evalItemResponses.some(
+      (ev) =>
+        ev.qualified === EvaluationResponse.NOT_COMPLY &&
+        ev.version === version,
     );
 
     const doesNotComply = doesNotComplyItem || doesNotComplyResponse;
@@ -480,9 +522,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
       qualified: doesNotComply
         ? EvaluationResponse.NOT_COMPLY
         : EvaluationResponse.COMPLY,
-      rfxId: solRegistration.rfxId,
+      rfxId: teamMember.rfxId,
       teamMemberId: teamMember.id,
-      solRegistrationId: solRegistration.id,
+      solRegistrationId: solRegistrationId,
     };
 
     const evaluationAssessment = this.evalAssessmentRepository.create(
@@ -496,6 +538,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     rfxId: string,
     solRegistrationId: string,
     isTeamAssessment: boolean,
+    version: number,
     user: any,
   ) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
@@ -533,6 +576,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
             .andWhere('eval.isTeamAssessment = :isTeam', {
               isTeam: isTeamAssessment,
             })
+            .andWhere('eval.version = :version', {
+              version,
+            })
             .andWhere('eval.solRegistrationId = :solRegId', {
               solRegId: solRegistrationId,
             }),
@@ -549,6 +595,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
             .andWhere('eval.teamMemberId = :teamId', { teamId: teamMember.id })
             .andWhere('eval.isTeamAssessment = :isTeamAssessment', {
               isTeamAssessment,
+            })
+            .andWhere('eval.version = :evalVersion', {
+              evalVersion: version,
             })
             .andWhere('eval.solRegistrationId = :solRegId', {
               solRegId: solRegistrationId,

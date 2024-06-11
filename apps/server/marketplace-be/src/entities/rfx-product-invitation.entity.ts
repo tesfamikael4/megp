@@ -22,7 +22,7 @@ export class RfxProductInvitation extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   productCatalogueId: string;
 
   @Column({ type: 'jsonb' })

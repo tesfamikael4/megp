@@ -17,13 +17,21 @@ import {
 import { TeamMember } from './team-member.entity';
 
 @Entity({ name: 'eval_item_responses' })
-@Unique(['teamMemberId', 'rfxProductInvitaitonId', 'isTeamAssessment'])
+@Unique([
+  'teamMemberId',
+  'rfxProductInvitaitonId',
+  'isTeamAssessment',
+  'version',
+])
 export class EvalItemResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'boolean', default: false })
   isTeamAssessment: boolean;
+
+  @Column({ default: 0 })
+  version: number;
 
   @Column({
     type: 'enum',

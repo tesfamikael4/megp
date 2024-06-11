@@ -12,7 +12,6 @@ import {
   EntityManager,
   In,
   LessThanOrEqual,
-  MoreThan,
   MoreThanOrEqual,
   Repository,
 } from 'typeorm';
@@ -78,23 +77,23 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     const currentRound = await this.getValidRound(rfxItem.rfx.id);
 
     if (rfxInvitation.status == EInvitationStatus.NOT_COMPLY)
-      throw new BadRequestException('Invitaion response is not comply');
+      throw new BadRequestException('Invitation response is not comply');
 
     if (
       rfxInvitation.status !== EInvitationStatus.ACCEPTED &&
       currentRound.round == 0
     )
       throw new BadRequestException(
-        'Invitaiton is not Accepted. Please Accept First',
+        'Invitation is not Accepted. Please Accept First',
       );
 
-    // if (currentRound.round >= 1) {
-    //   await this.checkPreviousRoundOfferExists(
-    //     currentRound.round,
-    //     itemData,
-    //     user,
-    //   );
-    // }
+    if (currentRound.round >= 1) {
+      await this.checkPreviousRoundOfferExists(
+        currentRound.round,
+        itemData,
+        user,
+      );
+    }
 
     const registration = await registrationRepo.findOne({
       where: {
@@ -166,7 +165,9 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
       offer.solRegistration.salt,
     );
 
-    return { ...offer, price: +price, tax: +tax };
+    const taxedPrice = +price * (1 + +tax / 100);
+
+    return { ...offer, price: +price, tax: +tax, taxedPrice };
   }
 
   private async getValidRound(rfxId: string) {
@@ -193,16 +194,13 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     itemData: CreateOfferDto,
     user: any,
   ) {
-    const previousOffer = await this.solOfferRepository.findOne({
+    const previousOffer = await this.solOfferRepository.exists({
       where: {
         solRound: {
           round: currentRound - 1,
         },
         rfxProductInvitationId: itemData.rfxProductInvitationId,
         vendorId: user.organization.id,
-      },
-      select: {
-        id: true,
       },
     });
 

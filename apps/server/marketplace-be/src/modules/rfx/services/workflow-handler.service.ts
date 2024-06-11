@@ -1,5 +1,10 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   OpenedOffer,
   RFX,
@@ -9,15 +14,17 @@ import {
   SolOffer,
   SolRound,
   SolRoundAward,
+  TeamMember,
 } from 'src/entities';
 import { EvalAssessment } from 'src/entities/eval-assessment.entity';
-import { OpenerSerivice } from 'src/modules/evaluation/services/opener.service';
+import { OpenerService } from 'src/modules/evaluation/services/opener.service';
 import {
   CreateRoundDto,
   RoundDto,
 } from 'src/modules/solicitation/dtos/round.dto';
 import {
   EInvitationStatus,
+  ERfxItemStatus,
   ERfxStatus,
   ESolOfferStatus,
   ESolRoundStatus,
@@ -32,121 +39,33 @@ export class WorkflowHandlerService {
     private dataSource: DataSource,
     private readonly amqpConnection: AmqpConnection,
     private readonly schedulerService: SchedulerService,
-    private readonly openerService: OpenerSerivice,
+    private readonly openerService: OpenerService,
   ) {}
 
   emitEvent(exchange: string, routingKey: string, payload: any) {
     this.amqpConnection.publish(exchange, routingKey, payload);
   }
 
-  async handleEvaluationApproval(payload: any, entityManager: EntityManager) {
+  async handleEvaluationApproval(payload: any) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      await entityManager.queryRunner.manager.connection.transaction(
+      await queryRunner.manager.connection.transaction(
         async (entityManager) => {
-          const approvalStatus =
-            payload.status == 'Approved' ? 'APPROVED' : 'REJECTED';
-          const evalAssessmentRepo =
-            entityManager.getRepository(EvalAssessment);
-          const rfxRepo = entityManager.getRepository(RFX);
-          const productInvitationRepo =
-            entityManager.getRepository(RfxProductInvitation);
-
-          if (approvalStatus == 'APPROVED') {
-            const [assessments, rfxExists] = await Promise.all([
-              evalAssessmentRepo.find({
-                where: {
-                  rfxId: payload.itemId,
-                  isTeamAssessment: true,
-                },
-                select: {
-                  id: true,
-                  qualified: true,
-                  solRegistration: {
-                    id: true,
-                    rfxProductInvitations: {
-                      id: true,
-                    },
-                  },
-                },
-                relations: {
-                  solRegistration: {
-                    rfxProductInvitations: true,
-                  },
-                },
-              }),
-              rfxRepo.exists({
-                where: {
-                  id: payload.itemId,
-                  status: ERfxStatus.SUBMITTED_EVALUATION,
-                },
-              }),
-            ]);
-
-            if (!rfxExists)
-              throw new BadRequestException(
-                'RFQ on submitted evaluation status not found',
-              );
-
-            const compliedAssessmentsId = assessments
-              .filter((ev) => ev.qualified == EvaluationResponse.COMPLY)
-              .flatMap((item) =>
-                item.solRegistration.rfxProductInvitations.map(
-                  (invitation) => invitation.id,
-                ),
-              );
-
-            const notCompliedAssessmentsId = assessments
-              .filter((ev) => ev.qualified == EvaluationResponse.NOT_COMPLY)
-              .flatMap((item) =>
-                item.solRegistration.rfxProductInvitations.map(
-                  (invitation) => invitation.id,
-                ),
-              );
-
-            await Promise.all([
-              productInvitationRepo.update(
-                {
-                  id: In(compliedAssessmentsId),
-                },
-                {
-                  status: EInvitationStatus.COMPLY,
-                },
-              ),
-              productInvitationRepo.update(
-                {
-                  id: In(notCompliedAssessmentsId),
-                },
-                {
-                  status: EInvitationStatus.NOT_COMPLY,
-                },
-              ),
-            ]);
-
-            await this.calculateRoundWinner(payload.itemId, 0, entityManager);
-
-            const rounds = await this.scheduleNextRounds(
-              payload.itemId,
-              entityManager,
-            );
-            if (Array.isArray(rounds)) {
-              if (rounds.length == 0) {
-                await rfxRepo.update(payload.itemId, {
-                  status: ERfxStatus.ENDED,
-                });
-              } else {
-                await rfxRepo.update(payload.itemId, {
-                  status: ERfxStatus.AUCTION,
-                });
-
-                this.schedulerService.scheduleWithEncryption;
-              }
-            }
-            await this.scheduleRoundOpening(payload.itemId, entityManager);
+          if (payload.status == 'Approved') {
+            await this.approveEvaluation(payload.itemId, entityManager);
+          } else {
+            await this.updateEvaluationVersions(payload.itemId, entityManager);
           }
         },
       );
     } catch (error) {
+      if (error.status == 430) Logger.error(error, 'OpenerService');
+      else await queryRunner.rollbackTransaction();
       console.log(error);
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -318,49 +237,39 @@ export class WorkflowHandlerService {
   }
 
   async calculateRoundWinner(
-    rfxId: string,
-    round: number,
+    items: RFXItem[],
+    delta: number,
     entityManager: EntityManager,
   ) {
-    const rfxItemsRepo = entityManager.getRepository(RFXItem);
     const roundAwardRepo = entityManager.getRepository(SolRoundAward);
-    const bidProcedureRepo = entityManager.getRepository(RfxBidProcedure);
+    const openedOfferRepo = entityManager.getRepository(OpenedOffer);
+    const itemRepo = entityManager.getRepository(RFXItem);
 
-    const [items, bidProcedure] = await Promise.all([
-      rfxItemsRepo.find({
-        where: {
-          rfxId,
-          openedOffers: {
-            solRound: {
-              round,
-            },
-          },
-        },
-        relations: {
-          openedOffers: true,
-        },
-      }),
-      bidProcedureRepo.findOne({
-        where: {
-          rfxId,
-        },
-        select: {
-          id: true,
-          deltaPercentage: true,
-        },
-      }),
-    ]);
     const solRoundAwards = [];
+    const rankedOffers = [];
+
     for (const item of items) {
-      const minPriceOffer = item.openedOffers.reduce(
-        (minOffer, currentOffer) => {
-          return currentOffer.price < minOffer.price ? currentOffer : minOffer;
-        },
+      if (item.openedOffers.length == 0) {
+        await itemRepo.update(item.id, {
+          status: ERfxItemStatus.ENDED,
+        });
+        continue;
+      }
+      const sortedOffers = item.openedOffers.sort(
+        (a, b) => a.taxedPrice - b.taxedPrice,
       );
 
-      const decreament =
-        (minPriceOffer.price * bidProcedure.deltaPercentage) / 100;
-      const nextRoundStartingPrice = minPriceOffer.price - decreament;
+      const offerRank = sortedOffers.map((offer, index) => ({
+        ...offer,
+        updatedAt: undefined,
+        rank: index + 1,
+      }));
+      rankedOffers.push(...offerRank);
+
+      const minPriceOffer = sortedOffers[0];
+
+      const decrement = (minPriceOffer.price * delta) / 100;
+      const nextRoundStartingPrice = minPriceOffer.price - decrement;
 
       solRoundAwards.push({
         rfxProductInvitationId: minPriceOffer.rfxProductInvitationId,
@@ -374,7 +283,192 @@ export class WorkflowHandlerService {
     }
 
     const createdRoundAwards = roundAwardRepo.create(solRoundAwards);
-    await roundAwardRepo.insert(createdRoundAwards);
+    await Promise.all([
+      roundAwardRepo.insert(createdRoundAwards),
+      openedOfferRepo.upsert(rankedOffers, ['id']),
+    ]);
+  }
+
+  private async updateEvaluationVersions(
+    rfxId: string,
+    entityManager: EntityManager,
+  ) {
+    const rfxRepo = entityManager.getRepository(RFX);
+    const teamMembersRepo = entityManager.getRepository(TeamMember);
+
+    const rfx = await rfxRepo.findOne({
+      where: {
+        id: rfxId,
+      },
+      select: {
+        id: true,
+        version: true,
+      },
+    });
+    await Promise.all([
+      rfxRepo.update(rfxId, {
+        version: rfx.version + 1,
+        status: ERfxStatus.EVALUATION,
+      }),
+      teamMembersRepo.update(
+        {
+          rfxId,
+        },
+        {
+          hasEvaluated: false,
+        },
+      ),
+    ]);
+  }
+  private async approveEvaluation(rfxId: string, entityManager: EntityManager) {
+    const evalAssessmentRepo = entityManager.getRepository(EvalAssessment);
+    const rfxRepo = entityManager.getRepository(RFX);
+    const productInvitationRepo =
+      entityManager.getRepository(RfxProductInvitation);
+
+    const [assessments, rfxExists] = await Promise.all([
+      evalAssessmentRepo.find({
+        where: {
+          rfxId,
+          isTeamAssessment: true,
+        },
+        select: {
+          id: true,
+          qualified: true,
+          solRegistration: {
+            id: true,
+            rfxProductInvitations: {
+              id: true,
+            },
+          },
+        },
+        relations: {
+          solRegistration: {
+            rfxProductInvitations: true,
+          },
+        },
+      }),
+      rfxRepo.exists({
+        where: {
+          id: rfxId,
+          status: ERfxStatus.SUBMITTED_EVALUATION,
+        },
+      }),
+    ]);
+
+    if (!rfxExists)
+      throw new BadRequestException(
+        'RFQ on submitted evaluation status not found',
+      );
+
+    const compliedAssessmentsId = assessments
+      .filter((ev) => ev.qualified == EvaluationResponse.COMPLY)
+      .flatMap((item) =>
+        item.solRegistration.rfxProductInvitations.map(
+          (invitation) => invitation.id,
+        ),
+      );
+
+    const notCompliedAssessmentsId = assessments
+      .filter((ev) => ev.qualified == EvaluationResponse.NOT_COMPLY)
+      .flatMap((item) =>
+        item.solRegistration.rfxProductInvitations.map(
+          (invitation) => invitation.id,
+        ),
+      );
+
+    if (compliedAssessmentsId.length > 0) {
+      productInvitationRepo.update(
+        {
+          id: In(compliedAssessmentsId),
+        },
+        {
+          status: EInvitationStatus.COMPLY,
+        },
+      );
+    }
+    if (notCompliedAssessmentsId.length > 0) {
+      productInvitationRepo.update(
+        {
+          id: In(notCompliedAssessmentsId),
+        },
+        {
+          status: EInvitationStatus.NOT_COMPLY,
+        },
+      );
+    }
+
+    const [items, procedure] = await this.filterItems(rfxId, 0, entityManager);
+    await this.calculateRoundWinner(
+      items,
+      procedure.deltaPercentage,
+      entityManager,
+    );
+
+    const rounds = await this.scheduleNextRounds(rfxId, entityManager);
+    if (Array.isArray(rounds)) {
+      if (rounds.length == 0) {
+        await rfxRepo.update(rfxId, {
+          status: ERfxStatus.ENDED,
+        });
+      } else {
+        await rfxRepo.update(rfxId, {
+          status: ERfxStatus.AUCTION,
+        });
+      }
+    }
+    await this.scheduleRoundOpening(rfxId, entityManager);
+  }
+
+  private async filterItems(
+    rfxId: string,
+    round: number,
+    entityManager: EntityManager,
+  ): Promise<[RFXItem[], RfxBidProcedure]> {
+    const itemRepo = entityManager.getRepository(RFXItem);
+    const rfxRepo = entityManager.getRepository(RFX);
+    const roundRepo = entityManager.getRepository(SolRound);
+    const procedureRepo = entityManager.getRepository(RfxBidProcedure);
+
+    const [validItems, rfxBidProcedure] = await Promise.all([
+      itemRepo
+        .createQueryBuilder('rfx_items')
+        .where('rfx_items.rfxId = :rfxId', { rfxId })
+        .andWhere('rfx_items.status = :status', {
+          status: ERfxItemStatus.APPROVED,
+        })
+        .leftJoinAndSelect('rfx_items.openedOffers', 'openedOffers')
+        .leftJoin('openedOffers.solRound', 'solRound')
+        .leftJoin('openedOffers.rfxProductInvitation', 'rfxProductInvitations')
+        .where('solRound.round = :round', { round })
+        .andWhere('rfxProductInvitations.status IN (:...status)', {
+          status: [EInvitationStatus.ACCEPTED, EInvitationStatus.COMPLY],
+        })
+        .getMany(),
+      procedureRepo.findOne({
+        where: { rfxId },
+        select: { id: true, deltaPercentage: true },
+      }),
+    ]);
+
+    if (validItems.length == 0) {
+      await Promise.all([
+        rfxRepo.update(rfxId, {
+          status: ERfxStatus.ENDED,
+        }),
+        roundRepo.update(
+          { round: MoreThanOrEqual(round), rfxId },
+          {
+            status: ESolRoundStatus.CANCELLED,
+          },
+        ),
+      ]);
+      throw new NotFoundException(
+        `No valid items found for this RFQ id ${rfxId}`,
+      );
+    }
+
+    return [validItems, rfxBidProcedure];
   }
 
   private createRoundFromProcedure(rfxBidProcedure: RfxBidProcedure) {

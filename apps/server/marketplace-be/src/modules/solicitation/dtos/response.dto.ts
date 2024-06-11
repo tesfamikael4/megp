@@ -33,7 +33,7 @@ class DocumentResponseDto {
   @IsString()
   rfxDocumentaryEvidenceId: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => FileUploadDto })
   fileInfo: FileUploadDto;
 }
 

@@ -6,7 +6,7 @@ import { EntityManager, LessThan, MoreThan, Repository } from 'typeorm';
 import { CreateRoundDto, RoundDto } from '../dtos/round.dto';
 import { REQUEST } from '@nestjs/core';
 import { SchedulerService } from 'src/utils/services/scheduler.service';
-import { OpenerSerivice } from 'src/modules/evaluation/services/opener.service';
+import { OpenerService } from 'src/modules/evaluation/services/opener.service';
 import { ESolRoundStatus } from 'src/utils/enums';
 
 @Injectable()
@@ -16,9 +16,27 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
     private readonly solRoundRepository: Repository<SolRound>,
     @Inject(REQUEST) private readonly request: Request,
     private readonly schedulerService: SchedulerService,
-    private readonly openerService: OpenerSerivice,
+    private readonly openerService: OpenerService,
   ) {
     super(solRoundRepository);
+  }
+
+  async endedRounds(rfxId: string) {
+    const round = await this.solRoundRepository.findOne({
+      where: {
+        rfxId,
+        status: ESolRoundStatus.COMPLETED,
+      },
+      order: {
+        round: 'DESC',
+      },
+      select: {
+        id: true,
+        round: true,
+      },
+    });
+
+    return round.round;
   }
 
   async createZeroSolicitationRound(rfxBidProcedure: RfxBidProcedure) {

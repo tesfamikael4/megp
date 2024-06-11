@@ -63,6 +63,9 @@ export class RFX extends Audit {
   })
   status: ERfxStatus;
 
+  @Column({ default: 0 })
+  version: number;
+
   @Column({ type: 'jsonb', nullable: true })
   metadata: any;
 
