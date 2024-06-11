@@ -129,7 +129,7 @@ export default function MyInvitationsPage() {
         </Stack>
       </Modal>
       <Box className="p-6 bg-[#e7f4f7]">
-        <Box className=" w-full p-6 min-h-screen bg-white">
+        <Box className=" w-full p-6 bg-white min-h-screen ">
           <Flex direction={'column'} className="w-full py-2 mb-4 border-b-2">
             <Text fw={700} fz="xl" c={'#1D8E3F'}>
               My Invitations
