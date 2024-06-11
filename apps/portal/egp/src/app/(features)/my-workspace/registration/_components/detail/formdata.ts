@@ -47,6 +47,9 @@ export const formData: GetFormResponse = {
   lineOfBusiness: [],
   invoice: null,
   preferential: [],
+  ppdaRegistrationNumber: '',
+  ppdaRegistrationDate: '',
+  expiryDate: '',
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: '',
     mRA_TPINCertificate: '',

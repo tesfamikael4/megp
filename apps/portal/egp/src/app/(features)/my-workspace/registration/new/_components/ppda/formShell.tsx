@@ -203,6 +203,9 @@ export const AreasOfBusinessInterestForm = ({
         ...initialValues,
         areasOfBusinessInterest: getValues().areasOfBusinessInterest,
         lineOfBusiness: getValues().lineOfBusiness,
+        ppdaRegistrationNumber: getValues().ppdaRegistrationNumber,
+        ppdaRegistrationDate: getValues().ppdaRegistrationDate,
+        expiryDate: getValues().expiryDate,
         initial: {
           ...vendorInfo,
           level: 'payment',
@@ -288,14 +291,13 @@ export const AreasOfBusinessInterestForm = ({
                       maxDate={dayjs(new Date()).toDate()}
                       onChange={async (value: any) =>
                         value &&
-                        (await extendedRegister(
+                        setValue(
                           `ppdaRegistrationDate`,
-                        ).onChange(
                           dayjs(value)
                             .format('YYYY/MM/DD')
                             .toString()
                             .replace(/\//g, '-'),
-                        ))
+                        )
                       }
                     />
                     <DatePickerInput
@@ -310,7 +312,8 @@ export const AreasOfBusinessInterestForm = ({
                       {...extendedRegister(`expiryDate`)}
                       onChange={async (value: any) =>
                         value &&
-                        (await extendedRegister(`expiryDate`)).onChange(
+                        setValue(
+                          `expiryDate`,
                           dayjs(value)
                             .format('YYYY/MM/DD')
                             .toString()

@@ -86,6 +86,9 @@ export interface FormData {
   }[];
   areasOfBusinessInterest: AreasOfBusinessInterestType[] | [];
   lineOfBusiness: lineOfBusinessSchema[] | [];
+  ppdaRegistrationNumber: string;
+  ppdaRegistrationDate: string;
+  expiryDate: string;
   preferential: PreferentialTreatment[] | [];
   //TODO: Check this later
   invoice: InvoiceData | null;
