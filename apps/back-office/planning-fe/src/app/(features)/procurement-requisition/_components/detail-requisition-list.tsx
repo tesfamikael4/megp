@@ -34,13 +34,16 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
     },
     {
       key: 'Estimated Amount',
-      value: parseFloat(requisition.estimatedAmount).toLocaleString('en-US', {
-        style: 'currency',
-        currency: requisition.currency ?? 'MKW',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-        currencyDisplay: 'code',
-      }),
+      value: parseFloat(requisition.totalEstimatedAmount).toLocaleString(
+        'en-US',
+        {
+          style: 'currency',
+          currency: requisition.currency ?? 'MKW',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+          currencyDisplay: 'code',
+        },
+      ),
     },
     {
       key: 'Calculated Amount',
