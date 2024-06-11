@@ -201,7 +201,7 @@ export class OpenerService {
           continue;
         }
         const sortedOffers = item.openedOffers.sort(
-          (a, b) => a.taxedPrice - b.taxedPrice,
+          (a, b) => a.calculatedPrice - b.calculatedPrice,
         );
 
         const offerRank = sortedOffers.map((offer, index) => ({
@@ -331,12 +331,12 @@ export class OpenerService {
           salt,
         );
 
-        const taxedPrice = +result * (1 + +tax / 100);
+        const calculatedPrice = +result * (1 + +tax / 100);
 
         openedOffers.push({
           ...offer,
           solOfferId: offer.id,
-          taxedPrice,
+          calculatedPrice,
           price: +result,
           tax: +tax,
           createdAt: undefined,
