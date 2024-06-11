@@ -13,6 +13,7 @@ import { EntityManager } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import {
   BidOpeningChecklistAssessmentDetail,
+  Lot,
   Spd,
   SpdOpeningChecklist,
   Tender,
@@ -350,12 +351,26 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
           isCurrent: false,
         },
       );
-      await manager.getRepository(TenderMilestone).insert({
-        tenderId: itemData.tenderId,
-        milestoneNum: TenderMilestoneEnum.TechnicalCompliance,
-        milestoneTxt: 'TechnicalCompliance',
-        isCurrent: true,
+      const lots = await manager.getRepository(Lot).find({
+        where: {
+          tenderId: itemData.tenderId,
+        },
+        select: {
+          id: true,
+        },
       });
+
+      const tenderMilestone = lots.map((x) => {
+        return manager.getRepository(TenderMilestone).create({
+          lotId: x.id,
+          tenderId: itemData.tenderId,
+          milestoneNum: TenderMilestoneEnum.TechnicalCompliance,
+          milestoneTxt: 'TechnicalCompliance',
+          isCurrent: true,
+        });
+      });
+
+      await manager.getRepository(TenderMilestone).save(tenderMilestone);
 
       const bidOpeningChecklistAssessment = await manager
         .getRepository(BidOpeningChecklistAssessment)
