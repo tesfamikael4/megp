@@ -308,6 +308,7 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
           bidRegistrationDetail: {
             lotId,
           },
+          submit: true,
         },
       }),
       manager.getRepository(TeamMember).count({

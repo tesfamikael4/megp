@@ -357,6 +357,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
           bidRegistrationDetail: {
             lotId,
           },
+          submit: true,
         },
       }),
       manager.getRepository(TeamMember).count({

@@ -358,6 +358,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
               bidRegistrationDetail: {
                 lotId,
               },
+              submit: true,
             },
           },
         }),

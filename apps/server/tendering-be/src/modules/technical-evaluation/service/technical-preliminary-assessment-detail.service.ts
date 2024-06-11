@@ -52,61 +52,37 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const evaluatorId = req.user.userId;
     const isTeamAssessment = isTeam == 'teamLeader' ? true : false;
-    // const teamMember = this.isTeamMember(lotId, req.user.userId);
-    // if (!teamMember) {
-    //   throw new Error('You are not a team member');
-    // }
 
-    const [bidders, spdChecklistCount] = await Promise.all([
-      manager
-        .getRepository(BidOpeningChecklistAssessmentDetail)
-        .createQueryBuilder('BidOpeningChecklist')
-        .select('BidOpeningChecklist.bidderId', 'bidderId')
-        .addSelect('COUNT(*)', 'count')
-        .where('BidOpeningChecklist.isTeamLead = :isTeamLead', {
-          isTeamLead: true,
-        })
-        .andWhere('BidOpeningChecklist.checked = :checked', { checked: true })
-        .andWhere('BidOpeningChecklist.lotId = :lotId', { lotId })
-        .groupBy('BidOpeningChecklist.bidderId')
-        .orderBy('BidOpeningChecklist.bidderId')
-        .getRawMany(),
+    // const evaluatorId = req.user.userId;
 
-      manager.getRepository(SpdOpeningChecklist).count({
+    const [passed, spdChecklist] = await Promise.all([
+      await manager.getRepository(BiddersComparison).find({
         where: {
-          spd: {
-            tenderSpds: {
-              tender: {
-                lots: {
-                  id: lotId,
-                },
-              },
+          bidRegistrationDetail: {
+            lotId: lotId,
+          },
+          milestoneNum: 301,
+          bidderStatus: 302,
+          isCurrent: true,
+        },
+        relations: {
+          bidRegistrationDetail: {
+            bidRegistration: true,
+          },
+        },
+        select: {
+          id: true,
+          bidRegistrationDetail: {
+            id: true,
+            bidRegistration: {
+              id: true,
+              bidderId: true,
+              bidderName: true,
             },
           },
         },
       }),
-    ]);
-
-    const openingPassedBidders = [];
-    bidders.forEach((bidder) => {
-      if (bidder.count == spdChecklistCount) {
-        openingPassedBidders.push(bidder.bidderId);
-      }
-    });
-    const [passed, spdChecklist] = await Promise.all([
-      manager.getRepository(BidRegistration).find({
-        where: {
-          bidderId: In(openingPassedBidders),
-          bidRegistrationDetails: {
-            lotId,
-          },
-        },
-        select: {
-          bidderId: true,
-          bidderName: true,
-        },
-      }),
-      manager.getRepository(EqcPreliminaryExamination).find({
+      manager.getRepository(EqcPreliminaryExamination).findAndCount({
         where: {
           lotId,
         },
@@ -120,6 +96,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
       items: [],
       total: passed.length,
     };
+
     const checklists =
       await this.technicalPreliminaryAssessmentDetailRepository.find({
         where: {
@@ -127,7 +104,12 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
             bidRegistrationDetail: {
               lotId,
               bidRegistration: {
-                bidderId: In(passed.map((bidder) => bidder.bidderId)),
+                bidderId: In(
+                  passed.map(
+                    (bidder) =>
+                      bidder.bidRegistrationDetail.bidRegistration.bidderId,
+                  ),
+                ),
               },
             },
             evaluatorId,
@@ -144,30 +126,44 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
 
     for (const bidder of passed) {
       if (checklists.length == 0) {
-        response.items.push({ bidder, status: 'not started' });
+        response.items.push({
+          bidder: bidder.bidRegistrationDetail.bidRegistration,
+          status: 'not started',
+        });
       } else if (
-        spdChecklist.length ===
+        spdChecklist[1] ===
         checklists.filter(
           (x) =>
             x.technicalPreliminaryAssessment.bidRegistrationDetail
-              .bidRegistration.bidderId == bidder.bidderId &&
+              .bidRegistration.bidderId ==
+              bidder.bidRegistrationDetail.bidRegistration.bidderId &&
             x.technicalPreliminaryAssessment.isTeamAssessment ==
               isTeamAssessment,
         ).length
       ) {
-        response.items.push({ bidder, status: 'completed' });
+        response.items.push({
+          bidder: bidder.bidRegistrationDetail.bidRegistration,
+          status: 'completed',
+        });
       } else if (
         checklists.filter(
           (x) =>
             x.technicalPreliminaryAssessment.bidRegistrationDetail
-              .bidRegistration.bidderId == bidder.bidderId &&
+              .bidRegistration.bidderId ==
+              bidder.bidRegistrationDetail.bidRegistration.bidderId &&
             x.technicalPreliminaryAssessment.isTeamAssessment ==
               isTeamAssessment,
         ).length == 0
       ) {
-        response.items.push({ bidder, status: 'not started' });
+        response.items.push({
+          bidder: bidder.bidRegistrationDetail.bidRegistration,
+          status: 'not started',
+        });
       } else {
-        response.items.push({ bidder, status: 'in progress' });
+        response.items.push({
+          bidder: bidder.bidRegistrationDetail.bidRegistration,
+          status: 'in progress',
+        });
       }
     }
     return response;
@@ -551,6 +547,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
           bidRegistrationDetail: {
             lotId,
           },
+          submit: true,
         },
       }),
       manager.getRepository(TeamMember).count({
