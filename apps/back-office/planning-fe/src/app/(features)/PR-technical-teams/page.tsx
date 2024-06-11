@@ -27,7 +27,6 @@ export default function ProcurementRequisition() {
         width: 250,
         sortable: true,
       },
-      { accessor: 'status', title: 'Status', width: 100, sortable: true },
       {
         accessor: 'totalEstimatedAmount',
         title: 'Total Amount',
