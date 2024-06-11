@@ -256,7 +256,7 @@ export class WorkflowHandlerService {
         continue;
       }
       const sortedOffers = item.openedOffers.sort(
-        (a, b) => a.taxedPrice - b.taxedPrice,
+        (a, b) => a.calculatedPrice - b.calculatedPrice,
       );
 
       const offerRank = sortedOffers.map((offer, index) => ({

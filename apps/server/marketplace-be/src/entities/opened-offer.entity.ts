@@ -35,7 +35,7 @@ export class OpenedOffer extends Audit {
   rank: number;
 
   @Column()
-  taxedPrice: number;
+  calculatedPrice: number;
 
   @Column({
     type: 'enum',
