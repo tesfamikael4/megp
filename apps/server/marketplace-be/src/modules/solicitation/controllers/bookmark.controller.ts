@@ -9,7 +9,6 @@ import {
 import { SolBookmarkService } from '../services/bookmark.service';
 import { SolBookmark } from 'src/entities';
 import { CreateBookmarkDto, UpdateBookmarkDto } from '../dtos/bookmark.dto';
-// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxId',

@@ -15,13 +15,22 @@ import { OpenedResponse } from './opened-response.entity';
 import { SolRegistration } from './sol-registration.entity';
 
 @Entity({ name: 'eval_responses' })
-@Unique(['teamMemberId', 'rfxId', 'isTeamAssessment', 'openedResponseId'])
+@Unique([
+  'teamMemberId',
+  'rfxId',
+  'isTeamAssessment',
+  'openedResponseId',
+  'version',
+])
 export class EvalResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'boolean', default: false })
   isTeamAssessment: boolean;
+
+  @Column({ default: 0 })
+  version: number;
 
   @Column({
     type: 'enum',

@@ -49,7 +49,12 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
 
     const rfxBidQualification =
       this.rfxDocumentaryEvidenceRepository.create(itemData);
-    await this.rfxDocumentaryEvidenceRepository.insert(rfxBidQualification);
+    await this.rfxDocumentaryEvidenceRepository.upsert(rfxBidQualification, {
+      conflictPaths: {
+        rfxId: true,
+        order: true,
+      },
+    });
     return rfxBidQualification;
   }
 

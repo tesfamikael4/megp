@@ -8,7 +8,6 @@ import {
 import { SolRoundService } from '../services/round.service';
 import { SolRound } from 'src/entities';
 import { CreateRoundDto, UpdateRoundDto } from '../dtos/round.dto';
-// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxId',
@@ -19,10 +18,14 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('sol-rounds')
 @ApiTags('Sol Rounds')
-// @UseGuards(JwtGuard, VendorGuard())
 export class SolRoundController extends ExtraCrudController<SolRound>(options) {
   constructor(private readonly solRemarkService: SolRoundService) {
     super(solRemarkService);
+  }
+
+  @Get('ended-round/:rfxId')
+  async getLastRound(@Param('rfxId') rfxId: string) {
+    return this.solRemarkService.endedRounds(rfxId);
   }
 
   @Get('current-round/:rfxId')

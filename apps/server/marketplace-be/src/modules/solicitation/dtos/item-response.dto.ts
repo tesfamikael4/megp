@@ -7,7 +7,7 @@ class DocumentResponseDto {
   @IsString()
   key: string;
 
-  @ApiProperty()
+  // @ApiProperty({ type: () => FileUploadDto })
   fileInfo: FileUploadDto;
 }
 
@@ -21,7 +21,7 @@ export class CreateSolItemResponseDto {
   @IsUUID()
   vendorId: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => DocumentResponseDto })
   value: DocumentResponseDto;
 }
 

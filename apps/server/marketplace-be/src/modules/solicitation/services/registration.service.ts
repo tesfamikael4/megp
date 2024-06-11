@@ -7,18 +7,12 @@ import {
   ExtraCrudService,
   QueryConstructor,
 } from 'megp-shared-be';
-import {
-  RFX,
-  RfxProductInvitation,
-  SolBookmark,
-  SolRegistration,
-} from 'src/entities';
+import { RFX, SolBookmark, SolRegistration } from 'src/entities';
 import { EntityManager, Repository } from 'typeorm';
 import { EncryptionHelperService } from '../../../utils/services/encryption-helper.service';
 import { REQUEST } from '@nestjs/core';
 import { CreateRegistrationDto } from '../dtos/registration.dto';
 import {
-  EInvitationStatus,
   ERfxStatus,
   ESolBookmarkStatus,
   ESolRegistrationStatus,
@@ -60,14 +54,14 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     const vendorId = req.user.organization.id;
     const vendorName = req.user.organization.name;
 
-    const registedVendor = await this.solRegistrationRepository.count({
+    const registeredVendor = await this.solRegistrationRepository.count({
       where: {
         rfxId: itemData.rfxId,
         vendorId,
       },
     });
 
-    if (registedVendor > 0) {
+    if (registeredVendor > 0) {
       throw new BadRequestException('RFQ Already Registered');
     }
 

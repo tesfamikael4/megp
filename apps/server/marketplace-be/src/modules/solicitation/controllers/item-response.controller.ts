@@ -12,7 +12,6 @@ import {
   CreateSolItemResponseDto,
   UpdateSolItemResponseDto,
 } from '../dtos/item-response.dto';
-// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxItemId',

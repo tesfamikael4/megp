@@ -36,4 +36,5 @@ export class CreateEvalResponseDto {
 
   openedResponseId: string;
   teamMemberId: string;
+  version: number;
 }

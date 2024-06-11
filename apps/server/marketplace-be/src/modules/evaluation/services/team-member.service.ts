@@ -4,13 +4,12 @@ import {
   CollectionQuery,
   DataResponseFormat,
   ExtraCrudService,
-  FilterOperators,
   QueryConstructor,
 } from 'megp-shared-be';
 import { RFX, SolRegistration, TeamMember } from 'src/entities';
 import { Repository } from 'typeorm';
 import { CreateTeamMemberDto } from '../dtos/team-member.dto';
-import { ERfxStatus, ESolBookmarkStatus } from 'src/utils/enums';
+import { ESolBookmarkStatus } from 'src/utils/enums';
 
 @Injectable()
 export class TeamMemberService extends ExtraCrudService<TeamMember> {
@@ -34,18 +33,13 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
       },
     });
   }
+
   async create(itemData: CreateTeamMemberDto, req?: any): Promise<any> {
-    const [rfx, teamMemberCount] = await Promise.all([
-      this.rfxRepository.exists({ where: { id: itemData.rfxId } }),
-      this.teamMemberRepository.count({ where: { rfxId: itemData.rfxId } }),
-    ]);
+    const rfx = await this.rfxRepository.exists({
+      where: { id: itemData.rfxId },
+    });
 
     if (!rfx) throw new Error('RFQ Not Found');
-
-    if (itemData.members.length + teamMemberCount > 3)
-      throw new Error(
-        'Team Member Limit Exceeded: Maximum number allowed team members for a given RFQs is 3',
-      );
 
     const members = itemData.members.map((item: any) => {
       item.rfxId = itemData.rfxId;
@@ -55,7 +49,12 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
     });
 
     const item = this.teamMemberRepository.create(members);
-    await this.teamMemberRepository.insert(item);
+    await this.teamMemberRepository.upsert(item, {
+      conflictPaths: {
+        rfxId: true,
+        personnelId: true,
+      },
+    });
     return item;
   }
 
@@ -96,6 +95,9 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
         id: true,
       },
     });
+
+    if (!teamMember) throw new Error('Team Member Not Found');
+
     const dataQuery = QueryConstructor.constructQuery<SolRegistration>(
       this.solRegistrationRepository,
       query,

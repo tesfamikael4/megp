@@ -43,7 +43,7 @@ import { RfxRevisionApprovalService } from './services/rfx-revision-approval.ser
 import { SolicitationModule } from '../solicitation/solicitation.module';
 import { WorkflowHandlerService } from './services/workflow-handler.service';
 import { WorkflowHandlerController } from './controllers/workflow-handler.controller';
-import { OpenerSerivice } from '../evaluation/services/opener.service';
+import { OpenerService } from '../evaluation/services/opener.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 @Module({
@@ -104,7 +104,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     RfxDocumentaryEvidenceService,
     RfxRevisionApprovalService,
     WorkflowHandlerService,
-    OpenerSerivice,
+    OpenerService,
   ],
 })
 export class RfxModule {}

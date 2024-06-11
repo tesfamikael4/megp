@@ -40,12 +40,11 @@ export class WorkflowHandlerController {
       console.log({ err });
     },
   })
-  async rfxEvaluationApprova(payload: any, amqpMsg: ConsumeMessage) {
+  async rfxEvaluationApproval(payload: any, amqpMsg: ConsumeMessage) {
     if (amqpMsg.fields.routingKey === 'marketplace.rfxEvaluationApproval') {
       console.log({ payload });
       return await this.workflowHandlerService.handleEvaluationApproval(
         payload,
-        payload['ENTITY_MANAGER'],
       );
     }
     if (amqpMsg.fields.routingKey === 'marketplace.approval') {

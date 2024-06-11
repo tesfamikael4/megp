@@ -13,13 +13,22 @@ import { RFX } from './rfx.entity';
 import { TeamMember } from './team-member.entity';
 
 @Entity({ name: 'eval_assessments' })
-@Unique(['teamMemberId', 'rfxId', 'isTeamAssessment', 'solRegistrationId'])
+@Unique([
+  'teamMemberId',
+  'rfxId',
+  'isTeamAssessment',
+  'solRegistrationId',
+  'version',
+])
 export class EvalAssessment extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'boolean', default: false })
   isTeamAssessment: boolean;
+
+  @Column({ default: 0 })
+  version: number;
 
   @Column({
     type: 'enum',

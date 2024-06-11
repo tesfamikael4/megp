@@ -6,6 +6,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { EvalResponse } from './eval-response.entity';
 import { EvalItemResponse } from './eval-item-response.entity';
@@ -13,6 +14,7 @@ import { RFX } from '.';
 import { EvalAssessment } from './eval-assessment.entity';
 
 @Entity({ name: 'team_members' })
+@Unique(['rfxId', 'personnelId'])
 export class TeamMember extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

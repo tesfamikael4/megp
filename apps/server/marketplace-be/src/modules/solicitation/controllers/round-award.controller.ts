@@ -1,13 +1,13 @@
-import { Controller, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import {
   ExtraCrudOptions,
   ExtraCrudController,
   JwtGuard,
+  decodeCollectionQuery,
 } from 'megp-shared-be';
 import { SolRoundAward } from 'src/entities';
 import { SolRoundAwardService } from '../services/round-award.service';
-// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxItemId',
@@ -20,7 +20,27 @@ const options: ExtraCrudOptions = {
 export class SolRoundAwardController extends ExtraCrudController<SolRoundAward>(
   options,
 ) {
-  constructor(private readonly rfxRepsonseItemService: SolRoundAwardService) {
-    super(rfxRepsonseItemService);
+  constructor(private readonly rfxResponseItemService: SolRoundAwardService) {
+    super(rfxResponseItemService);
+  }
+
+  @Get('round-winner/:rfxItemId/:round')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getRoundWinner(
+    @Param('rfxItemId') rfxItemId: string,
+    @Param('round') round: number,
+    @Query('q') q?: string,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.rfxResponseItemService.listResult(
+      rfxItemId,
+      round,
+      query,
+    );
   }
 }

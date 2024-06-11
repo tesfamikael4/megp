@@ -15,11 +15,13 @@ import {
   JwtGuard,
   decodeCollectionQuery,
 } from 'megp-shared-be';
-import { ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RfxProductInvitation } from 'src/entities/rfx-product-invitation.entity';
 import { RfxProductInvitationService } from '../services/rfx-product-invitation.service';
-import { CreateRfxBidInvitationDto } from '../dtos/rfx-bid-invitaiton.dto';
-// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
+import {
+  ApplyRfxProductInvitationDto,
+  CreateRfxBidInvitationDto,
+} from '../dtos/rfx-bid-invitaiton.dto';
 
 const option = {
   entityIdName: 'rfxItemId',
@@ -40,7 +42,10 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
 
   @Post('apply-on-invitation')
   @ApiBody({})
-  async applyOnInvtitation(@Body() itemData: any, @CurrentUser() user: any) {
+  async applyOnInvitation(
+    @Body() itemData: ApplyRfxProductInvitationDto,
+    @CurrentUser() user: any,
+  ) {
     return await this.rfxBidInvitationService.applyOnInvitation(itemData, user);
   }
 
@@ -73,6 +78,10 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
+  @ApiOperation({
+    summary:
+      'List of RFX Product Invitations for a given RFX filtered by the vendors Id with joined offers and previous awards for setting the starting price of the next round.',
+  })
   async myRfxInvitations(
     @Param('rfxId') rfxId: string,
     @CurrentUser() user: any,
@@ -93,6 +102,10 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
+  @ApiOperation({
+    summary:
+      'List of RFX Product Invitations for a given RFX filtered by the vendors Id',
+  })
   async myItemInvitations(
     @Param('rfxItemId') rfxItemId: string,
     @CurrentUser() user: any,
@@ -107,6 +120,9 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
   }
 
   @Get('my-item-detail/:rfxItemId')
+  @ApiOperation({
+    summary: 'RFX Item detail',
+  })
   async myItemDetails(
     @Param('rfxItemId') rfxItemId: string,
     @CurrentUser() user: any,
@@ -121,6 +137,10 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
+  @ApiOperation({
+    summary:
+      'List of items for a given RFX. Includes previousCount attribute to check if the user has already submitted an item for the RFX in the previous round',
+  })
   async myRfxItems(
     @Param('rfxId') rfxId: string,
     @CurrentUser() user: any,
@@ -131,6 +151,9 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
   }
 
   @Get('my-rfx-detail/:rfxId')
+  @ApiOperation({
+    summary: 'Selected RFX with procedure and rounds for dashboard',
+  })
   async myRfxDetails(@Param('rfxId') rfxId: string, @CurrentUser() user: any) {
     return await this.rfxBidInvitationService.myRfxDetail(rfxId, user);
   }
@@ -141,6 +164,10 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
     type: String,
     description: 'Collection Query Parameter. Optional',
     required: false,
+  })
+  @ApiOperation({
+    summary:
+      'List of approved RFXes for a vendor. This list is filtered by product invitation"s vendor id',
   })
   async myInvitations(@CurrentUser() user: any, @Query('q') q?: string) {
     const query = decodeCollectionQuery(q);

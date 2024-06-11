@@ -36,7 +36,7 @@ export class CreateOfferDto {
   encryptedTax: string;
 }
 
-export class UpdateOferDto extends CreateOfferDto {
+export class UpdateOfferDto extends CreateOfferDto {
   @ApiProperty()
   @IsUUID()
   id: string;

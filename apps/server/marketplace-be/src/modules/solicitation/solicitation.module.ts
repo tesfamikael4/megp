@@ -3,6 +3,7 @@ import { SolRegistrationController } from './controllers/registration.controller
 import { SolRegistrationService } from './services/registration.service';
 import {
   OpenedItemResponse,
+  OpenedOffer,
   OpenedResponse,
   RFX,
   RFXItem,
@@ -28,8 +29,10 @@ import { SolResponseController } from './controllers/response.controller';
 import { SolResponseService } from './services/response.service';
 import { MinIOModule } from 'megp-shared-be';
 import { UtilityModule } from 'src/utils/utils.module';
-import { OpenerSerivice } from '../evaluation/services/opener.service';
+import { OpenerService } from '../evaluation/services/opener.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { SolRoundAwardController } from './controllers/round-award.controller';
+import { SolRoundAwardService } from './services/round-award.service';
 
 @Module({
   imports: [
@@ -43,6 +46,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
       SolRoundAward,
       RFX,
       RFXItem,
+      OpenedOffer,
       OpenedResponse,
       OpenedItemResponse,
     ]),
@@ -66,7 +70,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     SolOfferController,
     SolItemResponseController,
     SolResponseController,
-    SolRoundController,
+    SolRoundAwardController,
   ],
   providers: [
     SolBookmarkService,
@@ -76,8 +80,8 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     SolItemResponseService,
     SolResponseService,
     EncryptionHelperService,
-    OpenerSerivice,
-    SolRoundService,
+    OpenerService,
+    SolRoundAwardService,
   ],
   exports: [SolRoundService],
 })

@@ -8,7 +8,7 @@ import { SolRound } from 'src/entities';
 import { ESolRoundStatus } from 'src/utils/enums';
 import { SchedulerService } from 'src/utils/services/scheduler.service';
 import { In, MoreThanOrEqual, Not, Repository } from 'typeorm';
-import { OpenerSerivice } from './opener.service';
+import { OpenerService } from './opener.service';
 
 @Injectable()
 export class ReSchedulerService implements OnModuleInit {
@@ -16,7 +16,7 @@ export class ReSchedulerService implements OnModuleInit {
     @InjectRepository(SolRound)
     private readonly solRoundRepository: Repository<SolRound>,
     private readonly schedulerService: SchedulerService,
-    private readonly openerService: OpenerSerivice,
+    private readonly openerService: OpenerService,
   ) {}
 
   async onModuleInit() {

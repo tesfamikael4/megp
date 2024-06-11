@@ -31,6 +31,12 @@ export class OpenedOffer extends Audit {
   @Column()
   tax: number;
 
+  @Column({ nullable: true })
+  rank: number;
+
+  @Column()
+  taxedPrice: number;
+
   @Column({
     type: 'enum',
     enum: ESolOfferStatus,

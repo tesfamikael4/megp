@@ -18,7 +18,6 @@ import {
   CreateRegistrationDto,
   UpdateRegistrationDto,
 } from '../dtos/registration.dto';
-// import { VendorGuard } from 'megp-shared-be/src/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxId',

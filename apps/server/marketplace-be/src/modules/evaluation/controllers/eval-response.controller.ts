@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   CurrentUser,
@@ -9,6 +9,8 @@ import { EvalResponse } from 'src/entities';
 import { EvalResponseService } from '../services/eval-response.service';
 import { CreateEvalResponseDto } from '../dtos/eval-response.dto';
 import { DeepPartial } from 'typeorm';
+import { RfxVersion } from 'src/utils/decorators/rfx-version.decorators';
+import { VersionOptions } from '@nestjs/common/interfaces';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'rfxId',
@@ -45,16 +47,20 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
   async getTeamMembersEvaluation(
     @Param('rfxDocumentaryEvidenceId') rfxDocumentaryEvidenceId: string,
     @Param('solRegistrationId') solRegistrationId: string,
+    @RfxVersion('version') version: number,
     @CurrentUser() user: any,
   ) {
     return await this.evalReponseService.getTeamMembersEvaluations(
       rfxDocumentaryEvidenceId,
       solRegistrationId,
+      version,
       user,
     );
   }
 
-  @Get('my-response/:rfxId/:rfxDocumentaryEvidenceId/:isTeamAssessment')
+  @Get(
+    'my-response/:solRegistrationId/:rfxDocumentaryEvidenceId/:isTeamAssessment',
+  )
   @ApiOperation({
     summary: 'Gets my evaluation for vendor for a specific document',
   })
@@ -62,12 +68,14 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
     @Param('solRegistrationId') solRegistrationId: string,
     @Param('rfxDocumentaryEvidenceId') rfxDocumentaryEvidenceId: string,
     @Param('isTeamAssessment') isTeamAssessment: boolean,
+    @RfxVersion('version') version: number,
     @CurrentUser() user: any,
   ) {
     return await this.evalReponseService.getEvaluation(
       solRegistrationId,
       rfxDocumentaryEvidenceId,
       isTeamAssessment,
+      version,
       user,
     );
   }
@@ -98,11 +106,13 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
   async canSubmitEvaluation(
     @Param('solRegistrationId') solRegistrationId: string,
     @Param('isTeamAssessment') isTeamAssessment: boolean,
+    @RfxVersion('version') version: number,
     @CurrentUser() user: any,
   ) {
     return await this.evalReponseService.canSubmitVendorEvaluation(
       solRegistrationId,
       isTeamAssessment,
+      version,
       user,
     );
   }
@@ -115,11 +125,13 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
   async submitVendorEvaluation(
     @Param('solRegistrationId') solRegistrationId: string,
     @Param('isTeamAssessment') isTeamAssessment: boolean,
+    @RfxVersion('version') version: number,
     @CurrentUser() user: any,
   ) {
     return await this.evalReponseService.submitVendorEvaluataion(
       solRegistrationId,
       isTeamAssessment,
+      version,
       user,
     );
   }
@@ -133,11 +145,13 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
   async canSubmitRfxEvaluation(
     @Param('rfxId') rfxId: string,
     @Param('isTeamAssessment') isTeamAssessment: boolean,
+    @RfxVersion('version') version: number,
     @CurrentUser() user: any,
   ) {
     return await this.evalReponseService.canSubmitRfxEvaluation(
       rfxId,
       isTeamAssessment,
+      version,
       user,
     );
   }
@@ -151,18 +165,24 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
     @Param('rfxId') rfxId: string,
     @Param('solRegistrationId') solRegistrationId: string,
     @Param('isTeamAssessment') isTeamAssessment: boolean,
+    @RfxVersion('version') version: number,
     @CurrentUser() user: any,
   ) {
     return await this.evalReponseService.myResponses(
       rfxId,
       solRegistrationId,
       isTeamAssessment,
+      version,
       user,
     );
   }
 
-  // @Patch('submit/:rfxId')
-  // async submitEvaluation(@Param('rfxId') rfxId: string) {
-  //   return await this.evalReponseService.submitEvaluation(rfxId);
-  // }
+  @Post()
+  async createEvaluationResponse(
+    @Body() itemData: CreateEvalResponseDto,
+    @RfxVersion('version') version: number,
+    @Req() req: any,
+  ) {
+    return await this.evalReponseService.create(itemData, version, req);
+  }
 }
