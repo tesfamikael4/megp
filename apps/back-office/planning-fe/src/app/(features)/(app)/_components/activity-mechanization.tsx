@@ -145,7 +145,6 @@ export const ActivityMechanization = ({
     useLazyReadPostActivityQuery();
 
   const { id } = useParams();
-  // const [procurementMethodId, setProcurementMethodId] = useState('');
   const [contract, setContract] = useState({});
   const [mode, setMode] = useState<'new' | 'detail'>('new');
   const [justifications, setJustifications] = useState<Record<string, any>>({});
@@ -429,6 +428,13 @@ export const ActivityMechanization = ({
     isGetPrMechanismSuccess,
     prmechanism,
   ]);
+
+  useEffect(() => {
+    if (page == 'pr') {
+      setValue('isOnline', true);
+    }
+  }, [page]);
+
   return (
     <Section title="Procurement Method" collapsible={false}>
       <div className="flex gap-4">
@@ -492,8 +498,7 @@ export const ActivityMechanization = ({
                 { label: 'Offline', value: 'false' },
               ]}
               errors={errors}
-              disableFields={page === 'pr' ? true : disableFields}
-              defaultValue={page === 'pr' ? 'true' : ''}
+              disableFields={disableFields || page === 'pr'}
             />
           </Flex>
           {(fundingSource == 'Loan' || fundingSource == 'Donor') && (
