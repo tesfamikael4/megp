@@ -2,12 +2,11 @@ import { MenuItem } from '@megp/core-fe';
 import {
   IconAdjustmentsHorizontal,
   IconBuildingBank,
-  IconChecklist,
   IconList,
   IconListCheck,
 } from '@tabler/icons-react';
 import { IconArrowFork, IconVersions } from '@tabler/icons-react';
-import { IconClipboardCheck, IconPageBreak } from '@tabler/icons-react';
+import { IconPageBreak } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
   {
