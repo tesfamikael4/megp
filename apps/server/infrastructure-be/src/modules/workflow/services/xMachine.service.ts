@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Step } from 'src/entities';
+import { Step, Workflow } from 'src/entities';
 import { Instance } from 'src/entities/instance.entity';
 import { InstanceStep } from 'src/entities/instance-step.entity';
+import { State } from 'src/entities/state.entity';
 import { In, Not, Repository } from 'typeorm';
 import { setup } from 'xstate';
 import axios from 'axios';
+import { ClientProxy } from '@nestjs/microservices';
 import { Activity } from 'src/entities/activity.entity';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import e from 'express';
 
 interface StateMachineConfig {
   states: {
@@ -41,19 +43,36 @@ export class XMachineService {
     @InjectRepository(Activity)
     private readonly repositoryActivity: Repository<Activity>,
 
-    private readonly amqpConnection: AmqpConnection,
-
     // private readonly instanceService: InstanceService,
-    // @Inject('WORKFLOW_RMQ_SERVICE')
-    // private readonly workflowRMQClient: ClientProxy,
+    @Inject('PLANNING_RMQ_SERVICE')
+    private readonly planningRMQClient: ClientProxy,
 
-    // @Inject('TENDERING_RMQ_SERVICE')
-    // private readonly tenderingRMQClient: ClientProxy,
-    // @Inject('PLANNING_RMQ_SERVICE')
-    // private readonly planningRMQClient: ClientProxy,
-    // @Inject('MARKETPLACE_RMQ_SERVICE')
-    // private readonly marketplaceRMQClient: ClientProxy,
+    @Inject('MARKETPLACE_RMQ_SERVICE')
+    private readonly marketplaceRMQClient: ClientProxy,
+
+    @Inject('TENDERING_RMQ_SERVICE')
+    private readonly tenderingRMQClient: ClientProxy,
   ) {}
+
+  private async emitEvent(
+    workflowName: string,
+    activityName: string,
+    status: string,
+    activityId: string,
+    itemId: string,
+  ) {
+    const clientMap = {
+      planning: this.planningRMQClient,
+      marketplace: this.marketplaceRMQClient,
+      tendering: this.tenderingRMQClient,
+    };
+
+    const client = clientMap[workflowName];
+    if (client) {
+      const eventName = `${workflowName}-workflow.${activityName}`;
+      await client.emit(eventName, { status, activityId, itemId }).toPromise();
+    }
+  }
 
   async createMachineConfig(
     activityId: string,
@@ -133,15 +152,12 @@ export class XMachineService {
                     workflow: true,
                   },
                 });
-
-                this.amqpConnection.publish(
-                  'workflow-broadcast-exchanges',
-                  `${acti.workflow.name}-workflow.${acti.name}`,
-                  {
-                    status: params.status,
-                    activityId: activityId,
-                    itemId: existingData.itemId,
-                  },
+                await this.emitEvent(
+                  acti.workflow.name,
+                  acti.name,
+                  params.status,
+                  activityId,
+                  existingData.itemId,
                 );
               }
             } else {
