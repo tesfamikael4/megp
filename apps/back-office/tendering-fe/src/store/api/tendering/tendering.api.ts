@@ -108,12 +108,39 @@ export const tenderingApi = createApi({
         bidderId: string;
       }) => `/opening/get-bidder-detail/${tenderId}/${lotId}/${bidderId}`,
     }),
+    getItemDetails: builder.query<any, any>({
+      query: ({
+        tenderId,
+        lotId,
+        itemId,
+      }: {
+        tenderId: string;
+        lotId: string;
+        itemId: string;
+      }) => `/opening/get-item-detail/${tenderId}/${lotId}/${itemId}`,
+    }),
+    getItemBidderDetails: builder.query<any, any>({
+      query: ({
+        tenderId,
+        lotId,
+        itemId,
+        bidderId,
+      }: {
+        tenderId: string;
+        lotId: string;
+        itemId: string;
+        bidderId: string;
+      }) =>
+        `/opening/get-bidder-item-detail/${tenderId}/${lotId}/${bidderId}/${itemId}`,
+    }),
   }),
 });
 
 export const {
   useLazyGetLotsByTenderIdQuery,
   useLazyGetTenderDetailQuery,
+  useLazyGetItemDetailsQuery,
+  useLazyGetItemBidderDetailsQuery,
   useLazyGetAllbiddersByTenderIdQuery,
   useLazyGetLotDetailQuery,
   useLazyGetBidderDetailsQuery,

@@ -1,19 +1,52 @@
 'use client';
-import { useLazyGetItemDetailsQuery } from '@/store/api/tendering/tendering.api';
-import { Badge, Box, Flex, LoadingOverlay, Text } from '@mantine/core';
-import { Section } from '@megp/core-fe';
+import { useCompleteResponsivenessEvaluationMutation } from '@/store/api/tendering/technical-responsiveness.api';
+import { useLazyGetItemBidderDetailsQuery } from '@/store/api/tendering/tendering.api';
+import { Badge, Box, Button, Flex, LoadingOverlay, Text } from '@mantine/core';
+import { Section, notify } from '@megp/core-fe';
 import { IconChevronLeft } from '@tabler/icons-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export const ItemsOverview = ({ basePath }: { basePath: string }) => {
-  const { tenderId, lotId, itemId } = useParams();
+export const ItemBidderOverView = ({
+  basePath,
+  teamAssessment = false,
+}: {
+  basePath: string;
+  teamAssessment?: boolean;
+}) => {
+  const { tenderId, lotId, bidderId, itemId } = useParams();
   const router = useRouter();
-  const [getItem, { data, isLoading }] = useLazyGetItemDetailsQuery();
+  const pathname = usePathname();
+  const [getBidder, { data, isLoading }] = useLazyGetItemBidderDetailsQuery();
+  const [
+    completeResponsivenessEvaluation,
+    { isLoading: isResponsivenessCompleting },
+  ] = useCompleteResponsivenessEvaluationMutation();
 
   useEffect(() => {
-    getItem({ tenderId, lotId, itemId });
+    getBidder({
+      tenderId,
+      lotId,
+      itemId,
+      bidderId,
+    });
   }, [tenderId]);
+
+  const complete = async () => {
+    try {
+      await completeResponsivenessEvaluation({
+        lotId: lotId as string,
+        bidderId: bidderId as string,
+        itemId: itemId as string,
+        isTeamLead: pathname.includes('team-assessment'),
+      }).unwrap();
+
+      notify('Success', 'completed successfully');
+      router.push(basePath);
+    } catch {
+      notify('Error', 'Something went wrong');
+    }
+  };
   return (
     <Box pos="relative">
       <LoadingOverlay visible={isLoading} />
@@ -25,14 +58,25 @@ export const ItemsOverview = ({ basePath }: { basePath: string }) => {
               className="font-semibold text-lg"
               onClick={() => router.push(basePath)}
             >
-              Item :{' '}
+              Item :
               <Text span className="font-normal text-lg">
-                {data?.lots?.[0]?.items?.[0]?.name ?? ''}
+                {data?.bidRegistrations?.[0]?.bidderName ?? ''}
               </Text>
             </Text>
+            {teamAssessment && (
+              <Badge className="ml-5" size="xs">
+                Team Assessment
+              </Badge>
+            )}
           </Flex>
         }
+        subTitle={'Bidder : ' + data?.bidRegistrations?.[0]?.bidderName ?? ''}
         collapsible={false}
+        action={
+          <Button onClick={complete} loading={isResponsivenessCompleting}>
+            Complete
+          </Button>
+        }
       >
         <Flex gap={20}>
           <Box className="w-full">
@@ -45,7 +89,7 @@ export const ItemsOverview = ({ basePath }: { basePath: string }) => {
                   Envelope :
                 </Text>
                 <Text fw={500} size="sm">
-                  Bid :
+                  Award Type :
                 </Text>
               </Box>
               <Box>
@@ -79,7 +123,7 @@ export const ItemsOverview = ({ basePath }: { basePath: string }) => {
                 </Text>
               </Box>
               <Box>
-                <p>{data?.lots?.[0]?.name ?? ''}</p>
+                {data?.lots?.[0]?.name && <p>{data?.lots?.[0]?.name}</p>}
                 <Text size="sm">
                   {data?.bdsEvaluation?.evaluationMethod && (
                     <Badge variant="outline" size="xs" color="gray">

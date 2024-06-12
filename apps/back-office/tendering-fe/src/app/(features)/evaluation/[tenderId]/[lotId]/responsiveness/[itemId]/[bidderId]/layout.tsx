@@ -2,8 +2,8 @@
 
 import { Box, Flex } from '@mantine/core';
 import { useParams } from 'next/navigation';
-import { BidderOverView } from '@/app/(features)/evaluation/_components/bidder-overview';
 import { Requirements } from '@/app/(features)/evaluation/_components/requirements';
+import { ItemBidderOverView } from '@/app/(features)/evaluation/_components/item-bidder-overview';
 
 export default function BiderDetail({
   children,
@@ -13,9 +13,8 @@ export default function BiderDetail({
   const { tenderId, lotId, itemId } = useParams();
   return (
     <>
-      <BidderOverView
+      <ItemBidderOverView
         basePath={`/evaluation/${tenderId}/${lotId}/responsiveness/${itemId}`}
-        milestone="technicalResponsiveness"
       />
       <Flex gap={10} mt={10}>
         <Box className=" bg-white w-1/4">
