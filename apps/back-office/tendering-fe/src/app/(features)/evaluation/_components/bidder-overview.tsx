@@ -105,7 +105,7 @@ export const BidderOverView = ({
             >
               Bidder :
               <Text span className="font-normal text-lg">
-                {' ' + data?.bidRegistrations?.[0]?.bidderName ?? ''}
+                {data?.bidRegistrations?.[0]?.bidderName ?? ''}
               </Text>
             </Text>
             {teamAssessment && (
