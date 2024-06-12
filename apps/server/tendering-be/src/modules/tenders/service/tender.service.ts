@@ -40,7 +40,7 @@ import {
   LotStatusEnum,
   TenderStatusEnum,
 } from 'src/shared/enums/tender-status.enum';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+// import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 @Injectable()
 export class TenderService extends EntityCrudService<Tender> {
@@ -49,7 +49,7 @@ export class TenderService extends EntityCrudService<Tender> {
     private readonly tenderRepository: Repository<Tender>,
     private readonly minIOService: MinIOService,
     private readonly documentManipulatorService: DocumentManipulatorService,
-    private readonly amqpConnection: AmqpConnection,
+    // private readonly amqpConnection: AmqpConnection,
     @Inject(REQUEST) private request: Request,
   ) {
     super(tenderRepository);
@@ -360,16 +360,16 @@ export class TenderService extends EntityCrudService<Tender> {
       .update({ id: input.id }, { status: input.status });
 
     if (input.status == TenderStatusEnum.APPROVAL) {
-      this.amqpConnection.publish(
-        'workflow-broadcast-exchanges',
-        'workflow.initiate',
-        {
-          id: tender.id,
-          name: 'tenderApproval',
-          itemName: tender.name,
-          organizationId: tender.organizationId,
-        },
-      );
+      // this.amqpConnection.publish(
+      //   'workflow-broadcast-exchanges',
+      //   'workflow.initiate',
+      //   {
+      //     id: tender.id,
+      //     name: 'tenderApproval',
+      //     itemName: tender.name,
+      //     organizationId: tender.organizationId,
+      //   },
+      // );
     }
   }
 

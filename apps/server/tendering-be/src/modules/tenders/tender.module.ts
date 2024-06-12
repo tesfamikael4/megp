@@ -64,16 +64,16 @@ import { TenderApprovalService } from './service/tender-approval.service';
     MinIOModule,
     DocxModule,
     DocumentManipulatorModule,
-    RabbitMQModule.forRoot(RabbitMQModule, {
-      exchanges: [
-        {
-          name: 'workflow-broadcast-exchanges',
-          type: 'direct',
-        },
-      ],
-      uri: process.env.RMQ_URL,
-      enableControllerDiscovery: true,
-    }),
+    // RabbitMQModule.forRoot(RabbitMQModule, {
+    //   exchanges: [
+    //     {
+    //       name: 'workflow-broadcast-exchanges',
+    //       type: 'direct',
+    //     },
+    //   ],
+    //   uri: process.env.RMQ_URL,
+    //   enableControllerDiscovery: true,
+    // }),
   ],
   controllers: [
     TenderController,

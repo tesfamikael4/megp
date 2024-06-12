@@ -6,10 +6,10 @@ import { GenerateTenderDocumentDto } from '../dto';
 import { TenderStatusEnum } from 'src/shared/enums/tender-status.enum';
 import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
-import {
-  MessageHandlerErrorBehavior,
-  RabbitRPC,
-} from '@golevelup/nestjs-rabbitmq';
+// import {
+//   MessageHandlerErrorBehavior,
+//   RabbitRPC,
+// } from '@golevelup/nestjs-rabbitmq';
 import { AllowAnonymous } from 'src/shared/authorization';
 import { ConsumeMessage } from 'amqplib';
 
@@ -22,15 +22,15 @@ export class TenderApprovalService {
     private readonly documentManipulatorService: DocumentManipulatorService,
   ) {}
 
-  @RabbitRPC({
-    exchange: 'workflow-broadcast-exchanges',
-    routingKey: 'tendering-workflow.tenderApproval',
-    queue: 'tendering-approval-workflow',
-    errorBehavior: MessageHandlerErrorBehavior.ACK,
-    errorHandler: (err) => {
-      console.log('🚀 ~ TenderController ~ err:', err);
-    },
-  })
+  // @RabbitRPC({
+  //   exchange: 'workflow-broadcast-exchanges',
+  //   routingKey: 'tendering-workflow.tenderApproval',
+  //   queue: 'tendering-approval-workflow',
+  //   errorBehavior: MessageHandlerErrorBehavior.ACK,
+  //   errorHandler: (err) => {
+  //     console.log('🚀 ~ TenderController ~ err:', err);
+  //   },
+  // })
   @AllowAnonymous()
   async tenderApproval(data: any, amqpMsg: ConsumeMessage) {
     if (amqpMsg.fields.routingKey != 'tendering-workflow.tenderApproval') {
