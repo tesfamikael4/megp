@@ -75,6 +75,35 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     }
     return response;
   }
+  async approvePostBudget(data: any): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const entityManager: EntityManager = queryRunner.manager;
+
+      const sourceEntity = await entityManager
+        .getRepository(PostBudgetPlan)
+        .findOneOrFail({
+          where: { id: data.itemId },
+        });
+
+      //check Approval status and update the postBudgetPlan
+      queryRunner.manager.connection.transaction(async (entityManager) => {
+        await entityManager
+          .getRepository(PostBudgetPlan)
+          .update(sourceEntity.id, {
+            status: data.status == 'Rejected' ? 'Draft' : 'Approved',
+          });
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
   async getAnalytics(postBudgetPlanId: string): Promise<{
     totalActivities: number;
     currencyTotalAmounts: Record<string, number>;
