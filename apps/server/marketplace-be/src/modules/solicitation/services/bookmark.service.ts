@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   CollectionQuery,
@@ -13,6 +13,7 @@ import { ESolBookmarkStatus } from 'src/utils/enums/sol.enum';
 import { ERfxStatus } from 'src/utils/enums';
 import { CreateBookmarkDto } from '../dtos/bookmark.dto';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
@@ -21,7 +22,9 @@ export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
     private readonly solBookmarkRepository: Repository<SolBookmark>,
     @InjectRepository(RFX)
     private readonly rfxRepository: Repository<RFX>,
-    private readonly amqpConnection: AmqpConnection,
+    // private readonly amqpConnection: AmqpConnection,
+    @Inject('RMS_RMQ_SERVICE')
+    private readonly rmsRMQClient: ClientProxy,
   ) {
     super(solBookmarkRepository);
   }
@@ -62,9 +65,9 @@ export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
       throw new BadRequestException('Rfx Submission Deadline Passed');
 
     itemData.vendorId = req.user?.organization.id;
-    const boodmarkData = this.solBookmarkRepository.create(itemData);
+    const bookmarkData = this.solBookmarkRepository.create(itemData);
 
-    await this.solBookmarkRepository.upsert(boodmarkData, {
+    await this.solBookmarkRepository.upsert(bookmarkData, {
       conflictPaths: {
         rfxId: true,
         vendorId: true,
@@ -72,12 +75,13 @@ export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
     });
 
     const bookmarkEventPayload = {
-      ...boodmarkData,
+      ...bookmarkData,
       objectType: 'RFX',
     };
-    this.amqpConnection.publish('rms', 'record-bookmark', bookmarkEventPayload);
+    this.rmsRMQClient.emit('record-bookmark', bookmarkEventPayload);
+    // this.amqpConnection.publish('rms', 'record-bookmark', bookmarkEventPayload);
 
-    return boodmarkData;
+    return bookmarkData;
   }
 
   async getMyBookmarks(query: CollectionQuery, req?: any): Promise<any> {

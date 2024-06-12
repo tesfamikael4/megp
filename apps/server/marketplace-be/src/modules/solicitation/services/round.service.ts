@@ -50,7 +50,7 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
       round: 0,
       end,
       start,
-      status: ESolRoundStatus.STARTED,
+      status: ESolRoundStatus.PENDING,
     };
     const round = this.solRoundRepository.create(roundItem);
     await entityManager.getRepository(SolRound).insert(round);
