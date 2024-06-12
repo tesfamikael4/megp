@@ -44,6 +44,16 @@ export class OpeningController extends ExtraCrudController<Opening>(options) {
   ) {
     return await this.openingService.getLotDetails(tenderId, lotId);
   }
+
+  @Get('get-item-detail/:tenderId/:lotId/:itemId')
+  @AllowAnonymous()
+  async getItemDetail(
+    @Param('tenderId') tenderId: string,
+    @Param('lotId') lotId: string,
+    @Param('itemId') itemId: string,
+  ) {
+    return await this.openingService.getItemDetails(tenderId, lotId, itemId);
+  }
   @Get('get-bidder-detail/:tenderId/:lotId/:bidderId')
   @AllowAnonymous()
   async getBidderDetail(
@@ -55,6 +65,21 @@ export class OpeningController extends ExtraCrudController<Opening>(options) {
       tenderId,
       lotId,
       bidderId,
+    );
+  }
+  @Get('get-bidder-item-detail/:tenderId/:lotId/:bidderId/:itemId')
+  @AllowAnonymous()
+  async getBidderItemDetail(
+    @Param('tenderId') tenderId: string,
+    @Param('lotId') lotId: string,
+    @Param('bidderId') bidderId: string,
+    @Param('itemId') itemId: string,
+  ) {
+    return await this.openingService.getBidderItemDetails(
+      tenderId,
+      lotId,
+      bidderId,
+      itemId,
     );
   }
 }

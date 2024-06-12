@@ -262,6 +262,55 @@ export class OpeningService extends ExtraCrudService<Opening> {
     });
     return tender;
   }
+  async getItemDetails(tenderId: string, lotId: string, itemId: string) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const tender = await manager.getRepository(Tender).findOne({
+      where: {
+        id: tenderId,
+        lots: {
+          id: lotId,
+          tenderMilestones: {
+            isCurrent: true,
+          },
+          items: {
+            id: itemId,
+          },
+        },
+      },
+      relations: {
+        bdsEvaluation: true,
+        bdsSubmission: true,
+        lots: {
+          tenderMilestones: true,
+          items: true,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        procurementCategory: true,
+        procurementReferenceNumber: true,
+        status: true,
+        bdsEvaluation: {
+          awardType: true,
+          evaluationMethod: true,
+        },
+        bdsSubmission: {
+          envelopType: true,
+        },
+        lots: {
+          id: true,
+          name: true,
+          tenderMilestones: {
+            milestoneNum: true,
+            milestoneTxt: true,
+            isCurrent: true,
+          },
+        },
+      },
+    });
+    return tender;
+  }
   async getBidderDetails(tenderId: string, lotId: string, bidderId: string) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const tender = await manager.getRepository(Tender).findOne({
@@ -282,6 +331,68 @@ export class OpeningService extends ExtraCrudService<Opening> {
         bdsSubmission: true,
         lots: {
           tenderMilestones: true,
+        },
+        bidRegistrations: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        procurementCategory: true,
+        procurementReferenceNumber: true,
+        status: true,
+        bdsEvaluation: {
+          awardType: true,
+          evaluationMethod: true,
+        },
+        bdsSubmission: {
+          envelopType: true,
+        },
+        lots: {
+          id: true,
+          name: true,
+          tenderMilestones: {
+            milestoneNum: true,
+            milestoneTxt: true,
+            isCurrent: true,
+          },
+        },
+        bidRegistrations: {
+          bidderId: true,
+          bidderName: true,
+        },
+      },
+    });
+    return tender;
+  }
+  async getBidderItemDetails(
+    tenderId: string,
+    lotId: string,
+    bidderId: string,
+    itemId: string,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const tender = await manager.getRepository(Tender).findOne({
+      where: {
+        id: tenderId,
+        lots: {
+          id: lotId,
+          tenderMilestones: {
+            isCurrent: true,
+          },
+          items: {
+            id: itemId,
+          },
+        },
+        bidRegistrations: {
+          bidderId: bidderId,
+        },
+      },
+      relations: {
+        bdsEvaluation: true,
+        bdsSubmission: true,
+        lots: {
+          tenderMilestones: true,
+          items: true,
         },
         bidRegistrations: true,
       },
