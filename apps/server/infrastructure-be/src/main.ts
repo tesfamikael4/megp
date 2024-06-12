@@ -25,6 +25,7 @@ async function bootstrap() {
       },
     },
   });
+
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
