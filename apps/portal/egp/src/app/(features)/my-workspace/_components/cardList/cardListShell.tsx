@@ -67,7 +67,6 @@ export const CardListShell: React.FC<CardListProps> = ({
 
   const validateItem = (item: any, fieldName?: string) => {
     const result = itemSchema.safeParse(item);
-    console.log(result, item);
     if (!result.success) {
       if (!fieldName)
         result.error.issues.map((issue) => {

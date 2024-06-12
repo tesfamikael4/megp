@@ -17,7 +17,17 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
   register,
   control,
 }) => {
-  const { data: currencies, isLoading, isError } = useGetCurrenciesQuery({});
+  const { data: currency, isLoading, isError } = useGetCurrenciesQuery({});
+  const currencies =
+    currency && currency.total > 0
+      ? currency.items.map((val) => ({
+          value: val.abbreviation,
+          label: val.abbreviation,
+        }))
+      : [];
+  console.log({
+    ...register('businessSizeAndOwnership.registeredCapital.amount', 'number'),
+  });
   return (
     <Stack>
       <Group grow>
@@ -36,11 +46,12 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
               render={({ field }) => (
                 <Select
                   leftSection={<IconCash size={'1.3rem'} />}
-                  data={['USD', 'ETB', 'EUR', 'GBP', 'MKW']}
+                  data={currencies}
                   placeholder="select"
                   {...field}
                   // rightSection={<><IconChevronDown size={'1.3rem'} /></>}
                   rightSectionWidth={0}
+                  withCheckIcon={false}
                   error={false}
                   onChange={(value) => {
                     register(
@@ -70,7 +81,7 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
           }}
           value={register(
             'businessSizeAndOwnership.registeredCapital.amount',
-            'input',
+            'number',
           ).value?.toString()}
           error={
             register('businessSizeAndOwnership.registeredCapital.amount')
@@ -119,7 +130,7 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
           }}
           value={register(
             'businessSizeAndOwnership.paidUpCapital.amount',
-            'input',
+            'number',
           ).value?.toString()}
           error={
             register(`businessSizeAndOwnership.paidUpCapital.amount`, 'number')

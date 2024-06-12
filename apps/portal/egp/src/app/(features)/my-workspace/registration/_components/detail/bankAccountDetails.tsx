@@ -21,6 +21,7 @@ import {
   CardListShell,
   SingleCardWrapper,
 } from '@/app/(features)/my-workspace/_components/cardList/cardListShell';
+import { useGetCurrenciesQuery } from '@/store/api/administrationApi';
 
 interface Props extends PassFormDataProps {
   itemSchema: any;
@@ -37,12 +38,25 @@ export const BankAccountDetails: React.FC<Props> = ({
 }) => {
   // console.log(control._getWatch(`bankAccountDetails`));
   const { data, isLoading, isSuccess, status } = useGetBankListQuery({});
+  const {
+    data: currency,
+    isLoading: isCurrencyLoading,
+    status: currencyStatus,
+  } = useGetCurrenciesQuery({});
 
   const bankList =
     status === 'fulfilled' && data && data.length
       ? data.map((val) => ({
           value: val.id,
           label: val.bankName,
+        }))
+      : [];
+
+  const currencies =
+    currency && currency.total > 0
+      ? currency.items.map((val) => ({
+          value: val.abbreviation,
+          label: val.abbreviation,
         }))
       : [];
   const getLabelByValue = (
@@ -87,7 +101,7 @@ export const BankAccountDetails: React.FC<Props> = ({
         modalBody={(getInputProps) => (
           <>
             <LoadingOverlay
-              visible={isLoading}
+              visible={isLoading || isCurrencyLoading}
               overlayProps={{ radius: 'sm', blur: 2 }}
             />
             <Stack>
@@ -177,7 +191,7 @@ export const BankAccountDetails: React.FC<Props> = ({
                 />
                 <Select
                   label="Currency"
-                  data={['USD', 'ETB', 'EUR', 'GBP', 'MKW']}
+                  data={currencies}
                   withAsterisk
                   placeholder="Select Currency"
                   searchable

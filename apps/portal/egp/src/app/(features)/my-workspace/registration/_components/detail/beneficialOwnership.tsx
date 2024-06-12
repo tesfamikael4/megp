@@ -107,14 +107,6 @@ export const BeneficialOwnership: React.FC<Props> = ({
                     getInputProps('votingRights', 'number').onChange(
                       Number(value),
                     );
-                    const previousShareholderShare =
-                      control?._formValues?.shareHolders.reduce(
-                        (acc, shareholder) => (acc += shareholder.share),
-                        0,
-                      );
-                    // if (previousShareholderShare > 100) {
-
-                    // }
                   }}
                   min={1}
                   max={100}
@@ -158,7 +150,17 @@ export const BeneficialOwnership: React.FC<Props> = ({
                       icon={<IconFlag size={25} stroke={1.5} color={'green'} />}
                     />
                     <CardItem
-                      label={value.share}
+                      label={`${value.share}% of total share`}
+                      icon={
+                        <IconPercentage
+                          size={25}
+                          stroke={1.5}
+                          color={'green'}
+                        />
+                      }
+                    />
+                    <CardItem
+                      label={`${value.votingRights}% of total voting rights`}
                       icon={
                         <IconPercentage
                           size={25}
