@@ -28,16 +28,9 @@ export class InstanceService extends EntityCrudService<Instance> {
 
     private readonly stateService: StateService,
 
-    @Inject('WORKFLOW_RMQ_SERVICE')
-    private readonly workflowRMQClient: ClientProxy,
-
-    // @Inject(REQUEST)
-    // private readonly request: Request,
-
     private connection: DataSource,
   ) {
     super(repositoryInstance);
-    workflowRMQClient.connect();
   }
   // Listen
   async initiate(data, context) {
