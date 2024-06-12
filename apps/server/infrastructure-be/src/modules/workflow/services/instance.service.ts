@@ -1,24 +1,18 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject, Injectable, Scope } from '@nestjs/common';
-// import { ClientProxy } from '@nestjs/microservices';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { DataSource, EntityManager, In, Not, Repository } from 'typeorm';
 import { Step, Workflow } from 'src/entities';
 import { Instance } from 'src/entities/instance.entity';
 import { Activity } from 'src/entities/activity.entity';
 import { StateService } from './state.service';
 import { State } from 'src/entities/state.entity';
-import {
-  AllowAnonymous,
-  ENTITY_MANAGER_KEY,
-  EntityCrudService,
-} from 'megp-shared-be';
+import { ENTITY_MANAGER_KEY, EntityCrudService } from 'megp-shared-be';
 import { InstanceStep } from 'src/entities/instance-step.entity';
 import { REQUEST } from '@nestjs/core';
 import { InstanceStepService } from './instance-step.service';
-import { ConsumeMessage } from 'amqplib';
-import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 
-@Injectable({ scope: Scope.DEFAULT })
+@Injectable()
 export class InstanceService extends EntityCrudService<Instance> {
   constructor(
     @InjectRepository(Instance)
@@ -27,28 +21,26 @@ export class InstanceService extends EntityCrudService<Instance> {
     private readonly repositoryStep: Repository<Step>,
     @InjectRepository(Activity)
     private readonly repositoryActivity: Repository<Activity>,
+    @InjectRepository(State)
+    private readonly repositoryState: Repository<State>,
 
     private readonly repositoryInstanceStepService: InstanceStepService,
 
     private readonly stateService: StateService,
-    // @Inject(REQUEST) private request: Request,
 
-    // @Inject('WORKFLOW_RMQ_SERVICE')
-    // private readonly workflowRMQClient: any,
+    @Inject('WORKFLOW_RMQ_SERVICE')
+    private readonly workflowRMQClient: ClientProxy,
+
+    // @Inject(REQUEST)
+    // private readonly request: Request,
+
+    private connection: DataSource,
   ) {
     super(repositoryInstance);
-    // workflowRMQClient.connect();
+    workflowRMQClient.connect();
   }
-  @Inject()
-  private connection: DataSource;
   // Listen
-  @AllowAnonymous()
-  @RabbitSubscribe({
-    exchange: 'workflow-broadcast-exchanges',
-    routingKey: 'workflow.initiate',
-    queue: 'workflow',
-  })
-  async initiate(data, context: ConsumeMessage) {
+  async initiate(data, context) {
     // const m = this.request;
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();

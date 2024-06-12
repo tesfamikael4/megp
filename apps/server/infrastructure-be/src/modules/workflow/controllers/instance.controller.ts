@@ -68,14 +68,10 @@ export class InstanceController extends EntityCrudController<Instance>(
     return this.instanceService.isActive(key, organizationId, itemId);
   }
 
-  // @AllowAnonymous()
-  // @RabbitRPC({
-  //   exchange: 'workflow-broadcast-exchanges',
-  //   routingKey: 'workflow.initiate',
-  //   queue: 'workflow',
-  // })
-  async initiate(data: any, context: ConsumeMessage) {
-    return await this.instanceServices.initiate(data, context);
+  @Post('initiate')
+  @EventPattern('initiate-workflow')
+  async initiate(@Body() data: any, @Ctx() context: RmqContext) {
+    return await this.instanceService.initiate(data, context);
   }
 
   @Post('goto')
