@@ -32,6 +32,7 @@ import {
   EInvitationStatus,
 } from 'src/utils/enums';
 import { WorkflowHandlerService } from './workflow-handler.service';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class RfxService extends EntityCrudService<RFX> {
@@ -44,6 +45,8 @@ export class RfxService extends EntityCrudService<RFX> {
     private readonly rfxBidProcedureRepository: Repository<RfxBidProcedure>,
     @Inject(REQUEST) private request: Request,
     private dataSource: DataSource,
+    @Inject('WORKFLOW_RMQ_SERVICE')
+    private readonly workflowRMQClient: ClientProxy,
     private readonly pdfGeneratorService: PdfGeneratorService,
     private readonly documentService: DocumentService,
     private readonly minIOService: MinIOService,
@@ -218,12 +221,12 @@ export class RfxService extends EntityCrudService<RFX> {
       organizationId: rfx.organizationId,
       name: 'RFQApproval',
     };
-
-    this.workflowHandlerService.emitEvent(
-      'workflow-broadcast-exchanges',
-      'workflow.initate',
-      rfxPayload,
-    );
+    this.workflowRMQClient.emit('initiate-workflow', rfxPayload);
+    // this.workflowHandlerService.emitEvent(
+    //   'workflow-broadcast-exchanges',
+    //   'workflow.initiate',
+    //   rfxPayload,
+    // );
 
     rfx.status = ERfxStatus.SUBMITTED;
 

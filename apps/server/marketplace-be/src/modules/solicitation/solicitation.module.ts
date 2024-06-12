@@ -33,6 +33,7 @@ import { OpenerService } from '../evaluation/services/opener.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { SolRoundAwardController } from './controllers/round-award.controller';
 import { SolRoundAwardService } from './services/round-award.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -52,16 +53,29 @@ import { SolRoundAwardService } from './services/round-award.service';
     ]),
     MinIOModule,
     UtilityModule,
-    RabbitMQModule.forRoot(RabbitMQModule, {
-      exchanges: [
-        {
-          name: 'rms',
-          type: 'direct',
+    ClientsModule.register([
+      {
+        name: 'RMS_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'rms',
+          queueOptions: {
+            durable: false,
+          },
         },
-      ],
-      uri: process.env.RMQ_URL,
-      enableControllerDiscovery: true,
-    }),
+      },
+    ]),
+    // RabbitMQModule.forRoot(RabbitMQModule, {
+    //   exchanges: [
+    //     {
+    //       name: 'rms',
+    //       type: 'direct',
+    //     },
+    //   ],
+    //   uri: process.env.RMQ_URL,
+    //   enableControllerDiscovery: true,
+    // }),
   ],
   controllers: [
     SolBookmarkController,

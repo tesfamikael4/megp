@@ -19,6 +19,7 @@ import {
 } from 'src/utils/enums';
 import * as crypto from 'crypto';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
@@ -26,7 +27,9 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     @InjectRepository(SolRegistration)
     private readonly solRegistrationRepository: Repository<SolRegistration>,
     private readonly encryptionHelperService: EncryptionHelperService,
-    private readonly amqpConnection: AmqpConnection,
+    // private readonly amqpConnection: AmqpConnection,
+    @Inject('RMS_RMQ_SERVICE')
+    private readonly rmsRMQClient: ClientProxy,
     @Inject(REQUEST) private request: Request,
   ) {
     super(solRegistrationRepository);
@@ -111,11 +114,13 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
       ...rfx,
       objectType: 'RFX',
     };
-    this.amqpConnection.publish(
-      'rms',
-      'record-registration',
-      registrationEventPayload,
-    );
+
+    this.rmsRMQClient.emit('record-registration', registrationEventPayload);
+    // this.amqpConnection.publish(
+    //   'rms',
+    //   'record-registration',
+    //   registrationEventPayload,
+    // );
 
     return rfxRegistration;
   }

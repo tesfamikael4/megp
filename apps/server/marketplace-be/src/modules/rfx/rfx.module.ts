@@ -65,16 +65,43 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     MinIOModule,
     UtilityModule,
     SolicitationModule,
-    RabbitMQModule.forRoot(RabbitMQModule, {
-      exchanges: [
-        {
-          name: 'workflow-broadcast-exchanges',
-          type: 'direct',
+    ClientsModule.register([
+      {
+        name: 'WORKFLOW_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'work-plan-initiate',
+          queueOptions: {
+            durable: false,
+          },
         },
-      ],
-      uri: process.env.RMQ_URL,
-      enableControllerDiscovery: true,
-    }),
+      },
+    ]),
+    ClientsModule.register([
+      {
+        name: 'RMS_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'rms',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
+
+    // RabbitMQModule.forRoot(RabbitMQModule, {
+    //   exchanges: [
+    //     {
+    //       name: 'workflow-broadcast-exchanges',
+    //       type: 'direct',
+    //     },
+    //   ],
+    //   uri: process.env.RMQ_URL,
+    //   enableControllerDiscovery: true,
+    // }),
   ],
   controllers: [
     RfxController,

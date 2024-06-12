@@ -4,6 +4,7 @@ import { AllowAnonymous } from 'megp-shared-be';
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 import { ConsumeMessage } from 'amqplib';
 import { Controller, Post } from '@nestjs/common';
+import { EventPattern } from '@nestjs/microservices';
 
 @ApiTags('Workflow Handler')
 @Controller('workflow')
@@ -21,38 +22,29 @@ export class WorkflowHandlerController {
   //     console.log({ err });
   //   },
   // })
-  async rfxApprovalResponse(payload: any, amqpMsg: ConsumeMessage) {
-    if (amqpMsg.fields.routingKey === 'marketplace.approval') {
-      console.log({ payload });
-      return await this.workflowHandlerService.handleRfxApproval(
-        payload,
-        payload['ENTITY_MANAGER'],
-      );
-    }
+  @EventPattern('marketplace-workflow.RFQApproval')
+  @AllowAnonymous()
+  async rfxApprovalResponse(payload: any) {
+    // if (amqpMsg.fields.routingKey === 'marketplace.approval') {
+    console.log({ payload });
+    return await this.workflowHandlerService.handleRfxApproval(
+      payload,
+      // payload['ENTITY_MANAGER'],
+    );
+    // }
   }
 
+  // @RabbitSubscribe({
+  //   exchange: 'workflow-broadcast-exchanges',
+  //   routingKey: 'marketplace.rfxEvaluationApproval',
+  //   queue: 'marketplace',
+  //   errorHandler: (err) => {
+  //     console.log({ err });
+  //   },
+  // })
+  @EventPattern('marketplace-workflow.RFQEvaluationApproval')
   @AllowAnonymous()
-  @RabbitSubscribe({
-    exchange: 'workflow-broadcast-exchanges',
-    routingKey: 'marketplace.rfxEvaluationApproval',
-    queue: 'marketplace',
-    errorHandler: (err) => {
-      console.log({ err });
-    },
-  })
-  async rfxEvaluationApproval(payload: any, amqpMsg: ConsumeMessage) {
-    if (amqpMsg.fields.routingKey === 'marketplace.rfxEvaluationApproval') {
-      console.log({ payload });
-      return await this.workflowHandlerService.handleEvaluationApproval(
-        payload,
-      );
-    }
-    if (amqpMsg.fields.routingKey === 'marketplace.approval') {
-      console.log({ payload });
-      return await this.workflowHandlerService.handleRfxApproval(
-        payload,
-        payload['ENTITY_MANAGER'],
-      );
-    }
+  async rfxEvaluationApproval(payload: any) {
+    return await this.workflowHandlerService.handleEvaluationApproval(payload);
   }
 }

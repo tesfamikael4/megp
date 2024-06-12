@@ -24,6 +24,7 @@ import { EvalAssessment } from 'src/entities/eval-assessment.entity';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
 import { WorkflowHandlerService } from 'src/modules/rfx/services/workflow-handler.service';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class EvalResponseService extends ExtraCrudService<EvalResponse> {
@@ -42,7 +43,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     private readonly rfxRepository: Repository<RFX>,
     @InjectRepository(TeamMember)
     private readonly teamMemberRepository: Repository<TeamMember>,
-    private readonly amqpConnection: AmqpConnection,
+    @Inject('WORKFLOW_RMQ_SERVICE')
+    private readonly workflowRMQClient: ClientProxy,
+    // private readonly amqpConnection: AmqpConnection,
     @Inject(REQUEST) private readonly request: Request,
   ) {
     super(evalResponseRepository);
@@ -322,11 +325,13 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
       await entityManager
         .getRepository(RFX)
         .update(rfxId, { status: ERfxStatus.SUBMITTED_EVALUATION });
-      this.amqpConnection.publish(
-        'workflow-broadcast-exchanges',
-        'workflow.initate',
-        eventPayload,
-      );
+
+      this.workflowRMQClient.emit('initiate-workflow', eventPayload);
+      // this.amqpConnection.publish(
+      //   'workflow-broadcast-exchanges',
+      //   'workflow.initiate',
+      //   eventPayload,
+      // );
     }
   }
 

@@ -1,10 +1,12 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import {
   BadRequestException,
+  Inject,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import {
   OpenedOffer,
   RFX,
@@ -37,14 +39,16 @@ import { DataSource, EntityManager, In, MoreThanOrEqual, Not } from 'typeorm';
 export class WorkflowHandlerService {
   constructor(
     private dataSource: DataSource,
-    private readonly amqpConnection: AmqpConnection,
+    // private readonly amqpConnection: AmqpConnection,
+    @Inject('RMS_RMQ_SERVICE')
+    private readonly rmsRMQClient: ClientProxy,
     private readonly schedulerService: SchedulerService,
     private readonly openerService: OpenerService,
   ) {}
 
-  emitEvent(exchange: string, routingKey: string, payload: any) {
-    this.amqpConnection.publish(exchange, routingKey, payload);
-  }
+  // emitEvent(exchange: string, routingKey: string, payload: any) {
+  //   this.amqpConnection.publish(exchange, routingKey, payload);
+  // }
 
   async handleEvaluationApproval(payload: any) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -69,9 +73,12 @@ export class WorkflowHandlerService {
     }
   }
 
-  async handleRfxApproval(payload: any, entityManager: EntityManager) {
+  async handleRfxApproval(payload: any) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      await entityManager.queryRunner.manager.connection.transaction(
+      await queryRunner.manager.connection.transaction(
         async (entityManager) => {
           const rfxRepo = entityManager.getRepository(RFX);
           const rfxProcedureRepo = entityManager.getRepository(RfxBidProcedure);
@@ -105,7 +112,8 @@ export class WorkflowHandlerService {
               ...rfx,
               objectType: 'RFX',
             };
-            this.emitEvent('rms', 'record-notice', approvePayload);
+            this.rmsRMQClient.emit('record-notice', approvePayload);
+            // this.emitEvent('rms', 'record-notice', approvePayload);
           }
 
           if (status == 'APPROVED') {
@@ -118,7 +126,11 @@ export class WorkflowHandlerService {
         },
       );
     } catch (error) {
-      Logger.log(error);
+      if (error.status == 430) Logger.error(error, 'OpenerService');
+      else await queryRunner.rollbackTransaction();
+      console.log(error);
+    } finally {
+      await queryRunner.release();
     }
   }
 
