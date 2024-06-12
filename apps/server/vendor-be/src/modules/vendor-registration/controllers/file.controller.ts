@@ -6,11 +6,12 @@ import {
   Post,
   Res,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from '../services/file.service';
 import { Response } from 'express';
 import { ReceiptDto } from '../dto/receipt.dto';
@@ -104,6 +105,7 @@ export class UploadController {
     const fileId = `${userInfo.id}/${fieldName}/${fileName}`;
     return this.fileService.getAttachmentpresignedObject(fileId);
   }
+
   @Post('upload-supporting-document-attachment/:fieldName')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
   async uploadSupportingDocumentAttachment(
@@ -114,17 +116,46 @@ export class UploadController {
     if (!file) {
       return { error: 'File not received' };
     }
+    console.log("fieldName--->" + fieldName)
+    // const result = await this.fileService.uploadSupportingDocumentAttachment(
+    //   file,
+    //   userInfo.id,
+    //   fieldName,
+    // );
+    // return result;
+  }
 
-    const paymentReceiptDto = {
-      fieldName: fieldName,
-    };
-    const result = await this.fileService.uploadSupportingDocumentAttachment(
-      file,
-      userInfo.id,
-      paymentReceiptDto,
+  @Post('upload-documents')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'businessRegistration_IncorporationCertificate', maxCount: 1 },
+      { name: 'mRA_TPINCertificate', maxCount: 1 },
+      { name: 'mRATaxClearanceCertificate', maxCount: 1 },
+      { name: 'generalReceipt_BankDepositSlip', maxCount: 1 },
+      { name: 'previousPPDARegistrationCertificate', maxCount: 1 },
+      { name: 'ibmCertificate', maxCount: 1 },
+      { name: 'MSMECertificate', maxCount: 1 },
+      { name: 'marginalizedCertificate', maxCount: 1 },
+    ])
+  )
+  async uploadSupportingDocuments(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @CurrentUser() userInfo: any,
+  ) {
+
+    if (!files) {
+      return { error: 'File not received' };
+    }
+    const subdirectory = 'SupportingDocument';
+    const result = await this.fileService.uploadSupportingDocuments(
+      files,
+      userInfo,
+      subdirectory,
     );
     return result;
+
   }
+
   @Get('get-supporting-document-attachment-pre-signed-object/:fileName')
   async getSupportingDocumentAttachmentpresignedObject(
     @Param('fileName') fileName: string,

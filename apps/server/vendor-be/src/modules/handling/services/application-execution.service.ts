@@ -118,14 +118,14 @@ export class ApplicationExcutionService {
           const bia = instance.isrVendor?.areasOfBusinessInterest.find(
             (item: any) => item.category == range.category,
           );
-          const lobs = bia?.lineOfBusiness?.map((item: any) => {
-            return item.name;
-          });
+          // const lobs = bia?.lineOfBusiness?.map((item: any) => {
+          //   return item.name;
+          // });
 
           businessInterest.push({
             category: bia?.category,
             priceRange: formattedBC,
-            lineOfBusiness: lobs,
+            // lineOfBusiness: lobs,
           });
           response.isrvendor.basic.status =
             range.status == ApplicationStatus.PENDING

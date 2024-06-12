@@ -430,6 +430,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   async uploadPreferentialAttachments(attachments: any, user: any) {
     const subdirectory = 'preferential-documents';
     const response = {};
+    const vendor = await this.srRepository.findOne({ where: { userId: user.id } });
+    if (!vendor)
+      throw new NotFoundException("Not Registered");
     try {
       if (attachments?.msmeCerti?.length) {
         const certificateUrl = await this.uploaderService.uploadDocuments(

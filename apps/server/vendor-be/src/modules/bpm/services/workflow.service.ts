@@ -165,7 +165,7 @@ export class WorkflowService {
       throw new NotFoundException('Workflow Instance not initiated Properly');
     const currentTaskHandler = workflowInstance.taskHandler;
     const currentTaskHandlerCopy = { ...workflowInstance.taskHandler };
-    const curruntTask = await this.taskService.findOne(
+    const currentTask = await this.taskService.findOne(
       currentTaskHandler.taskId,
     );
     const bp = workflowInstance.businessProcess;
@@ -194,9 +194,9 @@ export class WorkflowService {
         wfInstance.user = workflowInstance.user;
         let response = false;
         if (
-          curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
+          currentTask.taskType == TaskTypes.INITIAL_REVIEW &&
           nextCommand.action.toUpperCase() ==
-            ApplicationStatus.CANCEL.toUpperCase()
+          ApplicationStatus.CANCEL.toUpperCase()
         ) {
           response = await this.vendorRegService.cancelApplication(
             wfInstance,
@@ -246,7 +246,7 @@ export class WorkflowService {
           nextStepState.value.toString(),
         );
         if (!task) throw new NotFoundException('Task not found');
-        stateMetaData['type'] = curruntTask.taskType;
+        stateMetaData['type'] = currentTask.taskType;
         taskInfo.handlerType = task.handlerType;
         taskInfo.taskType = task.taskType;
         console.log(' taskInfo.taskType ', taskInfo.taskType);
@@ -258,7 +258,7 @@ export class WorkflowService {
         const status = await this.handleEvent(
           stateMetaData,
           nextCommand,
-          curruntTask,
+          currentTask,
           workflowInstance,
           user,
           notification,
@@ -270,7 +270,12 @@ export class WorkflowService {
         const lastExecutedTask = await this.getPrviousHandler(
           workflowInstance.id,
         );
-        const data = { remark: nextCommand.remark, ...nextCommand.data };
+        const transferableData: any = { ...currentTaskHandlerCopy.data };
+        const fileInfo = {
+          documentId: transferableData?.documentId,
+          fileId: transferableData?.fileId
+        };
+        const data = { remark: nextCommand.remark, ...nextCommand.data, ...fileInfo };
         currentTaskHandler.data = data;
         currentTaskHandler.taskId = task.id;
         currentTaskHandler.previousHandlerId = lastExecutedTask
@@ -373,7 +378,7 @@ export class WorkflowService {
       case TaskTypes.APPROVAL:
         if (
           command.action.toUpperCase() ==
-            ApplicationStatus.ADJUST.toUpperCase() ||
+          ApplicationStatus.ADJUST.toUpperCase() ||
           command.action.toUpperCase() == 'NO'
         ) {
           const result = await this.notify(
@@ -496,8 +501,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-      commandLower == 'yes' ||
-      commandLower == 'success'
+        commandLower == 'yes' ||
+        commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {

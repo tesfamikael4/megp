@@ -25,23 +25,7 @@ export class BriefcasesService {
 
     }
 
-    async downloadMyBriefcase(userId: string, fileId: string) {
-        try {
-            const fileaddress = `${userId}/brifecase/fileId`;
-            this.minioClient.getObject(
-                this.bucketName,
-                fileaddress,
-                function (err, dataStream) {
-                    if (err) {
-                        return err;
-                    }
-                    return dataStream
-                },
-            );
-        } catch (error) {
-            throw error;
-        }
-    }
+
     async getFile(userId: string, fileId: string, @Res() res: Response) {
         try {
             return this.fileService.getFile(userId, fileId, this.subdirectory, res);

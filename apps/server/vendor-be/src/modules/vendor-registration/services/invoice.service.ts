@@ -167,16 +167,16 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     vendor: VendorsEntity,
     user: any,
   ): Promise<boolean> {
-    const curruntPricings =
+    const currentPricings =
       await this.pricingService.findPricingWithServiceByIds(
         currentPriceRangeIds,
       );
-    if (curruntPricings.length == 0) {
+    if (currentPricings.length == 0) {
       throw new NotFoundException('Not Found, please set the price range');
     }
     let totalFee = 0;
     const paymentDetail: any = [];
-    for (const item of curruntPricings) {
+    for (const item of currentPricings) {
       totalFee = totalFee + Number(item.fee);
       const formatedBC = this.commonService.formatPriceRange(item);
       paymentDetail.push({
@@ -186,7 +186,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         fee: item.fee,
       });
     }
-    const priceRange = curruntPricings[0];
+    const priceRange = currentPricings[0];
     // const service = curruntPricings.service;
     const invoice: InvoiceEntity = this.mapInvoice(
       //  priceRange,
@@ -311,7 +311,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       where: {
         userId: userId,
         createdOn: MoreThanOrEqual(oneWeekAgo),
-        paymentStatus: PaymentStatus.PENDING,
+        paymentStatus: In([PaymentStatus.PENDING, PaymentStatus.PAID]),
         service: {
           key: serviceType,
         },
