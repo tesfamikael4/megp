@@ -52,7 +52,7 @@ export const ItemBidderOverView = ({
       <LoadingOverlay visible={isLoading} />
       <Section
         title={
-          <Flex justify="center" align="center" className="cursor-pointer">
+          <Flex align="center" className="cursor-pointer">
             <IconChevronLeft size={14} onClick={() => router.push(basePath)} />
             <Text
               className="font-semibold text-lg"
@@ -60,7 +60,7 @@ export const ItemBidderOverView = ({
             >
               Item :
               <Text span className="font-normal text-lg">
-                {data?.bidRegistrations?.[0]?.bidderName ?? ''}
+                {data?.lots?.[0]?.items?.[0]?.name ?? ''}
               </Text>
             </Text>
             {teamAssessment && (
