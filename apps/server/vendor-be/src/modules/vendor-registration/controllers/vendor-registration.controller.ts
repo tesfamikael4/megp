@@ -111,7 +111,6 @@ export class VendorRegistrationsController {
   /*
   featch new registration invoices of a venodr
   */
-
   @Get('get-isr-vendor-invoice-by-userId')
   async getIsrVendorInvoiceByuserId(@CurrentUser() userInfo: any) {
     return await this.regService.getIsrVendorInvoiceByUserId(userInfo.id);

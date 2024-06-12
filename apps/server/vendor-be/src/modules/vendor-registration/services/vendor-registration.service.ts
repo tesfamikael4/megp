@@ -288,7 +288,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         const priceRange = await this.pricingService.findOne(ba.priceRange);
         const bi = {
           category: ba.category,
-          lineOfBusiness: ba.lineOfBusiness?.map((lob: any) => lob.name),
+          //  lineOfBusiness: ba.lineOfBusiness?.map((lob: any) => lob.name),
           priceRange: this.commonService.formatPriceRange(priceRange),
         };
         formattedData.areasOfBusinessInterest.push(bi);
@@ -320,10 +320,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const formatted = this.commonService.reduceAttributes(pt);
       formattedData.preferential.push(formatted);
     }
+    // formattedData.lineOfBusiness = [];
+    formattedData.lineOfBusinesses = data.lineOfBusiness?.map(
+      (row) => row.name,
+    );
     formattedData.address = this.commonService.orderAddress(data.address);
     formattedData.basic = this.commonService.orderVendorBasicInformation(
       data.basic,
     );
+
     return formattedData;
   }
 
@@ -586,13 +591,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const vendor: VendorsEntity = new VendorsEntity();
           vendor.id = result.id;
           vendor.name = result.basic['name'];
-          const previoseinvoice = await this.invoiceService.getMyInvoice(
+          const previousInvoice = await this.invoiceService.getMyInvoice(
             userInfo.id,
             ServiceKeyEnum.NEW_REGISTRATION,
           );
-          if (previoseinvoice) {
-            if (previoseinvoice.paymentDetail.length != numberOfService) {
-              await this.invoiceService.remove(previoseinvoice.id);
+          if (previousInvoice) {
+            if (previousInvoice.paymentDetail.length != numberOfService) {
+              await this.invoiceService.remove(previousInvoice.id);
+              if (fppaData) {
+                const unregisteredBCIds = await this.excludeFromInvoice(
+                  priceRangeIds,
+                  fppaData,
+                );
+                priceRangeIds = [...unregisteredBCIds];
+              }
               await this.invoiceService.generateInvoice(
                 priceRangeIds,
                 vendor,
@@ -600,6 +612,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               );
             }
           } else {
+            if (fppaData) {
+              const unregisteredBCIds = await this.excludeFromInvoice(
+                priceRangeIds,
+                fppaData,
+              );
+              priceRangeIds = [...unregisteredBCIds];
+            }
             await this.invoiceService.generateInvoice(
               priceRangeIds,
               vendor,
@@ -618,6 +637,33 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       console.log(error);
       throw error;
     }
+  }
+  private async excludeFromInvoice(
+    newPriceRangeIds: string[],
+    prevBusinessAreas: any,
+  ) {
+    const registeredBusinessAreas = [];
+    const priceRanges =
+      await this.pricingService.findPricingWithServiceByIds(newPriceRangeIds);
+    for (const range of priceRanges) {
+      prevBusinessAreas.map((item) => {
+        if (item.category.tolowerCase() == range.businessArea.toLowerCase()) {
+          if (item.from == range.valueFrom) {
+            registeredBusinessAreas.push(range.id);
+          } else {
+            throw new HttpException(
+              'Please select The correct business class registered before',
+              HttpStatus.BAD_REQUEST,
+            );
+          }
+        }
+      });
+    }
+    const unregisteredBCIds = newPriceRangeIds.map((item) => {
+      const existingId = registeredBusinessAreas.find((ritem) => ritem == item);
+      if (!existingId) return item;
+    });
+    return unregisteredBCIds;
   }
 
   async getApplicationStatus(userId: string) {
@@ -1622,11 +1668,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           for (const bi of vendorEntity?.areasOfBusinessInterest) {
             if (bi.priceRange == price.id) {
               const priceRange = this.commonService.formatPriceRange(price);
-              const lob = bi?.lineOfBusiness?.map((item: any) => item.name);
+              // const lob = bi?.lineOfBusiness?.map((item: any) => item.name);
               formattedAreaOfBi.push({
                 category: bi.category,
                 priceRange: priceRange,
-                lineOfBusiness: lob,
+                ppdaRegistrationNumber: bi?.ppdaRegistrationNumber,
+                ppdaRegistrationDate: bi?.ppdaRegistrationDate,
+                expiryDate: bi?.expiryDate,
+
+                // lineOfBusiness: lob,
               });
             }
           }
@@ -1655,13 +1705,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         if (service) {
           const invoice = this.invoiceService.getInvoiceByUser(
             userId,
-            service.serviceId,
+            service.serviceId
           );
           vendorEntity.invoice = invoice;
         }
         vendorEntity.service = this.workflowService.getRequestedAppByVendorId(
           vendorEntity.id,
         );
+        const lineOfBusiness = [...vendorEntity.lineOfBusiness];
+        vendorEntity.lineOfBusiness = lineOfBusiness?.map((item) => item?.name);
       }
 
       return vendorEntity;

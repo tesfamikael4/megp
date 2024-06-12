@@ -163,6 +163,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
       const { level, status, ...basicRest } = basic;
       basicRest.status = entity?.isrVendor.status;
       response.isrvendor.basic = { ...basicRest };
+      response.isrvendor.lineOfBusiness = entity?.isrVendor.lineOfBusiness?.map((item) => item.name);
     } else {
       response.isrvendor = { ...entity.taskHandler?.data };
     }

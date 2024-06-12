@@ -20,7 +20,8 @@ import {
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
-import { ReadStream, Readable } from 'typeorm/platform/PlatformTools';
+import { Readable } from 'typeorm/platform/PlatformTools';
+
 
 @Injectable()
 export class FileService {
@@ -53,152 +54,13 @@ export class FileService {
     VendorStatusEnum.APPROVED,
     VendorStatusEnum.DRAFT,
   ];
-  async getFileNameByVendorId(vendorId: string) {
-    try {
-      return (
-        await this.fileRepository.findOne({ where: { vendorId: vendorId } })
-      ).fileName;
-    } catch (error) {
-      throw error;
-    }
-  }
-  async getFileNameByVendorIdFileType(vendorId: string, bucketName: string) {
-    try {
-      return (
-        await this.fileRepository.findOne({
-          where: { vendorId: vendorId, fileType: bucketName },
-        })
-      ).fileName;
-    } catch (error) {
-      throw error;
-    }
-  }
-  async getAttachment(
-    fileName: string,
-    bucketName: string,
-    destination: string,
-  ) {
-    try {
-      this.minioClient.fGetObject(
-        bucketName,
-        fileName,
-        destination,
-        function (err) {
-          if (err) {
-            return err;
-          }
-          return 'successfully downloaded';
-        },
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
-  async uploadAttachment(file: Express.Multer.File, command: CreateFileDto) {
-    try {
-      const result = this.uploadToRemoteServer(file, command);
-      const fileDto = new CreateFileDto();
 
-      fileDto.bucketName = result.bucketName;
-      fileDto.fileName = result.fileName;
-      fileDto.fileType = result.mimetype;
-      fileDto.attachmentUrl = result.path;
-      fileDto.path = result.path;
-      fileDto.ownerId = result.ownerId;
-      fileDto.originalName = result.originalname;
-      return await this.fileRepository.save(fileDto);
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
-  }
-  async deleteAttachment(deleteFileDto: DeleteFileDto) {
-    try {
-      await this.minioClient.removeObject(
-        deleteFileDto.bucketName,
-        deleteFileDto.fileName,
-      );
-      const result = await this.fileRepository.delete(deleteFileDto.fileName);
-      return result.affected > 0 ? true : false;
-    } catch (error) {
-      return error;
-    }
-  }
-  uploadToRemoteServer(file: Express.Multer.File, command: CreateFileDto) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const filename =
-      uniqueSuffix + '.' + file.mimetype.split('/')[1];
-    const bucket = command.bucketName;
-    const metaData = {
-      'Content-Type': 'application/octet-stream',
-      example: 5678,
-    };
-    this.minioClient.fPutObject(
-      bucket,
-      filename,
-      file.path,
-      metaData,
-      function (err, etag) {
-        if (err) return err;
-      },
-    );
-    const response = new CreateFileDto();
-    response.attachmentUrl = file.path;
-    response.originalName = file.originalname;
-
-    response.fileType = file.mimetype;
-
-    response.path = command.path;
-    return {
-      ...file,
-      ownerId: command.ownerId,
-      bucketName: command.bucketName,
-      fileName: filename,
-    };
-  }
-  uploadToRemoteServerTus(file: Express.Multer.File, command: CreateFileDto) {
-    const filename =
-      Date.now() +
-      '-' +
-      Math.round(Math.random() * 1e9) +
-      '_' +
-      command.fileName +
-      '.' +
-      file.mimetype.split('/')[1];
-    const bucket = command.bucketName;
-    const serverUrl = 'http://your-tus-server-url.com/files';
-    const metaData = {
-      'Content-Type': 'application/octet-stream',
-      example: 5678,
-    };
-    this.minioClient.fPutObject(
-      bucket,
-      filename,
-      file.path,
-      metaData,
-      function (err, etag) {
-        if (err) return err;
-      },
-    );
-    const response = new CreateFileDto();
-    response.attachmentUrl = file.path;
-    response.originalName = file.originalname;
-
-    response.fileType = file.mimetype;
-
-    response.path = command.path;
-    return {
-      ...file,
-      ownerId: command.ownerId,
-      bucketName: command.bucketName,
-      fileName: filename,
-    };
-  }
 
   async uploadPaymentAttachment(
     file: Express.Multer.File,
     userId: string,
     paymentReceiptDto: any,
+    size?: number
   ) {
     try {
       if (!await this.isTransactionNumberUnique(paymentReceiptDto.transactionNumber, userId)) {
@@ -233,6 +95,7 @@ export class FileService {
         this.bucketName,
         filename,
         file.buffer,
+        size,
         metaData,
       );
       const paymentReceipt = {
@@ -275,6 +138,7 @@ export class FileService {
     file: Express.Multer.File,
     user: any,
     paymentReceiptDto: any,
+    size?: number
   ) {
     const userId = user.id;
     try {
@@ -303,6 +167,7 @@ export class FileService {
         this.bucketName,
         filename,
         file.buffer,
+        size,
         metaData,
       );
       const paymentReceipt = {
@@ -382,7 +247,8 @@ export class FileService {
   async uploadPaymentReceiptAttachment(
     file: Express.Multer.File,
     uploadFileDto: UploadFileDto,
-    user: any
+    user: any,
+    size?: number
   ) {
     try {
       if (!await this.isTransactionNumberUnique(uploadFileDto.transactionNumber, user.id)) {
@@ -410,6 +276,7 @@ export class FileService {
         this.bucketName,
         filename,
         file.buffer,
+        size,
         metaData,
       );
       const paymentReceipt = {
@@ -438,60 +305,43 @@ export class FileService {
       throw error;
     }
   }
-  async uploadSupportingDocumentAttachment(
-    file: Express.Multer.File,
-    userId: string,
-    paymentReceiptDto: any,
-  ) {
-    try {
-      const result = await this.isrVendorsRepository.findOne({
-        where: { userId: userId, status: In(this.updateVendorEnums) },
-      });
-      if (!result) throw new HttpException('Incomplete Information', 404);
-      const fileId = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const fileUploadName = 'SupportingDocument';
-      // const fileId = `${uniqueSuffix}_${file.originalname}`;
-      const filename = `${userId}/${fileUploadName}/${fileId}`;
-      const metaData = {
-        'Content-Type': file.mimetype,
-      };
-      const fname = paymentReceiptDto.fieldName;
-      await this.minioClient.putObject(
-        this.bucketName,
-        filename,
-        file.buffer,
-        metaData,
-      );
-      const resultMetadata = result.supportingDocuments;
-      const fieldMapping = {
-        businessRegistration_IncorporationCertificate:
-          'businessRegistration_IncorporationCertificate',
-        mRA_TPINCertificate: 'mRA_TPINCertificate',
-        generalReceipt_BankDepositSlip: 'generalReceipt_BankDepositSlip',
-        mRATaxClearanceCertificate: 'mRATaxClearanceCertificate',
-        previousPPDARegistrationCertificate:
-          'previousPPDARegistrationCertificate',
-        MSMECertificate: 'MSMECertificate',
-        ibmCertificate: 'ibmCertificate',
-        marginalizedCertificate: 'marginalizedCertificate',
-      };
-      if (resultMetadata[fname] !== '') {
-        const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
-        await this.minioClient.removeObject(this.bucketName, objectName);
-      }
-      if (fieldMapping[paymentReceiptDto.fieldName]) {
-        resultMetadata[fieldMapping[paymentReceiptDto.fieldName]] = fileId;
-      }
 
-      result.supportingDocuments = resultMetadata;
-      const isrVendor = await this.isrVendorsRepository.save(result);
-      if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
-      return isrVendor.supportingDocuments;
-    } catch (error) {
-      console.log(error);
-      throw error;
+  async uploadSupportingDocuments(
+    attachments: any,
+    user: any,
+    subdirectory: string,
+  ): Promise<any> {
+
+    const result = await this.isrVendorsRepository.findOne({
+      where: { userId: user.id, status: In(this.updateVendorEnums) },
+    });
+    const supportingDocuments = result.supportingDocuments;
+    for (const key in attachments) {
+      if (attachments[key]?.length) {
+        if (['MSMECertificate', 'ibmCertificate', 'marginalizedCertificate'].some((item) => key == item)) {
+          subdirectory = 'preferential-documents';
+        }
+        const filename = await this.uploadDocuments(
+          attachments[key][0],
+          user,
+          subdirectory,
+        );
+        if (supportingDocuments[key] !== "") {
+          const previousFilePath = `${user.id}/${subdirectory}/${result.supportingDocuments[key]}`;
+          this.removeObject(previousFilePath)
+        }
+        supportingDocuments[key] = filename;
+      }
+      result.supportingDocuments = { ...supportingDocuments };
+
+
     }
+    const isrVendor = await this.isrVendorsRepository.save(result);
+    return isrVendor;
+
   }
+
+
   async getAttachmentpresignedObject(fileId: string) {
     try {
       const result = await this.minioClient.presignedGetObject(
@@ -527,6 +377,7 @@ export class FileService {
     file: Express.Multer.File,
     userId: string,
     businessAreaId: string,
+    size?: number
   ) {
     try {
       const result = await this.businessAreaRepository.findOne({
@@ -544,6 +395,7 @@ export class FileService {
         this.bucketName,
         filename,
         file.buffer,
+        size,
         metaData,
       );
       result.certificateUrl = fileId;
@@ -555,7 +407,7 @@ export class FileService {
     }
   }
 
-  async uploadCertificate2(file: Buffer, userId: string, instanceId: string) {
+  async uploadCertificate2(file: Buffer, userId: string, instanceId: string, size?: number) {
     console.log('user-id', userId);
     try {
       const result = await this.businessAreaRepository.findOne({
@@ -573,6 +425,7 @@ export class FileService {
         this.bucketName,
         filename,
         file,
+        size,
         metaData,
       );
       result.certificateUrl = fileId;
@@ -598,6 +451,7 @@ export class FileService {
         this.bucketName,
         filename,
         readstream,
+        null,
         metaData,
       );
       return fileId;
@@ -613,6 +467,7 @@ export class FileService {
     file: Express.Multer.File,
     user: any,
     subDirectory: string,
+    size?: number
   ): Promise<string> {
     try {
       const filetype = this.getFileExtension(file.originalname);
@@ -626,6 +481,7 @@ export class FileService {
         this.bucketName,
         filename,
         file.buffer,
+        size,
         metaData,
       );
       return fileId;
@@ -687,29 +543,6 @@ export class FileService {
       throw error;
     }
   }
-
-  async uploadBrifecase(file: Express.Multer.File, user: any): Promise<string> {
-    try {
-      const filetype = this.getFileExtension(file.originalname);
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const fileId = `${uniqueSuffix}_${'brifecase.'}` + filetype;
-      const filename = `${user.id}/brifecase/${fileId}`;
-      const metaData = {
-        'Content-Type': 'application/octet-stream',
-      };
-      await this.minioClient.putObject(
-        this.bucketName,
-        filename,
-        file.buffer,
-        metaData,
-      );
-      return fileId;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
-
   async removeObject(filepath: string) {
     return this.minioClient.removeObject(this.bucketName, filepath);
   }
