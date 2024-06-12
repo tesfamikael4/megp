@@ -1,5 +1,6 @@
 import { Controller, Post, Param, Body, Query, Get } from '@nestjs/common';
 import {
+  AllowAnonymous,
   EntityCrudController,
   EntityCrudOptions,
   decodeCollectionQuery,
@@ -62,5 +63,11 @@ export class RfxController extends EntityCrudController<RFX>(options) {
   @EventPattern('workflow-approval.rfxApproval')
   async workflowResponse(@Body() data: any) {
     return this.rfxService.handleWorkflowResponse(data);
+  }
+
+  @Get('current-time')
+  @AllowAnonymous()
+  getCurrentTime() {
+    return new Date().toDateString();
   }
 }
