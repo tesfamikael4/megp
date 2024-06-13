@@ -7,6 +7,10 @@ FROM base AS builder
 RUN apk add --no-cache libc6-compat
 RUN apk update
 RUN apk update
+
+RUN apk add --no-cache tzdata
+ENV TZ=Africa/Addis_Ababa
+
 # Set working directory
 WORKDIR /app
 # RUN yarn global add turbo pnpm
