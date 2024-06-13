@@ -51,7 +51,7 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
     data.organizationName = user.organization.name;
     return await this.procurementRequisitionService.initiateWorkflow(data);
   }
-  @EventPattern('planning-approval.procurementRequisition')
+  @EventPattern('planning-workflow.procurementRequisition')
   @ApiPaginatedResponse(ProcurementRequisition)
   async handleApprovedWorkflow(@Body() data: any) {
     return await this.procurementRequisitionService.prApprovalDecision(data);
