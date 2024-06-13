@@ -18,6 +18,7 @@ export class WorkflowApproval {
   @Inject()
   private dataSource: DataSource;
   @AllowAnonymous()
+  //! deprecated
   @RabbitSubscribe({
     exchange: 'workflow-broadcast-exchanges',
     routingKey: 'planning-workflow.postBudgetApproval',
