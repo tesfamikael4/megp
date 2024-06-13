@@ -8,11 +8,12 @@ RUN apk add --no-cache libc6-compat
 RUN apk update
 RUN apk update
 
+# Set working directory
+WORKDIR /app
+
 RUN apk add --no-cache tzdata
 ENV TZ="Africa/Addis_Ababa"
 
-# Set working directory
-WORKDIR /app
 # RUN yarn global add turbo pnpm
 RUN npm install -g pnpm
 RUN npm install -g turbo
@@ -25,6 +26,9 @@ FROM base AS installer
 RUN apk add --no-cache libc6-compat
 RUN apk update
 WORKDIR /app
+
+RUN apk add --no-cache tzdata
+ENV TZ="Africa/Addis_Ababa"
 
 # Install pnpm
 # RUN yarn global add pnpm
@@ -52,6 +56,9 @@ RUN npx turbo run build --filter=marketplace-be...
 
 FROM base AS runner
 WORKDIR /
+
+RUN apk add --no-cache tzdata
+ENV TZ="Africa/Addis_Ababa"
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs
