@@ -9,7 +9,7 @@ RUN apk update
 RUN apk update
 
 RUN apk add --no-cache tzdata
-ENV TZ=Africa/Addis_Ababa
+ENV TZ="Africa/Addis_Ababa"
 
 # Set working directory
 WORKDIR /app
@@ -52,10 +52,6 @@ RUN npx turbo run build --filter=marketplace-be...
 
 FROM base AS runner
 WORKDIR /
-
-# Change timezone to local time
-ENV TZ=Africa/Addis_Ababa
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs
