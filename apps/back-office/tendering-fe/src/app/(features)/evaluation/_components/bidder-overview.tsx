@@ -15,9 +15,11 @@ export const BidderOverView = ({
   basePath,
   milestone,
   teamAssessment = false,
+  hideComplete = false,
 }: {
   basePath: string;
   teamAssessment?: boolean;
+  hideComplete?: boolean;
   milestone:
     | 'technicalCompliance'
     | 'technicalQualification'
@@ -118,18 +120,20 @@ export const BidderOverView = ({
         // subTitle={data?.procurementReferenceNumber ?? ''}
         collapsible={false}
         action={
-          <Button
-            onClick={complete}
-            loading={
-              isCompleting ||
-              isQualificationCompleting ||
-              isResponsivenessCompleting ||
-              isScoringCompleting ||
-              isBidPriceCompleting
-            }
-          >
-            Complete
-          </Button>
+          !hideComplete ? (
+            <Button
+              onClick={complete}
+              loading={
+                isCompleting ||
+                isQualificationCompleting ||
+                isResponsivenessCompleting ||
+                isScoringCompleting ||
+                isBidPriceCompleting
+              }
+            >
+              Complete
+            </Button>
+          ) : null
         }
       >
         <Flex gap={20}>

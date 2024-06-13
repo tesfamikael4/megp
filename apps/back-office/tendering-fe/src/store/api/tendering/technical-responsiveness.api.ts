@@ -20,6 +20,18 @@ export const technicalResponsiveness = createApi({
         };
       },
     }),
+    getPassedBiddersByLotId: builder.query<any, any>({
+      query: ({ lotId, collectionQuery }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `/technical-responsiveness-assessment-detail/passed-bidders-for-lot/${lotId}${q}`,
+        };
+      },
+    }),
     getResponsivenessRequirementsByLotId: builder.query<any, any>({
       query: ({
         lotId,
@@ -129,11 +141,32 @@ export const technicalResponsiveness = createApi({
         };
       },
     }),
+    getItemsByBidderId: builder.query<any, any>({
+      query: ({
+        lotId,
+        bidderId,
+        collectionQuery,
+      }: {
+        lotId: string;
+        bidderId: string;
+        collectionQuery?: CollectionQuery;
+      }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `/technical-responsiveness-assessment-detail/get-items-by-bidder/${lotId}/${bidderId}${q}`,
+        };
+      },
+    }),
   }),
 });
 
 export const {
   useLazyGetPassedBiddersQuery,
+  useLazyGetPassedBiddersByLotIdQuery,
   useLazyGetResponsivenessRequirementsByLotIdQuery,
   useLazyGetSorTechnicalRequirementsQuery,
   useCreateTechnicalResponsivenessAssessmentMutation,
@@ -143,4 +176,5 @@ export const {
   useSubmitResponsivenessEvaluationMutation,
   useLazyGetResponsivenessMembersAssessmentResultQuery,
   useLazyGetItemsQuery,
+  useLazyGetItemsByBidderIdQuery,
 } = technicalResponsiveness;
