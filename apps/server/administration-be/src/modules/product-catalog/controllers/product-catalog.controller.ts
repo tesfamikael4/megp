@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ProductCatalogsService } from '../services/product-catalog.service';
@@ -23,6 +24,7 @@ import { ProductCatalogApprovalStatus } from 'src/shared/enums/product-catalog-e
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: EntityCrudOptions = {};
+
 @Controller('product-catalogs')
 @ApiTags('product-catalogs')
 @ApiResponse({ status: 500, description: 'Internal error' })
@@ -45,10 +47,12 @@ export class ProductCatalogsController extends EntityCrudController<ProductCatal
     const query = decodeCollectionQuery(q);
     return this.productCatalogService.getById(vendorId, query);
   }
+
+  @Post('/:id/approve')
   approveCatalog(
-    id: string,
-    approvalStatus: ProductCatalogApprovalStatus,
-    req?: any,
+    @Param('id') id: string,
+    @Body('approvalStatus') approvalStatus: ProductCatalogApprovalStatus,
+    @Req() req?: any,
   ) {
     return this.productCatalogService.approveCatalog(id, approvalStatus, req);
   }
