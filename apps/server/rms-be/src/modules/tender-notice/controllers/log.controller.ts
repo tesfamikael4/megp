@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { TenderNoticeService } from '../services/tender-notice.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -11,7 +11,7 @@ export class LogController {
 
   @Get('token')
   @AllowAnonymous()
-  async tokenLog(@Body() payload: any, @Req() req: Request) {
+  async tokenLog(@Req() req: Request) {
     console.log(
       '🚀 ~ OfflinePaymentController ~ authorization ~ authorization:',
       req.headers.authorization,
@@ -24,7 +24,7 @@ export class LogController {
     return '<h2>Token Log</h2>';
   }
 
-  @Get('complete')
+  @Post('complete')
   @AllowAnonymous()
   async logComplete(@Body() payload: any, @Req() req: Request) {
     console.log('🚀 ~ LogController ~ logComplete ~ payload:', payload);
