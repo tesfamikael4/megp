@@ -23,4 +23,16 @@ export class LogController {
 
     return '<h2>Token Log</h2>';
   }
+
+  @Get('complete')
+  @AllowAnonymous()
+  async logComplete(@Body() payload: any, @Req() req: Request) {
+    console.log('🚀 ~ LogController ~ logComplete ~ payload:', payload);
+    console.log(
+      '🚀 ~ OfflinePaymentController ~ authorization ~ authorization:',
+      req.headers.authorization,
+    );
+
+    return '<h2>Token Log</h2>';
+  }
 }
