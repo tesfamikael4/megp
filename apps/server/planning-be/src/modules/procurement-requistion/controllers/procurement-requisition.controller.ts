@@ -136,10 +136,7 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
   @UseGuards(ApiKeyGuard)
   @Get('procurement-requisition-status/:id')
   @ApiPaginatedResponse(ProcurementRequisition)
-  async getProcurementRequisitionStatus(
-    @Query('q') q?: string,
-    @Req() req?: any,
-  ) {
+  async getProcurementRequisitionStatus(@Query('q') q?: string) {
     const query = decodeCollectionQuery(q);
     return this.procurementRequisitionService.getProcurementRequisitionStatus(
       query,
