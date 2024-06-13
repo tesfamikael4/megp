@@ -51,7 +51,7 @@ const prSchema: ZodType<Partial<ProcurementRequisition>> = z.object({
     required_error: 'This field is required',
     invalid_type_error: 'This field is required to be a string',
   }),
-  userReference: z.string().optional(),
+  userReference: z.coerce.string().optional(),
 });
 
 export const FormDetail = ({
@@ -124,6 +124,10 @@ export const FormDetail = ({
       ...newData,
       budgetYearId: budget?.budgetYearId,
       budgetId: budget?.id,
+      userReference:
+        procurementRequisition?.userReference == null
+          ? ''
+          : newData?.userReference,
     };
 
     try {
