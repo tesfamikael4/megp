@@ -23,6 +23,18 @@ export class RfxController extends EntityCrudController<RFX>(options) {
     super(rfxService);
   }
 
+  @Get('rfxs-on-reviewal')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async rfxesOnReviewal(@Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.rfxService.getRfxesOnReviewal(query);
+  }
+
   @Get('closed-rfxs')
   @ApiQuery({
     name: 'q',

@@ -509,6 +509,32 @@ export class RfxService extends EntityCrudService<RFX> {
     ]);
   }
 
+  async getRfxesOnReviewal(query: CollectionQuery) {
+    const dataQuery = QueryConstructor.constructQuery<RFX>(
+      this.rfxRepository,
+      query,
+    );
+
+    dataQuery
+      .where('rfxes.status IN (:...statuses)', {
+        statuses: [ERfxStatus.TEAM_REVIEWAL, ERfxStatus.ADJUSTEDMENT],
+      })
+      .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedures')
+      .andWhere('rfxBidProcedures.reviewDeadline < :now', {
+        now: new Date(Date.now()),
+      });
+
+    const response = new DataResponseFormat<RFX>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
   private async getCompleteRfx(rfxId: string) {
     const rfx = await this.rfxRepository.findOne({
       where: {
