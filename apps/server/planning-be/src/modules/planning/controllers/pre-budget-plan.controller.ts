@@ -82,7 +82,7 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
     await this.preBudgetPlanService.initiateWorkflow(data);
   }
 
-  @EventPattern('planning-approval.preBudgetApproval')
+  @EventPattern('planning-workflow.preBudgetApproval')
   @ApiPaginatedResponse(PreBudgetPlan)
   // @UseInterceptors(TransactionInterceptor)
   async handleApprovedWorkflow(@Body() data: any) {
