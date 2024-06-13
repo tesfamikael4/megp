@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import {
   CurrentUser,
@@ -34,5 +34,10 @@ export class RfxRevisionApprovalController extends ExtraCrudController<RfxRevisi
   @ApiBody({})
   async create(@Body() itemData: any, @CurrentUser() user): Promise<any> {
     return await this.revisionApprovalService.create(itemData, user);
+  }
+
+  @Get('can-submit/:rfxId')
+  async canSubmit(@Param('rfxId') rfxId: string, @CurrentUser() user: any) {
+    return await this.revisionApprovalService.canSubmit(rfxId, user);
   }
 }
