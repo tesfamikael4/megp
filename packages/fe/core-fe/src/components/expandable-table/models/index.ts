@@ -16,4 +16,5 @@ export interface ExpandableTableConfig {
   minHeight?: number;
   noRecordsText?: string;
   isLoading?: boolean;
+  filters?: any[];
 }

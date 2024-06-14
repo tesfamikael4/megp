@@ -43,7 +43,12 @@ export default function ProcurementRequisition() {
         width: 250,
         sortable: true,
       },
-      { accessor: 'status', title: 'Status', width: 100, sortable: true },
+      {
+        accessor: 'status',
+        title: 'Status',
+        width: 100,
+        sortable: true,
+      },
       {
         accessor: 'totalEstimatedAmount',
         title: 'Total Amount',
@@ -94,6 +99,92 @@ export default function ProcurementRequisition() {
         width: 50,
       },
     ],
+    filters: [
+      {
+        accessor: 'status',
+        label: 'Status',
+        items: [
+          { key: 'APPROVED', value: 'Approved' },
+          { key: 'DRAFT', value: 'Drafted' },
+          { key: 'SUBMITTED', value: 'Submitted' },
+          { key: 'ADJUSTED', value: 'Adjusted' },
+        ],
+      },
+      {
+        accessor: 'procurementMechanisms.procurementMethod',
+        label: 'Procurement Method',
+        items: [
+          {
+            key: 'Request for Quotation (RFQ)',
+            value: 'Request for Quotation (RFQ)',
+          },
+          {
+            key: 'National Competitive Bidding (NCB)',
+            value: 'National Competitive Bidding (NCB)',
+          },
+          {
+            key: 'International Competitive Bidding (ICB)',
+            value: 'International Competitive Bidding (ICB)',
+          },
+          { key: 'Restricted Tender', value: 'Restricted Tender' },
+          {
+            key: 'Single Source Procurement',
+            value: 'Single Source Procurement',
+          },
+          {
+            key: 'Request for Proposal (RFP)',
+            value: 'Request for Proposal (RFP)',
+          },
+          {
+            key: 'Two Stage Bidding',
+            value: 'Two Stage Bidding',
+          },
+        ],
+      },
+      {
+        accessor: 'procurementMechanisms.procurementType',
+        label: 'Procurement Type',
+
+        items: [
+          {
+            key: 'Goods',
+            value: 'Goods',
+          },
+          {
+            key: 'Works',
+            value: 'Works',
+          },
+          {
+            key: 'Consultancy Services',
+            value: 'Consultancy Services',
+          },
+          { key: 'Non Consulting Services', value: 'Non Consulting Services' },
+          {
+            key: 'Motor Vehicle Repair',
+            value: 'Motor Vehicle Repair',
+          },
+        ],
+      },
+      {
+        accessor: 'procurementMechanisms.fundingSource',
+        label: 'Funding Source',
+        items: [
+          {
+            key: 'Internal Revenue',
+            value: 'Internal Revenue',
+          },
+          {
+            key: 'Treasury',
+            value: 'Treasury',
+          },
+          {
+            key: 'Loan',
+            value: 'Loan',
+          },
+          { key: 'Donor', value: 'Donor' },
+        ],
+      },
+    ],
     isExpandable: true,
     isSearchable: true,
     isLoading: isLoading,
@@ -105,14 +196,6 @@ export default function ProcurementRequisition() {
   };
 
   const onRequestChange = (request: CollectionQuery) => {
-    request?.where?.push([
-      {
-        column: 'status',
-        value: 'SUBMITTED',
-        operator: '!=',
-      },
-    ]);
-
     trigger({ ...request, includes: ['reasons', 'procurementMechanisms'] });
   };
 
