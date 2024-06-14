@@ -5,6 +5,7 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { Tender } from './tender.entity';
 import { SpdOpeningChecklist } from './spd-opening-checklist.entity';
@@ -14,6 +15,7 @@ import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { BidOpeningChecklistAssessment } from './bid-opening-checklist-assessment.entity';
 import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 
+@Unique(['bidOpeningChecklistAssessmentId', 'spdOpeningChecklistId'])
 @Entity({ name: 'bid_opening_checklist_assessment_details' })
 export class BidOpeningChecklistAssessmentDetail extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
