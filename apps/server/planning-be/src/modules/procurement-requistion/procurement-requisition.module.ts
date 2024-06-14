@@ -41,23 +41,13 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
       PostBudgetPlanActivity,
       Budget,
     ]),
-    RabbitMQModule.forRoot(RabbitMQModule, {
-      exchanges: [
-        {
-          name: 'workflow-broadcast-exchanges',
-          type: 'direct', // You can change this to 'topic', 'fanout', etc. as needed
-        },
-      ],
-      uri: process.env.RMQ_URL, // Replace with your RabbitMQ URI
-      enableControllerDiscovery: true,
-    }),
     ClientsModule.register([
       {
         name: 'PR_RMQ_SERVICE',
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RMQ_URL],
-          queue: 'work-plan-initiate',
+          queue: 'workflow-initiate',
           queueOptions: {
             durable: false,
           },
