@@ -12,6 +12,7 @@ import { SecurityQuestion } from './security-question.entity';
 import { User } from './user.entity';
 import { AccountProfile } from './account-profile.entity';
 import { EmailChangeRequest } from './email-change-request.entity';
+import { AccountCredential } from './account-credential.entity';
 
 @Entity('accounts')
 export class Account extends Audit {
@@ -90,4 +91,13 @@ export class Account extends Audit {
     cascade: true,
   })
   userProfile: AccountProfile;
+
+  @OneToOne(
+    () => AccountCredential,
+    (accountCredential) => accountCredential.account,
+    {
+      cascade: true,
+    },
+  )
+  accountCredential: AccountCredential;
 }

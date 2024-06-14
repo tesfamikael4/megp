@@ -328,7 +328,7 @@ export class UserService extends ExtraCrudService<User> {
         status: invite.status,
         firstName: invite.account.firstName,
         lastName: invite.account.lastName,
-        setPassword: !invite.account.password,
+        setPassword: !invite.account.accountCredential.password,
       };
 
       return result;

@@ -46,6 +46,7 @@ import { EmailService } from 'src/shared/email/email.service';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { EmailChangeRequest } from 'src/entities/email-change-request.entity';
+import { AccountCredential } from 'src/entities/account-credential.entity';
 
 @Injectable()
 export class AccountsService {
@@ -56,6 +57,8 @@ export class AccountsService {
     private readonly accountVerificationRepository: Repository<AccountVerification>,
     @InjectRepository(SecurityQuestion)
     private readonly securityQuestionRepository: Repository<SecurityQuestion>,
+    @InjectRepository(AccountCredential)
+    private readonly accountCredentialRepository: Repository<AccountCredential>,
     private readonly helper: AuthHelper,
     private readonly emailService: EmailService,
     @Inject(REQUEST) private readonly request: Request,
@@ -132,13 +135,13 @@ export class AccountsService {
 
     const verifyOTP = await this.verifyOTP(verificationId, otp, isOtp);
 
-    const account = await this.repository.findOneBy({
-      id: verifyOTP.id,
+    const account = await this.accountCredentialRepository.findOneBy({
+      accountId: verifyOTP.id,
     });
 
     account.password = this.helper.encodePassword(password);
 
-    await this.repository.update(account.id, account);
+    await this.accountCredentialRepository.upsert(account, ['accountId']);
 
     return account;
   }
@@ -155,12 +158,14 @@ export class AccountsService {
 
     const entityManager = this.request[ENTITY_MANAGER_KEY];
 
-    await entityManager
-      .getRepository(Account)
-      .update(accountVerification.accountId, {
+    await entityManager.getRepository(AccountCredential).upsert(
+      {
+        accountId: accountVerification.accountId,
         password: this.helper.encodePassword(password),
         status: AccountStatusEnum.ACTIVE,
-      });
+      },
+      ['accountId'],
+    );
 
     await entityManager.getRepository(User).update(accountVerification.userId, {
       status: AccountStatusEnum.ACTIVE,
@@ -182,7 +187,7 @@ export class AccountsService {
 
     await entityManager
       .getRepository(Account)
-      .update(accountVerification.accountId, {
+      .upsert(accountVerification.accountId, {
         status: AccountStatusEnum.ACTIVE,
       });
 
@@ -194,15 +199,15 @@ export class AccountsService {
   }
 
   public async changePassword(changePassword: ChangePasswordDto) {
-    const account = await this.repository.findOneBy({
-      id: changePassword.accountId,
+    const accountCredential = await this.accountCredentialRepository.findOneBy({
+      accountId: changePassword.accountId,
     });
-    if (!account) {
+    if (!accountCredential) {
       throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
     }
     const isOldPasswordValid: boolean = this.helper.compareHashedValue(
       changePassword.oldPassword,
-      account.password,
+      accountCredential.password,
     );
     if (!isOldPasswordValid) {
       throw new HttpException('incorrect_old_password', HttpStatus.BAD_REQUEST);
@@ -210,7 +215,7 @@ export class AccountsService {
 
     const isNewPasswordValid: boolean = this.helper.compareHashedValue(
       changePassword.newPassword,
-      account.password,
+      accountCredential.password,
     );
     if (isNewPasswordValid) {
       throw new HttpException(
@@ -219,11 +224,15 @@ export class AccountsService {
       );
     }
 
-    account.password = this.helper.encodePassword(changePassword.newPassword);
+    accountCredential.password = this.helper.encodePassword(
+      changePassword.newPassword,
+    );
 
-    await this.repository.update(account.id, account);
+    await this.accountCredentialRepository.upsert(accountCredential, [
+      'accountId',
+    ]);
 
-    return account;
+    return accountCredential;
   }
 
   public async resetAccountPassword(
@@ -246,15 +255,22 @@ export class AccountsService {
       throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
     }
 
-    const account = await this.repository.findOneBy({
-      id: changePassword.accountId,
+    const account = await this.repository.findOne({
+      where: {
+        id: changePassword.accountId,
+      },
+      relations: {
+        accountCredential: true,
+      },
     });
 
     if (!account) {
       throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
     }
 
-    account.password = this.helper.encodePassword(changePassword.password);
+    account.accountCredential.password = this.helper.encodePassword(
+      changePassword.password,
+    );
 
     await this.repository.update(account.id, account);
 
@@ -274,7 +290,10 @@ export class AccountsService {
 
     const account: Account = await this.repository.findOne({
       where: [{ username }, { email: username }, { phone: username }],
-      relations: ['securityQuestions'],
+      relations: {
+        securityQuestions: true,
+        accountCredential: true,
+      },
     });
 
     if (
@@ -287,7 +306,7 @@ export class AccountsService {
 
     const isPasswordValid: boolean = this.helper.compareHashedValue(
       password,
-      account.password,
+      account.accountCredential.password,
     );
 
     let bannedUntil: any;
@@ -381,8 +400,13 @@ export class AccountsService {
       );
     }
 
-    const account = await this.repository.findOneBy({
-      id: accountId,
+    const account = await this.repository.findOne({
+      where: {
+        id: accountId,
+      },
+      relations: {
+        accountCredential: true,
+      },
     });
     if (!account) {
       throw new HttpException('account_not_found', HttpStatus.BAD_REQUEST);
@@ -390,7 +414,7 @@ export class AccountsService {
 
     const isOldPasswordValid: boolean = this.helper.compareHashedValue(
       payload.password,
-      account.password,
+      account.accountCredential.password,
     );
     if (!isOldPasswordValid) {
       throw new HttpException('incorrect_password', HttpStatus.BAD_REQUEST);
@@ -588,7 +612,9 @@ export class AccountsService {
         otpType: AccountVerificationTypeEnum.INVITATION,
       },
       relations: {
-        account: true,
+        account: {
+          accountCredential: true,
+        },
       },
     });
   }
@@ -1104,10 +1130,14 @@ export class AccountsService {
     account.firstName = firstName;
     account.lastName = lastName;
     account.phone = phone;
-    account.password = password && this.helper.encodePassword(password);
     account.status = status;
+    if (password) {
+      const accountCredential = new AccountCredential();
+      accountCredential.password = this.helper.encodePassword(password);
+      account.accountCredential = accountCredential;
+    }
 
-    await this.repository.insert(account);
+    await this.repository.save(account);
     return account;
   }
 
@@ -1122,10 +1152,14 @@ export class AccountsService {
     account.email = email;
     account.firstName = name;
     account.lastName = name;
-    account.password = this.helper.encodePassword(password);
     account.status = status;
+    if (password) {
+      const accountCredential = new AccountCredential();
+      accountCredential.password = this.helper.encodePassword(password);
+      account.accountCredential = accountCredential;
+    }
 
-    await this.repository.insert(account);
+    await this.repository.save(account);
     return account;
   }
 

@@ -26,6 +26,7 @@ import {
   mandates,
 } from './seed-data';
 import * as bcrypt from 'bcrypt';
+import { AccountCredential } from 'src/entities/account-credential.entity';
 
 @Injectable()
 export class DataSeeder implements Seeder {
@@ -77,20 +78,25 @@ export class DataSeeder implements Seeder {
       conflictPaths: ['roleSystemId', 'permissionId'],
     });
 
-    const accountExists = await accountRepository.findOne({
+    let accountExists = await accountRepository.findOne({
       where: {
         username: account.username,
       },
     });
     if (!accountExists) {
+      accountExists = await accountRepository.create({
+        ...account,
+      });
+
       const salt: string = bcrypt.genSaltSync(12);
 
-      const password = bcrypt.hashSync('123456', salt);
+      const password = bcrypt.hashSync('P@ssw0rd@megp', salt);
 
-      await accountRepository.insert({
-        ...account,
-        password,
-      });
+      const accountCredential = new AccountCredential();
+      accountCredential.password = password;
+      accountExists.accountCredential = accountCredential;
+
+      await accountRepository.save(accountExists);
 
       await organizationRepository.insert(organization);
 
