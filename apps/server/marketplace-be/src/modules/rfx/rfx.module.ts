@@ -16,6 +16,7 @@ import {
   RfxProductInvitation,
   Document,
   RfxRevisionApproval,
+  RfxContractTerm,
 } from 'src/entities';
 import { RfxItemDocumentService } from './services/rfx-item-document.service';
 import { RfxProcurementMechanismService } from './services/rfx-procurement-mechanism.service';
@@ -45,6 +46,8 @@ import { WorkflowHandlerService } from './services/workflow-handler.service';
 import { WorkflowHandlerController } from './controllers/workflow-handler.controller';
 import { OpenerService } from '../evaluation/services/opener.service';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { RfxContractTermController } from './controllers/rfx-contract-term.controller';
+import { RfxContractTermService } from './services/rfx-contract-term.service';
 
 @Module({
   imports: [
@@ -60,6 +63,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
       RfxProductInvitation,
       RfxDocumentaryEvidence,
       RfxRevisionApproval,
+      RfxContractTerm,
       Document,
     ]),
     MinIOModule,
@@ -111,6 +115,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     RfxProcurementTechnicalTeamController,
     RfxBidProcedureController,
     RfxBidContractConditionController,
+    RfxContractTermController,
     RfxTechnicalRequirementController,
     RfxProductInvitationController,
     RfxDocumentaryEvidenceController,
@@ -129,6 +134,7 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
     RfxTechnicalRequirementService,
     RfxProductInvitationService,
     RfxDocumentaryEvidenceService,
+    RfxContractTermService,
     RfxRevisionApprovalService,
     WorkflowHandlerService,
     OpenerService,

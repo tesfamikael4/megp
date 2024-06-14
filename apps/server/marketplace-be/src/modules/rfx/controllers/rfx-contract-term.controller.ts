@@ -18,7 +18,7 @@ const options: ExtraCrudOptions = {
 
 @Controller('rfx-contract-terms')
 @ApiTags('Rfx Contract Terms')
-export class RfxDocumentaryEvidenceController extends ExtraCrudController<RfxContractTerm>(
+export class RfxContractTermController extends ExtraCrudController<RfxContractTerm>(
   options,
 ) {
   constructor(private readonly rfxContractTermService: RfxContractTermService) {
