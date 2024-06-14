@@ -1,10 +1,10 @@
 'use client';
-import { Flex, TextInput } from '@mantine/core';
-import { IconInboxOff, IconSearch } from '@tabler/icons-react';
+import { Flex, TextInput, Box, Menu } from '@mantine/core';
+import { IconInboxOff, IconSearch, IconFilter } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { type ReactElement, useEffect, useState } from 'react';
+import React from 'react';
 import { type ExpandableTableConfig } from './models';
-// import classes from './table.module.scss';
 
 const perPage = 10;
 
@@ -22,27 +22,67 @@ export function ExpandableTable({
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [sortStatus, setSortStatus] = useState<any>({});
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<string, string[]>
+  >(
+    () =>
+      config.filters?.reduce(
+        (acc, filter) => {
+          acc[filter.accessor] = [];
+          return acc;
+        },
+        {} as Record<string, string[]>,
+      ) || {},
+  );
 
   const defaultColumnRender = (record, _, accessor) => (
     <p className="line-clamp-2">{record[accessor]}</p>
   );
 
+  const handleItemClick = (filterAccessor: string, itemKey: string) => {
+    setSelectedFilters((prev) => {
+      const filters = { ...prev };
+      if (filters[filterAccessor].includes(itemKey)) {
+        filters[filterAccessor] = filters[filterAccessor].filter(
+          (key) => key !== itemKey,
+        );
+      } else {
+        filters[filterAccessor].push(itemKey);
+      }
+      return filters;
+    });
+  };
+
   useEffect(() => {
     const from = (page - 1) * perPage;
+    const where = search
+      ? [
+          [
+            {
+              column: config.primaryColumn ?? 'description',
+              value: search,
+              operator: 'ILIKE',
+            },
+          ],
+        ]
+      : [];
+
+    for (const [accessor, keys] of Object.entries(selectedFilters)) {
+      if (keys.length > 0) {
+        where.push(
+          keys.map((key) => ({
+            column: accessor,
+            value: key,
+            operator: '=',
+          })),
+        );
+      }
+    }
+
     onRequestChange?.({
       skip: from,
       take: perPage,
-      where: search
-        ? [
-            [
-              {
-                column: config.primaryColumn ?? 'description',
-                value: search,
-                operator: 'ILIKE',
-              },
-            ],
-          ]
-        : [],
+      where,
       orderBy: sortStatus?.columnAccessor
         ? [
             {
@@ -52,7 +92,8 @@ export function ExpandableTable({
           ]
         : [],
     });
-  }, [page, search, sortStatus]);
+  }, [page, search, sortStatus, selectedFilters]);
+
   const paginationProps = total
     ? {
         page,
@@ -61,11 +102,51 @@ export function ExpandableTable({
         totalRecords: total,
       }
     : {};
+
   return (
     <>
       {config.isSearchable ? (
         <Flex className="my-2" justify="space-between">
           {config.action ? config.action : <div />}
+          {config.filters ? (
+            <Box className="ml-auto mr-2">
+              <Menu position="right-start" shadow="md" width={400}>
+                <Menu.Target>
+                  <IconFilter />
+                </Menu.Target>
+                <Menu.Dropdown>
+                  {config.filters.map((filter, index) => (
+                    <React.Fragment key={index}>
+                      <Menu.Label>{filter.label}</Menu.Label>
+                      {filter.items.map((item, idx) => (
+                        <div className="flex items-center" key={idx}>
+                          <Flex
+                            className="items-center cursor-pointer pl-4"
+                            onClick={() => {
+                              handleItemClick(
+                                filter.accessor as string,
+                                item.key as string,
+                              );
+                            }}
+                          >
+                            {selectedFilters[filter.accessor].includes(
+                              item.key as string,
+                            ) ? (
+                              <span className="text-green-600 text-base">
+                                {item.value}
+                              </span>
+                            ) : (
+                              <span className="text-base">{item.value}</span>
+                            )}
+                          </Flex>
+                        </div>
+                      ))}
+                    </React.Fragment>
+                  ))}
+                </Menu.Dropdown>
+              </Menu>
+            </Box>
+          ) : null}
           <TextInput
             leftSection={<IconSearch size={14} />}
             miw={300}
@@ -75,7 +156,6 @@ export function ExpandableTable({
             placeholder="Search"
             size="xs"
             value={search}
-            // width={300}
           />
         </Flex>
       ) : null}
@@ -106,7 +186,6 @@ export function ExpandableTable({
         striped
         withTableBorder
         {...paginationProps}
-        // classNames={{ table: classes.table, header: classes.header }}
         fetching={config.isLoading}
         onRowClick={config.onClick ?? undefined}
         onSelectedRecordsChange={(records) => {
