@@ -740,8 +740,9 @@ export const organization = {
   id: 'c7865a67-d289-4671-b264-bc899ef870cb',
   name: 'Public Procurement And Disposal Of Assets Authority',
   code: '123456',
-  shortName: 'default',
+  shortName: 'PPDA',
   status: 'ACTIVE',
+  type: 'BACK-OFFICE',
 };
 export const unit = {
   id: 'bcf2e233-3572-45b3-b104-14023c76173a',
