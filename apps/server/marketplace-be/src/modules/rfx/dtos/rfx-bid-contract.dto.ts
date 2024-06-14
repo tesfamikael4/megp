@@ -36,6 +36,10 @@ export class CreateRfxBidContractConditionDTO {
   @IsInt()
   @Min(1)
   paymentReleasePeriod: number;
+
+  @ApiProperty()
+  @IsArray()
+  contractTerms: string[];
 }
 
 export class UpdateRfxBidContractConditionDTO extends CreateRfxBidContractConditionDTO {

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExtraCrudService } from 'megp-shared-be';
-import { RFX, RfxBidContractCondition } from 'src/entities';
+import { RFX, RfxBidContractCondition, RfxContractTerm } from 'src/entities';
 import { Repository } from 'typeorm';
 import {
   CreateRfxBidContractConditionDTO,
@@ -19,6 +19,8 @@ export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContr
   constructor(
     @InjectRepository(RfxBidContractCondition)
     private readonly rfxBidContractConditionRepository: Repository<RfxBidContractCondition>,
+    @InjectRepository(RfxContractTerm)
+    private readonly rfxContractTermRepository: Repository<RfxContractTerm>,
     @InjectRepository(RFX)
     private readonly rfxRepository: Repository<RFX>,
     private readonly rfxService: RfxService,
@@ -43,7 +45,18 @@ export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContr
     const rfxBidContract =
       this.rfxBidContractConditionRepository.create(itemData);
 
-    await this.rfxBidContractConditionRepository.insert(rfxBidContract);
+    const rfxContractTerms = itemData.contractTerms.map((term, index) => ({
+      term,
+      order: index,
+      rfxId: itemData.rfxId,
+    }));
+
+    const contractTerms =
+      this.rfxContractTermRepository.create(rfxContractTerms);
+    await Promise.all([
+      this.rfxContractTermRepository.upsert(contractTerms, ['rfxId', 'order']),
+      this.rfxBidContractConditionRepository.insert(rfxBidContract),
+    ]);
 
     return rfxBidContract;
   }
