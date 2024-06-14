@@ -69,6 +69,73 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
     }
     return response;
   }
+  async getItemsByBidderId(
+    lotId: string,
+    bidderId: string,
+    query: CollectionQuery,
+    req: any,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const bidder = await manager.getRepository(BiddersComparison).findOne({
+      where: {
+        milestoneTxt: 'TechnicalQualification',
+        bidderStatusTxt: 'TechnicalQualificationSucceeded',
+        bidRegistrationDetail: {
+          lotId,
+          bidRegistration: {
+            bidderId,
+          },
+        },
+      },
+      relations: {
+        bidRegistrationDetail: {
+          bidRegistration: true,
+        },
+      },
+    });
+
+    const item = await manager.getRepository(Item).find({
+      where: {
+        id: In(bidder.bidRegistrationDetail.technicalItems),
+      },
+    });
+
+    return item;
+  }
+  async passedBiddersForLot(lotId: string, query: CollectionQuery, req: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const bidders = await manager.getRepository(BiddersComparison).find({
+      where: {
+        milestoneTxt: 'TechnicalQualification',
+        bidderStatusTxt: 'TechnicalQualificationSucceeded',
+        bidRegistrationDetail: {
+          lotId,
+        },
+      },
+      relations: {
+        bidRegistrationDetail: {
+          bidRegistration: true,
+        },
+      },
+    });
+
+    const uniqueBiddersSet = new Set();
+
+    bidders.forEach((bidder) => {
+      const isUnique = ![...uniqueBiddersSet].some(
+        (x: BidRegistration) =>
+          x.id === bidder.bidRegistrationDetail.bidRegistration.id,
+      );
+      if (isUnique) {
+        uniqueBiddersSet.add(bidder.bidRegistrationDetail.bidRegistration);
+      }
+    });
+    const uniqueBidders = [...uniqueBiddersSet];
+
+    return uniqueBidders;
+  }
   async passedBidders(
     lotId: string,
     itemId: string,
