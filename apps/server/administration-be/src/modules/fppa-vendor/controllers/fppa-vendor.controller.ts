@@ -43,7 +43,7 @@ export class FppaVendorsController extends EntityCrudController<FppaVendor>(
   @Get(':tin')
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
-  async getFPPAVenderByTin(@Param() parms: GetFPPAVendorByTinDto) {
-    return this.fppaVendorService.getFPPAVenderByTin(parms.tin);
+  async getFPPAVenderByTin(@Param('tin') tin: string) {
+    return this.fppaVendorService.getFPPAVenderByTin(tin);
   }
 }

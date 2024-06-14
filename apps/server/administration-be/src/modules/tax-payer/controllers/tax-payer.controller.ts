@@ -37,11 +37,9 @@ export class TaxPayersController extends EntityCrudController<TaxPayer>(
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
   async getUserByTinAndIssuedDate(
-    @Param() parms: GetUserByTinAndIssuedDateDto,
+    @Param('tin') tin: string,
+    @Param('issuedDate') issuedDate: string,
   ) {
-    return this.taxPayerService.getVenderByTinAndIssuedDate(
-      parms.tin,
-      parms.issuedDate,
-    );
+    return this.taxPayerService.getVenderByTinAndIssuedDate(tin, issuedDate);
   }
 }

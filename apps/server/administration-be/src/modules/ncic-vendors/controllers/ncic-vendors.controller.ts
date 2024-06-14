@@ -57,7 +57,7 @@ export class NcicVendorsController extends EntityCrudController<NcicVendor>(
     type: FppaVendor,
   })
   @ApiResponse({ status: 404, description: 'Vendor not found' })
-  async getNCICVenderByTin(@Param() parm: GetFPPAVendorByTinDto) {
-    return this.ncicVendorsService.getNCICVenderByTin(parm.tin);
+  async getNCICVenderByTin(@Param('tin') tin: string) {
+    return this.ncicVendorsService.getNCICVenderByTin(tin);
   }
 }
