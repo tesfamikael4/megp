@@ -51,117 +51,6 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
     super(bidOpeningChecklistAssessmentDetailRepository);
   }
 
-  async created(itemData: any, req?: any): Promise<any> {
-    if (req?.user?.organization) {
-      itemData.organizationName = req.user.organization.name;
-      itemData.organizationId = req.user.organization.id;
-      itemData.openerId = req.user.userId;
-      itemData.openerName = req.user.firstName + ' ' + req.user.lastName;
-    }
-
-    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-
-    const bidder = await manager.getRepository(BidRegistration).findOne({
-      where: {
-        bidderId: itemData.bidderId,
-        bidRegistrationDetails: {
-          lotId: itemData.lotId,
-        },
-      },
-      relations: {
-        bidRegistrationDetails: true,
-      },
-      select: {
-        id: true,
-        bidderName: true,
-        bidRegistrationDetails: {
-          id: true,
-        },
-      },
-    });
-    if (!bidder) {
-      throw new NotFoundException('Bidder not found');
-    }
-
-    itemData.submit = false;
-
-    // const bidRegistrationDetail = await manager
-    //   .getRepository(BidRegistrationDetail)
-    //   .findOne({
-    //     where: {
-    //       bidRegistration: {
-    //         tenderId: itemData.tenderId,
-    //         bidderId: itemData.bidderId,
-    //       },
-
-    //       lotId: itemData.lotId,
-    //     },
-    //   });
-
-    // if (!bidRegistrationDetail) {
-    //   throw new Error('Bid Registration Detail not found');
-    // }
-
-    const bidRegistrationDetailId = bidder.bidRegistrationDetails[0]?.id;
-    const bidOpeningChecklistAssessment = await manager
-      .getRepository(BidOpeningChecklistAssessment)
-      .findOne({
-        where: {
-          bidRegistrationDetailId,
-          isTeamAssessment: itemData.isTeamAssessment,
-          openerId: itemData.openerId,
-        },
-      });
-
-    if (!bidOpeningChecklistAssessment) {
-      const item = manager.getRepository(BidOpeningChecklistAssessment).create({
-        bidRegistrationDetailId: bidder.bidRegistrationDetails[0]?.id,
-        openerId: req.user.userId,
-        openerName: req.user.firstName + ' ' + req.user.lastName,
-        isTeamAssessment: itemData.isTeamAssessment,
-        submit: false,
-        tenderId: itemData.tenderId,
-        lotId: itemData.lotId,
-        bidderId: itemData.bidderId,
-        bidderName: bidder.bidderName,
-        organizationName: req.user.organization.name,
-        organizationId: req.user.organization.id,
-        // bidOpeningChecklistAssessmentDetail: [itemD]
-      });
-
-      const savedItem = await manager
-        .getRepository(BidOpeningChecklistAssessment)
-        .save(item);
-
-      const itemD = manager
-        .getRepository(BidOpeningChecklistAssessmentDetail)
-        .create({
-          ...itemData,
-          bidOpeningChecklistAssessmentId: savedItem.id,
-        }) as any;
-      await manager
-        .getRepository(BidOpeningChecklistAssessmentDetail)
-        .save(itemD);
-    } else {
-      const itemD = manager
-        .getRepository(BidOpeningChecklistAssessmentDetail)
-        .create({
-          ...itemData,
-          bidOpeningChecklistAssessmentId: bidOpeningChecklistAssessment.id,
-        }) as any;
-      await manager
-        .getRepository(BidOpeningChecklistAssessmentDetail)
-        .save(itemD);
-    }
-
-    itemData.bidRegistrationDetailId = bidder.bidRegistrationDetails[0]?.id;
-
-    const item =
-      this.bidOpeningChecklistAssessmentDetailRepository.create(itemData);
-    // await this.technicalPreliminaryAssessmentDetailRepository.insert(item);
-    return item;
-  }
-
   async create(itemData: any, req?: any): Promise<any> {
     if (req?.user?.organization) {
       itemData.organizationName = req.user.organization.name;
@@ -533,6 +422,12 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
       });
 
     for (const bidder of bidders.items) {
+      const list = checklists.filter(
+        (x) =>
+          x.bidOpeningChecklistAssessment.bidRegistrationDetails.bidRegistration
+            .bidderId == bidder.bidderId &&
+          x.bidOpeningChecklistAssessment.isTeamAssessment == isTeamAssessment,
+      ).length;
       if (checklists.length == 0) {
         response.items.push({
           bidder: bidder,
