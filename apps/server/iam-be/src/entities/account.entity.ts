@@ -22,9 +22,6 @@ export class Account extends Audit {
   @Column({ type: 'text', unique: true })
   username: string;
 
-  @Column({ type: 'text', nullable: true })
-  password: string;
-
   @Column({ type: 'text', nullable: true, unique: true })
   email: string;
 
