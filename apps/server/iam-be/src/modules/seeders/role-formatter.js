@@ -3,9 +3,11 @@ const XLSX = require('xlsx');
 const path = require('path');
 
 // read csv file
-const xlFile = path.join(__dirname, 'GuarnteeServiceRoleAndPermission.csv');
-
+const xlFile = path.join(__dirname, 'GuaranteeRoleManagement.csv');
 const workbook = XLSX.readFile(xlFile);
+
+const application = 'guarantee';
+const applicationId = 1;
 
 const worksheet = XLSX.utils.sheet_to_json(
   workbook.Sheets[workbook.SheetNames[0]],
@@ -48,14 +50,24 @@ systemRoleFormattedArray.forEach((systemRole) => {
     key: systemRole[0].role.toUpperCase().replace(/\s/g, '_'),
   };
   for (const permission of systemRole) {
-    if (permission.duplication) continue;
+    if (permission.duplication) {
+      const previousPermission = permissions.find(
+        (p) => `${application}:${permission.key}` === p.key,
+      );
+      const permissionId = previousPermission.id;
+      roleSystemPermissions.push({
+        roleSystemId,
+        permissionId,
+      });
+      continue;
+    }
     const permissionId = permissions.length + 1;
     permissions.push({
       id: permissionId,
       name: permission.permission,
       description: permission.permission,
-      key: `guarantee:${permission.key}`,
-      applicationId: 3,
+      key: `${application}:${permission.key}`,
+      applicationId,
     });
     roleSystemPermissions.push({
       roleSystemId,
