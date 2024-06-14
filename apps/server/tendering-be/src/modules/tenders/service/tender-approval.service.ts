@@ -6,12 +6,9 @@ import { GenerateTenderDocumentDto } from '../dto';
 import { TenderStatusEnum } from 'src/shared/enums/tender-status.enum';
 import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
-// import {
-//   MessageHandlerErrorBehavior,
-//   RabbitRPC,
-// } from '@golevelup/nestjs-rabbitmq';
-import { AllowAnonymous } from 'src/shared/authorization';
-import { ConsumeMessage } from 'amqplib';
+import { REQUEST } from '@nestjs/core';
+import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class TenderApprovalService {
@@ -20,23 +17,16 @@ export class TenderApprovalService {
     private readonly tenderRepository: Repository<Tender>,
     private readonly minIOService: MinIOService,
     private readonly documentManipulatorService: DocumentManipulatorService,
+    @Inject(REQUEST) private request: Request,
   ) {}
 
-  // @RabbitRPC({
-  //   exchange: 'workflow-broadcast-exchanges',
-  //   routingKey: 'tendering-workflow.tenderApproval',
-  //   queue: 'tendering-approval-workflow',
-  //   errorBehavior: MessageHandlerErrorBehavior.ACK,
-  //   errorHandler: (err) => {
-  //     console.log('🚀 ~ TenderController ~ err:', err);
-  //   },
-  // })
-  @AllowAnonymous()
-  async tenderApproval(data: any, amqpMsg: ConsumeMessage) {
-    if (amqpMsg.fields.routingKey != 'tendering-workflow.tenderApproval') {
-      throw new BadRequestException('invalid_message');
-    } else if (!data.itemId) {
-      throw new BadRequestException('incomplete_data');
+  async tenderApproval(data: {
+    status: string;
+    activityId: string;
+    itemId: string;
+  }) {
+    if (!data.itemId) {
+      throw new RpcException('incomplete_data');
     }
 
     const tender = await this.tenderRepository.findOneBy({
@@ -44,16 +34,16 @@ export class TenderApprovalService {
     });
 
     if (!tender) {
-      throw new BadRequestException('Tender not found');
+      throw new RpcException('Tender not found');
     }
     let tenderInvitation = null;
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
     if (data.status == 'Approved') {
-      tenderInvitation = await this.generateTenderInvitation(
-        { id: tender.id },
-        data.ENTITY_MANAGER,
-      );
+      tenderInvitation = await this.generateTenderInvitation({ id: tender.id });
     }
-    await this.tenderRepository.update(
+
+    await manager.getRepository(Tender).update(
       { id: data.itemId },
       {
         tenderInvitation,
@@ -67,10 +57,9 @@ export class TenderApprovalService {
     return data;
   }
 
-  async generateTenderInvitation(
-    input: GenerateTenderDocumentDto,
-    manager: EntityManager,
-  ) {
+  async generateTenderInvitation(input: GenerateTenderDocumentDto) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
     const tender = await this.tenderRepository.findOne({
       where: {
         id: input.id,

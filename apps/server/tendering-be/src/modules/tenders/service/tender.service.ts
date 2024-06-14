@@ -7,14 +7,7 @@ import {
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
-import {
-  Lot,
-  ProcurementMechanism,
-  ProcurementTechnicalTeam,
-  SpdTemplate,
-  Tender,
-} from 'src/entities';
-import { Item } from 'src/entities/tender-item.entity';
+import { SpdTemplate, Tender } from 'src/entities';
 import { DataResponseFormat } from 'src/shared/api-data';
 import {
   CollectionQuery,
@@ -40,7 +33,7 @@ import {
   LotStatusEnum,
   TenderStatusEnum,
 } from 'src/shared/enums/tender-status.enum';
-// import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class TenderService extends EntityCrudService<Tender> {
@@ -49,7 +42,10 @@ export class TenderService extends EntityCrudService<Tender> {
     private readonly tenderRepository: Repository<Tender>,
     private readonly minIOService: MinIOService,
     private readonly documentManipulatorService: DocumentManipulatorService,
-    // private readonly amqpConnection: AmqpConnection,
+
+    @Inject('WORKFLOW_RMQ_SERVICE')
+    private readonly tenderingRMQClient: ClientProxy,
+
     @Inject(REQUEST) private request: Request,
   ) {
     super(tenderRepository);
@@ -360,16 +356,12 @@ export class TenderService extends EntityCrudService<Tender> {
       .update({ id: input.id }, { status: input.status });
 
     if (input.status == TenderStatusEnum.APPROVAL) {
-      // this.amqpConnection.publish(
-      //   'workflow-broadcast-exchanges',
-      //   'workflow.initiate',
-      //   {
-      //     id: tender.id,
-      //     name: 'tenderApproval',
-      //     itemName: tender.name,
-      //     organizationId: tender.organizationId,
-      //   },
-      // );
+      this.tenderingRMQClient.emit('initiate-workflow', {
+        id: tender.id,
+        name: 'tenderApproval',
+        itemName: tender.name,
+        organizationId: tender.organizationId,
+      });
     }
   }
 

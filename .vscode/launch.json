@@ -51,6 +51,12 @@
       "name": "Run RMS ",
       "request": "launch",
       "type": "node-terminal"
+    },
+    {
+      "command": "cd .\\apps\\server\\marketplace-be\\ && npm run start:dev",
+      "name": "Run Marketplace ",
+      "request": "launch",
+      "type": "node-terminal"
     }
   ]
 }

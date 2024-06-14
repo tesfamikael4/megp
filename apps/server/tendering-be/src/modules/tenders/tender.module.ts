@@ -43,8 +43,8 @@ import {
   TenderSpdService,
   TenderService,
 } from './service';
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { TenderApprovalService } from './service/tender-approval.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -64,16 +64,19 @@ import { TenderApprovalService } from './service/tender-approval.service';
     MinIOModule,
     DocxModule,
     DocumentManipulatorModule,
-    // RabbitMQModule.forRoot(RabbitMQModule, {
-    //   exchanges: [
-    //     {
-    //       name: 'workflow-broadcast-exchanges',
-    //       type: 'direct',
-    //     },
-    //   ],
-    //   uri: process.env.RMQ_URL,
-    //   enableControllerDiscovery: true,
-    // }),
+    ClientsModule.register([
+      {
+        name: 'WORKFLOW_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'workflow-initiate',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
   ],
   controllers: [
     TenderController,

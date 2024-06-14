@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseFilters,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Tender } from 'src/entities';
 import { EntityCrudController } from 'src/shared/controller';
@@ -12,6 +21,9 @@ import {
 } from '../dto/tender.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous } from 'src/shared/authorization';
+import { EventPattern } from '@nestjs/microservices';
+import { TenderApprovalService } from '../service/tender-approval.service';
+import { RabbitMQExceptionFilter } from 'src/shared/exceptions/rpc-exception.filter';
 
 const options: EntityCrudOptions = {
   createDto: CreateTenderDto,
@@ -21,8 +33,17 @@ const options: EntityCrudOptions = {
 @Controller('tenders')
 @ApiTags('Tender Controller')
 export class TenderController extends EntityCrudController<Tender>(options) {
-  constructor(private readonly tenderService: TenderService) {
+  constructor(
+    private readonly tenderService: TenderService,
+    private readonly tenderApprovalService: TenderApprovalService,
+  ) {
     super(tenderService);
+  }
+
+  @UseFilters(new RabbitMQExceptionFilter())
+  @EventPattern('tendering-workflow.tenderApproval')
+  async tenderApproval(@Body() data: any) {
+    return await this.tenderApprovalService.tenderApproval(data);
   }
 
   @Get('active-tenders')
