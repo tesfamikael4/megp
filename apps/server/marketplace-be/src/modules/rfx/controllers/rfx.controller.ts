@@ -10,6 +10,7 @@ import { RfxService } from '../services/rfx.service';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateRFXDto, UpdateRFXDto } from '../dtos/rfx.dto';
 import { EventPattern } from '@nestjs/microservices';
+import currentTime from 'src/utils/services/time-provider';
 
 const options: EntityCrudOptions = {
   createDto: CreateRFXDto,
@@ -80,6 +81,6 @@ export class RfxController extends EntityCrudController<RFX>(options) {
   @Get('current-time')
   @AllowAnonymous()
   getCurrentTime() {
-    return new Date();
+    return currentTime();
   }
 }
