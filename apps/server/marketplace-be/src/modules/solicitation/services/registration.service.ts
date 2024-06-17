@@ -20,6 +20,7 @@ import {
 import * as crypto from 'crypto';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { ClientProxy } from '@nestjs/microservices';
+import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
@@ -48,9 +49,11 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
       },
     });
 
+    const now = currentTime();
+
     if (!rfx) {
       throw new BadRequestException('RFQ not found');
-    } else if (rfx.rfxBidProcedure.submissionDeadline < new Date(Date.now())) {
+    } else if (rfx.rfxBidProcedure.submissionDeadline < now) {
       throw new BadRequestException('Submission deadline has passed');
     }
 

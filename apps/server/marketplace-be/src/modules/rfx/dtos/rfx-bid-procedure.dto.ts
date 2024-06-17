@@ -20,11 +20,11 @@ export class CreateRfxBidProcedureDTO {
 
   @ApiProperty()
   @IsString()
-  submissionDeadline: string;
+  submissionDeadline: any;
 
   @ApiProperty()
   @IsString()
-  openingDate: string;
+  openingDate: any;
 
   @ApiProperty()
   @IsNumber()

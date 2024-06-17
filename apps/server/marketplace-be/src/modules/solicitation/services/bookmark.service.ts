@@ -14,6 +14,7 @@ import { ERfxStatus } from 'src/utils/enums';
 import { CreateBookmarkDto } from '../dtos/bookmark.dto';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { ClientProxy } from '@nestjs/microservices';
+import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
@@ -58,8 +59,10 @@ export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
 
     if (!rfx) throw new BadRequestException('Rfx not found.');
 
-    const now = new Date(Date.now());
-    const deadline = new Date(rfx.rfxBidProcedure.submissionDeadline);
+    const now = currentTime();
+    const deadline = currentTime(
+      new Date(rfx.rfxBidProcedure.submissionDeadline),
+    );
 
     if (now >= deadline)
       throw new BadRequestException('Rfx Submission Deadline Passed');

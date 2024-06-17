@@ -9,6 +9,7 @@ import { ESolRoundStatus } from 'src/utils/enums';
 import { SchedulerService } from 'src/utils/services/scheduler.service';
 import { In, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { OpenerService } from './opener.service';
+import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class ReSchedulerService implements OnModuleInit {
@@ -20,18 +21,17 @@ export class ReSchedulerService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    const now = new Date(Date.now());
+    const now = currentTime();
 
     const rounds = await this.solRoundRepository.find({
       where: {
-        end: MoreThanOrEqual(now),
+        endingTime: MoreThanOrEqual(now),
         status: In([ESolRoundStatus.STARTED, ESolRoundStatus.PENDING]),
       },
     });
 
     for (const round of rounds) {
-      const end = new Date(round.end);
-      if (!end) continue;
+      const end: any = currentTime(new Date(round.endingTime));
 
       const payload = { rfxId: round.rfxId, round: round.round };
 

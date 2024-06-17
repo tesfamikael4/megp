@@ -12,6 +12,7 @@ import {
   UpdateRfxBidProcedureDTO,
 } from '../dtos/rfx-bid-procedure.dto';
 import { RfxService } from './rfx.service';
+import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
@@ -38,6 +39,11 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
 
     if (!rfx) throw new NotFoundException('Draft RFQ not found');
 
+    itemData.openingDate = currentTime(new Date(itemData.openingDate));
+    itemData.submissionDeadline = currentTime(
+      new Date(itemData.submissionDeadline),
+    );
+
     const rfxBidContract = this.rfxBidProcedureRepository.create(itemData);
     await this.rfxBidProcedureRepository.insert(rfxBidContract);
     return rfxBidContract;
@@ -59,9 +65,16 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
       },
     });
 
-    if (!rfx) throw new BadRequestException('rfx not found');
+    if (!rfx) throw new BadRequestException('RFQ not found');
 
     await this.rfxService.validateUpdateRequest(rfx);
+
+    if (itemData.openingDate)
+      itemData.openingDate = currentTime(new Date(itemData.openingDate));
+    if (itemData.submissionDeadline)
+      itemData.submissionDeadline = currentTime(
+        new Date(itemData.submissionDeadline),
+      );
 
     const rfxDocUpdate = this.rfxBidProcedureRepository.create(itemData);
     await this.rfxBidProcedureRepository.update(id, itemData);

@@ -8,6 +8,7 @@ import { REQUEST } from '@nestjs/core';
 import { SchedulerService } from 'src/utils/services/scheduler.service';
 import { OpenerService } from 'src/modules/evaluation/services/opener.service';
 import { ESolRoundStatus } from 'src/utils/enums';
+import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class SolRoundService extends ExtraCrudService<SolRound> {
@@ -42,14 +43,14 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
   async createZeroSolicitationRound(rfxBidProcedure: RfxBidProcedure) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const start = rfxBidProcedure.invitationDate || new Date(Date.now());
-    const end = rfxBidProcedure.submissionDeadline;
+    const startingTime = rfxBidProcedure.invitationDate;
+    const endingTime = rfxBidProcedure.submissionDeadline;
 
     const roundItem: CreateRoundDto = {
       rfxId: rfxBidProcedure.rfxId,
       round: 0,
-      end,
-      start,
+      endingTime,
+      startingTime,
       status: ESolRoundStatus.PENDING,
     };
     const round = this.solRoundRepository.create(roundItem);
@@ -76,9 +77,15 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
         rfxId,
       };
 
+      // TODO: REVERT: GMT+03:00
+      const roundEnding = new Date(round.endingTime);
+      roundEnding.setHours(
+        roundEnding.getHours() + +process.env.TIMEZONE_OFFSET || 0,
+      );
+
       await this.schedulerService.scheduleWithEncryption(
         this.openerService.openAndEvaluateResponses,
-        round.end,
+        roundEnding,
         payload,
       );
     } catch (error) {
@@ -101,15 +108,16 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
   }
 
   async getCurrentRound(rfxId: string) {
-    const now = new Date(Date.now());
+    const now = currentTime();
+
     const round = await this.solRoundRepository.findOne({
       where: {
         rfxId,
-        start: LessThan(now),
-        end: MoreThan(now),
+        startingTime: LessThan(now),
+        endingTime: MoreThan(now),
       },
       order: {
-        start: 'ASC',
+        startingTime: 'ASC',
       },
     });
 
@@ -122,26 +130,32 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
     const rounds: RoundDto[] = [];
     const openingDate = new Date(rfxBidProcedure.openingDate);
 
-    const firstRoundStartingDate = new Date(
-      openingDate.setDate(openingDate.getDate() + rfxBidProcedure.idleTime),
+    const firstRoundStartingDate = currentTime(
+      new Date(
+        openingDate.setDate(openingDate.getDate() + rfxBidProcedure.idleTime),
+      ),
     );
 
     for (let i = 0; i < rfxBidProcedure.round; i++) {
-      let roundStartingDate: Date, roundEndDate: Date;
+      let roundStartingDate, roundEndDate;
       if (i == 0) {
         roundStartingDate = firstRoundStartingDate;
 
-        roundEndDate = new Date(
-          roundStartingDate.setDate(
-            roundStartingDate.getDate() + rfxBidProcedure.roundDuration,
+        roundEndDate = currentTime(
+          new Date(
+            roundStartingDate.setDate(
+              roundStartingDate.getDate() + rfxBidProcedure.roundDuration,
+            ),
           ),
         );
       } else {
-        const previousEndDate = new Date(rounds[i - 1].end);
+        const previousEndDate = new Date(rounds[i - 1].endingTime);
 
-        roundStartingDate = new Date(
-          previousEndDate.setMinutes(
-            previousEndDate.getMinutes() + rfxBidProcedure.idleTime,
+        roundStartingDate = currentTime(
+          new Date(
+            previousEndDate.setMinutes(
+              previousEndDate.getMinutes() + rfxBidProcedure.idleTime,
+            ),
           ),
         );
 
@@ -149,11 +163,12 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
         roundEndDate.setMinutes(
           roundEndDate.getMinutes() + rfxBidProcedure.roundDuration,
         );
+        roundEndDate;
       }
       rounds.push({
         round: i + 1,
-        start: roundStartingDate,
-        end: roundEndDate,
+        startingTime: roundStartingDate,
+        endingTime: roundEndDate,
       });
     }
     return rounds;

@@ -70,6 +70,7 @@ export class OpenerService {
     } finally {
       await queryRunner.release();
     }
+
     async function filterItems(
       entityManager: EntityManager,
     ): Promise<[RFXItem[], RfxBidProcedure]> {
@@ -163,14 +164,10 @@ export class OpenerService {
         return;
       }
 
-      const nextRound = await roundRepo.findOne({
+      const nextRound = await roundRepo.exists({
         where: {
           round: payload.round + 1,
           rfxId: payload.rfxId,
-        },
-        select: {
-          id: true,
-          end: true,
         },
       });
 

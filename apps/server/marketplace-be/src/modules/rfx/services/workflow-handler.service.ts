@@ -33,6 +33,7 @@ import {
   EvaluationResponse,
 } from 'src/utils/enums';
 import { SchedulerService } from 'src/utils/services/scheduler.service';
+import currentTime from 'src/utils/services/time-provider';
 import { DataSource, EntityManager, In, MoreThanOrEqual, Not } from 'typeorm';
 
 @Injectable()
@@ -97,13 +98,15 @@ export class WorkflowHandlerService {
 
           const status = payload.status == 'Approved' ? 'APPROVED' : 'REJECTED';
 
+          const now = currentTime();
+
           await this.updateRfxChildrenStatus(rfx.id, status, entityManager);
           await rfxProcedureRepo.update(
             {
               id: rfx.rfxBidProcedure.id,
             },
             {
-              invitationDate: new Date(Date.now()),
+              invitationDate: now,
             },
           );
 
@@ -161,14 +164,16 @@ export class WorkflowHandlerService {
   ) {
     const roundRepo = entityManager.getRepository(SolRound);
 
-    const start = rfxBidProcedure.invitationDate || new Date(Date.now());
-    const end = rfxBidProcedure.submissionDeadline;
+    const startingTime = currentTime(new Date(rfxBidProcedure.invitationDate));
+    const endingTime = currentTime(
+      new Date(rfxBidProcedure.submissionDeadline),
+    );
 
     const roundItem: CreateRoundDto = {
       rfxId: rfxBidProcedure.rfxId,
       round: 0,
-      end,
-      start,
+      endingTime,
+      startingTime,
       status: ESolRoundStatus.STARTED,
     };
     const round = roundRepo.create(roundItem);
@@ -215,6 +220,8 @@ export class WorkflowHandlerService {
 
   async scheduleRoundOpening(rfxId: string, entityManager: EntityManager) {
     try {
+      const now = currentTime();
+
       const roundRepo = entityManager.getRepository(SolRound);
       const rounds = await roundRepo.find({
         where: {
@@ -222,7 +229,7 @@ export class WorkflowHandlerService {
           status: Not(
             In([ESolRoundStatus.CANCELLED, ESolRoundStatus.COMPLETED]),
           ),
-          end: MoreThanOrEqual(new Date(Date.now())),
+          endingTime: MoreThanOrEqual(now),
         },
       });
 
@@ -239,7 +246,7 @@ export class WorkflowHandlerService {
 
         await this.schedulerService.scheduleWithEncryption(
           this.openerService.openAndEvaluateResponses,
-          round.end,
+          round.endingTime,
           payload,
         );
       }
@@ -487,17 +494,20 @@ export class WorkflowHandlerService {
     const rounds: RoundDto[] = [];
 
     for (let i = 0; i < rfxBidProcedure.round; i++) {
-      let roundStartingDate: Date, roundEndDate: Date;
+      let roundStartingDate, roundEndDate;
       if (i == 0) {
-        roundStartingDate = new Date();
+        const now = new Date();
+
+        roundStartingDate = currentTime(now);
 
         roundEndDate = new Date(
-          new Date().setMinutes(
+          now.setMinutes(
             roundStartingDate.getMinutes() + rfxBidProcedure.roundDuration,
           ),
         );
+        roundEndDate = currentTime(roundEndDate);
       } else {
-        const previousEndDate = new Date(rounds[i - 1].end);
+        const previousEndDate = new Date(rounds[i - 1].endingTime);
 
         roundStartingDate = new Date(
           previousEndDate.setMinutes(
@@ -512,8 +522,8 @@ export class WorkflowHandlerService {
       }
       rounds.push({
         round: i + 1,
-        start: roundStartingDate,
-        end: roundEndDate,
+        startingTime: roundStartingDate,
+        endingTime: roundEndDate,
       });
     }
     return rounds;

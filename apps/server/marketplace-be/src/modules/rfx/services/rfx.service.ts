@@ -33,6 +33,7 @@ import {
 } from 'src/utils/enums';
 import { WorkflowHandlerService } from './workflow-handler.service';
 import { ClientProxy } from '@nestjs/microservices';
+import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class RfxService extends EntityCrudService<RFX> {
@@ -50,7 +51,7 @@ export class RfxService extends EntityCrudService<RFX> {
     private readonly pdfGeneratorService: PdfGeneratorService,
     private readonly documentService: DocumentService,
     private readonly minIOService: MinIOService,
-    private readonly solRoundServuce: SolRoundService,
+    private readonly solRoundService: SolRoundService,
     private readonly workflowHandlerService: WorkflowHandlerService,
   ) {
     super(rfxRepository);
@@ -201,11 +202,11 @@ export class RfxService extends EntityCrudService<RFX> {
       },
     });
 
-    if (!rfx) throw new BadRequestException('rfx on reviewal not found');
+    if (!rfx) throw new BadRequestException('RFQ on reviewal not found');
 
     await this.verifyAdjustable(rfx);
 
-    await this.rfxRepository.update(rfxId, { status: ERfxStatus.ADJUSTEDMENT });
+    await this.rfxRepository.update(rfxId, { status: ERfxStatus.ADJUSTMENT });
 
     return rfx;
   }
@@ -250,6 +251,8 @@ export class RfxService extends EntityCrudService<RFX> {
 
     const status = payload.status == 'Approved' ? 'APPROVED' : 'REJECTED';
 
+    const now = currentTime();
+
     // TRANSACTION
     await this.updateRfxChildrenStatus(rfx.id, status);
     await this.rfxBidProcedureRepository.update(
@@ -257,15 +260,15 @@ export class RfxService extends EntityCrudService<RFX> {
         id: rfx.rfxBidProcedure.id,
       },
       {
-        invitationDate: new Date(Date.now()),
+        invitationDate: now,
       },
     );
 
     if (status == 'APPROVED') {
-      await this.solRoundServuce.createZeroSolicitationRound(
+      await this.solRoundService.createZeroSolicitationRound(
         rfx.rfxBidProcedure,
       );
-      this.solRoundServuce.scheduleRoundOpening(rfx.id, 0);
+      this.solRoundService.scheduleRoundOpening(rfx.id, 0);
     }
   }
 
@@ -274,12 +277,14 @@ export class RfxService extends EntityCrudService<RFX> {
 
     const rfx = await this.getCompleteRfx(rfxId);
 
-    if (rfx.status != ERfxStatus.DRAFT && rfx.status != ERfxStatus.ADJUSTEDMENT)
+    if (rfx.status != ERfxStatus.DRAFT && rfx.status != ERfxStatus.ADJUSTMENT)
       throw new BadRequestException('RFQ not draft or adjustment');
 
     this.validateRfxOnReview(rfx);
 
     const doc = await this.generateReviewDocument(rfx);
+
+    const review = currentTime(new Date(payload.reviewDeadline));
 
     await Promise.all([
       entityManager.getRepository(RFX).update(rfxId, {
@@ -290,7 +295,7 @@ export class RfxService extends EntityCrudService<RFX> {
           id: rfx.rfxBidProcedure.id,
         },
         {
-          reviewDeadline: payload.reviewDeadline,
+          reviewDeadline: review,
         },
       ),
       // TODO: Analysis ?
@@ -314,19 +319,19 @@ export class RfxService extends EntityCrudService<RFX> {
     )
       canUpdate = true;
 
-    const now = new Date(Date.now());
+    const now = currentTime();
+    const reviewDeadline = currentTime(
+      new Date(rfx.rfxBidProcedure.reviewDeadline),
+    );
 
-    if (
-      rfx.status == ERfxStatus.TEAM_REVIEWAL &&
-      now > new Date(rfx.rfxBidProcedure.reviewDeadline)
-    ) {
+    if (rfx.status == ERfxStatus.TEAM_REVIEWAL && now > reviewDeadline) {
       canUpdate = true;
       entityManager.getRepository(RFX).update(rfx.id, {
-        status: ERfxStatus.ADJUSTEDMENT,
+        status: ERfxStatus.ADJUSTMENT,
       });
     }
 
-    if (rfx.status == ERfxStatus.ADJUSTEDMENT) canUpdate = true;
+    if (rfx.status == ERfxStatus.ADJUSTMENT) canUpdate = true;
 
     if (!canUpdate) {
       throw new BadRequestException('rfx not updatable');
@@ -343,8 +348,10 @@ export class RfxService extends EntityCrudService<RFX> {
     )
       canAdjust = true;
 
-    const now = new Date(Date.now());
-    const reviewDeadline = new Date(rfx.rfxBidProcedure.reviewDeadline);
+    const now = currentTime();
+    const reviewDeadline = currentTime(
+      new Date(rfx.rfxBidProcedure.reviewDeadline),
+    );
 
     if (now > reviewDeadline) canAdjust = true;
 
@@ -429,7 +436,7 @@ export class RfxService extends EntityCrudService<RFX> {
       .createQueryBuilder('rfxes')
       .where('rfxes.id = :rfxId', { rfxId })
       .andWhere('rfxes.status IN (:...status)', {
-        status: [ERfxStatus.DRAFT, ERfxStatus.ADJUSTEDMENT],
+        status: [ERfxStatus.DRAFT, ERfxStatus.ADJUSTMENT],
       })
       .loadAllRelationIds({
         relations: ['items'],
@@ -463,12 +470,13 @@ export class RfxService extends EntityCrudService<RFX> {
       this.rfxRepository,
       query,
     );
+    const now = currentTime();
 
     dataQuery
       .andWhere('rfxes.status = :status', { status: ERfxStatus.APPROVED })
       .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedure')
       .andWhere('rfxBidProcedure.submissionDeadline < :now', {
-        now: new Date(Date.now()),
+        now: now,
       });
 
     const response = new DataResponseFormat<RFX>();
@@ -488,7 +496,7 @@ export class RfxService extends EntityCrudService<RFX> {
     const rfxExists = await this.rfxRepository.exists({
       where: {
         id: rfxId,
-        status: In([ERfxStatus.DRAFT, ERfxStatus.ADJUSTEDMENT]),
+        status: In([ERfxStatus.DRAFT, ERfxStatus.ADJUSTMENT]),
       },
     });
 
@@ -515,13 +523,15 @@ export class RfxService extends EntityCrudService<RFX> {
       query,
     );
 
+    const now = currentTime();
+
     dataQuery
       .where('rfxes.status IN (:...statuses)', {
-        statuses: [ERfxStatus.TEAM_REVIEWAL, ERfxStatus.ADJUSTEDMENT],
+        statuses: [ERfxStatus.TEAM_REVIEWAL, ERfxStatus.ADJUSTMENT],
       })
       .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedures')
       .andWhere('rfxBidProcedures.reviewDeadline < :now', {
-        now: new Date(Date.now()),
+        now,
       });
 
     const response = new DataResponseFormat<RFX>();
@@ -611,7 +621,7 @@ export class RfxService extends EntityCrudService<RFX> {
     if (rfx.status == ERfxStatus.DRAFT)
       throw new BadRequestException('RFQ not on team reviewal');
 
-    if (rfx.status == ERfxStatus.ADJUSTEDMENT)
+    if (rfx.status == ERfxStatus.ADJUSTMENT)
       throw new BadRequestException('RFQ not approved by team members');
 
     this.validateRfxOnReview(rfx);
@@ -620,8 +630,9 @@ export class RfxService extends EntityCrudService<RFX> {
     if (rfx.status != ERfxStatus.TEAM_REVIEWAL)
       throw new BadRequestException('RFQ not on reviewal');
 
-    const now = new Date(Date.now());
-    const deadline = new Date(rfx.rfxBidProcedure.reviewDeadline);
+    const now = currentTime();
+    const deadline = currentTime(new Date(rfx.rfxBidProcedure.reviewDeadline));
+
     if (rfx.status != ERfxStatus.TEAM_REVIEWAL && now < deadline)
       throw new BadRequestException('RFQ review deadline has not ended');
   }
@@ -646,10 +657,14 @@ export class RfxService extends EntityCrudService<RFX> {
   }
 
   private validateRfxReviewal(rfx: RFX) {
-    const now = new Date(Date.now());
+    const now = currentTime();
+    const reviewDeadline = currentTime(
+      new Date(rfx.rfxBidProcedure.reviewDeadline),
+    );
+
     const revisions = rfx.revisionApprovals;
 
-    if (now < new Date(rfx.rfxBidProcedure.reviewDeadline)) {
+    if (now < reviewDeadline) {
       // if (revisions.length != 2)
       //   throw new BadRequestException('reviewal not ended');
     }
