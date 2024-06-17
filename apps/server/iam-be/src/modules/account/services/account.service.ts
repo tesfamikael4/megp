@@ -62,7 +62,7 @@ export class AccountsService {
     private readonly helper: AuthHelper,
     private readonly emailService: EmailService,
     @Inject(REQUEST) private readonly request: Request,
-  ) {}
+  ) { }
 
   public async createAccount(
     createAccountDto: CreateAccountDto,
@@ -162,10 +162,15 @@ export class AccountsService {
       {
         accountId: accountVerification.accountId,
         password: this.helper.encodePassword(password),
-        status: AccountStatusEnum.ACTIVE,
       },
       ['accountId'],
     );
+
+    await entityManager
+      .getRepository(Account)
+      .update(accountVerification.accountId, {
+        status: AccountStatusEnum.ACTIVE,
+      });
 
     await entityManager.getRepository(User).update(accountVerification.userId, {
       status: AccountStatusEnum.ACTIVE,
