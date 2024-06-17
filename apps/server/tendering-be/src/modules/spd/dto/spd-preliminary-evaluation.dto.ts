@@ -18,9 +18,9 @@ export class CreateSpdPreliminaryEvaluationDto {
   type: string;
 
   @ApiProperty()
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
-  formLink: string;
+  bidFormId: string;
 
   @ApiProperty()
   @IsString()
