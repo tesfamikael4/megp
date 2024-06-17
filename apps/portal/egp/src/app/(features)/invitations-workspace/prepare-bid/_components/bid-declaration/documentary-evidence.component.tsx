@@ -30,6 +30,7 @@ const DocumentaryEvidence = () => {
       {
         rfxDocumentaryEvidenceId,
         fileInfo: { originalname: file?.name, contentType: file?.type },
+        file,
       },
     ]);
     const filteredUploadedFiles = uploadedFiles.filter(
@@ -67,7 +68,57 @@ const DocumentaryEvidence = () => {
 
   const uploadDocumentaryEvidences = async () => {
     try {
-      await uploadEvidences({ rfxId, responses: files }).unwrap();
+      const filteredItems = files.map((file: any) => (file = undefined));
+      const preSignedResponses: [
+        { preSignedUrl: string; rfxDocumentaryEvidenceId: string },
+      ] = await uploadEvidences({
+        rfxId,
+        responses: filteredItems,
+      }).unwrap();
+
+      try {
+        const fetchPromises: any[] = [];
+
+        files.forEach((fileObj) => {
+          const presignedResponse = preSignedResponses.find(
+            (response) =>
+              response.rfxDocumentaryEvidenceId ===
+              fileObj.rfxDocumentaryEvidenceId,
+          );
+
+          if (presignedResponse) {
+            const fetchPromise = fetch(presignedResponse.preSignedUrl, {
+              method: 'PUT',
+              body: fileObj.file,
+            });
+
+            fetchPromises.push(fetchPromise);
+          }
+        });
+
+        const results = await Promise.all(fetchPromises);
+
+        results.forEach((result, index) => {
+          if (!result) {
+            throw new Error(
+              `Failed to upload file: ${filteredItems[index].file.name}`,
+            );
+          }
+        });
+
+        notifications.show({
+          title: 'Documentary Evidences',
+          message: 'Documentary evidences uploaded successfully',
+          color: 'green',
+        });
+      } catch (err) {
+        notifications.show({
+          title: 'Error',
+          message: err?.message,
+          color: 'red',
+        });
+      }
+
       notifications.show({
         title: 'Documentary Evidences',
         message: 'Documentary evidences uploaded successfully',
