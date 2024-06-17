@@ -22,6 +22,7 @@ import {
 } from 'src/entities';
 import { CreateRevisionApprovalDto } from '../dtos/rfx-revision-approval.dto';
 import { ERfxRevisionApprovalStatusEnum, ERfxStatus } from 'src/utils/enums';
+import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class RfxRevisionApprovalService extends ExtraCrudService<RfxRevisionApproval> {
@@ -58,7 +59,7 @@ export class RfxRevisionApprovalService extends ExtraCrudService<RfxRevisionAppr
 
     if (itemData.status == ERfxRevisionApprovalStatusEnum.ADJUST)
       await manager.getRepository(RFX).update(itemData.rfxId, {
-        status: ERfxStatus.ADJUSTEDMENT,
+        status: ERfxStatus.ADJUSTMENT,
       });
 
     return item;
@@ -69,6 +70,8 @@ export class RfxRevisionApprovalService extends ExtraCrudService<RfxRevisionAppr
     user: any,
   ): Promise<{ canSubmit: boolean; reason?: string }> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const now = currentTime();
 
     const [
       rfxExists,
@@ -94,7 +97,7 @@ export class RfxRevisionApprovalService extends ExtraCrudService<RfxRevisionAppr
       manager.getRepository(RfxBidProcedure).exists({
         where: {
           rfxId,
-          reviewDeadline: LessThanOrEqual(new Date(Date.now())),
+          reviewDeadline: LessThanOrEqual(now),
         },
       }),
       manager.getRepository(RfxRevisionApproval).exists({

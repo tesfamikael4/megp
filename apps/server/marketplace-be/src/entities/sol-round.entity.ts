@@ -24,10 +24,10 @@ export class SolRound extends Audit {
   round: number;
 
   @Column({ type: 'timestamp' })
-  start: Date;
+  startingTime: string;
 
   @Column({ type: 'timestamp' })
-  end: Date;
+  endingTime: string;
 
   @Column({
     type: 'enum',

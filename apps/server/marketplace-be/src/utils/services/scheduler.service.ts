@@ -14,7 +14,7 @@ export class SchedulerService {
     private readonly encryptionHelperService: EncryptionHelperService,
   ) {}
 
-  async scheduleWithEncryption(func, date: Date, payload: any) {
+  async scheduleWithEncryption(func, date: Date | string, payload: any) {
     const cronDate = new Date(date);
     if (!cronDate) throw new BadRequestException('invalid date');
 

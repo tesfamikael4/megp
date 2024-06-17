@@ -7,9 +7,9 @@ export class RoundDto {
   @IsNumber()
   round: number;
 
-  start: Date;
+  startingTime: string;
 
-  end: Date;
+  endingTime: string;
 }
 export class CreateRoundDto extends RoundDto {
   @ApiProperty()

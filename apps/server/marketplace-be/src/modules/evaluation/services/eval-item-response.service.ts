@@ -10,6 +10,7 @@ import {
 } from 'src/entities';
 import { LessThanOrEqual, Repository } from 'typeorm';
 import { CreateEvalItemResponseDto } from '../dtos/eval-item-response.dto';
+import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class EvalItemResponseService extends ExtraCrudService<EvalItemResponse> {
@@ -27,7 +28,8 @@ export class EvalItemResponseService extends ExtraCrudService<EvalItemResponse> 
   }
 
   async create(itemData: CreateEvalItemResponseDto, req?: any) {
-    const now = new Date(Date.now());
+    const now: any = currentTime();
+
     const [rfx, teamMember] = await Promise.all([
       this.rfxRepository.exists({
         where: {

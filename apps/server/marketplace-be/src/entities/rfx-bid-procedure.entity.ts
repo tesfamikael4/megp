@@ -11,7 +11,7 @@ import { RFX } from './rfx.entity';
 
 @Entity({ name: 'rfx_bid_procedures' })
 @Check('"openingDate" > "submissionDeadline"')
-@Check('"submissionDeadline" > CURRENT_TIMESTAMP')
+// @Check('"submissionDeadline" > CURRENT_TIMESTAMP')
 @Check(
   '"minimumBidDecrementPercentage" >= 0 AND "minimumBidDecrementPercentage" < 100',
 )
@@ -23,16 +23,16 @@ export class RfxBidProcedure extends Audit {
   bidValidityPeriod: number;
 
   @Column({ type: 'timestamp' })
-  submissionDeadline: Date;
+  submissionDeadline: string;
 
   @Column({ type: 'timestamp' })
-  openingDate: Date;
+  openingDate: string;
 
   @Column({ nullable: true, type: 'timestamp' })
-  invitationDate: Date;
+  invitationDate: string;
 
   @Column({ nullable: true, type: 'timestamp' })
-  reviewDeadline: Date;
+  reviewDeadline: string;
 
   @Column()
   deltaPercentage: number;

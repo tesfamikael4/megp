@@ -43,6 +43,7 @@ import {
   ESolRegistrationStatus,
 } from 'src/utils/enums';
 import { REQUEST } from '@nestjs/core';
+import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvitation> {
@@ -65,7 +66,8 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const rfxItemId = itemData.rfxItemId;
 
-    const now = new Date(Date.now());
+    const now: any = currentTime();
+
     const [item, solRegistration] = await Promise.all([
       entityManager.getRepository(RFXItem).findOne({
         where: {
@@ -145,10 +147,11 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
   async myRfxItems(query: CollectionQuery, rfxId: string, user: any) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const now = new Date();
+    const now = currentTime();
+
     const [previousRound, registration] = await Promise.all([
       entityManager.getRepository(SolRound).findOne({
-        where: { rfxId, end: LessThanOrEqual(now) },
+        where: { rfxId, endingTime: LessThanOrEqual(now) },
         select: { id: true },
       }),
       entityManager.getRepository(SolRegistration).findOne({
@@ -191,7 +194,7 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
 
   async myRfxDetail(rfxId: string, user: any) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const now = new Date();
+    const now = currentTime();
 
     const [rfx, activeRound, nextRound] = await Promise.all([
       this.rfxRepository.findOne({
@@ -211,17 +214,17 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
       entityManager.getRepository(SolRound).findOne({
         where: {
           rfxId,
-          start: LessThanOrEqual(now),
-          end: MoreThanOrEqual(now),
+          startingTime: LessThanOrEqual(now),
+          endingTime: MoreThanOrEqual(now),
         },
       }),
       entityManager.getRepository(SolRound).findOne({
         where: {
           rfxId,
-          start: MoreThanOrEqual(now),
+          startingTime: MoreThanOrEqual(now),
         },
         order: {
-          start: 'ASC',
+          startingTime: 'ASC',
         },
       }),
     ]);
