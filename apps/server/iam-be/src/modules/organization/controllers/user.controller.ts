@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Put,
-  Param,
-  ParseUUIDPipe,
-  HttpStatus,
-  Get,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Post, Param, Get, Query } from '@nestjs/common';
 import { ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
 import { User } from '@entities';
@@ -91,7 +81,6 @@ export class UserController extends ExtraCrudController<User>(options) {
 
   @Post('create-organization-admin')
   @ApiBody({ type: CreateUserDto })
-  @AllowAnonymous()
   async createOrganizationAdmin(@Body() itemData: CreateUserDto): Promise<any> {
     return this.userService.createOrganizationAdmin(itemData);
   }
