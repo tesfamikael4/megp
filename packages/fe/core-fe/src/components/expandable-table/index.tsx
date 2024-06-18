@@ -1,5 +1,5 @@
 'use client';
-import { Flex, TextInput, Box, Menu } from '@mantine/core';
+import { Flex, TextInput, Box, Menu, Tooltip } from '@mantine/core';
 import { IconInboxOff, IconSearch, IconFilter } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { type ReactElement, useEffect, useState } from 'react';
@@ -109,10 +109,12 @@ export function ExpandableTable({
         <Flex className="my-2" justify="space-between">
           {config.action ? config.action : <div />}
           {config.filters ? (
-            <Box className="ml-auto mr-2">
+            <Box className="ml-auto mr-2 mt-2">
               <Menu position="right-start" shadow="md" width={400}>
                 <Menu.Target>
-                  <IconFilter />
+                  <Tooltip label="Filter">
+                    <IconFilter size={17} />
+                  </Tooltip>
                 </Menu.Target>
                 <Menu.Dropdown>
                   {config.filters.map((filter, index) => (
