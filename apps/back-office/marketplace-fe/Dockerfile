@@ -43,9 +43,6 @@ COPY turbo.json turbo.json
 ARG VERSION_ARG
 ENV NEXT_PUBLIC_VERSION=$VERSION_ARG
 
-ENV NEXT_PUBLIC_IAM_API="/marketplace/api"
-
-
 RUN pnpm turbo run build --filter=marketplace-fe...
 
 FROM base AS runner
