@@ -1580,7 +1580,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     formattedData.areasOfBusinessInterest = [
       ...vendorEntity.areasOfBusinessInterest,
     ];
-    formattedData.lineOfBusiness = [...vendorEntity.lineOfBusiness];
+    formattedData.lineOfBusiness = vendorEntity.lineOfBusiness ? [...vendorEntity.lineOfBusiness] : [];
     formattedData.application = { ...requestedApplication };
 
     if (vendorEntity?.areasOfBusinessInterest) {
@@ -1712,10 +1712,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         vendorEntity.service = this.workflowService.getRequestedAppByVendorId(
           vendorEntity.id,
         );
-        const lineOfBusiness = [...vendorEntity.lineOfBusiness];
+        const lineOfBusiness = vendorEntity.lineOfBusiness ? [...vendorEntity.lineOfBusiness] : [];
         vendorEntity.lineOfBusiness = lineOfBusiness?.map((item) => item?.name);
       }
-
       return vendorEntity;
     } catch (error) {
       throw error;
@@ -2469,7 +2468,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           formattedAreaOfBi.push({
             category: bi.category,
             priceRange: priceRange,
-            lineOfBusiness: lob,
+            // lineOfBusiness: lob,
           });
         }
       }
