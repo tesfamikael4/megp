@@ -142,6 +142,11 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
 
     const result = await this.docxService.validateDocument(file.buffer, [
       'public_body',
+      'clarification_deadline_date',
+      'clarification_deadline_time',
+      'incoterm_edition',
+      'opening_date_date',
+      'opening_date_time',
     ]);
 
     if (result.length != 0) {
@@ -189,6 +194,7 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
 
     const result = await this.docxService.validateDocument(file.buffer, [
       'public_body',
+      'procurement_reference_no',
     ]);
 
     if (result.length != 0) {
