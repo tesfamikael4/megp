@@ -46,7 +46,7 @@ export default function PrDetailPage() {
       <Container size="xl">
         <Box className="mt-5 -mx-4  ">
           {currentTab === 'Technical Team' && (
-            <Requisitioner page="pr" disableFields={false} />
+            <Requisitioner page="pr" disableFields={data?.isUsed} />
           )}
         </Box>
       </Container>

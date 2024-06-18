@@ -97,6 +97,7 @@ export const Requisitioner = ({
           return (
             <>
               <Checkbox
+                disabled={disableFields}
                 onChange={() => handleChange(record)}
                 checked={record.userId === checkedRow || record.isTeamLeader}
                 value={record?.isTeamLeader}
