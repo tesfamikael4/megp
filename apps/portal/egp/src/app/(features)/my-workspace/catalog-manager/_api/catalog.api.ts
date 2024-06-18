@@ -110,17 +110,17 @@ export const getCatalogApi = createApi({
     }),
 
     getDeliveryLocation: builder.query<any, any>({
-      query: () => 'product_catalog_deliveries',
+      query: () => 'product-catalog-deliveries',
       providesTags: ['delivery-days'],
     }),
 
     readDeliveryLocation: builder.query<any, string>({
-      query: (id: string) => `product_catalog_deliveries/${id}`,
+      query: (id: string) => `product-catalog-deliveries/${id}`,
       providesTags: ['delivery-days'],
     }),
     createDeliveryLocation: builder.mutation<any, any>({
       query: (data) => ({
-        url: `product_catalog_deliveries`,
+        url: `product-catalog-deliveries`,
         method: 'POST',
         body: data,
       }),
@@ -128,7 +128,7 @@ export const getCatalogApi = createApi({
     }),
     updateDeliveryLocation: builder.mutation<any, any>({
       query: ({ id, ...data }) => ({
-        url: `product_catalog_deliveries/${id}`,
+        url: `product-catalog-deliveries/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -137,7 +137,7 @@ export const getCatalogApi = createApi({
 
     deleteDeliveryLocation: builder.mutation<any, string>({
       query: (id) => ({
-        url: `product_catalog_deliveries/${id}`,
+        url: `product-catalog-deliveries/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['delivery-days'],
