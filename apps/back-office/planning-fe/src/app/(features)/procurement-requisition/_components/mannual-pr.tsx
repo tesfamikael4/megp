@@ -213,7 +213,7 @@ export const FormDetail = ({
               withAsterisk
               {...register('name')}
               error={errors.name?.message}
-              disabled={disableFields}
+              disabled={disableFields || procurementRequisition?.isPlanned}
               placeholder="Procurement Requisition Name"
             />
 
@@ -221,7 +221,7 @@ export const FormDetail = ({
               label="is Multi Year"
               className="w-full mt-4 mb-2"
               {...register('isMultiYear')}
-              disabled={disableFields}
+              disabled={disableFields || procurementRequisition?.isPlanned}
             />
             <Controller
               name="totalEstimatedAmount"
@@ -236,7 +236,7 @@ export const FormDetail = ({
                   withAsterisk
                   placeholder="Estimated Amount"
                   thousandSeparator=","
-                  disabled={disableFields}
+                  disabled={disableFields || procurementRequisition?.isPlanned}
                   allowNegative={false}
                 />
               )}
@@ -244,7 +244,7 @@ export const FormDetail = ({
 
             <BudgetSelector
               activity={procurementRequisition}
-              disableFields={disableFields}
+              disableFields={disableFields || procurementRequisition?.isPlanned}
               budget={budget}
               setBudget={setBudget}
               error={err}
@@ -267,7 +267,11 @@ export const FormDetail = ({
                 label={'Optional Reference Number'}
                 placeholder="Optional Reference Number"
                 {...register('userReference')}
-                disabled={disableFields || procurementRequisition?.isPlanned}
+                disabled={
+                  disableFields ||
+                  (procurementRequisition?.isPlanned &&
+                    procurementRequisition.userReference === null)
+                }
                 error={
                   errors?.userReference
                     ? errors?.userReference?.message?.toString()
