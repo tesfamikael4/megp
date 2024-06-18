@@ -44,7 +44,7 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
   ): Promise<PostBudgetPlanActivity> {
     itemData.organizationId = user.organization.id;
     itemData.organizationName = user.organization.name;
-    return this.postBudgetPlanActivityService.create(itemData);
+    return this.postBudgetPlanActivityService.create(itemData, user);
   }
 
   @OnEvent('post.recalculateEstimatedAmount')
