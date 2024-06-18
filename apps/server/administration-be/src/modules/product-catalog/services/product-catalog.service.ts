@@ -123,6 +123,9 @@ export class ProductCatalogsService extends EntityCrudService<ProductCatalog> {
       where: {
         id: In(ids),
       },
+      relations: {
+        productCatalogDeliveries: true,
+      },
     });
   }
 }
