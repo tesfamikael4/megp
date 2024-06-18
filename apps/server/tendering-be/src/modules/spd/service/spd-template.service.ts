@@ -143,6 +143,19 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     let validationProperties = [];
     if (type == 'main-document') {
       validationProperties = ['public_body', 'bds', 'scc'];
+    } else if (type === 'bds') {
+      validationProperties = [
+        'public_body',
+        'clarification_deadline_date',
+        'clarification_deadline_time',
+        'incoterm_edition',
+        'opening_date_date',
+        'opening_date_time',
+        'date',
+        'time',
+      ];
+    } else if (type === 'scc') {
+      validationProperties = ['public_body', 'procurement_reference_no'];
     } else if (type === 'bid-security') {
       validationProperties = [
         'public_body',
