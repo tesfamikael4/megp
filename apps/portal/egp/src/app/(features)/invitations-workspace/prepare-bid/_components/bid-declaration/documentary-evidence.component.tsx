@@ -68,7 +68,10 @@ const DocumentaryEvidence = () => {
 
   const uploadDocumentaryEvidences = async () => {
     try {
-      const filteredItems = files.map((file: any) => (file = undefined));
+      const filteredItems = files.map((file: any) => {
+        file.file = undefined;
+        return file;
+      });
       const preSignedResponses: [
         { preSignedUrl: string; rfxDocumentaryEvidenceId: string },
       ] = await uploadEvidences({
