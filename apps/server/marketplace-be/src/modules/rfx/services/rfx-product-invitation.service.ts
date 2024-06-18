@@ -66,7 +66,7 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const rfxItemId = itemData.rfxItemId;
 
-    const now: any = currentTime();
+    const now: any = new Date();
 
     const [item, solRegistration] = await Promise.all([
       entityManager.getRepository(RFXItem).findOne({
@@ -147,7 +147,7 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
   async myRfxItems(query: CollectionQuery, rfxId: string, user: any) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const now = currentTime();
+    const now = new Date();
 
     const [previousRound, registration] = await Promise.all([
       entityManager.getRepository(SolRound).findOne({
@@ -194,7 +194,7 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
 
   async myRfxDetail(rfxId: string, user: any) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const now = currentTime();
+    const now = new Date();
 
     const [rfx, activeRound, nextRound] = await Promise.all([
       this.rfxRepository.findOne({

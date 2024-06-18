@@ -59,12 +59,12 @@ export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
 
     if (!rfx) throw new BadRequestException('Rfx not found.');
 
-    const now = currentTime();
-    const deadline = currentTime(
-      new Date(rfx.rfxBidProcedure.submissionDeadline),
-    );
+    const now = new Date();
+    // const deadline = currentTime(
+    //   new Date(rfx.rfxBidProcedure.submissionDeadline),
+    // );
 
-    if (now >= deadline)
+    if (now >= rfx.rfxBidProcedure.submissionDeadline)
       throw new BadRequestException('Rfx Submission Deadline Passed');
 
     itemData.vendorId = req.user?.organization.id;

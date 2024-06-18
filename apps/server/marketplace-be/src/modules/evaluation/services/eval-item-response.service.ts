@@ -28,7 +28,7 @@ export class EvalItemResponseService extends ExtraCrudService<EvalItemResponse> 
   }
 
   async create(itemData: CreateEvalItemResponseDto, req?: any) {
-    const now: any = currentTime();
+    const now: any = new Date();
 
     const [rfx, teamMember] = await Promise.all([
       this.rfxRepository.exists({

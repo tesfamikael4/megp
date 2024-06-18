@@ -39,10 +39,10 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
 
     if (!rfx) throw new NotFoundException('Draft RFQ not found');
 
-    itemData.openingDate = currentTime(new Date(itemData.openingDate));
-    itemData.submissionDeadline = currentTime(
-      new Date(itemData.submissionDeadline),
-    );
+    // itemData.openingDate = currentTime(new Date(itemData.openingDate));
+    // itemData.submissionDeadline = currentTime(
+    //   new Date(itemData.submissionDeadline),
+    // );
 
     const rfxBidContract = this.rfxBidProcedureRepository.create(itemData);
     await this.rfxBidProcedureRepository.insert(rfxBidContract);
@@ -69,12 +69,12 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
 
     await this.rfxService.validateUpdateRequest(rfx);
 
-    if (itemData.openingDate)
-      itemData.openingDate = currentTime(new Date(itemData.openingDate));
-    if (itemData.submissionDeadline)
-      itemData.submissionDeadline = currentTime(
-        new Date(itemData.submissionDeadline),
-      );
+    // if (itemData.openingDate)
+    //   itemData.openingDate = currentTime(new Date(itemData.openingDate));
+    // if (itemData.submissionDeadline)
+    //   itemData.submissionDeadline = currentTime(
+    //     new Date(itemData.submissionDeadline),
+    //   );
 
     const rfxDocUpdate = this.rfxBidProcedureRepository.create(itemData);
     await this.rfxBidProcedureRepository.update(id, itemData);

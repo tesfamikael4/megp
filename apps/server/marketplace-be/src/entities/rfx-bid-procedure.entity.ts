@@ -22,17 +22,17 @@ export class RfxBidProcedure extends Audit {
   @Column()
   bidValidityPeriod: number;
 
-  @Column({ type: 'timestamp' })
-  submissionDeadline: string;
+  @Column({ type: 'timestamptz' })
+  submissionDeadline: Date;
 
-  @Column({ type: 'timestamp' })
-  openingDate: string;
+  @Column({ type: 'timestamptz' })
+  openingDate: Date;
 
-  @Column({ nullable: true, type: 'timestamp' })
-  invitationDate: string;
+  @Column({ nullable: true, type: 'timestamptz' })
+  invitationDate: Date;
 
-  @Column({ nullable: true, type: 'timestamp' })
-  reviewDeadline: string;
+  @Column({ nullable: true, type: 'timestamptz' })
+  reviewDeadline: Date;
 
   @Column()
   deltaPercentage: number;

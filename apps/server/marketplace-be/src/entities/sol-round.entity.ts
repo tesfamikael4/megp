@@ -23,11 +23,11 @@ export class SolRound extends Audit {
   @Column()
   round: number;
 
-  @Column({ type: 'timestamp' })
-  startingTime: string;
+  @Column({ type: 'timestamptz' })
+  startingTime: Date;
 
-  @Column({ type: 'timestamp' })
-  endingTime: string;
+  @Column({ type: 'timestamptz' })
+  endingTime: Date;
 
   @Column({
     type: 'enum',

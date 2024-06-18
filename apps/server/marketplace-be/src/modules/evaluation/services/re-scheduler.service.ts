@@ -21,7 +21,7 @@ export class ReSchedulerService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    const now = currentTime();
+    const now = new Date();
 
     const rounds = await this.solRoundRepository.find({
       where: {
@@ -31,7 +31,7 @@ export class ReSchedulerService implements OnModuleInit {
     });
 
     for (const round of rounds) {
-      const end: any = currentTime(new Date(round.endingTime));
+      const end = new Date(round.endingTime);
 
       const payload = { rfxId: round.rfxId, round: round.round };
 

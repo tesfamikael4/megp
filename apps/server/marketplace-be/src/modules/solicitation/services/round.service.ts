@@ -108,7 +108,7 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
   }
 
   async getCurrentRound(rfxId: string) {
-    const now = currentTime();
+    const now = new Date();
 
     const round = await this.solRoundRepository.findOne({
       where: {
@@ -130,32 +130,26 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
     const rounds: RoundDto[] = [];
     const openingDate = new Date(rfxBidProcedure.openingDate);
 
-    const firstRoundStartingDate = currentTime(
-      new Date(
-        openingDate.setDate(openingDate.getDate() + rfxBidProcedure.idleTime),
-      ),
+    const firstRoundStartingDate = new Date(
+      openingDate.setDate(openingDate.getDate() + rfxBidProcedure.idleTime),
     );
 
     for (let i = 0; i < rfxBidProcedure.round; i++) {
-      let roundStartingDate, roundEndDate;
+      let roundStartingDate: Date, roundEndDate: Date;
       if (i == 0) {
         roundStartingDate = firstRoundStartingDate;
 
-        roundEndDate = currentTime(
-          new Date(
-            roundStartingDate.setDate(
-              roundStartingDate.getDate() + rfxBidProcedure.roundDuration,
-            ),
+        roundEndDate = new Date(
+          firstRoundStartingDate.setDate(
+            firstRoundStartingDate.getDate() + rfxBidProcedure.roundDuration,
           ),
         );
       } else {
         const previousEndDate = new Date(rounds[i - 1].endingTime);
 
-        roundStartingDate = currentTime(
-          new Date(
-            previousEndDate.setMinutes(
-              previousEndDate.getMinutes() + rfxBidProcedure.idleTime,
-            ),
+        roundStartingDate = new Date(
+          previousEndDate.setMinutes(
+            previousEndDate.getMinutes() + rfxBidProcedure.idleTime,
           ),
         );
 

@@ -98,7 +98,7 @@ export class WorkflowHandlerService {
 
           const status = payload.status == 'Approved' ? 'APPROVED' : 'REJECTED';
 
-          const now = currentTime();
+          const now = new Date();
 
           await this.updateRfxChildrenStatus(rfx.id, status, entityManager);
           await rfxProcedureRepo.update(
@@ -164,16 +164,16 @@ export class WorkflowHandlerService {
   ) {
     const roundRepo = entityManager.getRepository(SolRound);
 
-    const startingTime = currentTime(new Date(rfxBidProcedure.invitationDate));
-    const endingTime = currentTime(
-      new Date(rfxBidProcedure.submissionDeadline),
-    );
+    // const startingTime = currentTime(new Date(rfxBidProcedure.invitationDate));
+    // const endingTime = currentTime(
+    //   new Date(rfxBidProcedure.submissionDeadline),
+    // );
 
     const roundItem: CreateRoundDto = {
       rfxId: rfxBidProcedure.rfxId,
       round: 0,
-      endingTime,
-      startingTime,
+      endingTime: rfxBidProcedure.invitationDate,
+      startingTime: rfxBidProcedure.submissionDeadline,
       status: ESolRoundStatus.STARTED,
     };
     const round = roundRepo.create(roundItem);
@@ -220,7 +220,7 @@ export class WorkflowHandlerService {
 
   async scheduleRoundOpening(rfxId: string, entityManager: EntityManager) {
     try {
-      const now = currentTime();
+      const now = new Date();
 
       const roundRepo = entityManager.getRepository(SolRound);
       const rounds = await roundRepo.find({
@@ -498,14 +498,13 @@ export class WorkflowHandlerService {
       if (i == 0) {
         const now = new Date();
 
-        roundStartingDate = currentTime(now);
+        roundStartingDate = now;
 
         roundEndDate = new Date(
           now.setMinutes(
             roundStartingDate.getMinutes() + rfxBidProcedure.roundDuration,
           ),
         );
-        roundEndDate = currentTime(roundEndDate);
       } else {
         const previousEndDate = new Date(rounds[i - 1].endingTime);
 
