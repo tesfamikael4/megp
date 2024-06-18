@@ -29,7 +29,7 @@ export class ExchangeRate extends OrgAudit {
   )
   exchangeRateDetails: ExchangeRateDetail[];
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamptz' })
   dateOfConversion: Date;
 
   @Column()

@@ -21,13 +21,13 @@ export class BdsSubmission extends Audit {
   @JoinColumn()
   tender: Tender;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   submissionDeadline: Date;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   openingDate: Date;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   invitationDate: Date;
 
   @Column({

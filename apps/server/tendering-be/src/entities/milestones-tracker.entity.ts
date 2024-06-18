@@ -25,15 +25,15 @@ export class MilestonesTracker extends OrgAudit {
   // @Column('timestamp')
   // plannedStartDate: Date;
 
-  @Column('timestamp', { nullable: true })
+  @Column('timestamptz', { nullable: true })
   actualStartDate: Date;
 
   // @Column('timestamp')
   // plannedEndDate: Date;
 
-  @Column('timestamp', { nullable: true })
+  @Column('timestamptz', { nullable: true })
   actualEndDate: Date;
 
-  @Column('timestamp')
+  @Column('timestamptz')
   timeStamp: Date;
 }

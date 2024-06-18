@@ -38,6 +38,6 @@ export class SharedBidderKey extends Audit {
   @Column({ nullable: true })
   contactPhoneNumber: string;
 
-  @Column('timestamp')
+  @Column('timestamptz')
   timestamp: Date;
 }

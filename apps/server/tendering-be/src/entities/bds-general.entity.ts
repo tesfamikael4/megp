@@ -32,13 +32,13 @@ export class BdsGeneral extends Audit {
   @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   maximumPercentageContractingAllowed: number;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   clarificationDeadline: Date;
 
   @Column()
   preBidConferenceRequired: boolean;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   preBidConferenceDate: Date;
 
   @Column()

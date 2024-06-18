@@ -1,7 +1,7 @@
 import { OrgAudit } from 'src/shared/entities';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity({ name: 'offered-item-summaries' })
+@Entity({ name: 'offered_item_summaries' })
 export class OfferedItemSummary extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -42,6 +42,6 @@ export class OfferedItemSummary extends OrgAudit {
   @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   exchangeRate: number;
 
-  @Column('timestamp')
+  @Column('timestamptz')
   timestamp: Date;
 }
