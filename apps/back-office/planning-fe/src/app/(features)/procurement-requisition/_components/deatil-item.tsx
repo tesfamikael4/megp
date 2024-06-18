@@ -4,7 +4,7 @@ export const DetailItem = ({ data }: any) => {
   const detailData = [
     {
       key: 'Classification',
-      value: data?.classification,
+      value: data?.commodityName,
     },
     {
       key: 'Item Code',
@@ -16,20 +16,20 @@ export const DetailItem = ({ data }: any) => {
     },
     {
       key: 'Currency',
-      value: data?.currency,
+      value: 'MKW',
     },
-    {
-      key: 'Unit Price',
-      value: data?.unitPrice?.toLocaleString('en-US', {
-        style: 'currency',
-        currency: data?.currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }),
-    },
+    // {
+    //   key: 'Unit Price',
+    //   value: data?.unitPrice?.toLocaleString('en-US', {
+    //     style: 'currency',
+    //     currency: data?.currency,
+    //     minimumFractionDigits: 2,
+    //     maximumFractionDigits: 2,
+    //   }),
+    // },
     {
       key: 'Unit of Measurement',
-      value: data?.uoM,
+      value: data?.uOMName,
     },
   ];
   return (

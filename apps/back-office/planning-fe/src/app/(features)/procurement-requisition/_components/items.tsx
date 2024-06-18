@@ -8,6 +8,7 @@ import {
   Group,
   LoadingOverlay,
   Modal,
+  Stack,
   Text,
 } from '@mantine/core';
 import { ExpandableTable, Section, notify } from '@megp/core-fe';
@@ -25,13 +26,14 @@ import {
   useLazyGetPrItemsQuery,
   useDeleteItemMutation,
   useUpdateItemMutation,
+  useReadQuery,
 } from '@/store/api/pr/pr.api';
 import { modals } from '@mantine/modals';
 import ItemSelector from '@/app/(features)/procurement-requisition/_components/item-selector';
 import DataImport from './data-import';
 import { ItemDetailForm } from './item-form-detail';
 import { CollectionQuery } from '@megp/entity';
-import { useReadQuery } from '../_api/procurement-requisition.api';
+// import { useReadQuery } from '../_api/procurement-requisition.api';
 
 export function Items({
   activityId,
@@ -230,6 +232,7 @@ export function Items({
       currency: itemsList?.items[0]?.currency ?? pr.currency,
       quantity: 0,
       uoM: item.uOMId,
+      uom: item.uOMName,
       description: item.description,
       procurementRequisitionId: id,
       itemCode: item.itemCode,
@@ -335,6 +338,35 @@ export function Items({
         )
       }
     >
+      <Flex direction="column" align="end">
+        <Stack unstyled>
+          <Group>
+            <Text size="sm" fw={700}>
+              Est Amount:
+            </Text>
+
+            {parseInt(pr?.totalEstimatedAmount)?.toLocaleString('en-US', {
+              style: 'currency',
+              currency: pr?.currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            })}
+          </Group>
+          <Group>
+            <Text size="sm" fw={700}>
+              Cal Amount:
+            </Text>
+            {parseInt(pr?.calculatedAmount)?.toLocaleString('en-US', {
+              style: 'currency',
+              currency: pr?.currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            })}
+          </Group>
+        </Stack>
+      </Flex>
       <Box className="mt-2">
         {newItems.length !== 0 && (
           <>
@@ -355,30 +387,6 @@ export function Items({
         )}
         {(data.length != 0 || newItems.length === 0) && (
           <Box pos={'relative'}>
-            <Flex direction="column" align="end">
-              <Group>
-                <Text size="sm">Cal Amount:</Text>
-                {parseInt(pr?.calculatedAmount)?.toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: pr?.currency,
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                  currencyDisplay: 'code',
-                })}
-              </Group>
-
-              <Group>
-                <Text size="sm">Est Amount:</Text>
-
-                {parseInt(pr?.totalEstimatedAmount)?.toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: pr?.currency,
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                  currencyDisplay: 'code',
-                })}
-              </Group>
-            </Flex>
             <LoadingOverlay visible={itemLoading} />
             {!activityId && (
               <Text className="text-lg" fw="500">

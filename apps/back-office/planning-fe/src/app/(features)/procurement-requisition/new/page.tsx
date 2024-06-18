@@ -25,9 +25,7 @@ export default function NewPrPage() {
       >
         <Tabs defaultValue="definition">
           <Tabs.List>
-            <Tabs.Tab value="definition">
-              Procurement Requisition Identification
-            </Tabs.Tab>
+            <Tabs.Tab value="definition">Identification</Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="definition" className="pt-2">
             <FormDetail mode="new" />
