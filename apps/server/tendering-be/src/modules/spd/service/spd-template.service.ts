@@ -151,8 +151,6 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
         'incoterm_edition',
         'opening_date_date',
         'opening_date_time',
-        'date',
-        'time',
       ];
     } else if (type === 'scc') {
       validationProperties = ['public_body', 'procurement_reference_no'];
