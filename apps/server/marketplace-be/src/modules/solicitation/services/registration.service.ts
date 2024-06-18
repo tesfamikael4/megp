@@ -49,7 +49,7 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
       },
     });
 
-    const now = currentTime();
+    const now = new Date();
 
     if (!rfx) {
       throw new BadRequestException('RFQ not found');

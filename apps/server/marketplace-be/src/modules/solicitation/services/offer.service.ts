@@ -172,7 +172,7 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
   }
 
   private async getValidRound(rfxId: string) {
-    const now = currentTime();
+    const now = new Date();
 
     const round = await this.solRoundRepository.findOne({
       where: {

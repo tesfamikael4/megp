@@ -71,7 +71,7 @@ export class RfxRevisionApprovalService extends ExtraCrudService<RfxRevisionAppr
   ): Promise<{ canSubmit: boolean; reason?: string }> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const now = currentTime();
+    const now = new Date();
 
     const [
       rfxExists,

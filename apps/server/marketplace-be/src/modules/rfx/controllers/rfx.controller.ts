@@ -81,6 +81,6 @@ export class RfxController extends EntityCrudController<RFX>(options) {
   @Get('current-time')
   @AllowAnonymous()
   getCurrentTime() {
-    return currentTime();
+    return new Date();
   }
 }
