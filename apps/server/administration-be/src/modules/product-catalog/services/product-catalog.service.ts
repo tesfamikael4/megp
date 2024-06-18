@@ -35,13 +35,6 @@ export class ProductCatalogsService extends EntityCrudService<ProductCatalog> {
 
   async getById(vendorId: string, query: CollectionQuery) {
     query.includes = ['itemMaster'];
-    query.where.push([
-      {
-        column: 'vendor.organization.id',
-        value: vendorId,
-        operator: FilterOperators.EqualTo,
-      },
-    ]);
     return await super.findAll(query);
   }
 
