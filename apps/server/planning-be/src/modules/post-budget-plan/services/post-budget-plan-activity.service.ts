@@ -41,7 +41,25 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
     });
   }
 
-  async create(itemData: any): Promise<any> {
+  async create(itemData: any, user: any): Promise<any> {
+    itemData.organizationId = user.organization.id;
+
+    const refer = await this.repositoryPostBudgetPlanActivity.findOne({
+      where: {
+        organizationId: user.organization.id,
+      },
+      order: {
+        procurementReference: 'DESC',
+      },
+    });
+    let lastIncrement = refer
+      ? parseInt(refer.procurementReference.split('-')[1])
+      : 0;
+    lastIncrement++;
+    const newRefCode = `${String(lastIncrement).padStart(5, '0')}`;
+    const orgShortName = user.organization.shortName;
+    const current = orgShortName + newRefCode;
+    itemData.procurementReference = current;
     const activity =
       await this.repositoryPostBudgetPlanActivity.create(itemData);
     const plan = await this.repositoryPostBudgetPlan.findOne({
