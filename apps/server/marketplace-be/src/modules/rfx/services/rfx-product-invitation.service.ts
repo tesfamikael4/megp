@@ -556,10 +556,13 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
   ) {
     const rfxProductInvitation = new RfxProductInvitation();
 
+    const { tenantId, createdAt, updatedAt, ...others } =
+      catalogue.productCatalogDeliveries;
+
     rfxProductInvitation.rfxItemId = rfxItemId;
     rfxProductInvitation.catalogueSpecificationValues =
       catalogue.specifications;
-    rfxProductInvitation.catalogueDeliveryValues = catalogue.deliveryValues;
+    rfxProductInvitation.catalogueDeliveryValues = others;
     rfxProductInvitation.productCatalogueId = catalogue.id;
     rfxProductInvitation.vendorMetadata = catalogue.vendor;
     rfxProductInvitation.vendorId = catalogue.vendor?.id;

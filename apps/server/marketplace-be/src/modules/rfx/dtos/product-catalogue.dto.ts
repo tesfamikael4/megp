@@ -16,7 +16,7 @@ export class ProductCatalogueDto {
 
   @ApiProperty()
   @IsObject()
-  deliveryValues: any;
+  productCatalogDeliveries: any;
 
   @ApiProperty()
   @IsObject()
