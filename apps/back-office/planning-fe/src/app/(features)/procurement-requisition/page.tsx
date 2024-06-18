@@ -32,7 +32,7 @@ export default function ProcurementRequisition() {
     columns: [
       {
         accessor: 'procurementReference',
-        title: '#Ref',
+        title: 'Reference',
         width: 150,
         sortable: true,
       },

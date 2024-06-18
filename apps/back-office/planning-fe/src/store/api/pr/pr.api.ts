@@ -101,7 +101,7 @@ export const prApi = createApi({
         url: `procurement-requisitions/${id}`,
         method: 'GET',
       }),
-      providesTags: ['pr'],
+      providesTags: ['pr', 'items'],
     }),
     getAnalytics: builder.query<any, string>({
       query: (key) => ({

@@ -22,8 +22,18 @@ const ItemSchema: ZodType<any> = z.object({
   classification: z.string().min(1, { message: 'Classification is required' }),
   description: z.string().min(1, { message: 'Description is required' }),
   currency: z.string(),
-  quantity: z.string().min(1, { message: 'Quantity is required' }),
-  unitPrice: z.string().min(1, { message: 'Unit Price is required' }),
+  quantity: z
+    .string()
+    .min(1, { message: 'Quantity is required' })
+    .refine((value) => parseInt(value) > 0, {
+      message: 'Quantity must be greater than zero',
+    }),
+  unitPrice: z
+    .string()
+    .min(1, { message: 'Unit Price is required' })
+    .refine((value) => parseFloat(value) > 0, {
+      message: 'Unit Price must be greater than zero',
+    }),
   itemCode: z.string().min(1, { message: 'Item Code is required' }),
   uom: z.string().min(1, { message: 'Unit of measurement is required' }),
 });
@@ -102,6 +112,7 @@ export const ItemDetailForm = ({
               errors?.quantity ? errors?.quantity?.message?.toString() : ''
             }
             disabled={disable}
+            withAsterisk
           />
           <TextInput
             type="number"
@@ -112,18 +123,20 @@ export const ItemDetailForm = ({
               errors?.unitPrice ? errors?.unitPrice?.message?.toString() : ''
             }
             disabled={disable}
+            withAsterisk
           />
           <Controller
             name="uom"
             control={control}
             render={({ field: { name, value, onChange } }) => (
               <Select
+                withAsterisk
                 label="Unit of Measurement"
                 name={name}
                 disabled={disable}
                 value={value}
                 onChange={onChange}
-                data={uom?.items.map((u) => u.abbreviation) ?? []}
+                data={uom?.items.map((u) => u.name) ?? []}
                 error={errors?.uom ? errors?.uom?.message?.toString() : ''}
               />
             )}
