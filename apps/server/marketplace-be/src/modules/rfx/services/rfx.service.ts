@@ -311,13 +311,13 @@ export class RfxService extends EntityCrudService<RFX> {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     let canUpdate = false;
 
-    if (rfx.status == ERfxStatus.DRAFT) canUpdate = true;
+    if (rfx.status == ERfxStatus.DRAFT) return (canUpdate = true);
 
     if (
       rfx.status == ERfxStatus.TEAM_REVIEWAL &&
       rfx.revisionApprovals?.length == 0
     )
-      canUpdate = true;
+      return (canUpdate = true);
 
     const now = currentTime();
     const reviewDeadline = currentTime(
@@ -325,18 +325,17 @@ export class RfxService extends EntityCrudService<RFX> {
     );
 
     if (rfx.status == ERfxStatus.TEAM_REVIEWAL && now > reviewDeadline) {
-      canUpdate = true;
       entityManager.getRepository(RFX).update(rfx.id, {
         status: ERfxStatus.ADJUSTMENT,
       });
+      return (canUpdate = true);
     }
 
-    if (rfx.status == ERfxStatus.ADJUSTMENT) canUpdate = true;
+    if (rfx.status == ERfxStatus.ADJUSTMENT) return (canUpdate = true);
 
     if (!canUpdate) {
       throw new BadRequestException('rfx not updatable');
     }
-    return canUpdate;
   }
 
   async verifyAdjustable(rfx: RFX): Promise<boolean> {
