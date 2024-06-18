@@ -108,10 +108,7 @@ export default function PrDetailPage() {
         <Box className="mt-5 -mx-4  ">
           <Flex>
             {currentTab === 'identification' && (
-              <FormDetail
-                mode="detail"
-                disableFields={disableFields || data?.isPlanned}
-              />
+              <FormDetail mode="detail" disableFields={disableFields} />
             )}
 
             {currentTab === 'method' && (
