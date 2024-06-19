@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 import { logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import {
@@ -19,6 +19,7 @@ import {
   useUpdateMutation,
 } from '@/app/(features)/preparation/_api/tender/bid-evaluations.api';
 import { useParams } from 'next/navigation';
+import { useListQuery } from '../../_api/scc/curencies.api';
 
 export default function BidProEvaluation() {
   const { id } = useParams();
@@ -65,7 +66,10 @@ export default function BidProEvaluation() {
   const finance = watch('financialWeight');
   const passing = watch('passingMark');
   const { data: selected, isSuccess, isLoading } = useReadQuery(id?.toString());
-
+  const { data: currencies } = useListQuery({
+    skip: 0,
+    take: 300,
+  });
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
 
@@ -168,13 +172,16 @@ export default function BidProEvaluation() {
               onChange={onChange}
               className="w-1/2"
               label="Bid Evaluation Currency"
-              data={[
-                { value: 'Not Applicable', label: 'Not Applicable' },
-                { value: 'IBM', label: 'Indigenous Black Malawian' },
-                { value: 'MSME', label: 'Micro, Small And Medium Enterprises' },
-                { value: 'Marginalized Group', label: 'Marginalized Group' },
-                { value: 'Others', label: 'Others' },
-              ]}
+              data={
+                currencies && currencies.items.length > 0
+                  ? currencies.items.map((item: any) => {
+                      const value = { ...item };
+                      (value['value'] = item.abbreviation),
+                        (value['label'] = item.name);
+                      return value;
+                    })
+                  : []
+              }
               searchable
               clearable
               error={

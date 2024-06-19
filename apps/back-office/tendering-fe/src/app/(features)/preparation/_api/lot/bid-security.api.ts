@@ -6,7 +6,7 @@ import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 const bidSecurityApi = entityApi.entitySliceApi['bid-securities'];
 
 export const bidSecuritySliceApi: typeof EntitySliceApi =
-  createEntitySlice<BidSecurity>(bidSecurityApi, 'bid-securities');
+  createEntitySlice<BidSecurity>(bidSecurityApi, 'bds-bid-securities');
 
 export const {
   useListQuery,
