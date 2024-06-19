@@ -6,10 +6,9 @@ import {
   NativeSelect,
   NumberInput,
   Stack,
-  TextInput,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import {
@@ -18,6 +17,7 @@ import {
   useUpdateMutation,
 } from '../../../_api/lot/bid-security.api';
 import { logger, notify } from '@megp/core-fe';
+import { useListQuery } from '../../../_api/scc/curencies.api';
 
 interface BidSecurityProps {
   lotId: string;
@@ -46,6 +46,10 @@ export default function BidSecurity({ lotId }: BidSecurityProps) {
     register,
   } = useForm({
     resolver: zodResolver(BidSeuritySchema),
+  });
+  const { data: currencies } = useListQuery({
+    skip: 0,
+    take: 300,
   });
   const { data: selected, isSuccess, isLoading } = useReadQuery(lotId);
   const [create, { isLoading: isSaving }] = useCreateMutation();
@@ -116,13 +120,24 @@ export default function BidSecurity({ lotId }: BidSecurityProps) {
             />
           )}
         />
-        <TextInput
-          label="Bid Security Currency"
+        <NativeSelect
+          placeholder="Bid Security Currency"
           withAsterisk
+          label="Bid Security Currency"
           className="w-1/2"
+          data={
+            currencies && currencies.items.length > 0
+              ? currencies.items.map((item: any) => {
+                  const value = { ...item };
+                  (value['value'] = item.abbreviation),
+                    (value['label'] = item.name);
+                  return value;
+                })
+              : []
+          }
           error={
-            errors?.bidSecurityCurrency
-              ? errors?.bidSecurityCurrency?.message?.toString()
+            errors['bidSecurityCurrency']
+              ? errors['bidSecurityCurrency']?.message?.toString()
               : ''
           }
           {...register('bidSecurityCurrency')}
