@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SpdTemplate, Tender } from 'src/entities';
-import { EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { GenerateTenderDocumentDto } from '../dto';
 import { TenderStatusEnum } from 'src/shared/enums/tender-status.enum';
 import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
@@ -18,6 +18,7 @@ export class TenderApprovalService {
     private readonly minIOService: MinIOService,
     private readonly documentManipulatorService: DocumentManipulatorService,
     @Inject(REQUEST) private request: Request,
+    private connection: DataSource,
   ) {}
 
   async tenderApproval(data: {
@@ -28,38 +29,53 @@ export class TenderApprovalService {
     if (!data.itemId) {
       throw new RpcException('incomplete_data');
     }
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const tender = await this.tenderRepository.findOneBy({
-      id: data.itemId,
-    });
+    try {
+      const tender = await this.tenderRepository.findOneBy({
+        id: data.itemId,
+      });
 
-    if (!tender) {
-      throw new RpcException('Tender not found');
+      if (!tender) {
+        throw new RpcException('Tender not found');
+      }
+      let tenderInvitation = null;
+
+      const manager: EntityManager = queryRunner.manager;
+
+      if (data.status == 'Approved') {
+        tenderInvitation = await this.generateTenderInvitation(
+          { id: tender.id },
+          manager,
+        );
+      }
+
+      await manager.getRepository(Tender).update(
+        { id: data.itemId },
+        {
+          tenderInvitation,
+          status:
+            data.status == 'Approved'
+              ? TenderStatusEnum.APPROVED
+              : TenderStatusEnum.ADJUSTED,
+        },
+      );
+      await queryRunner.commitTransaction();
+      return data;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-    let tenderInvitation = null;
-    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-
-    if (data.status == 'Approved') {
-      tenderInvitation = await this.generateTenderInvitation({ id: tender.id });
-    }
-
-    await manager.getRepository(Tender).update(
-      { id: data.itemId },
-      {
-        tenderInvitation,
-        status:
-          data.status == 'Approved'
-            ? TenderStatusEnum.APPROVED
-            : TenderStatusEnum.ADJUSTED,
-      },
-    );
-
-    return data;
   }
 
-  async generateTenderInvitation(input: GenerateTenderDocumentDto) {
-    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-
+  async generateTenderInvitation(
+    input: GenerateTenderDocumentDto,
+    manager: EntityManager,
+  ) {
     const tender = await this.tenderRepository.findOne({
       where: {
         id: input.id,
