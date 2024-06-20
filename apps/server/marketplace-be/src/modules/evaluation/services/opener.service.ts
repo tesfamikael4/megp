@@ -50,22 +50,27 @@ export class OpenerService {
     try {
       await queryRunner.manager.connection.transaction(
         async (entityManager) => {
-          const round = payload.round;
+          try {
+            const round = payload.round;
 
-          await checkValidRfx(entityManager);
-          await openResponses(entityManager);
+            await checkValidRfx(entityManager);
+            await openResponses(entityManager);
 
-          const [items, rfxBidProcedure] = await filterItems(entityManager);
+            const [items, rfxBidProcedure] = await filterItems(entityManager);
 
-          if (round > 0) {
-            await calculateRoundWinner(items, rfxBidProcedure, entityManager);
-            await endRound(entityManager);
+            if (round > 0) {
+              await calculateRoundWinner(items, rfxBidProcedure, entityManager);
+              await endRound(entityManager);
+            }
+          } catch (error) {
+            if (error.status == 430) {
+              Logger.error(error, 'OpenerService');
+            } else throw error;
           }
         },
       );
     } catch (error) {
-      if (error.status == 430) Logger.error(error, 'OpenerService');
-      else await queryRunner.rollbackTransaction();
+      await queryRunner.rollbackTransaction();
       console.log(error);
     } finally {
       await queryRunner.release();
@@ -105,6 +110,16 @@ export class OpenerService {
 
       if (validItems.length == 0) {
         await Promise.all([
+          payload.round == 0
+            ? itemRepo.update(
+                {
+                  rfxId: payload.rfxId,
+                },
+                {
+                  status: ERfxItemStatus.ENDED,
+                },
+              )
+            : Promise.resolve(),
           rfxRepo.update(payload.rfxId, {
             status: ERfxStatus.ENDED,
           }),
