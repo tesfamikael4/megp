@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RfxBidContractCondition } from 'src/entities';
 import { ExtraCrudOptions, ExtraCrudController } from 'megp-shared-be';
@@ -24,5 +24,10 @@ export class RfxBidContractConditionController extends ExtraCrudController<RfxBi
     private readonly rfxBidContractConditionService: RfxBidContractConditionService,
   ) {
     super(rfxBidContractConditionService);
+  }
+
+  @Post()
+  async create(itemData: CreateRfxBidContractConditionDTO) {
+    return this.rfxBidContractConditionService.create(itemData);
   }
 }

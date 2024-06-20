@@ -75,7 +75,7 @@ import { RfxContractTermService } from './services/rfx-contract-term.service';
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RMQ_URL],
-          queue: 'work-plan-initiate',
+          queue: 'workflow-initiate',
           queueOptions: {
             durable: false,
           },
