@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import axios from 'axios';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -112,6 +117,14 @@ export class RfxService extends EntityCrudService<RFX> {
       await manager.getRepository(RFX).insert(rfx);
 
       const procurementTechnicalTeams: RfxProcurementTechnicalTeam[] = [];
+
+      if (
+        !prResponse.procurementRequisitionTechnicalTeams.find(
+          (team) => team.isTeamLeader,
+        )
+      )
+        throw new NotFoundException('PR Technical Team Leader is not found');
+
       for (const iterator of prResponse.procurementRequisitionTechnicalTeams) {
         const procurementTechnicalTeam = new RfxProcurementTechnicalTeam();
         procurementTechnicalTeam.rfxId = rfx.id;
