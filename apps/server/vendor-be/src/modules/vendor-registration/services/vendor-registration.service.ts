@@ -8,7 +8,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { In, Not, QueryBuilder, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import {
   VendorInitiationDto,
@@ -16,13 +16,11 @@ import {
 } from '../dto/vendor-initiation.dto';
 import { EntityCrudService } from 'src/shared/service';
 import {
-  BpServiceEntity,
   BusinessAreaEntity,
   InvoiceEntity,
   IsrVendorsEntity,
   ServicePrice,
   VendorsEntity,
-  WorkflowInstanceEntity,
 } from '@entities';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import {
@@ -35,7 +33,6 @@ import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { InvoiceService } from './invoice.service';
 import {
   CollectionQuery,
-  FilterOperators,
   QueryConstructor,
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
@@ -61,7 +58,6 @@ import { ApplicationDto } from '../dto/applications.dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { MRAResponseDTO } from '../dto/api-mra.dto';
 import { MBRSResponseDto, RecordDTO } from '../dto/api-mbrs.dto';
-import { StringifyOptions } from 'querystring';
 import { NCICResponseDTO } from '../dto/api-ncic.dto';
 import { Readable } from 'typeorm/platform/PlatformTools';
 import { NcicMockData } from '../ncic.mock';
@@ -724,6 +720,26 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         ? vendorsEntity?.businessAreas
         : undefined;
     vendorsEntity.tinNumber = data.basic.tinNumber;
+    if (vendorsEntity.areasOfBusinessInterest?.length !== 0) {
+
+      const BusinessInterestData = vendorsEntity.areasOfBusinessInterest.map((item) => {
+        if (item.category == BusinessCategories.GOODS || item.category == BusinessCategories.SERVICES) {
+          item.ppdaRegistrationNumber = data?.ppdaRegistrationNumber;
+          item.ppdaRegistrationDate = data?.ppdaRegistrationDate;
+          item.expiryDate = data?.expiryDate;
+          return item;
+        } else {
+          return item;
+        }
+
+
+      })
+      vendorsEntity.areasOfBusinessInterest = [...BusinessInterestData];
+
+    }
+
+
+
     return vendorsEntity;
   };
 
@@ -1713,7 +1729,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           vendorEntity.id,
         );
         const lineOfBusiness = vendorEntity.lineOfBusiness ? [...vendorEntity.lineOfBusiness] : [];
-        vendorEntity.lineOfBusiness = lineOfBusiness?.map((item) => item?.name);
+        vendorEntity.lineOfBusinessView = lineOfBusiness?.map((item) => item?.name);
       }
       return vendorEntity;
     } catch (error) {
