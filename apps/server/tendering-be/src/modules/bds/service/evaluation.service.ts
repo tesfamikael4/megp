@@ -13,6 +13,16 @@ export class BdsEvaluationService extends ExtraCrudService<BdsEvaluation> {
     super(bdsEvaluationRepository);
   }
 
+  async create(itemData: any, req?: any): Promise<any> {
+    if (req?.user?.organization) {
+      itemData.organizationId = req.user.organization.id;
+      itemData.organizationName = req.user.organization.name;
+    }
+    const item = this.bdsEvaluationRepository.create(itemData);
+    await this.bdsEvaluationRepository.upsert(item, ['tenderId']);
+    return item;
+  }
+
   async findOne(
     tenderId: string,
     req?: any,
