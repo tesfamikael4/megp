@@ -1,17 +1,20 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class SplitOrginaztionJson1718891944474 implements MigrationInterface {
-  name = 'SplitOrginaztionJson1718891944474';
+export class SplitOrganizationJson1718957756194 implements MigrationInterface {
+  name = 'SplitOrganizationJson1718957756194';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "product_catalogs" DROP COLUMN "vendor"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "contract_beneficiaries" DROP COLUMN "organizationId"`,
+      `ALTER TABLE "contract_beneficiaries" DROP COLUMN "organization"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "contract_beneficiaries" DROP COLUMN "organizationName"`,
+      `ALTER TABLE "contract_catalogs" DROP COLUMN "vendor"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "contract_catalogs" DROP COLUMN "organization"`,
     );
     await queryRunner.query(
       `ALTER TABLE "product_catalogs" ADD "vendorId" uuid NOT NULL`,
@@ -26,19 +29,31 @@ export class SplitOrginaztionJson1718891944474 implements MigrationInterface {
       `ALTER TABLE "contract_beneficiaries" ADD "beneficiaryName" character varying NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE "contract_catalogs" ALTER COLUMN "vendorId" SET NOT NULL`,
+      `ALTER TABLE "contract_catalogs" ADD "organizationId" uuid NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE "contract_catalogs" ALTER COLUMN "vendorName" SET NOT NULL`,
+      `ALTER TABLE "contract_catalogs" ADD "organizationName" character varying NOT NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "contract_catalogs" ADD "vendorId" character varying NOT NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "contract_catalogs" ADD "vendorName" character varying NOT NULL`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "contract_catalogs" ALTER COLUMN "vendorName" DROP NOT NULL`,
+      `ALTER TABLE "contract_catalogs" DROP COLUMN "vendorName"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "contract_catalogs" ALTER COLUMN "vendorId" DROP NOT NULL`,
+      `ALTER TABLE "contract_catalogs" DROP COLUMN "vendorId"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "contract_catalogs" DROP COLUMN "organizationName"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "contract_catalogs" DROP COLUMN "organizationId"`,
     );
     await queryRunner.query(
       `ALTER TABLE "contract_beneficiaries" DROP COLUMN "beneficiaryName"`,
@@ -53,10 +68,13 @@ export class SplitOrginaztionJson1718891944474 implements MigrationInterface {
       `ALTER TABLE "product_catalogs" DROP COLUMN "vendorId"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "contract_beneficiaries" ADD "organizationName" character varying`,
+      `ALTER TABLE "contract_catalogs" ADD "organization" jsonb NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE "contract_beneficiaries" ADD "organizationId" character varying`,
+      `ALTER TABLE "contract_catalogs" ADD "vendor" jsonb NOT NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "contract_beneficiaries" ADD "organization" jsonb NOT NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE "product_catalogs" ADD "vendor" jsonb NOT NULL`,
