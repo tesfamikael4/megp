@@ -1,10 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsEnum, IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import {
+  IsUUID,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+} from 'class-validator';
 import { ContractBeneficiaryStatus } from 'src/shared/enums/contract-catalog-enum';
 
 export class CreateContractBeneficiaryDto {
   @ApiProperty()
-  organization: any;
+  @IsNotEmpty()
+  beneficiaryId: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  beneficiaryName: string;
 
   @ApiProperty()
   @IsUUID()
@@ -34,14 +45,6 @@ export class Organization {
   @ApiProperty()
   @IsString()
   name: string;
-
-  @ApiProperty()
-  @IsString()
-  shortName: string;
-
-  @ApiProperty()
-  @IsString()
-  code: string;
 }
 export class BulkCreateContractBeneficiaryDto extends CreateContractBeneficiaryDto {
   @ApiProperty()

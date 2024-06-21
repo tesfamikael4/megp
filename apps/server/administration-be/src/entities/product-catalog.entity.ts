@@ -27,8 +27,11 @@ export class ProductCatalog extends Audit {
   @Column({ type: 'uuid' })
   itemMasterId: string;
 
-  @Column({ type: 'jsonb' })
-  vendor: any;
+  @Column({ type: 'uuid' })
+  vendorId: string;
+
+  @Column()
+  vendorName: string;
 
   @Column({ type: 'uuid' })
   specificationTemplateId: string;
