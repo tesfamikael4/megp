@@ -1,18 +1,18 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Audit } from 'src/shared/entities';
+import { OrgAudit } from 'src/shared/entities';
 import { ContractCatalogStatus } from 'src/shared/enums/contract-catalog-enum';
 import { ContractItem } from './contract-item.entity';
 import { ContractBeneficiary } from './contract-beneficiary.entity';
 @Entity({ name: 'contract_catalogs' })
-export class ContractCatalog extends Audit {
+export class ContractCatalog extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'jsonb' })
-  organization: any;
+  @Column()
+  vendorId: string;
 
-  @Column({ type: 'jsonb' })
-  vendor: any;
+  @Column()
+  vendorName: string;
 
   @Column()
   contractReferenceNumber: string;

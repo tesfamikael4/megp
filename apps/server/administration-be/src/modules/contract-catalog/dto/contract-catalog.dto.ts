@@ -4,10 +4,12 @@ import { ContractCatalogStatus } from 'src/shared/enums/contract-catalog-enum';
 
 export class CreateContractCatalogDTO {
   @ApiProperty()
-  organization: any;
+  @IsNotEmpty()
+  vendorId: string;
 
   @ApiProperty()
-  vendor: any;
+  @IsNotEmpty()
+  vendorName: string;
 
   @ApiProperty()
   @IsNotEmpty()

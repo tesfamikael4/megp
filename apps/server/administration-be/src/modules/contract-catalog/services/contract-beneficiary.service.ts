@@ -13,21 +13,19 @@ export class ContractBeneficiariesService extends ExtraCrudService<ContractBenef
   ) {
     super(contractBeneficiaryRepository);
   }
-  async bulkCreate(
-    contractBeneficiaries: BulkCreateContractBeneficiaryDto,
-  ) {
+  async bulkCreate(contractBeneficiaries: BulkCreateContractBeneficiaryDto) {
     await this.contractBeneficiaryRepository.delete({
       contractCatalogId: contractBeneficiaries.contractCatalogId,
     });
 
     const result = contractBeneficiaries.organizations.map((x) => ({
       contractCatalogId: contractBeneficiaries.contractCatalogId,
-      organization: x,
+      beneficiaryId: x.id,
+      beneficiaryName: x.name,
     }));
     await this.contractBeneficiaryRepository.insert(
       this.contractBeneficiaryRepository.create(result),
     );
     return result;
   }
-
 }

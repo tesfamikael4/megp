@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   ProductCatalog,
+  ProductCatalogDelivery,
   ProductCatalogImage,
   SpecificationTemplate,
 } from 'src/entities';
@@ -13,6 +14,8 @@ import { ProductCatalogImageService } from './services/product-catalog-image.ser
 import { MinIOModule } from 'src/shared/min-io';
 import { ProductCatalogImageController } from './controllers/product-catalog-image.controller';
 import { ItemMasterModule } from '../item-master/item-master.module';
+import { ProductCatalogDeliveryService } from './services/product-catalog-delivery.service';
+import { ProductCatalogDeliveryController } from './controllers/product-catalog-delivery.controller';
 
 @Module({
   imports: [
@@ -22,17 +25,20 @@ import { ItemMasterModule } from '../item-master/item-master.module';
       ProductCatalog,
       SpecificationTemplate,
       ProductCatalogImage,
+      ProductCatalogDelivery,
     ]),
   ],
   controllers: [
     ProductCatalogsController,
     SpecificationTemplatesController,
     ProductCatalogImageController,
+    ProductCatalogDeliveryController,
   ],
   providers: [
     ProductCatalogsService,
     SpecificationTemplatesService,
     ProductCatalogImageService,
+    ProductCatalogDeliveryService,
   ],
 })
 export class ProductCatalogModule {}

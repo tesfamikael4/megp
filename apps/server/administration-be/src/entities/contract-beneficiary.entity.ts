@@ -18,8 +18,11 @@ export class ContractBeneficiary extends Audit {
   @Column({ type: 'uuid' })
   contractCatalogId: string;
 
-  @Column({ type: 'jsonb' })
-  organization: any;
+  @Column()
+  beneficiaryId: string;
+
+  @Column()
+  beneficiaryName: string;
 
   @Column({
     type: 'enum',

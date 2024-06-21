@@ -22,7 +22,8 @@ export class ProductCatalogsService extends EntityCrudService<ProductCatalog> {
   }
   async create(data: ProductCatalogData, req?: any): Promise<any> {
     if (req?.user?.organization) {
-      data.vendor = req?.user?.organization;
+      data.vendorId = req?.user?.organization.id;
+      data.vendorName = req?.user?.organization.name;
     }
     ProductCatalogSchema.parse(data);
     const productCatalog = this.productCatalogRepository.create(data);
