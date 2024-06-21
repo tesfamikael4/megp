@@ -551,6 +551,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     const teamMember = await this.teamMemberRepository.findOne({
       where: {
         personnelId: user.userId,
+        rfxId,
       },
       select: {
         id: true,
@@ -584,8 +585,8 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
             .andWhere('eval.version = :version', {
               version,
             })
-            .andWhere('eval.solRegistrationId = :solRegId', {
-              solRegId: solRegistrationId,
+            .andWhere('eval.solRegistrationId = :solReg', {
+              solReg: solRegistrationId,
             }),
       )
       .loadRelationCountAndMap(

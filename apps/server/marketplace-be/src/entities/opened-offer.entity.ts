@@ -34,7 +34,7 @@ export class OpenedOffer extends Audit {
   @Column({ nullable: true })
   rank: number;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
   calculatedPrice: number;
 
   @Column({
