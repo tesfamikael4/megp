@@ -1,14 +1,14 @@
 import {
   Checkbox,
   LoadingOverlay,
-  NativeSelect,
+  Select,
   Stack,
   Textarea,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useReadQuery,
   useDeleteMutation,
@@ -35,6 +35,7 @@ export function OpeningChecklistFormDetail({ mode, pmId }: FormDetailProps) {
   const {
     handleSubmit,
     reset,
+    control,
     formState: { errors },
     register,
   } = useForm({
@@ -102,14 +103,25 @@ export function OpeningChecklistFormDetail({ mode, pmId }: FormDetailProps) {
       />
 
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Type"
-          withAsterisk
-          className="w-1/2"
-          label="Type"
-          data={['technical', 'financial']}
-          {...register('type')}
+        <Controller
+          control={control}
+          name="type"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['technical', 'financial']}
+              label="Type"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Type"
+              searchable
+              value={value}
+            />
+          )}
         />
+
         <Checkbox
           label="Is Boolean"
           className="w-1/2 my-auto"

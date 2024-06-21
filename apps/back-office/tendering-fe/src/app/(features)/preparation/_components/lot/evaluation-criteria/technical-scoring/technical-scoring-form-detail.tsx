@@ -1,6 +1,5 @@
 import {
   LoadingOverlay,
-  NativeSelect,
   NumberInput,
   Select,
   Stack,
@@ -175,13 +174,23 @@ export function TechnicalScoringFormDetail({
           )}
         />
 
-        <NativeSelect
-          placeholder="Requirement condition"
-          withAsterisk
-          className="w-1/2"
-          label="Requirement condition"
-          data={Object.values(RequirementCondition)}
-          {...register('requirementCondition')}
+        <Controller
+          control={control}
+          name="requirementCondition"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={Object.values(RequirementCondition)}
+              label="Requirement condition"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Requirement condition"
+              searchable
+              value={value}
+            />
+          )}
         />
       </div>
       <Controller

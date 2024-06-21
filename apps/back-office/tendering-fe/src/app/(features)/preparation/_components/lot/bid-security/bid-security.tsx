@@ -3,8 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Checkbox,
   LoadingOverlay,
-  NativeSelect,
   NumberInput,
+  Select,
   Stack,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
@@ -120,46 +120,68 @@ export default function BidSecurity({ lotId }: BidSecurityProps) {
             />
           )}
         />
-        <NativeSelect
-          placeholder="Bid Security Currency"
-          withAsterisk
-          label="Bid Security Currency"
-          className="w-1/2"
-          data={
-            currencies && currencies.items.length > 0
-              ? currencies.items.map((item: any) => {
-                  const value = { ...item };
-                  (value['value'] = item.abbreviation),
-                    (value['label'] = item.name);
-                  return value;
-                })
-              : []
-          }
-          error={
-            errors['bidSecurityCurrency']
-              ? errors['bidSecurityCurrency']?.message?.toString()
-              : ''
-          }
-          {...register('bidSecurityCurrency')}
+
+        <Controller
+          control={control}
+          name="bidSecurityCurrency"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={
+                currencies && currencies.items.length > 0
+                  ? currencies.items.map((item: any) => {
+                      const value = { ...item };
+                      (value['value'] = item.abbreviation),
+                        (value['label'] = item.name);
+                      return value;
+                    })
+                  : []
+              }
+              error={
+                errors?.bidSecurityCurrency
+                  ? errors?.bidSecurityCurrency?.message?.toString()
+                  : ''
+              }
+              label="Bid Security Currency"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Bid Security Currency"
+              searchable
+              value={value}
+            />
+          )}
         />
       </div>
-      <NativeSelect
-        placeholder="Bid Security Form"
-        withAsterisk
-        label="Bid Security Form"
-        className="w-1/2"
-        data={[
-          'declaration',
-          'spo',
-          'insurance letter',
-          'Letter from small and micro enterprise',
-        ]}
-        error={
-          errors['bidSecurityForm']
-            ? errors['bidSecurityForm']?.message?.toString()
-            : ''
-        }
-        {...register('bidSecurityForm')}
+
+      <Controller
+        control={control}
+        name="bidSecurityForm"
+        render={({ field: { value, name, onChange } }) => (
+          <Select
+            data={[
+              'declaration',
+              'spo',
+              'insurance letter',
+              'Letter from small and micro enterprise',
+            ]}
+            error={
+              errors?.bidSecurityForm
+                ? errors?.bidSecurityForm?.message?.toString()
+                : ''
+            }
+            label="Bid Security Form"
+            withAsterisk
+            name={name}
+            className="w-1/2"
+            nothingFoundMessage="No options"
+            onChange={onChange}
+            placeholder="Bid Security Form"
+            searchable
+            value={value}
+          />
+        )}
       />
 
       <EntityButton

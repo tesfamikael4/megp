@@ -3,8 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   LoadingOverlay,
   MultiSelect,
-  NativeSelect,
   NumberInput,
+  Select,
   Stack,
   Text,
 } from '@mantine/core';
@@ -56,7 +56,6 @@ export default function BidProEvaluation() {
     setValue,
     reset,
     control,
-    register,
   } = useForm({
     resolver: zodResolver(EvaluationSchema),
   });
@@ -190,44 +189,85 @@ export default function BidProEvaluation() {
             />
           )}
         />
-        <NativeSelect
-          placeholder="Evaluation Method"
-          withAsterisk
-          label="Evaluation Method"
-          className="w-1/2"
-          data={['point system', 'compliance']}
-          error={
-            errors['evaluationMethod']
-              ? errors['evaluationMethod']?.message?.toString()
-              : ''
-          }
-          {...register('evaluationMethod')}
+        <Controller
+          control={control}
+          name="evaluationMethod"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['point system', 'compliance']}
+              error={
+                errors['evaluationMethod']
+                  ? errors['evaluationMethod']?.message?.toString()
+                  : ''
+              }
+              label="Evaluation Method"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Evaluation Method"
+              searchable
+              value={value}
+            />
+          )}
         />
       </div>
       <div className="flex gap-3">
-        <NativeSelect
-          placeholder="Selection Method"
-          withAsterisk
-          className="w-1/2"
-          label="Selection Method"
-          data={['lowest price', 'meat', 'lcs', 'qcbs', 'fbs', 'cqs', 'sss']}
-          error={
-            errors['selectionMethod']
-              ? errors['selectionMethod']?.message?.toString()
-              : ''
-          }
-          {...register('selectionMethod')}
+        <Controller
+          control={control}
+          name="selectionMethod"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={[
+                'lowest price',
+                'meat',
+                'lcs',
+                'qcbs',
+                'fbs',
+                'cqs',
+                'sss',
+              ]}
+              error={
+                errors['selectionMethod']
+                  ? errors['selectionMethod']?.message?.toString()
+                  : ''
+              }
+              label="Selection Method"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Selection Method"
+              searchable
+              value={value}
+            />
+          )}
         />
-        <NativeSelect
-          placeholder="Award Type"
-          withAsterisk
-          className="w-1/2"
-          label="Award Type"
-          data={['item based', 'lot based']}
-          error={
-            errors['awardType'] ? errors['awardType']?.message?.toString() : ''
-          }
-          {...register('awardType')}
+
+        <Controller
+          control={control}
+          name="awardType"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['item based', 'lot based']}
+              error={
+                errors['awardType']
+                  ? errors['awardType']?.message?.toString()
+                  : ''
+              }
+              label="Award Type"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Award Type"
+              searchable
+              value={value}
+            />
+          )}
         />
       </div>
       <div className="w-full flex gap-3">

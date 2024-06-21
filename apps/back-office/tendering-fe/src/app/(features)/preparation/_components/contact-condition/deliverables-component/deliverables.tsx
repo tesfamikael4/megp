@@ -1,11 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Flex,
-  NativeSelect,
-  NumberInput,
-  Stack,
-  TextInput,
-} from '@mantine/core';
+import { Flex, NumberInput, Select, Stack, TextInput } from '@mantine/core';
 import { logger } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import React from 'react';
@@ -49,21 +43,32 @@ export default function Deliverables() {
           error={errors?.name ? errors?.name?.message?.toString() : ''}
           {...register('name')}
         />
-        <NativeSelect
-          placeholder="Delivarable Type"
-          withAsterisk
-          label="Delivarable Type"
-          className="w-1/2"
-          data={[
-            'FromTheTotalCoGoodsDeliverablentractAmount',
-            'NonGoodsDeliverable',
-          ]}
-          error={
-            errors['deliverableType']
-              ? errors['deliverableType']?.message?.toString()
-              : ''
-          }
-          {...register('deliverableType')}
+
+        <Controller
+          control={control}
+          name="deliverableType"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={[
+                'FromTheTotalCoGoodsDeliverablentractAmount',
+                'NonGoodsDeliverable',
+              ]}
+              error={
+                errors['deliverableType']
+                  ? errors['deliverableType']?.message?.toString()
+                  : ''
+              }
+              label="Delivarable Type"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Delivarable Type"
+              searchable
+              value={value}
+            />
+          )}
         />
       </Flex>
       <Flex gap={'md'}>
@@ -87,18 +92,28 @@ export default function Deliverables() {
             />
           )}
         />
-        <NativeSelect
-          placeholder="Payment Basis"
-          withAsterisk
-          label="Payment Basis"
-          className="w-1/2"
-          data={['Deliverable-Based', 'Period-Based']}
-          error={
-            errors['paymentBasis']
-              ? errors['paymentBasis']?.message?.toString()
-              : ''
-          }
-          {...register('paymentBasis')}
+        <Controller
+          control={control}
+          name="paymentBasis"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['Deliverable-Based', 'Period-Based']}
+              error={
+                errors['paymentBasis']
+                  ? errors['paymentBasis']?.message?.toString()
+                  : ''
+              }
+              label="Payment Basis"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Payment Basis"
+              searchable
+              value={value}
+            />
+          )}
         />
       </Flex>
 

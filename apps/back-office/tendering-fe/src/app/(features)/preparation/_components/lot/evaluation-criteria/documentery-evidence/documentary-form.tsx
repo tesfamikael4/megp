@@ -11,14 +11,14 @@ import {
   Checkbox,
   Flex,
   LoadingOverlay,
-  NativeSelect,
+  Select,
   Stack,
   TextInput,
 } from '@mantine/core';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 
 const evidenceTypes = [
@@ -108,6 +108,7 @@ export default function DocumentaryForm({
   const {
     handleSubmit,
     reset,
+    control,
     formState: { errors },
     register,
   } = useForm({
@@ -186,32 +187,55 @@ export default function DocumentaryForm({
             }
             {...register('evidenceTitle')}
           />
-          <NativeSelect
-            placeholder="Evidence Type"
-            withAsterisk
-            className="w-1/2"
-            label="Evidence Type"
-            data={[...evidenceTypes]}
-            error={
-              errors?.evidenceType
-                ? errors?.evidenceType?.message?.toString()
-                : ''
-            }
-            {...register('evidenceType')}
+          <Controller
+            control={control}
+            name="evidenceType"
+            render={({ field: { value, name, onChange } }) => (
+              <Select
+                data={[...evidenceTypes]}
+                error={
+                  errors?.evidenceType
+                    ? errors?.evidenceType?.message?.toString()
+                    : ''
+                }
+                label="Evidence Type"
+                withAsterisk
+                name={name}
+                className="w-1/2"
+                nothingFoundMessage="No options"
+                onChange={onChange}
+                placeholder="Evidence Type"
+                searchable
+                value={value}
+              />
+            )}
           />
         </Flex>
         <Flex gap={'md'}>
-          <NativeSelect
-            placeholder="Required To"
-            withAsterisk
-            className="w-1/2"
-            label="Required To"
-            data={[...requiredToList]}
-            error={
-              errors?.requiredTo ? errors?.requiredTo?.message?.toString() : ''
-            }
-            {...register('requiredTo')}
+          <Controller
+            control={control}
+            name="requiredTo"
+            render={({ field: { value, name, onChange } }) => (
+              <Select
+                data={[...requiredToList]}
+                error={
+                  errors?.requiredTo
+                    ? errors?.requiredTo?.message?.toString()
+                    : ''
+                }
+                label="Required To"
+                withAsterisk
+                name={name}
+                className="w-1/2"
+                nothingFoundMessage="No options"
+                onChange={onChange}
+                placeholder="Required To"
+                searchable
+                value={value}
+              />
+            )}
           />
+
           <Checkbox
             label="Is Required"
             className="w-1/2 my-auto"

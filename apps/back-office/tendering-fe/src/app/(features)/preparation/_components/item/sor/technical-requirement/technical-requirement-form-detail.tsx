@@ -160,31 +160,52 @@ export function TechnicalRequirementFormDetail({
       />
 
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Requirement condition"
-          withAsterisk
-          className="w-1/2"
-          label="Requirement condition"
-          data={Object.values(RequirementCondition)}
-          error={
-            errors?.requirementCondition
-              ? errors?.requirementCondition?.message?.toString()
-              : ''
-          }
-          {...register('requirementCondition')}
+        <Controller
+          control={control}
+          name="requirementCondition"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={Object.values(RequirementCondition)}
+              error={
+                errors['requirementCondition']
+                  ? errors['requirementCondition']?.message?.toString()
+                  : ''
+              }
+              label="Requirement condition"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Requirement condition"
+              searchable
+              value={value}
+            />
+          )}
         />
-        <NativeSelect
-          placeholder="Requirement Type"
-          withAsterisk
-          className="w-1/2"
-          label="Requirement requirementType"
-          data={['minimum', 'exact']}
-          error={
-            errors?.requirementType
-              ? errors?.requirementType?.message?.toString()
-              : ''
-          }
-          {...register('requirementType')}
+
+        <Controller
+          control={control}
+          name="requirementType"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['minimum', 'exact']}
+              error={
+                errors?.requirementType
+                  ? errors?.requirementType?.message?.toString()
+                  : ''
+              }
+              label="Requirement Type"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Requirement Type"
+              searchable
+              value={value}
+            />
+          )}
         />
       </div>
 

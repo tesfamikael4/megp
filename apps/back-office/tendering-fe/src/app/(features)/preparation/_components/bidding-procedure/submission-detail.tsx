@@ -1,6 +1,6 @@
 import { ITenderSubmission } from '@/models/tender/bid-procedures/submission.model';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoadingOverlay, NativeSelect, Stack } from '@mantine/core';
+import { LoadingOverlay, Select, Stack } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -55,7 +55,6 @@ export default function SubmissionDetail({
     control,
     watch,
     formState: { errors },
-    register,
   } = useForm({
     resolver: zodResolver(SubmissionSchema),
   });
@@ -119,20 +118,31 @@ export default function SubmissionDetail({
 
       <div className="flex gap-3">
         {!fromExtension && (
-          <NativeSelect
-            placeholder="Envelope Type"
-            withAsterisk
-            label="Envelope Type"
-            className="w-1/2"
-            data={['single envelop', 'two envelop']}
-            error={
-              errors['envelopType']
-                ? errors['envelopType']?.message?.toString()
-                : ''
-            }
-            {...register('envelopType')}
+          <Controller
+            control={control}
+            name="envelopType"
+            render={({ field: { value, name, onChange } }) => (
+              <Select
+                data={['single envelop', 'two envelop']}
+                error={
+                  errors['envelopType']
+                    ? errors['envelopType']?.message?.toString()
+                    : ''
+                }
+                label="Envelope Type"
+                withAsterisk
+                name={name}
+                className="w-1/2"
+                nothingFoundMessage="No options"
+                onChange={onChange}
+                placeholder="Envelope Type"
+                searchable
+                value={value}
+              />
+            )}
           />
         )}
+
         <Controller
           name="invitationDate"
           control={control}

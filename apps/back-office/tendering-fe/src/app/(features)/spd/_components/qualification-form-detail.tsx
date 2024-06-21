@@ -1,7 +1,6 @@
 import {
-  Checkbox,
   LoadingOverlay,
-  NativeSelect,
+  Select,
   Stack,
   TextInput,
   Textarea,
@@ -9,7 +8,7 @@ import {
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useReadQuery,
   useDeleteMutation,
@@ -48,6 +47,7 @@ export function SpdQualificationFormDetail({
   const {
     handleSubmit,
     reset,
+    control,
     formState: { errors },
     register,
   } = useForm({
@@ -175,20 +175,33 @@ export function SpdQualificationFormDetail({
         {...register('itbDescription')}
       />
 
-      <NativeSelect
-        placeholder="Bid Form Link"
-        withAsterisk
-        label="Form Link"
-        error={errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''}
-        data={
-          bidFormLinks?.items
-            ? bidFormLinks?.items.map((link) => ({
-                label: link.title,
-                value: link.id,
-              }))
-            : []
-        }
-        {...register('bidFormId')}
+      <Controller
+        control={control}
+        name="bidFormId"
+        render={({ field: { value, name, onChange } }) => (
+          <Select
+            data={
+              bidFormLinks?.items
+                ? bidFormLinks?.items.map((link) => ({
+                    label: link.title,
+                    value: link.id,
+                  }))
+                : []
+            }
+            error={
+              errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
+            }
+            label="Form Link"
+            withAsterisk
+            name={name}
+            className="w-1/2"
+            nothingFoundMessage="No options"
+            onChange={onChange}
+            placeholder="Bid Form Link"
+            searchable
+            value={value}
+          />
+        )}
       />
 
       <EntityButton
