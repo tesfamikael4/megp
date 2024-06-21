@@ -8,6 +8,7 @@ import {
   Group,
   LoadingOverlay,
   Modal,
+  NumberFormatter,
   Stack,
   Text,
 } from '@mantine/core';
@@ -33,7 +34,6 @@ import ItemSelector from '@/app/(features)/procurement-requisition/_components/i
 import DataImport from './data-import';
 import { ItemDetailForm } from './item-form-detail';
 import { CollectionQuery } from '@megp/entity';
-// import { useReadQuery } from '../_api/procurement-requisition.api';
 
 export function Items({
   activityId,
@@ -82,17 +82,14 @@ export function Items({
         title: 'Unit Price',
         textAlign: 'center',
         accessor: 'unitPrice',
-        width: 100,
+        // width: 100,
         render: (record) => {
           return (
             <p>
-              {parseInt(record?.unitPrice)?.toLocaleString('en-US', {
-                style: 'currency',
-                currency: record?.currency,
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-                currencyDisplay: 'code',
-              })}
+              <NumberFormatter
+                value={record?.unitPrice}
+                prefix={` ${pr?.currency} `}
+              />
             </p>
           );
         },
@@ -104,15 +101,10 @@ export function Items({
         textAlign: 'right',
         width: 150,
         render: (record) => (
-          <p className="text-right">
-            {(record.unitPrice * record.quantity).toLocaleString('en-US', {
-              style: 'currency',
-              currency: record?.currency ? record?.currency : 'USD',
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-              currencyDisplay: 'code',
-            })}
-          </p>
+          <NumberFormatter
+            value={record.unitPrice * record.quantity}
+            prefix={`${pr?.currency} `}
+          />
         ),
       },
     ],
@@ -221,7 +213,11 @@ export function Items({
       await updateItem({ ...data, id }).unwrap();
       notify('Success', 'Updated Successfully');
     } catch (err) {
-      notify('Error', 'Something went wrong');
+      if (err.data.statusCode === 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong');
+      }
     }
   };
 
@@ -345,25 +341,19 @@ export function Items({
               Est Amount:
             </Text>
 
-            {parseInt(pr?.totalEstimatedAmount)?.toLocaleString('en-US', {
-              style: 'currency',
-              currency: pr?.currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-              currencyDisplay: 'code',
-            })}
+            <NumberFormatter
+              value={pr?.totalEstimatedAmount}
+              prefix={`${pr?.currency} `}
+            />
           </Group>
           <Group>
             <Text size="sm" fw={700}>
               Cal Amount:
             </Text>
-            {parseInt(pr?.calculatedAmount)?.toLocaleString('en-US', {
-              style: 'currency',
-              currency: pr?.currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-              currencyDisplay: 'code',
-            })}
+            <NumberFormatter
+              value={pr?.calculatedAmount}
+              prefix={` ${pr?.currency} `}
+            />
           </Group>
         </Stack>
       </Flex>
