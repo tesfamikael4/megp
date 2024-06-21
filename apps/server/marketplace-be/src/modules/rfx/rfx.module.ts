@@ -45,7 +45,6 @@ import { SolicitationModule } from '../solicitation/solicitation.module';
 import { WorkflowHandlerService } from './services/workflow-handler.service';
 import { WorkflowHandlerController } from './controllers/workflow-handler.controller';
 import { OpenerService } from '../evaluation/services/opener.service';
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { RfxContractTermController } from './controllers/rfx-contract-term.controller';
 import { RfxContractTermService } from './services/rfx-contract-term.service';
 
