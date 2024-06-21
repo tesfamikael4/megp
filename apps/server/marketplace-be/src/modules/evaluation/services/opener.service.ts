@@ -59,9 +59,11 @@ export class OpenerService {
             const [items, rfxBidProcedure] = await filterItems(entityManager);
 
             if (round > 0) {
+              // Solicitation (Round 0) Winners are calculated after evaluation approval
               await calculateRoundWinner(items, rfxBidProcedure, entityManager);
-              await endRound(entityManager);
             }
+
+            await endRound(entityManager);
           } catch (error) {
             if (error.status == 430) {
               Logger.error(error, 'OpenerService');
@@ -97,14 +99,19 @@ export class OpenerService {
             'openedOffers.rfxProductInvitation',
             'rfxProductInvitations',
           )
-          .where('solRound.round = :round', { round: payload.round })
-          .andWhere('rfxProductInvitations.status IN (:...status)', {
-            status: [EInvitationStatus.ACCEPTED, EInvitationStatus.COMPLY],
+          .andWhere('solRound.round = :round', { round: payload.round })
+          .andWhere('rfxProductInvitations.status IN (:...statuses)', {
+            statuses: [EInvitationStatus.ACCEPTED, EInvitationStatus.COMPLY],
           })
           .getMany(),
         procedureRepo.findOne({
           where: { rfxId: payload.rfxId },
-          select: { id: true, deltaPercentage: true, round: true },
+          select: {
+            id: true,
+            deltaPercentage: true,
+            submissionDeadline: true,
+            round: true,
+          },
         }),
       ]);
 

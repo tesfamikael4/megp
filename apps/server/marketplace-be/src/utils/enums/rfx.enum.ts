@@ -28,6 +28,7 @@ export enum ERfxItemStatus {
   REJECTED = 'REJECTED',
 
   ENDED = 'ENDED',
+  CANCELLED = 'CANCELLED',
 }
 
 export enum EInvitationStatus {

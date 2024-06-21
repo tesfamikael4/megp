@@ -1,4 +1,12 @@
-import { Controller, Post, Param, Body, Query, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Param,
+  Body,
+  Query,
+  Get,
+  Patch,
+} from '@nestjs/common';
 import {
   AllowAnonymous,
   EntityCrudController,
@@ -22,6 +30,10 @@ const options: EntityCrudOptions = {
 export class RfxController extends EntityCrudController<RFX>(options) {
   constructor(private readonly rfxService: RfxService) {
     super(rfxService);
+  }
+  @Patch('cancel/:rfxId')
+  async cancelRfx(@Param('rfxId') rfxId: string) {
+    return await this.rfxService.cancelRfx(rfxId);
   }
 
   @Get('rfxs-on-reviewal')

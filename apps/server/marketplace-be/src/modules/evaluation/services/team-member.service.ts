@@ -9,7 +9,7 @@ import {
 import { RFX, SolRegistration, TeamMember } from 'src/entities';
 import { Repository } from 'typeorm';
 import { CreateTeamMemberDto } from '../dtos/team-member.dto';
-import { ESolBookmarkStatus } from 'src/utils/enums';
+import { ESolBookmarkStatus, ESolRegistrationStatus } from 'src/utils/enums';
 
 @Injectable()
 export class TeamMemberService extends ExtraCrudService<TeamMember> {
@@ -108,7 +108,7 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
         rfxId,
       })
       .andWhere('sol_registrations.status = :status', {
-        status: ESolBookmarkStatus.REGISTERED,
+        status: ESolRegistrationStatus.REGISTERED,
       })
 
       .loadRelationCountAndMap(

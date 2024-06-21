@@ -164,17 +164,15 @@ export class WorkflowHandlerService {
   ) {
     const roundRepo = entityManager.getRepository(SolRound);
 
-    // const startingTime = currentTime(new Date(rfxBidProcedure.invitationDate));
-    // const endingTime = currentTime(
-    //   new Date(rfxBidProcedure.submissionDeadline),
-    // );
+    const startingTime = rfxBidProcedure.invitationDate || new Date();
+    const endingTime = new Date(rfxBidProcedure.submissionDeadline);
 
     const roundItem: CreateRoundDto = {
       rfxId: rfxBidProcedure.rfxId,
       round: 0,
-      endingTime: rfxBidProcedure.invitationDate,
-      startingTime: rfxBidProcedure.submissionDeadline,
-      status: ESolRoundStatus.STARTED,
+      endingTime,
+      startingTime,
+      status: ESolRoundStatus.PENDING,
     };
     const round = roundRepo.create(roundItem);
     await roundRepo.insert(round);
