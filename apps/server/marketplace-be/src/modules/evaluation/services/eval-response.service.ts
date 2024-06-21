@@ -43,7 +43,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     private readonly rfxRepository: Repository<RFX>,
     @InjectRepository(TeamMember)
     private readonly teamMemberRepository: Repository<TeamMember>,
-    @Inject('WORKFLOW_RMQ_SERVICE')
+    @Inject('WORKFLOW_EVALUATION_RMQ_SERVICE')
     private readonly workflowRMQClient: ClientProxy,
     // private readonly amqpConnection: AmqpConnection,
     @Inject(REQUEST) private readonly request: Request,

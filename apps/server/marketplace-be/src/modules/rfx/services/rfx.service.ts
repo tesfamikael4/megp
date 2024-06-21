@@ -560,6 +560,30 @@ export class RfxService extends EntityCrudService<RFX> {
     return response;
   }
 
+  async cancelRfx(rfxId: string) {
+    const validStatuses = [
+      ERfxStatus.APPROVED,
+      ERfxStatus.AUCTION,
+      ERfxStatus.EVALUATION,
+      ERfxStatus.ENDED,
+      ERfxStatus.SUBMITTED_EVALUATION,
+    ];
+
+    const rfx = await this.rfxRepository.findOne({
+      where: {
+        id: rfxId,
+        status: In(validStatuses),
+      },
+    });
+
+    if (!rfx) throw new BadRequestException('RFQ not found');
+
+    await Promise.all([
+      this.updateRfxChildrenStatus(rfxId, 'CANCELLED'),
+      await this.solRoundService.cancelPendingRounds(rfxId),
+    ]);
+  }
+
   private async getCompleteRfx(rfxId: string) {
     const rfx = await this.rfxRepository.findOne({
       where: {

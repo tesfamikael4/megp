@@ -126,6 +126,30 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
     return round;
   }
 
+  async cancelPendingRounds(rfxId: string) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const rounds = await entityManager.getRepository(SolRound).exists({
+      where: {
+        rfxId,
+        status: ESolRoundStatus.PENDING,
+      },
+    });
+
+    if (rounds) {
+      await entityManager.getRepository(SolRound).update(
+        {
+          rfxId,
+        },
+        {
+          status: ESolRoundStatus.CANCELLED,
+        },
+      );
+    }
+
+    return rounds;
+  }
+
   private createRoundFromProcedure(rfxBidProcedure: RfxBidProcedure) {
     const rounds: RoundDto[] = [];
     const openingDate = new Date(rfxBidProcedure.openingDate);

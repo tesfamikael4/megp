@@ -25,10 +25,10 @@ export class OpenedOffer extends Audit {
   @Column()
   vendorId: string;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
   price: number;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
   tax: number;
 
   @Column({ nullable: true })

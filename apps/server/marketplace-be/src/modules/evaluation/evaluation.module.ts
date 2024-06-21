@@ -46,11 +46,11 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     UtilityModule,
     ClientsModule.register([
       {
-        name: 'WORKFLOW_RMQ_SERVICE',
+        name: 'WORKFLOW_EVALUATION_RMQ_SERVICE',
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RMQ_URL],
-          queue: 'work-plan-approval',
+          queue: 'workflow-approval',
           queueOptions: {
             durable: false,
           },

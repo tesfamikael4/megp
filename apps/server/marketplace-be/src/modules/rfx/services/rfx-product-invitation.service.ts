@@ -160,15 +160,23 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
       }),
     ]);
 
+    const validStatuses = [
+      ERfxStatus.APPROVED,
+      ERfxStatus.AUCTION,
+      ERfxStatus.EVALUATION,
+      ERfxStatus.ENDED,
+      ERfxStatus.SUBMITTED_EVALUATION,
+    ];
+
     const dataQuery = QueryConstructor.constructQuery<RFXItem>(
       entityManager.getRepository(RFXItem),
       query,
     )
       .leftJoin('rfx_items.rfx', 'rfxes')
       .where('rfxes.id = :rfxId', { rfxId })
-      // .andWhere('rfxes.status IN (:...status)', {
-      //   status: [ERfxStatus.APPROVED, ERfxStatus.AUCTION],
-      // })
+      .andWhere('rfxes.status IN (:...status)', {
+        status: validStatuses,
+      })
       .leftJoin('rfx_items.rfxProductInvitations', 'rfxProductInvitations')
       .andWhere('rfxProductInvitations.vendorId = :vendorId', {
         vendorId: user.organization.id,
@@ -196,11 +204,19 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const now = new Date();
 
+    const validStatuses = [
+      ERfxStatus.APPROVED,
+      ERfxStatus.AUCTION,
+      ERfxStatus.EVALUATION,
+      ERfxStatus.ENDED,
+      ERfxStatus.SUBMITTED_EVALUATION,
+    ];
+
     const [rfx, activeRound, nextRound] = await Promise.all([
       this.rfxRepository.findOne({
         where: {
           id: rfxId,
-          // status: In([ERfxStatus.APPROVED, ERfxStatus.AUCTION, ERfxStatus.EVALUATION, ERfxStatus.ENDED, ERfxStatus.SUBMITTED_EVALUATION]),
+          status: In(validStatuses),
           items: {
             rfxProductInvitations: {
               vendorId: user.organization.id,
@@ -252,13 +268,21 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
   async myInvitations(query: CollectionQuery, user: any) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
+    const validStatuses = [
+      ERfxStatus.APPROVED,
+      ERfxStatus.AUCTION,
+      ERfxStatus.EVALUATION,
+      ERfxStatus.ENDED,
+      ERfxStatus.SUBMITTED_EVALUATION,
+    ];
+
     const dataQuery = QueryConstructor.constructQuery<RFX>(
       entityManager.getRepository(RFX),
       query,
     )
-      // .where('rfxes.status IN (:...status)', {
-      //   status: [ERfxStatus.APPROVED, ERfxStatus.AUCTION],
-      // })
+      .where('rfxes.status IN (:...status)', {
+        status: validStatuses,
+      })
       .leftJoinAndSelect('rfxes.items', 'rfxItems')
       .leftJoinAndSelect(
         'rfxItems.rfxProductInvitations',
