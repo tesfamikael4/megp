@@ -504,6 +504,14 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
         },
       });
 
+    const validStatuses = [
+      ERfxStatus.APPROVED,
+      ERfxStatus.AUCTION,
+      ERfxStatus.EVALUATION,
+      ERfxStatus.ENDED,
+      ERfxStatus.SUBMITTED_EVALUATION,
+    ];
+
     const dataQuery = QueryConstructor.constructQuery<RfxProductInvitation>(
       this.rfxBidInvitationRepository,
       query,
@@ -512,10 +520,12 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
         vendorId: user.organization.id,
       })
       .leftJoinAndSelect('rfx_product_invitations.rfxItem', 'rfxItems')
-      .leftJoinAndSelect(
-        'rfx_product_invitations.openedOffers',
-        'openedOffers',
-      );
+      .leftJoin('rfxItems.rfx', 'rfxes')
+      .andWhere('rfxes.id = :rfxId', { rfxId })
+      .leftJoinAndSelect('rfx_product_invitations.openedOffers', 'openedOffers')
+      .andWhere('rfxes.status IN (:...status)', {
+        status: validStatuses,
+      });
 
     if (latestAward)
       dataQuery.leftJoinAndSelect(
@@ -524,10 +534,6 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
         'roundAwards.id = :awardId',
         { awardId: latestAward.id },
       );
-
-    // .andWhere('rfxes.status IN (:...status)', {
-    //   status: [ERfxStatus.APPROVED, ERfxStatus.AUCTION, ERfxStatus.ENDED],
-    // });
 
     return await this.giveQueryResponse<RfxProductInvitation>(query, dataQuery);
   }
