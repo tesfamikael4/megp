@@ -20,8 +20,7 @@
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.2",
     "rimraf": "^3.0.2",
-    "turbo": "^1.13.0"
+    "turbo": "^2.0.4"
   },
-  "packageManager": "pnpm@8.6.10",
   "name": "megp"
 }
