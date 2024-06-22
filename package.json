@@ -23,5 +23,5 @@
     "turbo": "^2.0.4"
   },
   "name": "megp",
-  "packageManager": "^pnpm@9.2.0"
+  "packageManager": "pnpm@9.2.0"
 }
