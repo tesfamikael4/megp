@@ -1,7 +1,7 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "extends": ["//"],
-  "pipeline": {
+  "tasks": {
     "build": {
       "env": [
         "NEXT_PUBLIC_ADMINISTRATION_API",
