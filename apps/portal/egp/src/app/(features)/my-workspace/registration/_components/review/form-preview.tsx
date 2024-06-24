@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Accordion, Box, Modal } from '@mantine/core';
+import { Accordion, Box, List, Modal } from '@mantine/core';
 import classes from './accordion.module.scss';
 import { renderTable } from './renderTable';
 import { useDisclosure } from '@mantine/hooks';
@@ -24,6 +24,18 @@ function FormPreview({
 
   const tabs = [...uniqueTabs, ...tab(data.basic.countryOfRegistration)];
   const formatColumns = _formatColumns(data.basic.countryOfRegistration);
+
+  const fileUrl = (tabValue) => {
+    return `${
+      process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
+    }/upload/get-file/${
+      tabValue === 'supportingDocuments'
+        ? 'SupportingDocument'
+        : tabValue === 'certificate'
+          ? 'certificate'
+          : 'paymentReceipt'
+    }/${data[tabValue]}`;
+  };
 
   return (
     <Accordion variant="separated" classNames={classes}>
@@ -53,15 +65,7 @@ function FormPreview({
                     <Accordion.Panel>
                       {data[tabValue] ? (
                         <ShowFile
-                          url={`${
-                            process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
-                          }/upload/get-file/${
-                            tabValue === 'supportingDocuments'
-                              ? 'SupportingDocument'
-                              : tabValue === 'certificate'
-                                ? 'certificate'
-                                : 'paymentReceipt'
-                          }/${data[tabValue]}`}
+                          url={fileUrl(tabValue)}
                           filename={data[tabValue]}
                           zoom
                         />
@@ -73,27 +77,48 @@ function FormPreview({
                     </Accordion.Panel>
                   </Accordion.Panel>
                 ) : Array.isArray(data[tabValue]) ? (
-                  <Accordion.Panel
-                    key={tabValue}
-                    className="items-center"
-                    styles={{
-                      panel: {
-                        padding: 0,
-                      },
-                      content: {
-                        padding: 0,
-                      },
-                    }}
-                  >
-                    {renderTable(
-                      data[tabValue],
-                      formatColumns,
-                      tabValue,
-                      open,
-                      setUrl,
-                      user?.id,
-                    )}
-                  </Accordion.Panel>
+                  tabValue === 'lineOfBusinessView' ? (
+                    <Accordion.Panel
+                      key={tabValue}
+                      className="items-center"
+                      styles={{
+                        panel: {
+                          padding: 0,
+                        },
+                        content: {
+                          padding: 0,
+                        },
+                      }}
+                    >
+                      <List withPadding type="ordered">
+                        {data[tabValue].map((value, index) => (
+                          <List.Item key={index}>{value}</List.Item>
+                        ))}
+                      </List>
+                    </Accordion.Panel>
+                  ) : (
+                    <Accordion.Panel
+                      key={tabValue}
+                      className="items-center"
+                      styles={{
+                        panel: {
+                          padding: 0,
+                        },
+                        content: {
+                          padding: 0,
+                        },
+                      }}
+                    >
+                      {renderTable(
+                        data[tabValue],
+                        formatColumns,
+                        tabValue,
+                        open,
+                        setUrl,
+                        user?.id,
+                      )}
+                    </Accordion.Panel>
+                  )
                 ) : formatColumns[tabValue] ? (
                   <FormattedPanel data={data} tabValue={tabValue} />
                 ) : (

@@ -45,9 +45,15 @@ function Page() {
   const [uploadFile, uploadFileInfo] = useUploadPaymentReceiptUpgradeMutation(
     {},
   );
-  const { register, formState, setValue, watch, handleSubmit, reset } = useForm<
-    z.infer<typeof UpgradePaymentSchema>
-  >({
+  const {
+    register,
+    formState,
+    setValue,
+    watch,
+    handleSubmit,
+    reset,
+    setError,
+  } = useForm<z.infer<typeof UpgradePaymentSchema>>({
     defaultValues: {
       transactionNumber: '',
       file: undefined,
@@ -69,7 +75,19 @@ function Page() {
           router.push('/my-workspace/registration/track-applications');
         });
     } catch (error) {
-      NotificationService.requestErrorNotification('Something went wrong');
+      if (
+        (error as any).data?.message === ' Transaction NUmber must be unique'
+      ) {
+        setError(`transactionNumber`, {
+          message: (error as any).data?.message,
+        });
+        NotificationService.requestErrorNotification(
+          (error as any).data?.message,
+        );
+      } else
+        NotificationService.requestErrorNotification(
+          'Failed to save Payment receipt',
+        );
     }
   };
 
@@ -121,6 +139,9 @@ function Page() {
               />
             </Stack>
             <Flex justify="end" className="gap-2 mt-4">
+              <Button onClick={() => router.push('ppda')} variant="outline">
+                Back
+              </Button>
               <Button
                 type="submit"
                 disabled={!watch('file') || !watch('transactionNumber')}

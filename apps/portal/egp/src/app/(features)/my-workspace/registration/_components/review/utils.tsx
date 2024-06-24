@@ -96,7 +96,6 @@ export function displayFormattedObject(
   obj: ObjectType,
   format: any = {},
 ): string {
-  console.log(obj);
   if (obj)
     return Object.keys(obj)
       .map((key) => {

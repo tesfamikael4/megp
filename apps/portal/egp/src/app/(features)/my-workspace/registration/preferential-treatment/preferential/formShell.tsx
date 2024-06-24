@@ -19,16 +19,12 @@ import {
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
-import { FormData } from '@/models/vendorRegistration';
 import PreferentialTreatment from './preferentialTreatment';
 import {
   useSubmitRequestMutation,
   useUploadPreferentialAttachmentsMutation,
 } from '@/store/api/preferential-treatment/preferential-treatment.api';
 import { ExtendedRegistrationReturnType } from '../../_components/detail/formShell';
-import { DatePickerInput } from '@mantine/dates';
-import { IconCalendar } from '@tabler/icons-react';
-import dayjs from 'dayjs';
 
 export interface PassFormDataProps {
   register: (
@@ -60,7 +56,9 @@ export const preferentialSchema = z.discriminatedUnion('category', [
 ]);
 
 export const formDataSchema = z.object({
-  preferential: z.array(preferentialSchema).optional(),
+  preferential: z.array(preferentialSchema).refine((arr) => arr.length > 0, {
+    message: 'At least one preferential service is required',
+  }),
 });
 
 export const PreferentialTreatmentForm = ({
@@ -179,22 +177,16 @@ export const PreferentialTreatmentForm = ({
             name="preferential"
             control={control}
             register={extendedRegister}
-            // adjustment={vendorInfo.status === 'Adjustment' ? false : true}
           />
         </Flex>
 
         <Flex className="mt-10 justify-end gap-2">
-          <Button onClick={() => router.push('payment')} variant="outline">
-            Back
-          </Button>
           {watch('preferential') &&
-          (watch('preferential') as any).length > 0 ? (
-            <>
-              <Button type="submit">Save & Continue</Button>
-            </>
-          ) : (
-            <Button onClick={() => router.push('doc')}>Skip</Button>
-          )}
+            (watch('preferential') as any).length > 0 && (
+              <>
+                <Button type="submit">Save & Continue</Button>
+              </>
+            )}
         </Flex>
       </form>
     </Box>

@@ -1,5 +1,3 @@
-import { getDisplayName } from 'next/dist/shared/lib/utils';
-
 export const tab = (countryOfRegistration) => [
   {
     tabValue: 'basic',
@@ -34,7 +32,7 @@ export const tab = (countryOfRegistration) => [
     tabName: 'Purpose of Registration',
   },
   {
-    tabValue: 'lineOfBusiness',
+    tabValue: 'lineOfBusinessView',
     tabName: 'Line Of Business',
   },
   ...(countryOfRegistration === 'Malawi'

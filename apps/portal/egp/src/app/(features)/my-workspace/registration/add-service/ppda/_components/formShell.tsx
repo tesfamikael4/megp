@@ -60,7 +60,6 @@ export const areasOfBusinessInterestSchema = z
       priceRange: z.string().min(1, 'Price range must be selected'),
       userType: z.string(),
       classification: z.string(),
-      activationDate: z.string(),
       expiryDate: z.string(),
     }),
   ])
@@ -79,6 +78,9 @@ export const formDataSchema = z.object({
     .refine((arr) => arr.length > 0, {
       message: 'At least one Areas Of Business Interest is required',
     }),
+  ppdaRegistrationNumber: z.string().optional(),
+  ppdaRegistrationDate: z.string().optional(),
+  expiryDate: z.string().optional(),
 });
 
 export interface PassFormDataProps {
@@ -157,10 +159,16 @@ export const AreasOfBusinessInterestForm = ({
 
   const onSubmit = async (values) => {
     try {
-      await generatePayment(values.areasOfBusinessInterest)
+      /**
+       *  lineOfBusiness: getValues().lineOfBusiness,
+        ppdaRegistrationNumber: getValues().ppdaRegistrationNumber,
+        ppdaRegistrationDate: getValues().ppdaRegistrationDate,
+        expiryDate: getValues().expiryDate,
+       * 
+       */
+      await generatePayment(values)
         .unwrap()
         .then((response) => {
-          console.log(response);
           // if (response && response.length > 0) {
           // if (response.some((item) => item.canPay)) {
           NotificationService.successNotification('PPDA successfully created');
@@ -173,7 +181,6 @@ export const AreasOfBusinessInterestForm = ({
     }
   };
 
-  console.log({ data });
   if (data)
     return (
       <Box className="p-2 w-full relative">
@@ -243,31 +250,51 @@ export const AreasOfBusinessInterestForm = ({
                     (value: z.infer<typeof areasOfBusinessInterestSchema>) =>
                       value.category === 'Goods' ||
                       value.category === 'Services',
-                  ) &&
-                    data.basic.countryOfRegistration === 'Malawi' && (
-                      <Group grow>
-                        <DatePickerInput
-                          valueFormat="YYYY/MM/DD"
-                          label="PPDA Registration Issued Date"
-                          placeholder="PPDA Registration Issued Date"
-                          leftSection={
-                            <IconCalendar size={'1.2rem'} stroke={1.5} />
-                          }
-                          maxDate={dayjs(new Date()).toDate()}
-                          onChange={async (value: any) =>
-                            value &&
-                            (await extendedRegister(
-                              `ppdaRegistrationDate`,
-                            ).onChange(
-                              dayjs(value)
-                                .format('YYYY/MM/DD')
-                                .toString()
-                                .replace(/\//g, '-'),
-                            ))
-                          }
-                        />
-                      </Group>
-                    )}
+                  ) && (
+                    <Group grow>
+                      <DatePickerInput
+                        valueFormat="YYYY/MM/DD"
+                        label="PPDA Registration Issued Date"
+                        placeholder="PPDA Registration Issued Date"
+                        leftSection={
+                          <IconCalendar size={'1.2rem'} stroke={1.5} />
+                        }
+                        maxDate={dayjs(new Date()).toDate()}
+                        onChange={async (value: any) =>
+                          value &&
+                          setValue(
+                            `ppdaRegistrationDate`,
+                            dayjs(value)
+                              .format('YYYY/MM/DD')
+                              .toString()
+                              .replace(/\//g, '-'),
+                          )
+                        }
+                      />
+                      <DatePickerInput
+                        // name={`expiryDate`}
+                        valueFormat="YYYY/MM/DD"
+                        label="Expiry Date"
+                        placeholder="Expiry Date"
+                        leftSection={
+                          <IconCalendar size={'1.2rem'} stroke={1.5} />
+                        }
+                        minDate={dayjs(new Date()).toDate()}
+                        {...extendedRegister(`expiryDate`)}
+                        onChange={async (value: any) =>
+                          value &&
+                          setValue(
+                            `expiryDate`,
+                            dayjs(value)
+                              .format('YYYY/MM/DD')
+                              .toString()
+                              .replace(/\//g, '-'),
+                          )
+                        }
+                        error={extendedRegister(`expiryDate`).error}
+                      />
+                    </Group>
+                  )}
                 </>
               )}
           </Flex>

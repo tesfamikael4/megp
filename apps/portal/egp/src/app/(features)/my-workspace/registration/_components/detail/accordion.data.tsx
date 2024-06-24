@@ -50,25 +50,12 @@ export const useTabs = (extendedRegister, control, disabled): Tabs[] => [
   },
   {
     tabValue: 'businessSizeAndOwnership',
-    tabName: 'Business Size and Ownership',
-    tabDescription: 'Business Size and Ownership Information',
+    tabName: 'Business Size',
+    tabDescription: 'Business Size Information',
     tabPanelComponent: (
       <BusinessSizeAndOwnership register={extendedRegister} control={control} />
     ),
   },
-  // {
-  //   tabValue: 'shareHolders',
-  //   tabName: 'Shareholders',
-  //   tabDescription: 'Shareholders List',
-  //   tabPanelComponent: (
-  //     <ShareHolders
-  //       name="shareHolders"
-  //       control={control}
-  //       itemSchema={shareHoldersSchema}
-  //       disabled={disabled}
-  //     />
-  //   ),
-  // },
   {
     tabValue: 'beneficialOwnershipShareholders',
     tabName: 'Beneficial Ownership/Shareholders',

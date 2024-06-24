@@ -37,6 +37,7 @@ export const {
   useGetServicePriceRangeQuery,
   useLazyGetServicePriceRangeQuery,
   useGenerateInvoiceForAdditionalServiceMutation,
+  useUploadSupportingDocumentsMutation,
 } = paymentApi;
 
 export const {

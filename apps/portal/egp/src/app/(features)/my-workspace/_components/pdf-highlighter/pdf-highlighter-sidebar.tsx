@@ -28,31 +28,6 @@ export function Sidebar({
   selectedHash: string;
 }): ReactElement {
   const { user } = useAuth();
-  // const [remove] = useDeleteMutation();
-
-  const openDeleteModal = (commentId: string) => {
-    modals.openConfirmModal({
-      title: `Delete Comment`,
-      centered: true,
-      children: (
-        <Text size="sm">Are you sure you want to delete this Comment</Text>
-      ),
-      labels: { confirm: 'Yes', cancel: 'No' },
-      confirmProps: { color: 'red' },
-      onConfirm: () => {
-        onDelete(commentId);
-      },
-    });
-  };
-
-  const onDelete = async (commentId: string) => {
-    try {
-      // await remove(commentId).unwrap();
-      notify('Success', 'Deleted Successfully');
-    } catch (err) {
-      notify('Error', 'Something went wrong');
-    }
-  };
 
   return (
     <div className="p-5 border-r" style={{ width: '25vw' }}>
@@ -62,9 +37,6 @@ export function Sidebar({
           {workflow && <Tabs.Tab value="workflow">Workflow</Tabs.Tab>}
         </Tabs.List>
 
-        {/* <div className="description" style={{ padding: '1rem' }}>
-        <h2 style={{ marginBottom: '1rem' }}>Comments</h2>
-      </div> */}
         <Tabs.Panel value="comments" className="">
           <ul className=" pb-10 mt-2 overflow-y-scroll  h-[95vh]">
             {highlights.map((highlight, index) => {
@@ -82,31 +54,6 @@ export function Sidebar({
                   >
                     <p className="border-l-4 px-2 border-[rgb(77,74,184)] font-semibold text-sm flex justify-between">
                       {highlight?.from.fullName}
-                      <Menu>
-                        <Menu.Target>
-                          <ActionIcon variant="subtle">
-                            <IconChevronDown color="gray" size={14} />
-                          </ActionIcon>
-                        </Menu.Target>
-                        <Menu.Dropdown>
-                          <Menu.Item
-                            leftSection={<IconArrowForwardUp size={14} />}
-                          >
-                            Reply
-                          </Menu.Item>
-                          {highlight.from.id === user?.id && (
-                            <Menu.Item
-                              color="red"
-                              leftSection={<IconTrash size={14} />}
-                              onClick={() =>
-                                openDeleteModal(highlight.highlight.id)
-                              }
-                            >
-                              Delete
-                            </Menu.Item>
-                          )}
-                        </Menu.Dropdown>
-                      </Menu>
                     </p>
                     {highlight?.highlight?.content?.text ? (
                       <Alert className=" ml-2 mt-2 border-l-4 border-[rgb(77,74,184)]">
@@ -147,38 +94,6 @@ export function Sidebar({
                     <p className="mt-2 text-xs">
                       {highlight?.highlight?.comment?.text}
                     </p>
-
-                    {/* reply */}
-                    {/* <div className="ml-3 p-2">
-                <div className="border rounded p-2">
-                  <p className="border-l-4 px-2 border-[rgb(77,74,184)] font-semibold text-xs flex justify-between">
-                    {highlight?.from.fullName}
-                    {highlight.from.id === user?.id && (
-                      <Menu>
-                        <Menu.Target>
-                          <ActionIcon variant="subtle">
-                            <IconChevronDown color="gray" size={14} />
-                          </ActionIcon>
-                        </Menu.Target>
-                        <Menu.Dropdown>
-                          <Menu.Item
-                            color="red"
-                            leftSection={<IconTrash size={14} />}
-                            onClick={() =>
-                              openDeleteModal(highlight.highlight.id)
-                            }
-                          >
-                            Delete
-                          </Menu.Item>
-                        </Menu.Dropdown>
-                      </Menu>
-                    )}
-                  </p>
-                  <p className="mt-2 text-xs">
-                    {highlight?.highlight?.comment?.text}
-                  </p>
-                </div>
-              </div> */}
                   </div>
                 </Box>
               );

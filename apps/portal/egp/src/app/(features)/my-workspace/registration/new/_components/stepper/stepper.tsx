@@ -58,8 +58,6 @@ function StyledStepper({ data: ISRVendor }: { data: GetFormResponse }) {
       router.push(routes[stepIndex]);
   };
 
-  console.log({ ISRVendor });
-
   return (
     <Suspense>
       <Section

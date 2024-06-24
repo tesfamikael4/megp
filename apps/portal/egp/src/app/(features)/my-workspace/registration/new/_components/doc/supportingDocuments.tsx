@@ -8,6 +8,7 @@ import {
   useGetVendorQuery,
   useLazyGetVendorOnDemandQuery,
   useLazyUploadSupportingDocQuery,
+  useUploadSupportingDocumentsMutation,
 } from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { usePrivilege } from '../../_context/privilege-context';
@@ -68,6 +69,7 @@ export default function SupportingDocuments() {
     useForm<z.infer<typeof supportingDocumentsSchema>>({
       resolver: zodResolver(supportingDocumentsSchema),
     });
+
   const [files, setFiles] = useState<
     {
       key:
@@ -97,7 +99,7 @@ export default function SupportingDocuments() {
     { key: 'marginalizedCertificate', file: null, imageUrl: null },
   ]);
 
-  const [uploadFile, uploadFileInfo] = useLazyUploadSupportingDocQuery();
+  const [uploadFile, uploadFileInfo] = useUploadSupportingDocumentsMutation();
 
   // Define handler function for file change
   const handleFileChange = (file, key) => {
@@ -110,12 +112,18 @@ export default function SupportingDocuments() {
   useEffect(() => {
     if (docInfo.data && docInfo.data?.supportingDocuments) {
       setFiles((prevFiles) =>
-        prevFiles.map((item) => ({
-          ...item,
-          imageUrl: docInfo.data?.supportingDocuments[item.key]
-            ? `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments[item.key]}`
-            : null,
-        })),
+        prevFiles.map((item) => {
+          return {
+            ...item,
+            imageUrl: docInfo.data?.supportingDocuments[item.key]
+              ? item.key === 'MSMECertificate' ||
+                item.key === 'ibmCertificate' ||
+                item.key === 'marginalizedCertificate'
+                ? `${VENDOR_URL}/upload/get-file/preferential-documents/${docInfo.data?.supportingDocuments[item.key]}`
+                : `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments[item.key]}`
+              : null,
+          };
+        }),
       );
     }
   }, [docInfo.data]);
@@ -159,16 +167,7 @@ export default function SupportingDocuments() {
 
   const onSave = async () => {
     try {
-      await Promise.all(
-        files.map(async ({ file, key }) => {
-          if (file) {
-            await uploadFile({
-              file,
-              fieldName: key,
-            });
-          }
-        }),
-      );
+      await uploadFile(watch());
       request({});
       router.push('review');
     } catch (error) {

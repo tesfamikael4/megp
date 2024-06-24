@@ -210,7 +210,6 @@ export const ShowFile = ({
                 <Button
                   variant="subtle"
                   onClick={() => {
-                    console.log('Subtle', pdfData);
                     return open();
                   }}
                 >
