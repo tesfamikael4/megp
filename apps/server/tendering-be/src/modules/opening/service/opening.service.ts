@@ -159,10 +159,10 @@ export class OpeningService extends ExtraCrudService<Opening> {
       manager.getRepository(Tender),
       query,
     )
-      .leftJoin('tenders.tenderMilestones', 'tenderMilestones')
-      .andWhere('tenderMilestones.milestoneNum IN (:...milestoneNums)', {
-        milestoneNums: [301, 320],
-      })
+      // .leftJoin('tenders.tenderMilestones', 'tenderMilestones')
+      // .andWhere('tenderMilestones.milestoneNum IN (:...milestoneNums)', {
+      //   milestoneNums: [301, 320],
+      // })
 
       // .leftJoin('tenders.lots', 'lots')
       // .leftJoin('lots.teams', 'teams')
@@ -174,8 +174,8 @@ export class OpeningService extends ExtraCrudService<Opening> {
       .leftJoin('tenders.bdsSubmission', 'bdsSubmission')
       .andWhere('bdsSubmission.submissionDeadline <= :submissionDeadline', {
         submissionDeadline: new Date(),
-      })
-      .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true });
+      });
+    // .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true });
     // .andWhere('tenderMilestones.milestoneNum = :milestoneNum', {
     //   milestoneNum: 303,
     // });
