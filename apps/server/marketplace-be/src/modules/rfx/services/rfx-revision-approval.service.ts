@@ -42,7 +42,7 @@ export class RfxRevisionApprovalService extends ExtraCrudService<RfxRevisionAppr
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const team = await manager
       .getRepository(RfxProcurementTechnicalTeam)
-      .findOneBy({ userId: user.id });
+      .findOneBy({ userId: user.userId });
 
     //   if(!team)
     //     throw new BadRequestException("User is not a Team Member.")
@@ -53,7 +53,7 @@ export class RfxRevisionApprovalService extends ExtraCrudService<RfxRevisionAppr
 
     const item = manager
       .getRepository(RfxRevisionApproval)
-      .create({ ...itemData, userId: user.id });
+      .create({ ...itemData, userId: user.userId });
 
     await manager.getRepository(RfxRevisionApproval).insert(item);
 

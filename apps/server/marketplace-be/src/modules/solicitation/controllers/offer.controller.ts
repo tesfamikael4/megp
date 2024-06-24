@@ -27,7 +27,7 @@ export class SolOfferController extends ExtraCrudController<SolOffer>(options) {
 
   @Post()
   async create(@Body() itemData: CreateOfferDto, @CurrentUser() user: any) {
-    itemData.vendorId = user?.id;
+    itemData.vendorId = user?.organization.id;
     return await this.solOfferService.create(itemData, user);
   }
 

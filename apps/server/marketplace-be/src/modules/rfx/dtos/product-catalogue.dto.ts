@@ -7,8 +7,12 @@ export class ProductCatalogueDto {
   id: string;
 
   @ApiProperty()
-  @IsObject()
-  vendor: any;
+  @IsString()
+  vendorId: any;
+
+  @ApiProperty()
+  @IsString()
+  vendorName: any;
 
   @ApiProperty()
   @IsObject()

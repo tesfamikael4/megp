@@ -26,13 +26,13 @@ const options: ExtraCrudOptions = {
 export class SolItemResponseController extends ExtraCrudController<SolItemResponse>(
   options,
 ) {
-  constructor(private readonly rfxRepsonseItemService: SolItemResponseService) {
-    super(rfxRepsonseItemService);
+  constructor(private readonly rfxResponseItemService: SolItemResponseService) {
+    super(rfxResponseItemService);
   }
 
   @Post()
   async create(itemData: any, @CurrentUser() user: any) {
-    itemData.vendorId = user?.id;
-    return await this.rfxRepsonseItemService.create(itemData, user);
+    itemData.vendorId = user.organization.id;
+    return await this.rfxResponseItemService.create(itemData, user);
   }
 }

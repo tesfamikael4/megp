@@ -22,7 +22,7 @@ export class DocumentService extends EntityCrudService<Document> {
     try {
       itemData.organizationId = user?.organization?.organizationId;
       itemData.organizationName = user?.organization?.organizationName;
-      itemData.userId = user?.id;
+      itemData.userId = user?.userId;
 
       const doc = await this.repositoryDocument.findOne({
         where: {

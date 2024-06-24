@@ -457,9 +457,9 @@ export class WorkflowHandlerService {
         .leftJoinAndSelect('rfx_items.openedOffers', 'openedOffers')
         .leftJoin('openedOffers.solRound', 'solRound')
         .leftJoin('openedOffers.rfxProductInvitation', 'rfxProductInvitations')
-        .where('solRound.round = :round', { round })
-        .andWhere('rfxProductInvitations.status IN (:...status)', {
-          status: [EInvitationStatus.ACCEPTED, EInvitationStatus.COMPLY],
+        .andWhere('solRound.round = :round', { round })
+        .andWhere('rfxProductInvitations.status IN (:...statuses)', {
+          statuses: [EInvitationStatus.ACCEPTED, EInvitationStatus.COMPLY],
         })
         .getMany(),
       procedureRepo.findOne({
@@ -494,12 +494,10 @@ export class WorkflowHandlerService {
     for (let i = 0; i < rfxBidProcedure.round; i++) {
       let roundStartingDate, roundEndDate;
       if (i == 0) {
-        const now = new Date();
-
-        roundStartingDate = now;
+        roundStartingDate = new Date();
 
         roundEndDate = new Date(
-          now.setMinutes(
+          new Date().setMinutes(
             roundStartingDate.getMinutes() + rfxBidProcedure.roundDuration,
           ),
         );
