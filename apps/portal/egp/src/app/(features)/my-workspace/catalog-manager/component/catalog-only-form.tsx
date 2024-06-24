@@ -55,21 +55,17 @@ export const CatalogDetalForm = ({
 
         temp[nameToValidate] = item?.value;
         temp[uomFieldName] = item?.uom;
-        logger.log(item?.uom);
       });
-
       reset({
         ...temp,
         quantity: catalog?.quantity,
-        location: catalog?.deliveryValues?.location,
-        deliverDays: catalog?.deliveryValues?.deliverDays,
       });
     }
   }, [catalog, reset]);
   onError = (err) => logger.error(err);
   const ProductButton = () => {
     return (
-      <Group>
+      <Group mt={'lg'}>
         {mode == 'new' ? (
           <Button onClick={handleSubmit(onCreate)} className="ml-auto mt-4">
             Save

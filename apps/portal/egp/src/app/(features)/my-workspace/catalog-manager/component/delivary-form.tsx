@@ -22,17 +22,18 @@ import {
   useLazyGetDistrictsQuery,
 } from '../_api/catalog.api';
 import { logger, notify } from '@megp/core-fe';
+import { useParams } from 'next/navigation';
 
 interface DeliverDays {
   quantity: number;
-  deliverDays: number;
-  district: string;
+  deliveryDays: number;
+  location: string;
 }
 export const DeliverDaysForm = ({ close }) => {
   const schema: ZodType<Partial<DeliverDays>> = z.object({
     quantity: z.coerce.number().optional(),
     deliverDays: z.coerce.number(),
-    district: z.string({
+    location: z.string({
       required_error: 'This field is required',
       invalid_type_error: 'This field is required',
     }),
@@ -40,6 +41,7 @@ export const DeliverDaysForm = ({ close }) => {
 
   const [selectedRegion, setSelectedRegion] = useState<any>();
   const { data: regions } = useGetRegionsQuery(undefined);
+  const { id } = useParams();
   const [triggerDistrict, { data: districts }] = useLazyGetDistrictsQuery();
   const [onCreate] = useCreateDeliveryLocationMutation();
   const [trigger, { data: delivaryLocations, isLoading }] =
@@ -55,7 +57,10 @@ export const DeliverDaysForm = ({ close }) => {
 
   const handleSave = async (data: any) => {
     try {
-      await onCreate(data).unwrap();
+      await onCreate({
+        ...data,
+        productCatalogId: id.toString(),
+      }).unwrap();
       notify('Success', 'Delivery location added successfully');
       close();
     } catch (e) {
@@ -64,11 +69,10 @@ export const DeliverDaysForm = ({ close }) => {
     }
   };
 
-  // setSelectedRegion(catalog?.deliveryValues?.[0]?.region);
-
   useEffect(() => {
     selectedRegion !== undefined && triggerDistrict(selectedRegion);
   }, [selectedRegion, triggerDistrict]);
+
   const onError = (error) => {
     logger.error(error);
   };
@@ -103,7 +107,7 @@ export const DeliverDaysForm = ({ close }) => {
               )}
             />
             <Controller
-              name="district"
+              name="location"
               control={control}
               render={({ field: { onChange, value } }) => (
                 <Select
