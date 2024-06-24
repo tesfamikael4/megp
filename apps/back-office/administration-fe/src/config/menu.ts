@@ -1,17 +1,6 @@
 import { MenuItem } from '@megp/core-fe';
 import {
-  IconFile,
   IconAdjustmentsHorizontal,
-  IconBookmark,
-  IconBrandFlightradar24,
-  IconBuildingBank,
-  IconDatabaseDollar,
-  IconFileCheck,
-  IconFileDollar,
-  IconMapPin,
-  IconTable,
-  IconTableShortcut,
-  IconTools,
   IconRegistered,
   IconSearch,
 } from '@tabler/icons-react';
@@ -48,6 +37,7 @@ export const Menu: MenuItem[] = [
       { label: 'Donors', link: '/lookup/donors' },
       { label: 'Region', link: '/region' },
       { label: 'Currency', link: '/currency' },
+      { label: 'Tax', link: '/tax' },
     ],
   },
   {
@@ -61,7 +51,6 @@ export const Menu: MenuItem[] = [
       },
 
       // { label: 'Budget Category', link: '/lookup/budget-category' },
-      // { label: 'Donors', link: '/lookup/donors' },
       // { label: 'Procurement Institution', link: '/procurement-institution' },
       // { label: 'Procurement Method', link: '/lookup/procurement-method' },
       // {
@@ -80,5 +69,4 @@ export const Menu: MenuItem[] = [
     ],
   },
   // { label: 'Organizations', icon: IconBuildingBank, link: '/organizations' },
-  // { label: 'Tax', icon: IconFileDollar, link: '/tax' },
 ];
