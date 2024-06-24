@@ -134,42 +134,10 @@ export const AreasOfBusinessInterest = ({
                         {...register(`${name}.${index}.userType`, 'select')}
                         disabled={
                           !register(`${name}.${index}.classification`, 'select')
-                            .value
+                            .value ||
+                          register(`${name}.${index}.userType`, 'select')
+                            .disabled
                         }
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <Controller
-                        name={`areasOfBusinessInterest.${index}.activationDate`}
-                        control={control}
-                        render={({ field }) => (
-                          <DatePickerInput
-                            // name={`areasOfBusinessInterest.${index}.activationDate`}
-                            valueFormat="YYYY/MM/DD"
-                            required
-                            label="Activation Date"
-                            placeholder="Activation Date"
-                            leftSection={
-                              <IconCalendar size={'1.2rem'} stroke={1.5} />
-                            }
-                            maxDate={dayjs(new Date()).toDate()}
-                            // {...register(`areasOfBusinessInterest.${index}.activationDate`)}
-                            onChange={async (value: any) =>
-                              value &&
-                              field.onChange(
-                                dayjs(value)
-                                  .format('YYYY/MM/DD')
-                                  .toString()
-                                  .replace(/\//g, '-'),
-                              )
-                            }
-                            error={
-                              register(
-                                `areasOfBusinessInterest.${index}.activationDate`,
-                              ).error
-                            }
-                          />
-                        )}
                       />
                     </Grid.Col>
                     <Grid.Col span={6}>
@@ -178,16 +146,16 @@ export const AreasOfBusinessInterest = ({
                         control={control}
                         render={({ field }) => (
                           <DatePickerInput
-                            // name={`areasOfBusinessInterest.${index}.expiryDate`}}`}
                             valueFormat="YYYY/MM/DD"
-                            required
                             label="Expiry Date"
                             placeholder="Expiry Date"
                             leftSection={
                               <IconCalendar size={'1.2rem'} stroke={1.5} />
                             }
                             maxDate={dayjs(new Date()).toDate()}
-                            // {...register(`areasOfBusinessInterest.${index}.expiryDate`)}
+                            {...register(
+                              `areasOfBusinessInterest.${index}.expiryDate`,
+                            )}
                             onChange={async (value: any) =>
                               value &&
                               field.onChange(
@@ -206,55 +174,50 @@ export const AreasOfBusinessInterest = ({
                         )}
                       />
                     </Grid.Col>
-                    {data?.basic.countryOfRegistration === 'Malawi' &&
-                      field.category === 'Works' && (
-                        <>
-                          <Grid.Col span={6}>
-                            <TextInput
-                              label="NCIC Registration Number"
-                              placeholder="Enter NCIC Registration Number"
-                              {...register(
-                                `${name}.${index}.ncicRegistrationNumber`,
-                              )}
-                            />
-                          </Grid.Col>
-                          <Grid.Col span={6}>
-                            <Controller
-                              name={`areasOfBusinessInterest.${index}.ncicRegistrationDate`}
-                              control={control}
-                              render={({ field }) => (
-                                <DatePickerInput
-                                  // name={`areasOfBusinessInterest.${index}.expiryDate`}}`}
-                                  valueFormat="YYYY/MM/DD"
-                                  required
-                                  label="NCIC Registration Issued Date"
-                                  placeholder="NCIC Registration Issued Date"
-                                  leftSection={
-                                    <IconCalendar
-                                      size={'1.2rem'}
-                                      stroke={1.5}
-                                    />
-                                  }
-                                  {...register(
-                                    `areasOfBusinessInterest.${index}.ncicRegistrationDate`,
-                                  )}
-                                  value={new Date('2023/02/12')}
-                                  maxDate={dayjs(new Date()).toDate()}
-                                  onChange={async (value: any) =>
-                                    value &&
-                                    field.onChange(
-                                      dayjs(value)
-                                        .format('YYYY/MM/DD')
-                                        .toString()
-                                        .replace(/\//g, '-'),
-                                    )
-                                  }
-                                />
-                              )}
-                            />
-                          </Grid.Col>
-                        </>
-                      )}
+                    {field.category === 'Works' && (
+                      <>
+                        <Grid.Col span={6}>
+                          <TextInput
+                            label="NCIC Registration Number"
+                            placeholder="Enter NCIC Registration Number"
+                            {...register(
+                              `${name}.${index}.ncicRegistrationNumber`,
+                            )}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                          <Controller
+                            name={`areasOfBusinessInterest.${index}.ncicRegistrationDate`}
+                            control={control}
+                            render={({ field }) => (
+                              <DatePickerInput
+                                // name={`areasOfBusinessInterest.${index}.expiryDate`}}`}
+                                valueFormat="YYYY/MM/DD"
+                                label="NCIC Registration Issued Date"
+                                placeholder="NCIC Registration Issued Date"
+                                leftSection={
+                                  <IconCalendar size={'1.2rem'} stroke={1.5} />
+                                }
+                                {...register(
+                                  `areasOfBusinessInterest.${index}.ncicRegistrationDate`,
+                                )}
+                                value={new Date('2023/02/12')}
+                                maxDate={dayjs(new Date()).toDate()}
+                                onChange={async (value: any) =>
+                                  value &&
+                                  field.onChange(
+                                    dayjs(value)
+                                      .format('YYYY/MM/DD')
+                                      .toString()
+                                      .replace(/\//g, '-'),
+                                  )
+                                }
+                              />
+                            )}
+                          />
+                        </Grid.Col>
+                      </>
+                    )}
                   </>
                 )}
               </Grid>

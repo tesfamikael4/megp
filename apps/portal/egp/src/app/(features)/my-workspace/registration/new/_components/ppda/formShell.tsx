@@ -155,7 +155,6 @@ export const AreasOfBusinessInterestForm = ({
       );
     }
     if (saveValues.isError) {
-      console.log(saveValues.error);
       if ((saveValues.error as any).data?.message === 'not_registered_on_ncic')
         NotificationService.requestErrorNotification(
           'You Are not registered on NCIC',

@@ -19,6 +19,7 @@ import { paymentSlipUploadSchema } from '@/shared/schema/paymentSlipUploadSchema
 import { useRouter } from 'next/navigation';
 import { useUploadPaymentReceiptRenewalMutation } from '@/store/api/vendor-upgrade/api';
 import FileUploader from '../../../_components/uploader';
+import { NotificationService } from '../../../_components/notification';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 function Page() {
@@ -35,16 +36,15 @@ function Page() {
   const [uploadFile, { isLoading: isUploading, isSuccess: isUploadSuccess }] =
     useUploadPaymentReceiptRenewalMutation({});
 
-  const { register, formState, setValue, watch, handleSubmit } = useForm<any>({
-    defaultValues: {
-      invoiceIds: '',
-      transactionNumber: '',
-      file: undefined,
-    },
-    resolver: zodResolver(paymentSlipUploadSchema),
-  });
-
-  console.log(formState.errors);
+  const { register, formState, setValue, watch, handleSubmit, setError } =
+    useForm<any>({
+      defaultValues: {
+        invoiceIds: '',
+        transactionNumber: '',
+        file: undefined,
+      },
+      resolver: zodResolver(paymentSlipUploadSchema),
+    });
 
   const onSubmitHandler: SubmitHandler<any> = async (values) => {
     if (data) {
@@ -53,12 +53,28 @@ function Page() {
         transactionNumber: values.transactionNumber,
         invoiceIds: [data.id],
       };
-      // submitRequest(data?.items.map((i) => i.id));
-      uploadFile(paymentData)
-        .unwrap()
-        .then(() => {
-          router.push('/my-workspace/registration/track-applications');
-        });
+      try {
+        await uploadFile(paymentData)
+          .unwrap()
+          .then(() => {
+            NotificationService.successNotification('Payed Successfully!');
+            router.push('/my-workspace/registration/track-applications');
+          });
+      } catch (error) {
+        if (
+          (error as any).data?.message === ' Transaction NUmber must be unique'
+        ) {
+          setError(`transactionNumber`, {
+            message: (error as any).data?.message,
+          });
+          NotificationService.requestErrorNotification(
+            (error as any).data?.message,
+          );
+        } else
+          NotificationService.requestErrorNotification(
+            'Failed to save Payment receipt',
+          );
+      }
     }
   };
 
@@ -128,6 +144,9 @@ function Page() {
                 />
               </Stack>
               <Flex justify="end" className="gap-2 mt-4">
+                <Button onClick={() => router.push('ppda')} variant="outline">
+                  Back
+                </Button>
                 <Button type="submit" loading={isUploading}>
                   Submit
                 </Button>

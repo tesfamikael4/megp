@@ -62,7 +62,7 @@ const formDataSchema = z.discriminatedUnion('countryOfRegistration', [
     countryOfRegistration: z.literal('Malawi'),
     tinNumber: z
       .string()
-      .min(6, { message: 'TIN must have at least 10 characters' })
+      .min(8, { message: 'TIN must have at least 8 characters' })
       .max(10, { message: 'TIN should not exceed 10 characters' }),
     tinIssuedDate: z
       .string()

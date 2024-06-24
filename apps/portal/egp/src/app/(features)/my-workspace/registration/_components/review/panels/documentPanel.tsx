@@ -50,11 +50,11 @@ export const DocumentPanel = ({
                 url={`${
                   process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
                 }/upload/get-file-bo/${
-                  tabValue === 'supportingDocuments'
-                    ? 'SupportingDocument'
-                    : tabValue === 'certificate'
-                      ? 'Certificate'
-                      : 'paymentReceipt'
+                  fieldKey === 'MSMECertificate' ||
+                  fieldKey === 'ibmCertificate' ||
+                  fieldKey === 'marginalizedCertificate'
+                    ? 'preferential-documents'
+                    : 'SupportingDocument'
                 }/${data[tabValue]?.[fieldKey]}/${data?.userId}`}
                 filename={data[tabValue][fieldKey]}
                 zoom

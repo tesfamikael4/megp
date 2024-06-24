@@ -41,7 +41,6 @@ const renderObjectCell = (cellValue) => (
 
 const renderCell = (header, item, open, setUrl, userId) => {
   const cellValue = item[header.name ?? header];
-  console.log((header.name ?? header) === 'type' && cellValue);
 
   if (header.format) {
     return <TableCell value={cellValue} />;

@@ -64,6 +64,20 @@ export const paymentApi = vendorRegistrationApi.injectEndpoints({
         };
       },
     }),
+    uploadSupportingDocuments: builder.mutation<any, any>({
+      query(data) {
+        const formData = new FormData();
+        //map Object to FormData
+        Object.keys(data).forEach((key) => {
+          formData.append(key, data[key]);
+        });
+        return {
+          url: `/upload/upload-documents`,
+          method: 'POST',
+          body: formData,
+        };
+      },
+    }),
     getPaymentSlip: builder.query<string, PaymentReceiptItem>({
       query(data) {
         return {

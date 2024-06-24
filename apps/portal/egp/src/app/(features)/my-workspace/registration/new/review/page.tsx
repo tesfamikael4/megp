@@ -16,7 +16,6 @@ function Page() {
 
   const [save, saveValues] = useAddFormMutation();
   const { checkAccess, updateAccess, updateStatus } = usePrivilege();
-  console.log(saveValues);
 
   useEffect(() => {
     if (requestInfo.data?.initial.level) {
