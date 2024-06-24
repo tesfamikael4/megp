@@ -5,11 +5,11 @@ import {
   Flex,
   LoadingOverlay,
   MultiSelect,
-  NativeSelect,
   NumberInput,
+  Select,
   Stack,
 } from '@mantine/core';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { useParams } from 'next/navigation';
 import React, { useEffect } from 'react';
@@ -151,22 +151,32 @@ export default function Guarantees() {
           className="w-1/2"
           {...register('guaranteeRequired')}
         />
-        <NativeSelect
-          placeholder="Guarantee Type"
-          withAsterisk
-          label="Guarantee Type"
-          className="w-1/2"
-          data={[
-            'Advance Payment Guarantee',
-            'Performance Guarantee',
-            'Retention Guarantee',
-          ]}
-          error={
-            errors['guaranteeType']
-              ? errors['guaranteeType']?.message?.toString()
-              : ''
-          }
-          {...register('guaranteeType')}
+        <Controller
+          control={control}
+          name="guaranteeType"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={[
+                'Advance Payment Guarantee',
+                'Performance Guarantee',
+                'Retention Guarantee',
+              ]}
+              error={
+                errors['guaranteeType']
+                  ? errors['guaranteeType']?.message?.toString()
+                  : ''
+              }
+              label="Guarantee Type"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Guarantee Type"
+              searchable
+              value={value}
+            />
+          )}
         />
       </Flex>
       <Flex gap="md">
@@ -188,25 +198,37 @@ export default function Guarantees() {
             />
           )}
         />
-        <NativeSelect
-          placeholder="Currency"
-          withAsterisk
-          label="Currency"
-          className="w-1/2"
-          data={
-            isSuccess && currencies && currencies.items.length > 0
-              ? currencies.items.map((item: any) => {
-                  const value = { ...item };
-                  (value['value'] = item.abbreviation),
-                    (value['label'] = item.name);
-                  return value;
-                })
-              : []
-          }
-          error={
-            errors['currency'] ? errors['currency']?.message?.toString() : ''
-          }
-          {...register('currency')}
+        <Controller
+          control={control}
+          name="currency"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={
+                isSuccess && currencies && currencies.items.length > 0
+                  ? currencies.items.map((item: any) => {
+                      const value = { ...item };
+                      (value['value'] = item.abbreviation),
+                        (value['label'] = item.name);
+                      return value;
+                    })
+                  : []
+              }
+              error={
+                errors['currency']
+                  ? errors['currency']?.message?.toString()
+                  : ''
+              }
+              label="Currency"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Currency"
+              searchable
+              value={value}
+            />
+          )}
         />
       </Flex>
       <Flex gap="md">

@@ -218,13 +218,29 @@ export default function PreparationDetail() {
           }
           {...register('incotermsEdition')}
         />
-        <NativeSelect
-          placeholder="Incoterm Type"
-          withAsterisk
-          className="w-1/2"
-          label="Incoterm Type"
-          data={['DDP']}
-          {...register('incotermType')}
+
+        <Controller
+          control={control}
+          name="incotermType"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['DDP']}
+              error={
+                errors['incotermType']
+                  ? errors['incotermType']?.message?.toString()
+                  : ''
+              }
+              label="Incoterm Type"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Incoterm Type"
+              searchable
+              value={value}
+            />
+          )}
         />
       </div>
       <div className="w-full flex space-x-4">

@@ -1,10 +1,9 @@
 import {
   Checkbox,
   LoadingOverlay,
-  NativeSelect,
   NumberInput,
+  Select,
   Stack,
-  TextInput,
   Textarea,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
@@ -188,24 +187,35 @@ export function SpdTechnicalScoringFormDetail({
         />
       </div>
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Bid Form Link"
-          withAsterisk
-          className="w-1/2 my-auto"
-          label="Form Link"
-          error={
-            errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
-          }
-          data={
-            bidFormLinks?.items
-              ? bidFormLinks?.items.map((link) => ({
-                  label: link.title,
-                  value: link.id,
-                }))
-              : []
-          }
-          {...register('bidFormId')}
+        <Controller
+          control={control}
+          name="bidFormId"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={
+                bidFormLinks?.items
+                  ? bidFormLinks?.items.map((link) => ({
+                      label: link.title,
+                      value: link.id,
+                    }))
+                  : []
+              }
+              error={
+                errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
+              }
+              label="Form Link"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Bid Form Link"
+              searchable
+              value={value}
+            />
+          )}
         />
+
         <Checkbox
           label="Is Professional"
           className="w-1/2 my-auto"

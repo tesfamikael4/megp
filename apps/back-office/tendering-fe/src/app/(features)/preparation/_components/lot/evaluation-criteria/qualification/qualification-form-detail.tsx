@@ -1,6 +1,5 @@
 import {
   LoadingOverlay,
-  NativeSelect,
   Select,
   Stack,
   TextInput,
@@ -201,13 +200,23 @@ export function QualificationFormDetail({
         {...register('itbDescription')}
       />
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Requirement for a Single Bidder"
-          withAsterisk
-          className="w-1/2"
-          label="Requirement for a Single Bidder"
-          data={Object.values(RequirementCondition)}
-          {...register('singleEntityCondition.value')}
+        <Controller
+          control={control}
+          name="singleEntityCondition.value"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={Object.values(RequirementCondition)}
+              label="Requirement for a Single Bidder"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Requirement for a Single Bidder"
+              searchable
+              value={value}
+            />
+          )}
         />
 
         <Textarea
@@ -224,13 +233,23 @@ export function QualificationFormDetail({
         />
       </div>
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Jv combined condition"
-          withAsterisk
-          className="w-1/2"
-          label="Jv combined condition"
-          data={Object.values(RequirementCondition)}
-          {...register('jvCombinedPartnerCondition.value')}
+        <Controller
+          control={control}
+          name="jvCombinedPartnerCondition.value"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={Object.values(RequirementCondition)}
+              label="Jv combined condition"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Jv combined condition"
+              searchable
+              value={value}
+            />
+          )}
         />
 
         <Textarea
@@ -247,13 +266,23 @@ export function QualificationFormDetail({
         />
       </div>
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Jv each partner condition"
-          withAsterisk
-          className="w-1/2"
-          label="Jv each partner condition"
-          data={Object.values(RequirementCondition)}
-          {...register('jvEachPartnerCondition.value')}
+        <Controller
+          control={control}
+          name="jvEachPartnerCondition.value"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={Object.values(RequirementCondition)}
+              label="Jv each partner condition"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Jv each partner condition"
+              searchable
+              value={value}
+            />
+          )}
         />
 
         <Textarea
@@ -270,13 +299,23 @@ export function QualificationFormDetail({
         />
       </div>
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Jv at least one partner condition"
-          withAsterisk
-          className="w-1/2"
-          label="Jv At least One Partner Condition"
-          data={Object.values(RequirementCondition)}
-          {...register('jvAtleastOnePartnerCondition.value')}
+        <Controller
+          control={control}
+          name="jvAtleastOnePartnerCondition.value"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={Object.values(RequirementCondition)}
+              label="Jv At least One Partner Condition"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Jv At least One Partner Condition"
+              searchable
+              value={value}
+            />
+          )}
         />
 
         <Textarea

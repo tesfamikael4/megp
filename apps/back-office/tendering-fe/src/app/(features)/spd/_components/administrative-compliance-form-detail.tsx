@@ -1,6 +1,6 @@
 import {
   LoadingOverlay,
-  NativeSelect,
+  Select,
   Stack,
   TextInput,
   Textarea,
@@ -8,7 +8,7 @@ import {
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useReadQuery,
   useDeleteMutation,
@@ -46,6 +46,7 @@ export function SpdAdministrativeComplianceFormDetail({
   const {
     handleSubmit,
     reset,
+    control,
     formState: { errors },
     register,
   } = useForm({
@@ -155,20 +156,32 @@ export function SpdAdministrativeComplianceFormDetail({
         }
         {...register('itbDescription')}
       />
-      <NativeSelect
-        placeholder="Form Link"
-        withAsterisk
-        label="Bid Form Link"
-        error={errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''}
-        data={
-          data?.items
-            ? data?.items.map((link) => ({
-                label: link.title,
-                value: link.id,
-              }))
-            : []
-        }
-        {...register('bidFormId')}
+      <Controller
+        control={control}
+        name="bidFormId"
+        render={({ field: { value, name, onChange } }) => (
+          <Select
+            data={
+              data?.items
+                ? data?.items.map((link) => ({
+                    label: link.title,
+                    value: link.id,
+                  }))
+                : []
+            }
+            error={
+              errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
+            }
+            label="Bid Form Link"
+            withAsterisk
+            name={name}
+            nothingFoundMessage="No options"
+            onChange={onChange}
+            placeholder="Form Link"
+            searchable
+            value={value}
+          />
+        )}
       />
 
       <EntityButton

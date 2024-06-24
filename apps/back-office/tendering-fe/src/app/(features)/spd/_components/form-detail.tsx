@@ -1,6 +1,6 @@
 import {
   LoadingOverlay,
-  NativeSelect,
+  Select,
   Stack,
   TextInput,
   Textarea,
@@ -8,7 +8,7 @@ import {
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useReadQuery,
   useDeleteMutation,
@@ -41,6 +41,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const {
     handleSubmit,
     reset,
+    control,
     formState: { errors },
     register,
   } = useForm({
@@ -121,21 +122,41 @@ export function FormDetail({ mode }: FormDetailProps) {
         {...register('description')}
       />
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Procurement Category"
-          withAsterisk
-          className="w-1/2"
-          label="Procurement Category"
-          data={['goods', 'consultancy', 'non-consultancy', 'works']}
-          {...register('procurementCategory')}
+        <Controller
+          control={control}
+          name="procurementCategory"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['goods', 'consultancy', 'non-consultancy', 'works']}
+              label="Procurement Category"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Procurement Category"
+              searchable
+              value={value}
+            />
+          )}
         />
-        <NativeSelect
-          placeholder="Market Type"
-          withAsterisk
-          className="w-1/2"
-          label="Market Type"
-          data={['national', 'international']}
-          {...register('marketType')}
+        <Controller
+          control={control}
+          name="marketType"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['national', 'international']}
+              label="Market Type"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Market Type"
+              searchable
+              value={value}
+            />
+          )}
         />
       </div>
       <EntityButton

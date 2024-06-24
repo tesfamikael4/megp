@@ -2,8 +2,8 @@ import {
   LoadingOverlay,
   NumberInput,
   Stack,
-  NativeSelect,
   Textarea,
+  Select,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
@@ -178,22 +178,33 @@ export function SpdProfessionalSettingFormDetail({
         />
       </div>
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Bid Form Link"
-          withAsterisk
-          label="Form Link"
-          error={
-            errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
-          }
-          data={
-            bidFormLinks?.items
-              ? bidFormLinks?.items.map((link) => ({
-                  label: link.title,
-                  value: link.id,
-                }))
-              : []
-          }
-          {...register('bidFormId')}
+        <Controller
+          control={control}
+          name="bidFormId"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={
+                bidFormLinks?.items
+                  ? bidFormLinks?.items.map((link) => ({
+                      label: link.title,
+                      value: link.id,
+                    }))
+                  : []
+              }
+              error={
+                errors?.bidFormId ? errors?.bidFormId?.message?.toString() : ''
+              }
+              label="Form Link"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Bid Form Link"
+              searchable
+              value={value}
+            />
+          )}
         />
       </div>
       <EntityButton

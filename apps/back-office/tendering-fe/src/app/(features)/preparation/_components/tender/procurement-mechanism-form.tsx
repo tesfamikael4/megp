@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Flex,
   LoadingOverlay,
-  NativeSelect,
+  Select,
   Stack,
   Table,
   Text,
@@ -44,7 +44,6 @@ export default function ProcurementMechanismForm({
     reset,
     watch,
     formState: { errors },
-    register,
     control,
   } = useForm({
     resolver: zodResolver(ProcurementMechanismSchema),
@@ -111,24 +110,35 @@ export default function ProcurementMechanismForm({
         visible={isLoading || isUpdating || isSaving || analyticsLoading}
       />
       <div className="w-full flex space-x-4">
-        <NativeSelect
-          placeholder="Invitation Type"
-          withAsterisk
-          label="Invitation Type"
-          className="w-1/2"
-          data={['direct', 'limited', 'open']}
-          error={
-            errors?.invitationType
-              ? errors?.invitationType?.message?.toString()
-              : ''
-          }
-          {...register('invitationType')}
+        <Controller
+          control={control}
+          name="invitationType"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['direct', 'limited', 'open']}
+              error={
+                errors?.invitationType
+                  ? errors?.invitationType?.message?.toString()
+                  : ''
+              }
+              label="Invitation Type"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Invitation Type"
+              searchable
+              value={value}
+            />
+          )}
         />
+
         <Controller
           name="stageType"
           control={control}
           render={({ field: { name, value, onChange } }) => (
-            <NativeSelect
+            <Select
               label="Stage Type"
               placeholder="Stage Type"
               withAsterisk
@@ -148,18 +158,28 @@ export default function ProcurementMechanismForm({
         />
       </div>
       <div className="w-full flex space-x-4">
-        <NativeSelect
-          placeholder="Market Approach"
-          withAsterisk
-          className="w-1/2"
-          label="Market Approach"
-          data={['local', 'national', 'international']}
-          error={
-            errors?.marketApproach
-              ? errors?.marketApproach?.message?.toString()
-              : ''
-          }
-          {...register('marketApproach')}
+        <Controller
+          control={control}
+          name="marketApproach"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['local', 'national', 'international']}
+              error={
+                errors?.marketApproach
+                  ? errors?.marketApproach?.message?.toString()
+                  : ''
+              }
+              label="Market Approach"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Market Approach"
+              searchable
+              value={value}
+            />
+          )}
         />
       </div>
 

@@ -1,14 +1,14 @@
 import {
   FileInput,
   LoadingOverlay,
-  NativeSelect,
+  Select,
   Stack,
   TextInput,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useReadQuery,
   useDeleteMutation,
@@ -44,6 +44,7 @@ export function ContractFormFormDetail({
   const {
     handleSubmit,
     reset,
+    control,
     formState: { errors },
     register,
   } = useForm({
@@ -126,14 +127,25 @@ export function ContractFormFormDetail({
         {...register('code')}
       />
       <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Form type"
-          withAsterisk
-          className="w-1/2"
-          label="Form type"
-          data={['contract', 'performance-guaranty', 'advance-guaranty']}
-          {...register('type')}
+        <Controller
+          control={control}
+          name="type"
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              data={['contract', 'performance-guaranty', 'advance-guaranty']}
+              label="Form Type"
+              withAsterisk
+              name={name}
+              className="w-1/2"
+              nothingFoundMessage="No options"
+              onChange={onChange}
+              placeholder="Form Type"
+              searchable
+              value={value}
+            />
+          )}
         />
+
         <FileInput
           accept=".docx"
           multiple
