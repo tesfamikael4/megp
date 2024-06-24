@@ -42,7 +42,9 @@ export default function ViewImage() {
   };
 
   useEffect(() => {
-    dowloadPrFile(data?.items?.[index]?.id);
+    if (data?.items?.[index]?.id) {
+      dowloadPrFile(data?.items?.[index]?.id);
+    }
   }, [index, data]);
 
   return (
@@ -56,12 +58,12 @@ export default function ViewImage() {
             </Flex>
           )}
           {url && (
-            <Box className=" relative">
+            <Box className="relative w-full h-full overflow-hidden">
               <Image
                 src={url?.presignedUrl}
                 unstyled
                 alt="Product image"
-                className=" object-cover"
+                className="object-contain w-full h-full"
               />
             </Box>
           )}

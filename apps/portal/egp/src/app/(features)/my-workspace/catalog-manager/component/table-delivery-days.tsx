@@ -22,6 +22,7 @@ import { ExpandableTable, logger, notify } from '@megp/core-fe';
 import { CollectionQuery } from '@megp/entity';
 import { useDisclosure } from '@mantine/hooks';
 import { DeliverDaysForm } from './delivary-form';
+import { useParams } from 'next/navigation';
 
 interface DeliverDays {
   quantity: number;
@@ -32,6 +33,10 @@ export const DeliverDays = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [trigger, { data: deliveryLocations }] =
     useLazyGetDeliveryLocationQuery();
+
+  const { id } = useParams();
+
+  logger.log(deliveryLocations);
 
   const [onDelete] = useDeleteDeliveryLocationMutation();
 
@@ -76,7 +81,7 @@ export const DeliverDays = () => {
   };
   const onRequestChange = (request: CollectionQuery) => {
     logger.log(request);
-    trigger(request);
+    trigger({ id: id?.toString(), collectionQuery: request });
   };
 
   return (

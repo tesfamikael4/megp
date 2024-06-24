@@ -109,8 +109,21 @@ export const getCatalogApi = createApi({
       query: (id: string) => `districts/list/${id}`,
     }),
 
-    getDeliveryLocation: builder.query<any, any>({
-      query: () => 'product-catalog-deliveries',
+    getDeliveryLocation: builder.query<
+      any,
+      { id: string; collectionQuery: CollectionQuery }
+    >({
+      query: ({ id, collectionQuery }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `product-catalog-deliveries/${id}${q}`,
+          method: 'GET',
+        };
+      },
       providesTags: ['delivery-days'],
     }),
 
