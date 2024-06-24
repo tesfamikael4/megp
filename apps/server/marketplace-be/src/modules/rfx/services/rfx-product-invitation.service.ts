@@ -594,8 +594,11 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
       catalogue.specifications;
     rfxProductInvitation.catalogueDeliveryValues = others;
     rfxProductInvitation.productCatalogueId = catalogue.id;
-    rfxProductInvitation.vendorMetadata = catalogue.vendor;
-    rfxProductInvitation.vendorId = catalogue.vendor?.id;
+    rfxProductInvitation.vendorMetadata = {
+      id: catalogue.vendorId,
+      name: catalogue.vendorName,
+    };
+    rfxProductInvitation.vendorId = catalogue.vendorId;
     rfxProductInvitation.catalogueImages = catalogue.productCatalogImages;
 
     return rfxProductInvitation;
