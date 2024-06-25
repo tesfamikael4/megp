@@ -14,6 +14,7 @@ export default function Financial() {
         milestone="financial"
         basePath={`/evaluation/${tenderId}`}
         hideComplete
+        page="config"
       />
       <ConversionRate />
       <Section className="mt-2" title="Item Rules" collapsible={false}>

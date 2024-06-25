@@ -20,6 +20,7 @@ export default function BidOpening() {
     isSearchable: true,
     isExpandable: true,
     isLoading: isBiddersLoading,
+    idAccessor: 'bidder.bidderName',
     expandedRowContent: (record) => <BidderDetail bidder={record} />,
     columns: [
       {

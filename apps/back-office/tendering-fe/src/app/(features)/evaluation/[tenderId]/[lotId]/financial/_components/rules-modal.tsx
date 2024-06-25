@@ -80,11 +80,6 @@ export const RulesModal = ({ close }: any) => {
   useEffect(() => {
     if (rules) {
       const temp = [
-        {
-          id: 'unit_price',
-          name: 'unit_price',
-          formula: '1+1',
-        },
         ...rules.items.map((e) => ({
           id: e.id,
           name: e.name,
@@ -106,7 +101,9 @@ export const RulesModal = ({ close }: any) => {
             value={value}
             label="Select Rule "
             withAsterisk
-            data={rulesList}
+            data={rulesList.filter(
+              (r) => !expressions?.find((e) => e.name === r),
+            )}
             onChange={(val, option) => {
               if (val == null) {
                 onChange(null);

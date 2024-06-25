@@ -15,6 +15,7 @@ import {
 import { useSubmitScoringEvaluationMutation } from '@/store/api/tendering/technical-scoring.api';
 import { useLazyGetLotDetailQuery } from '@/store/api/tendering/tendering.api';
 import {
+  ActionIcon,
   Badge,
   Box,
   Button,
@@ -22,10 +23,11 @@ import {
   Group,
   LoadingOverlay,
   Text,
+  Tooltip,
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { Section, notify } from '@megp/core-fe';
-import { IconChevronLeft } from '@tabler/icons-react';
+import { IconChevronLeft, IconNotes, IconSettings } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -34,6 +36,7 @@ export const LotOverview = ({
   teamAssessment = false,
   hideComplete = false,
   milestone,
+  page,
 }: {
   basePath: string;
   teamAssessment?: boolean;
@@ -45,6 +48,7 @@ export const LotOverview = ({
     | 'technicalScoring'
     | 'financial'
     | 'priceAnalysis';
+  page?: 'items' | 'config';
 }) => {
   const { tenderId, lotId } = useParams();
   const router = useRouter();
@@ -180,6 +184,34 @@ export const LotOverview = ({
         collapsible={false}
         action={
           <Group gap="md">
+            {milestone === 'financial' && page == 'items' && (
+              <Tooltip label="Financial Qualification Config">
+                <ActionIcon
+                  variant="subtle"
+                  color="gray"
+                  onClick={() =>
+                    router.push(
+                      `/evaluation/${tenderId}/${lotId}/financial/config`,
+                    )
+                  }
+                >
+                  <IconSettings size={18} />
+                </ActionIcon>
+              </Tooltip>
+            )}
+            {milestone === 'financial' && page == 'config' && (
+              <Tooltip label="Items">
+                <ActionIcon
+                  variant="subtle"
+                  color="gray"
+                  onClick={() =>
+                    router.push(`/evaluation/${tenderId}/${lotId}/financial`)
+                  }
+                >
+                  <IconNotes size={18} />
+                </ActionIcon>
+              </Tooltip>
+            )}
             {milestone !== 'technicalScoring' &&
               milestone !== 'financial' &&
               lotStatus?.isTeamLead?.isTeam && (
