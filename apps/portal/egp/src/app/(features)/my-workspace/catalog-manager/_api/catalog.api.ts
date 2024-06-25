@@ -120,7 +120,7 @@ export const getCatalogApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `product-catalog-deliveries/${id}${q}`,
+          url: `product-catalog-deliveries/list/${id}${q}`,
           method: 'GET',
         };
       },
@@ -154,6 +154,11 @@ export const getCatalogApi = createApi({
         method: 'DELETE',
       }),
       invalidatesTags: ['delivery-days'],
+    }),
+    ReadDist: builder.query<any, string>({
+      query: (id: string) => ({
+        url: `districts/${id}`,
+      }),
     }),
   }),
 });
@@ -194,4 +199,8 @@ export const {
   useCreateDeliveryLocationMutation,
   useUpdateDeliveryLocationMutation,
   useDeleteDeliveryLocationMutation,
+
+  //District
+  useReadDistQuery,
+  useLazyReadDistQuery,
 } = getCatalogApi;

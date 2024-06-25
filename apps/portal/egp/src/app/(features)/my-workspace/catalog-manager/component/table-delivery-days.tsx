@@ -1,22 +1,11 @@
 'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Group,
-  Modal,
-  NumberInput,
-  Select,
-  Stack,
-  Title,
-} from '@mantine/core';
+import { Box, Button, Group, Modal, Title } from '@mantine/core';
 import { IconCirclePlus, IconTrash } from '@tabler/icons-react';
 
 import {
   useLazyGetDeliveryLocationQuery,
   useDeleteDeliveryLocationMutation,
+  useReadDistQuery,
 } from '../_api/catalog.api';
 import { ExpandableTable, logger, notify } from '@megp/core-fe';
 import { CollectionQuery } from '@megp/entity';
@@ -29,14 +18,18 @@ interface DeliverDays {
   deliverDays: number;
   district: string;
 }
+
+const DeliverDistrict = ({ districtId }) => {
+  const { data: district } = useReadDistQuery(districtId.toString());
+  return <Box>{district?.name}</Box>;
+};
+
 export const DeliverDays = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [trigger, { data: deliveryLocations }] =
     useLazyGetDeliveryLocationQuery();
 
   const { id } = useParams();
-
-  logger.log(deliveryLocations);
 
   const [onDelete] = useDeleteDeliveryLocationMutation();
 
@@ -58,9 +51,14 @@ export const DeliverDays = () => {
       {
         accessor: 'district',
         title: 'District',
+        render: (render) => (
+          <Box>
+            <DeliverDistrict districtId={render?.location} />
+          </Box>
+        ),
       },
       {
-        accessor: 'deliveryDays',
+        accessor: 'deliverDays',
         title: 'Delivery Days',
       },
       {
@@ -79,8 +77,8 @@ export const DeliverDays = () => {
       },
     ],
   };
+
   const onRequestChange = (request: CollectionQuery) => {
-    logger.log(request);
     trigger({ id: id?.toString(), collectionQuery: request });
   };
 
