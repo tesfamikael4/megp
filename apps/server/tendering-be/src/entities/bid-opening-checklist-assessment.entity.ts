@@ -8,7 +8,6 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Tender } from './tender.entity';
-import { SpdOpeningChecklist } from './spd-opening-checklist.entity';
 import { Lot } from './lot.entity';
 // import { BidRegistration } from './bid-registration.entity';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';

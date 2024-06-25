@@ -15,6 +15,7 @@ import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { EqcPreliminaryExamination } from './eqc-preliminary-examination.entity';
 
 @Entity({ name: 'technical_preliminary_assessment_details' })
+@Unique(['technicalPreliminaryAssessmentId', 'eqcPreliminaryExaminationId'])
 export class TechnicalPreliminaryAssessmentDetail extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
