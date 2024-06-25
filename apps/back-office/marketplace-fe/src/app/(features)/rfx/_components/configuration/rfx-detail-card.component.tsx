@@ -24,14 +24,13 @@ export default function RFXDetailCard() {
     },
     {
       key: 'Budget Amount',
-      value: selectedRFX?.budgetAmount?.toLocaleString('en-US', {
-        style: 'currency',
-        currency: selectedRFX?.budgetAmountCurrency,
-      }),
-    },
-    {
-      key: 'Budget Amount Currency',
-      value: selectedRFX?.budgetAmountCurrency,
+      value: `${selectedRFX?.budgetAmountCurrency} ${selectedRFX?.budgetAmount?.toLocaleString(
+        'en-US',
+        {
+          style: 'currency',
+          currency: selectedRFX?.budgetAmountCurrency,
+        },
+      )}`,
     },
   ];
   return (

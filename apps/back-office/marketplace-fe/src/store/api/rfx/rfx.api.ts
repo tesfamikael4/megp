@@ -8,6 +8,36 @@ export const rfxOtherApi = createApi({
   tagTypes: ['eval-responses:LIST'],
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api/'),
   endpoints: (builder) => ({
+    listRfxs: builder.query<any, CollectionQuery>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `rfxs/preparation${q}` };
+      },
+    }),
+    listRfxOnReview: builder.query<any, CollectionQuery>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `rfxs/revision${q}` };
+      },
+    }),
+    listRfxOnEvaluation: builder.query<any, CollectionQuery>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `rfxs/evaluation${q}` };
+      },
+    }),
     getCatalogueItems: builder.query<any, any>({
       query: (collectionQuery) => {
         let q = '';
@@ -157,6 +187,13 @@ export const rfxOtherApi = createApi({
         method: 'GET',
       }),
     }),
+    canSubmitForRfxApproval: builder.query<any, { rfxId: string }>({
+      query: (data) => ({
+        url: `/rfx-revision-approvals/can-submit/${data?.rfxId}`,
+        method: 'GET',
+      }),
+      providesTags: ['eval-responses:LIST'],
+    }),
     canSubmitEvaluation: builder.query<
       any,
       { bidderId: string; isTeamAssessment: boolean }
@@ -244,10 +281,23 @@ export const rfxOtherApi = createApi({
       }),
       providesTags: ['eval-responses:LIST'],
     }),
+    getPresignedForEvalDoc: builder.query<
+      any,
+      { rfxId: string; requirmentId: string; bidderId: string }
+    >({
+      query: (data) => ({
+        url: `/sol-reponses/document/${data?.rfxId}/${data?.requirmentId}/${data?.bidderId}`,
+        method: 'GET',
+      }),
+      providesTags: ['eval-responses:LIST'],
+    }),
   }),
 });
 
 export const {
+  useLazyListRfxsQuery,
+  useLazyListRfxOnReviewQuery,
+  useLazyListRfxOnEvaluationQuery,
   useLazyGetCatalogueItemsQuery,
   useSubmitForReviewMutation,
   useGetPreSignedQuery,
@@ -265,6 +315,7 @@ export const {
   useGetMyResponsesQuery,
   useLazyGetMyResponsesQuery,
   useLazyGetEvidenceAttachmentQuery,
+  useLazyCanSubmitForRfxApprovalQuery,
   useLazyCanSubmitEvaluationQuery,
   useSubmitEvaluationMutation,
   useCreateEvalMutation,
@@ -275,4 +326,5 @@ export const {
   useLazyCanStartTeamAssesmentQuery,
   useLazyGetTeamMembersEvalQuery,
   useSubmitRFXEvaluationMutation,
+  useLazyGetPresignedForEvalDocQuery,
 } = rfxOtherApi;

@@ -41,6 +41,7 @@ export default function BidderHeader() {
         message: 'Completed Successfully.',
         color: 'green',
       });
+      router.back();
     } catch (err) {
       notifications.show({
         title: 'Error',

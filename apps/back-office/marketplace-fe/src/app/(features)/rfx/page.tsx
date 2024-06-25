@@ -8,9 +8,10 @@ import React from 'react';
 import { ExpandableTable } from '@megp/core-fe';
 import { useLazyListQuery } from './_api/rfx/rfx.api';
 import RFXDetail from './_components/configuration/rfx-detail';
+import { useLazyListRfxsQuery } from '@/store/api/rfx/rfx.api';
 
 export default function Preparation() {
-  const [trigger, { data, isFetching }] = useLazyListQuery();
+  const [trigger, { data, isFetching }] = useLazyListRfxsQuery();
   const router = useRouter();
 
   const config = {
@@ -18,7 +19,7 @@ export default function Preparation() {
       { accessor: 'name', title: 'Name', width: 200 },
       {
         accessor: 'procurementReferenceNumber',
-        title: 'Ref',
+        title: 'Reference Number',
         width: 200,
       },
       {
@@ -63,7 +64,13 @@ export default function Preparation() {
   };
 
   const onRequestChange = (request: any) => {
-    trigger(request);
+    trigger({
+      ...request,
+      // where: [
+      //   [{ column: 'status', operator: '=', value: 'DRAFT' }],
+      //   [{ column: 'status', operator: '=', value: 'PENDING' }],
+      // ],
+    });
   };
   return (
     <Section

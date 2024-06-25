@@ -52,6 +52,7 @@ export default function RFXHeader() {
         message: 'Completed Successfully.',
         color: 'green',
       });
+      router.back();
     } catch (err) {
       notifications.show({
         title: 'Error',
@@ -125,14 +126,22 @@ export default function RFXHeader() {
               </Badge>
             </Flex>
             <Flex className="gap-2 items-center">
-              <p>Total bidders:</p>
-              <Badge variant="outline">{data?.bidders ?? '-'}</Badge>
+              <p>Category:</p>
+              <Badge variant="outline">
+                {data?.procurementCategory ?? '-'}
+              </Badge>
             </Flex>
           </Flex>
           <Flex className="px-6 flex-col gap-2">
             <Flex className="gap-2 items-center">
-              <p>Is Open:</p>
-              <Badge variant="outline">{data?.isOpen ? 'true' : 'false'}</Badge>
+              <p>Budget:</p>
+              <Badge variant="outline">
+                {data?.budgetAmountCurrency}{' '}
+                {data?.budgetAmount?.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: data?.budgetAmountCurrency,
+                })}
+              </Badge>
             </Flex>
             <Flex className="gap-2 items-center">
               <p>Status:</p>

@@ -53,7 +53,7 @@ const perPage = 10;
 export default function ItemCatalogue() {
   const [
     getCatalogueItems,
-    { data: catalogueItems, isLoading: isGettingCatalogue },
+    { data: catalogueItems, isLoading: isGettingCatalogue, isSuccess },
   ] = useLazyGetProductCataloguesQuery();
 
   const router = useRouter();
@@ -178,11 +178,12 @@ export default function ItemCatalogue() {
         const res = await getCatalogueItems({
           where: filterConditions,
           select: ['id'],
-        }).unwrap();
-        await invitedSelected({
-          productCatalogueIds: res?.data?.items?.map((item) => item.id),
-          id: itemId.toString(),
-        }).unwrap();
+        });
+        isSuccess &&
+          (await invitedSelected({
+            productCatalogueIds: res?.data?.items?.map((item) => item.id),
+            id: itemId.toString(),
+          }).unwrap());
       } else if (invitationMode == 'random') {
         const res = await getCatalogueItems({
           where: filterConditions,
@@ -192,10 +193,11 @@ export default function ItemCatalogue() {
           res?.items?.map((item) => item.id),
           noOfSuppliers,
         );
-        await invitedSelected({
-          productCatalogueIds: ids,
-          id: itemId.toString(),
-        }).unwrap();
+        isSuccess &&
+          (await invitedSelected({
+            productCatalogueIds: ids,
+            id: itemId.toString(),
+          }).unwrap());
       } else if (invitationMode == 'open') {
         await makeOpenInvitation({ id: itemId.toString() }).unwrap();
       }
@@ -334,7 +336,7 @@ export default function ItemCatalogue() {
         selected?.status !== 'INVITATION_PREPARED' &&
         catalogueItems?.items?.length != 0 && (
           <Flex className="gap-4 w-3/4">
-            <Paper className="p-4">
+            <Paper className="p-4 w-full">
               <Stack>
                 <LoadingOverlay
                   visible={

@@ -37,7 +37,10 @@ export default function WorkflowPage() {
           objectId={data?.document.itemId as string}
           pdfUrl={fileUrl}
           workflow={
-            <WorkflowHandling itemId={id as string} itemKey={'RFQApproval'} />
+            <WorkflowHandling
+              itemId={id as string}
+              itemKey={'RFQEvaluationApproval'}
+            />
           }
         />
       )}

@@ -1,31 +1,17 @@
 'use client';
 
-import { ActionIcon, Box, Button } from '@mantine/core';
+import { ActionIcon, Box } from '@mantine/core';
 import { Section } from '@megp/core-fe';
-import { IconChevronRight, IconPlus } from '@tabler/icons-react';
+import { IconChevronRight } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { ExpandableTable } from '@megp/core-fe';
-import { useLazyListQuery } from '../rfx/_api/rfx/rfx.api';
 import RFXDetail from '../rfx/_components/configuration/rfx-detail';
+import { useLazyListRfxOnReviewQuery } from '@/store/api/rfx/rfx.api';
 
 export default function Revision() {
-  const [trigger, { data, isFetching }] = useLazyListQuery();
+  const [trigger, { data, isFetching }] = useLazyListRfxOnReviewQuery();
   const router = useRouter();
-
-  useEffect(() => {
-    trigger({
-      where: [
-        [
-          {
-            column: 'status',
-            value: 'TEAM_REVIEWAL',
-            operator: '=',
-          },
-        ],
-      ],
-    });
-  }, []);
 
   const config = {
     columns: [
