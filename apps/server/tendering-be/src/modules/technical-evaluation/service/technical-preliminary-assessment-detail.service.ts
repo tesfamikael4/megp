@@ -517,6 +517,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
             lotId,
           },
           passFail: true,
+          bidderStatus: BidderStatusEnum.TechnicalOpeningSucceeded,
           isCurrent: true,
         },
       }),
