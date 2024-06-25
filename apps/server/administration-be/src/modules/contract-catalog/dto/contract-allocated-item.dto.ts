@@ -9,6 +9,10 @@ export class CreateContractAllocatedItemDto {
 
   @ApiProperty()
   @IsUUID()
+  contractBeneficiaryId: string;
+
+  @ApiProperty()
+  @IsUUID()
   itemMasterId: string;
 
   @ApiProperty()

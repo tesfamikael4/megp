@@ -36,18 +36,6 @@ export class ProductCatalogsController extends EntityCrudController<ProductCatal
     super(productCatalogService);
   }
 
-  @Get('/:vendorId')
-  @ApiQuery({
-    name: 'q',
-    type: String,
-    description: 'Collection Query Parameter. Optional',
-    required: false,
-  })
-  getById(@Param('vendorId') vendorId: string, @Query('q') q: string) {
-    const query = decodeCollectionQuery(q);
-    return this.productCatalogService.getById(vendorId, query);
-  }
-
   @Post('/:id/approve')
   approveCatalog(
     @Param('id') id: string,
