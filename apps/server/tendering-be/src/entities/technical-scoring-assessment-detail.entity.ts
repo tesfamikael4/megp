@@ -7,6 +7,7 @@ import {
   Tree,
   TreeChildren,
   TreeParent,
+  Unique,
 } from 'typeorm';
 import { TechnicalScoringAssessment } from './technical-scoring-assessments.entity';
 import { OrgAudit } from 'src/shared/entities';
@@ -16,6 +17,7 @@ import { EqcTechnicalScoring } from './eqc-technical-scoring.entity';
 
 @Tree('closure-table')
 @Entity({ name: 'technical_scoring_assessments_details' })
+@Unique(['technicalScoringAssessmentId', 'eqcTechnicalScoringId'])
 export class TechnicalScoringAssessmentDetail extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { TechnicalQualificationAssessment } from './technical-qualification-assessments.entity';
 import { OrgAudit } from 'src/shared/entities';
@@ -12,6 +13,7 @@ import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { EqcQualification } from './eqc-qualification.entity';
 
 @Entity({ name: 'technical_qualification_assessment_details' })
+@Unique(['technicalQualificationAssessmentId', 'eqcQualificationId'])
 export class TechnicalQualificationAssessmentDetail extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
