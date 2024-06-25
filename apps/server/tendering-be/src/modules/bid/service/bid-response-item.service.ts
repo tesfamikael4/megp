@@ -86,6 +86,16 @@ export class BidResponseItemService {
 
       items.push(item);
     }
+
+    await manager
+      .getRepository(BidRegistrationDetail)
+      .update(bidRegistrationDetail.id, {
+        technicalItems: [
+          ...bidRegistrationDetail?.technicalItems,
+          inputDto.itemId,
+        ],
+      });
+
     return items;
   }
 
