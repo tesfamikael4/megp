@@ -1,19 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  BadRequestException,
   HttpException,
   Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  ArrayContains,
-  EntityManager,
-  In,
-  JsonContains,
-  Not,
-  Repository,
-} from 'typeorm';
+import { EntityManager, In, Not, Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { TechnicalScoringAssessmentDetail } from 'src/entities/technical-scoring-assessment-detail.entity';
 import {
@@ -26,7 +18,6 @@ import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
 import { REQUEST } from '@nestjs/core';
 import {
   BidRegistration,
-  BidRegistrationDetail,
   EqcTechnicalScoring,
   Item,
   SorTechnicalRequirement,
@@ -34,12 +25,11 @@ import {
 import { TeamMember } from 'src/entities/team-member.entity';
 import { CompleteScoringBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
 import { TechnicalScoringAssessment } from 'src/entities/technical-scoring-assessments.entity';
-import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
-import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
+import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 
 @Injectable()
 export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<TechnicalScoringAssessmentDetail> {
@@ -316,57 +306,73 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
     };
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const evaluatorId = req.user.userId;
-    const [isTeamLead, evaluationChecklist, canTeam, scoringCount] =
-      await Promise.all([
-        manager.getRepository(TeamMember).exists({
-          where: {
-            team: {
-              tender: {
-                lots: {
-                  id: lotId,
-                },
+    const [
+      isTeamLead,
+      biddersCount,
+      evaluationChecklist,
+      canTeam,
+      scoringCount,
+    ] = await Promise.all([
+      manager.getRepository(TeamMember).exists({
+        where: {
+          team: {
+            tender: {
+              lots: {
+                id: lotId,
               },
             },
-            personnelId: evaluatorId,
-            isTeamLead: true,
           },
-        }),
-        manager.getRepository(TechnicalScoringAssessmentDetail).exists({
-          where: {
-            technicalScoringAssessment: {
-              bidRegistrationDetail: {
-                lotId,
-              },
-              evaluatorId,
-              submit: false,
+          personnelId: evaluatorId,
+          isTeamLead: true,
+        },
+      }),
+      manager.getRepository(BiddersComparison).count({
+        where: {
+          bidRegistrationDetail: {
+            lotId,
+          },
+          passFail: true,
+          bidderStatus: BidderStatusEnum.TechnicalResponsivenessSucceeded,
+          isCurrent: true,
+        },
+      }),
+      manager.getRepository(TechnicalScoringAssessmentDetail).exists({
+        where: {
+          technicalScoringAssessment: {
+            bidRegistrationDetail: {
+              lotId,
             },
+            evaluatorId,
+            submit: false,
           },
-        }),
-        manager.getRepository(TechnicalScoringAssessmentDetail).exists({
-          where: {
-            technicalScoringAssessment: {
-              bidRegistrationDetail: {
-                lotId,
-              },
-              submit: false,
+        },
+      }),
+      manager.getRepository(TechnicalScoringAssessmentDetail).exists({
+        where: {
+          technicalScoringAssessment: {
+            bidRegistrationDetail: {
+              lotId,
             },
+            submit: false,
           },
-        }),
-        manager.getRepository(TechnicalScoringAssessmentDetail).find({
-          where: {
-            technicalScoringAssessment: {
-              bidRegistrationDetail: {
-                lotId,
-              },
-              submit: true,
+        },
+      }),
+      manager.getRepository(TechnicalScoringAssessmentDetail).find({
+        where: {
+          technicalScoringAssessment: {
+            bidRegistrationDetail: {
+              lotId,
             },
+            submit: true,
           },
-        }),
-      ]);
+        },
+      }),
+    ]);
     response.isTeamLead.isTeam = isTeamLead;
     response.hasCompleted =
       scoringCount.length == 0 ? false : !evaluationChecklist;
     response.canTeamAssess = scoringCount.length == 0 ? false : !canTeam;
+    // response.canTeamAssess = teamMemberCount * biddersCount == complianceCount;
 
     if (isTeamLead) {
       const [teamCompleted, scoringCount] = await Promise.all([

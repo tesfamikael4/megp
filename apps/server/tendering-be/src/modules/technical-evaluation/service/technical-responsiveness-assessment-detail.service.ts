@@ -368,6 +368,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
     const evaluatorId = req.user.userId;
     const [
       isTeamLead,
+      biddersCount,
       evaluationChecklist,
       canTeam,
       responsivenessDetailCount,
@@ -385,6 +386,16 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
           },
           personnelId: evaluatorId,
           isTeamLead: true,
+        },
+      }),
+      manager.getRepository(BiddersComparison).count({
+        where: {
+          bidRegistrationDetail: {
+            lotId,
+          },
+          passFail: true,
+          bidderStatus: BidderStatusEnum.TechnicalQualificationSucceeded,
+          isCurrent: true,
         },
       }),
       manager.getRepository(TechnicalResponsivenessAssessmentDetail).exists({
@@ -445,8 +456,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       responsivenessDetailCount.length == 0 ? false : !evaluationChecklist;
     response.canTeamAssess =
       responsivenessDetailCount.length == 0 ? false : !canTeam;
-
-    response.canTeamAssess = teamMemberCount == scoringCount;
+    response.canTeamAssess = teamMemberCount * biddersCount == scoringCount;
 
     if (isTeamLead) {
       const [teamCompleted, responsivenessDetailCount] = await Promise.all([
