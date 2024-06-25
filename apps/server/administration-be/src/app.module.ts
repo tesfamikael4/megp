@@ -20,6 +20,11 @@ import { GuaranteeServiceModule } from './modules/guarantee-services/guarantee-s
 import { ClarificationModule } from './modules/clarification/clarification.module';
 import { ProductCatalogModule } from './modules/product-catalog/product-catalog.module';
 import { ContractCatalogModule } from './modules/contract-catalog/contract-catalog.module';
+import {
+  TenantInterceptor,
+  TransactionInterceptor,
+} from './shared/interceptors';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -45,6 +50,15 @@ import { ContractCatalogModule } from './modules/contract-catalog/contract-catal
     ContractCatalogModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransactionInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TenantInterceptor,
+    },
+  ],
 })
 export class AppModule {}

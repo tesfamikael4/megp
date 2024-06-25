@@ -34,8 +34,14 @@ export class ProductCatalogsService extends EntityCrudService<ProductCatalog> {
     return this.productCatalogRepository.save({ id, ...data });
   }
 
-  async getById(vendorId: string, query: CollectionQuery) {
-    query.includes = ['itemMaster'];
+  async findAll(query: CollectionQuery, req: any) {
+    query.where.push([
+      {
+        column: 'vendorId',
+        value: req.user.organization.id,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
     return await super.findAll(query);
   }
 
@@ -73,7 +79,7 @@ export class ProductCatalogsService extends EntityCrudService<ProductCatalog> {
   async getWithImages(query: CollectionQuery) {
     query.includes = ['productCatalogImages'];
 
-    const data = await this.findAll(query);
+    const data = await super.findAll(query);
 
     const enhancedData = await Promise.all(
       data.items.map(async (item) => {
