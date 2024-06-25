@@ -100,16 +100,16 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
   @Get('can-submit-vendor-eval/:solRegistrationId/:isTeamAssessment')
   @ApiOperation({
     summary:
-      'Check if the team member can submit vendor evaluation after completeing all documentary evaluations',
+      'Check if the team member can submit vendor evaluation after completing all documentary evaluations',
     description: 'enables a button on the frontend',
   })
-  async canSubmitEvaluation(
+  async canSubmitVendorEvaluation(
     @Param('solRegistrationId') solRegistrationId: string,
     @Param('isTeamAssessment') isTeamAssessment: boolean,
     @RfxVersion('version') version: number,
     @CurrentUser() user: any,
   ) {
-    return await this.evalReponseService.canSubmitVendorEvaluation(
+    return await this.evalReponseService.canSubmitVendorsEvaluation(
       solRegistrationId,
       isTeamAssessment,
       version,
@@ -120,7 +120,7 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
   @Patch('submit-vendor-eval/:solRegistrationId/:isTeamAssessment')
   @ApiOperation({
     summary:
-      'Submit vendor evaluation after completeing all documentary evaluations',
+      'Submit vendor evaluation after completing all documentary evaluations',
   })
   async submitVendorEvaluation(
     @Param('solRegistrationId') solRegistrationId: string,

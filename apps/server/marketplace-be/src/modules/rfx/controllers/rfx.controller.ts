@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   AllowAnonymous,
+  CurrentUser,
   EntityCrudController,
   EntityCrudOptions,
   decodeCollectionQuery,
@@ -31,12 +32,32 @@ export class RfxController extends EntityCrudController<RFX>(options) {
   constructor(private readonly rfxService: RfxService) {
     super(rfxService);
   }
-  @Patch('cancel/:rfxId')
-  async cancelRfx(@Param('rfxId') rfxId: string) {
-    return await this.rfxService.cancelRfx(rfxId);
+
+  @Get('preparation')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getPreparationRfxes(@CurrentUser() user: any, @Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.rfxService.getPreparationRfxes(query, user);
   }
 
-  @Get('rfxs-on-reviewal')
+  @Get('evaluation')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getEvaluationRfxes(@CurrentUser() user: any, @Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.rfxService.getEvaluationRfxes(query, user);
+  }
+
+  @Get('revision')
   @ApiQuery({
     name: 'q',
     type: String,
@@ -46,6 +67,11 @@ export class RfxController extends EntityCrudController<RFX>(options) {
   async rfxesOnReviewal(@Query('q') q?: string) {
     const query = decodeCollectionQuery(q);
     return await this.rfxService.getRfxesOnReviewal(query);
+  }
+
+  @Patch('cancel/:rfxId')
+  async cancelRfx(@Param('rfxId') rfxId: string) {
+    return await this.rfxService.cancelRfx(rfxId);
   }
 
   @Get('closed-rfxs')

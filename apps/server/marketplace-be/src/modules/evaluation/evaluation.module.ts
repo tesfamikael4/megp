@@ -5,6 +5,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import {
   EvalItemResponse,
   EvalResponse,
+  OpenedItemResponse,
   OpenedResponse,
   RFX,
   RfxProcurementTechnicalTeam,
@@ -33,6 +34,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       SolRegistration,
       SolResponse,
       OpenedResponse,
+      OpenedItemResponse,
       TeamMember,
       RfxProcurementTechnicalTeam,
       RFX,

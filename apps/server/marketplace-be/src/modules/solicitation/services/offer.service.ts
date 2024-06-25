@@ -19,7 +19,6 @@ import { CreateOfferDto } from '../dtos/offer.dto';
 import { EInvitationStatus, ERfxItemStatus } from 'src/utils/enums';
 import { EncryptionHelperService } from '../../../utils/services/encryption-helper.service';
 import { REQUEST } from '@nestjs/core';
-import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class SolOfferService extends ExtraCrudService<SolOffer> {

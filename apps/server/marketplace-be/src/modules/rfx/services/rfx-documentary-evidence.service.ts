@@ -87,4 +87,8 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
     await this.rfxDocumentaryEvidenceRepository.update(id, itemData);
     return rfxDocUpdate;
   }
+
+  async softDelete(id: string, req?: any): Promise<void> {
+    await this.rfxDocumentaryEvidenceRepository.delete({ id });
+  }
 }

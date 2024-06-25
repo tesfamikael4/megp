@@ -23,7 +23,13 @@ import {
   RfxRevisionApproval,
 } from 'src/entities';
 import { RfxProcurementMechanism } from 'src/entities/rfx-procurement-mechanism.entity';
-import { DataSource, EntityManager, In, Repository } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  In,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { CreateRFXDto, UpdateRFXDto } from '../dtos/rfx.dto';
 import { RfxProductInvitation } from '../../../entities';
 import { PdfGeneratorService } from 'src/utils/services/pdf-generator.service';
@@ -130,7 +136,7 @@ export class RfxService extends EntityCrudService<RFX> {
         procurementTechnicalTeam.rfxId = rfx.id;
         procurementTechnicalTeam.userId = iterator?.userId;
         procurementTechnicalTeam.userName = iterator?.userName;
-        procurementTechnicalTeam.isTeamLead = false;
+        procurementTechnicalTeam.isTeamLead = iterator?.isTeamLeader;
         procurementTechnicalTeams.push(procurementTechnicalTeam);
       }
 
@@ -236,11 +242,6 @@ export class RfxService extends EntityCrudService<RFX> {
       name: 'RFQApproval',
     };
     this.workflowRMQClient.emit('initiate-workflow', rfxPayload);
-    // this.workflowHandlerService.emitEvent(
-    //   'workflow-broadcast-exchanges',
-    //   'workflow.initiate',
-    //   rfxPayload,
-    // );
 
     rfx.status = ERfxStatus.SUBMITTED;
 
@@ -266,7 +267,6 @@ export class RfxService extends EntityCrudService<RFX> {
 
     const now = new Date();
 
-    // TRANSACTION
     await this.updateRfxChildrenStatus(rfx.id, status);
     await this.rfxBidProcedureRepository.update(
       {
@@ -296,8 +296,6 @@ export class RfxService extends EntityCrudService<RFX> {
     this.validateRfxOnReview(rfx);
 
     const doc = await this.generateReviewDocument(rfx);
-
-    // const review = currentTime(new Date(payload.reviewDeadline));
 
     await Promise.all([
       entityManager.getRepository(RFX).update(rfxId, {
@@ -333,9 +331,6 @@ export class RfxService extends EntityCrudService<RFX> {
       return (canUpdate = true);
 
     const now = new Date();
-    // const reviewDeadline = currentTime(
-    //   new Date(rfx.rfxBidProcedure.reviewDeadline),
-    // );
 
     if (
       rfx.status == ERfxStatus.TEAM_REVIEWAL &&
@@ -364,9 +359,6 @@ export class RfxService extends EntityCrudService<RFX> {
       canAdjust = true;
 
     const now = new Date();
-    // const reviewDeadline = currentTime(
-    //   new Date(rfx.rfxBidProcedure.reviewDeadline),
-    // );
 
     if (now > rfx.rfxBidProcedure.reviewDeadline) canAdjust = true;
 
@@ -549,15 +541,7 @@ export class RfxService extends EntityCrudService<RFX> {
         now,
       });
 
-    const response = new DataResponseFormat<RFX>();
-    if (query.count) {
-      response.total = await dataQuery.getCount();
-    } else {
-      const [result, total] = await dataQuery.getManyAndCount();
-      response.total = total;
-      response.items = result;
-    }
-    return response;
+    return await this.giveQueryResponse<RFX>(query, dataQuery);
   }
 
   async cancelRfx(rfxId: string) {
@@ -582,6 +566,90 @@ export class RfxService extends EntityCrudService<RFX> {
       this.updateRfxChildrenStatus(rfxId, 'CANCELLED'),
       await this.solRoundService.cancelPendingRounds(rfxId),
     ]);
+  }
+
+  async getPreparationRfxes(query: CollectionQuery, user: any) {
+    const dataQuery = QueryConstructor.constructQuery<RFX>(
+      this.rfxRepository,
+      query,
+    );
+
+    dataQuery
+      .where('rfxes.status = :status', { status: ERfxStatus.DRAFT })
+      .andWhere('rfxes.organizationId = :organizationId', {
+        organizationId: user.organization.id,
+      })
+      .leftJoin(
+        'rfxes.rfxProcurementTechnicalTeams',
+        'rfxProcurementTechnicalTeams',
+      )
+      .andWhere('rfxProcurementTechnicalTeams.userId = :userId', {
+        userId: user.userId,
+      })
+      .andWhere('rfxProcurementTechnicalTeams.isTeamLead = :isTeamLead', {
+        isTeamLead: true,
+      });
+
+    return await this.giveQueryResponse<RFX>(query, dataQuery);
+  }
+
+  async getEvaluationRfxes(query: CollectionQuery, user: any) {
+    const dataQuery = QueryConstructor.constructQuery<RFX>(
+      this.rfxRepository,
+      query,
+    );
+
+    dataQuery
+      .where('rfxes.status = :status', { status: ERfxStatus.EVALUATION })
+      .andWhere('rfxes.organizationId = :organizationId', {
+        organizationId: user.organization.id,
+      })
+      .leftJoin('rfxes.teamMembers', 'teamMember')
+      .andWhere('teamMember.personnelId = :personnelId', {
+        personnelId: user.userId,
+      });
+
+    return await this.giveQueryResponse<RFX>(query, dataQuery);
+  }
+
+  async getAwardedRfxes(query: CollectionQuery, user: any) {
+    const dataQuery = QueryConstructor.constructQuery<RFX>(
+      this.rfxRepository,
+      query,
+    );
+
+    dataQuery
+      // .where('rfxes.status = :status', { status: ERfxStatus.DRAFT })
+      .where('rfxes.organizationId = :organizationId', {
+        organizationId: user.organization.id,
+      })
+      .leftJoin(
+        'rfxes.rfxProcurementTechnicalTeams',
+        'rfxProcurementTechnicalTeams',
+      )
+      .andWhere('rfxProcurementTechnicalTeams.userId = :userId', {
+        userId: user.userId,
+      })
+      .andWhere('rfxProcurementTechnicalTeams.isTeamLead = :isTeamLead', {
+        isTeamLead: true,
+      });
+
+    return await this.giveQueryResponse<RFX>(query, dataQuery);
+  }
+
+  private async giveQueryResponse<T>(
+    query: CollectionQuery,
+    dataQuery: SelectQueryBuilder<T>,
+  ) {
+    const response = new DataResponseFormat<T>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 
   private async getCompleteRfx(rfxId: string) {
@@ -670,7 +738,6 @@ export class RfxService extends EntityCrudService<RFX> {
       throw new BadRequestException('RFQ not on reviewal');
 
     const now = new Date();
-    // const deadline = currentTime(new Date(rfx.rfxBidProcedure.reviewDeadline));
 
     if (
       rfx.status != ERfxStatus.TEAM_REVIEWAL &&
@@ -700,9 +767,6 @@ export class RfxService extends EntityCrudService<RFX> {
 
   private validateRfxReviewal(rfx: RFX) {
     const now = new Date();
-    // const reviewDeadline = currentTime(
-    //   new Date(rfx.rfxBidProcedure.reviewDeadline),
-    // );
 
     const revisions = rfx.revisionApprovals;
 

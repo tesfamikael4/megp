@@ -4,6 +4,7 @@ import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import {
   EvalItemResponse,
   EvalResponse,
+  OpenedItemResponse,
   OpenedResponse,
   RFX,
   RfxProcurementTechnicalTeam,
@@ -21,9 +22,7 @@ import {
 import { REQUEST } from '@nestjs/core';
 import { CreateEvalAssessmentDto } from '../dtos/eval-assessment.dto';
 import { EvalAssessment } from 'src/entities/eval-assessment.entity';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
-import { WorkflowHandlerService } from 'src/modules/rfx/services/workflow-handler.service';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
@@ -39,13 +38,14 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     private readonly solRegistrationRepository: Repository<SolRegistration>,
     @InjectRepository(OpenedResponse)
     private readonly openedResponseRepository: Repository<OpenedResponse>,
+    @InjectRepository(OpenedItemResponse)
+    private readonly openedItemResponseRepository: Repository<OpenedItemResponse>,
     @InjectRepository(RFX)
     private readonly rfxRepository: Repository<RFX>,
     @InjectRepository(TeamMember)
     private readonly teamMemberRepository: Repository<TeamMember>,
     @Inject('WORKFLOW_EVALUATION_RMQ_SERVICE')
     private readonly workflowRMQClient: ClientProxy,
-    // private readonly amqpConnection: AmqpConnection,
     @Inject(REQUEST) private readonly request: Request,
   ) {
     super(evalResponseRepository);
@@ -194,40 +194,40 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         reason: 'Evaluation has already been submitted',
       };
 
-    const rfx: any = await this.rfxRepository
-      .createQueryBuilder('rfxes')
-      .where('rfxes.id = :rfxId', { rfxId })
-      .loadRelationCountAndMap(
-        'rfxes.solRegistrationCount',
-        'rfxes.solRegistrations',
-        'registrations',
-        (qb) =>
-          qb.where('registrations.status = :status', {
-            status: ESolRegistrationStatus.REGISTERED,
-          }),
-      )
-      .loadRelationCountAndMap(
-        'rfxes.evaluationAssessmentCounts',
-        'rfxes.evaluationAssessments',
-        'eval',
-        (qb) =>
-          qb
-            .where('eval.teamMemberId = :teamMemberId', {
-              teamMemberId: teamMember.id,
-            })
-            .andWhere('eval.isTeamAssessment = :isTeamAssessment', {
-              isTeamAssessment,
-            })
-            .andWhere('eval.version = :version', {
-              version,
-            }),
-      )
-      .getOne();
+    const [solRegistrations, evalAssessments] = await Promise.all([
+      this.solRegistrationRepository.find({
+        where: {
+          rfxId,
+          status: ESolRegistrationStatus.REGISTERED,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      this.evalAssessmentRepository.find({
+        where: {
+          rfxId,
+          teamMemberId: teamMember.id,
+          isTeamAssessment,
+          version,
+        },
+        select: {
+          id: true,
+          solRegistrationId: true,
+        },
+      }),
+    ]);
 
-    if (rfx.solRegistrationCount != rfx.evaluationAssessmentCounts)
+    const canSubmitRfxEvaluation = solRegistrations.every((solReg) =>
+      evalAssessments.some(
+        (evalAssessment) => evalAssessment.solRegistrationId === solReg.id,
+      ),
+    );
+
+    if (!canSubmitRfxEvaluation)
       return {
         canSubmit: false,
-        reason: 'All vendors evaluation has not ended yet',
+        reason: 'All vendors evaluation for this RFQ has not ended yet',
       };
 
     return { canSubmit: true };
@@ -327,11 +327,6 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         .update(rfxId, { status: ERfxStatus.SUBMITTED_EVALUATION });
 
       this.workflowRMQClient.emit('initiate-workflow', eventPayload);
-      // this.amqpConnection.publish(
-      //   'workflow-broadcast-exchanges',
-      //   'workflow.initiate',
-      //   eventPayload,
-      // );
     }
   }
 
@@ -437,6 +432,118 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     return { canSubmit: true };
   }
 
+  async canSubmitVendorsEvaluation(
+    solRegistrationId: string,
+    isTeamAssessment: boolean,
+    version: number,
+    user: any,
+  ): Promise<{ canSubmit: boolean; reason?: string }> {
+    const [teamMember, alreadySubmitted] = await Promise.all([
+      this.teamMemberRepository.findOne({
+        where: {
+          rfx: {
+            solRegistrations: {
+              id: solRegistrationId,
+            },
+          },
+          personnelId: user.userId,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      this.evalAssessmentRepository.exists({
+        where: {
+          isTeamAssessment,
+          solRegistrationId,
+          teamMember: {
+            personnelId: user.userId,
+          },
+        },
+      }),
+    ]);
+
+    if (!teamMember) throw new BadRequestException('You are not a team member');
+
+    if (alreadySubmitted)
+      return {
+        canSubmit: false,
+        reason: 'Evaluation has already been submitted',
+      };
+
+    const [
+      openedResponses,
+      evalResponses,
+      openedItemResponses,
+      evalItemResponses,
+    ] = await Promise.all([
+      this.openedResponseRepository.find({
+        where: {
+          solRegistrationId,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      this.evalResponseRepository.find({
+        where: {
+          isTeamAssessment,
+          solRegistrationId,
+          teamMemberId: teamMember.id,
+          version,
+        },
+        select: {
+          id: true,
+          openedResponseId: true,
+        },
+      }),
+      this.openedItemResponseRepository.find({
+        where: {
+          solRegistrationId,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      this.evalItemResponseRepository.find({
+        where: {
+          isTeamAssessment,
+          solRegistrationId,
+          teamMemberId: teamMember.id,
+          version,
+        },
+        select: {
+          id: true,
+        },
+      }),
+    ]);
+
+    const canSubmitResponse = openedResponses.every((openedResp) =>
+      evalResponses.some(
+        (evalResp) => evalResp.openedResponseId === openedResp.id,
+      ),
+    );
+    const canSubmitItemResponse = openedItemResponses.every((openedResp) =>
+      evalItemResponses.some(
+        (evalResp) => evalResp.openedItemResponseId === openedResp.id,
+      ),
+    );
+
+    if (!canSubmitResponse)
+      return {
+        canSubmit: false,
+        reason: 'Documentary Evaluation for Registration is not yet completed',
+      };
+
+    if (!canSubmitItemResponse)
+      return {
+        canSubmit: false,
+        reason: 'Documentary Evaluation for RFQ Items is not yet completed',
+      };
+
+    return { canSubmit: true };
+  }
+
   async submitVendorEvaluataion(
     solRegistrationId: string,
     isTeamAssessment: boolean,
@@ -489,7 +596,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
           },
         },
       }),
-      this.canSubmitVendorEvaluation(
+      this.canSubmitVendorsEvaluation(
         solRegistrationId,
         isTeamAssessment,
         version,

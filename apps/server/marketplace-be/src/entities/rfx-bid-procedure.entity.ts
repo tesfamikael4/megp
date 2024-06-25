@@ -26,6 +26,9 @@ export class RfxBidProcedure extends Audit {
   submissionDeadline: Date;
 
   @Column({ type: 'timestamptz' })
+  postingDate: Date;
+
+  @Column({ type: 'timestamptz' })
   openingDate: Date;
 
   @Column({ nullable: true, type: 'timestamptz' })

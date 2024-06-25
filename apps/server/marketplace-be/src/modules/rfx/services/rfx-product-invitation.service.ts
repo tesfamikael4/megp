@@ -275,6 +275,7 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
       ERfxStatus.ENDED,
       ERfxStatus.SUBMITTED_EVALUATION,
     ];
+    const now = new Date();
 
     const dataQuery = QueryConstructor.constructQuery<RFX>(
       entityManager.getRepository(RFX),
@@ -288,8 +289,12 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
         'rfxItems.rfxProductInvitations',
         'rfxProductInvitation',
       )
-      .where('rfxProductInvitation.vendorId = :vendorId', {
+      .andWhere('rfxProductInvitation.vendorId = :vendorId', {
         vendorId: user.organization.id,
+      })
+      .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedure')
+      .andWhere('rfxBidProcedure.postingDate > :now', {
+        now,
       });
 
     return await this.giveQueryResponse<RFX>(query, dataQuery);
