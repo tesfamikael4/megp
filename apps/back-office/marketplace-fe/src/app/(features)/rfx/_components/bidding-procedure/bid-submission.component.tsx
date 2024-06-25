@@ -27,6 +27,7 @@ const schema = z.object({
   bidValidityPeriod: z.number(),
   submissionDeadline: z.string(),
   openingDate: z.string(),
+  postingDate: z.string(),
   deltaPercentage: z.number(),
   idleTime: z.number().optional().default(0),
   isReverseAuction: z.boolean().default(false),
@@ -113,6 +114,15 @@ export default function BidSubmission() {
     reset(biddingProcedure?.items?.[0] ?? {});
   }, [biddingProcedure]);
 
+  useEffect(() => {
+    if (!watch('isReverseAuction')) {
+      setValue('round', 0);
+      setValue('minimumBidDecrementPercentage', 0);
+      setValue('roundDuration', 0);
+      setValue('idleTime', 0);
+    }
+  }, [watch('isReverseAuction')]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <Stack className="w-full">
@@ -174,7 +184,42 @@ export default function BidSubmission() {
             }}
           />
         </Flex>
+
         <Flex className="gap-4">
+          <Controller
+            name="postingDate"
+            control={control}
+            render={({ field: { name, value } }) => {
+              const submissionDeadline = watch('submissionDeadline');
+              const maxDate =
+                submissionDeadline &&
+                !isNaN(new Date(submissionDeadline).getTime())
+                  ? new Date(
+                      new Date(submissionDeadline).getTime() - 5 * 60 * 1000,
+                    )
+                  : new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+              return (
+                <DateTimePicker
+                  name={name}
+                  withAsterisk
+                  label="Posting Date"
+                  placeholder="Posting Date"
+                  value={value ? new Date(value) : null}
+                  maxDate={maxDate}
+                  minDate={new Date()}
+                  className="w-1/2"
+                  onChange={(value) => {
+                    setValue(
+                      'postingDate',
+                      value?.toISOString() ?? new Date().toISOString(),
+                    );
+                  }}
+                  error={errors?.postingDate?.message}
+                />
+              );
+            }}
+          />
           <Controller
             name="bidValidityPeriod"
             control={control}
@@ -193,6 +238,8 @@ export default function BidSubmission() {
               />
             )}
           />
+        </Flex>
+        <Flex className="gap-4">
           <Controller
             name="deltaPercentage"
             control={control}

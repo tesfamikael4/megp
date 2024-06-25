@@ -5,11 +5,11 @@ import { Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { ExpandableTable } from '@megp/core-fe';
-import { useLazyListQuery } from '../rfx/_api/rfx/rfx.api';
 import RFXDetail from '../rfx/_components/configuration/rfx-detail';
+import { useLazyListRfxOnEvaluationQuery } from '@/store/api/rfx/rfx.api';
 
-export default function Preparation() {
-  const [trigger, { data, isFetching }] = useLazyListQuery();
+export default function Evaluation() {
+  const [trigger, { data, isFetching }] = useLazyListRfxOnEvaluationQuery();
   const router = useRouter();
 
   const config = {
@@ -62,10 +62,7 @@ export default function Preparation() {
   };
 
   const onRequestChange = (request: any) => {
-    trigger({
-      ...request,
-      where: [[{ column: 'status', operator: '=', value: 'EVALUATION' }]],
-    });
+    trigger(request);
   };
   return (
     <Section title="RFQs (Evaluation)" collapsible={false}>

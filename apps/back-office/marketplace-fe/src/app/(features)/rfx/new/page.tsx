@@ -26,7 +26,7 @@ export default function RFXPage() {
     columns: [
       {
         accessor: 'procurementReference',
-        title: 'Ref',
+        title: 'Reference Number',
         width: 150,
         sortable: true,
       },

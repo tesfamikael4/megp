@@ -8,8 +8,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-width: rem(50px);
-  height: rem(50px);
+  min-width: 3.125rem;
+  height: 3.125rem;
   background-image: var(--docs-home-page-gradient);
 }
 

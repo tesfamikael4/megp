@@ -54,7 +54,7 @@ export default function Invitation({ itemId }: { itemId: string }) {
     isExpandable: true,
     isSearchable: true,
     primaryColumn: 'product',
-    isFetching: isGettingInvitations,
+    isLoading: isGettingInvitations,
     expandedRowContent: (products) => {
       return <InvitationDetail products={products} />;
     },

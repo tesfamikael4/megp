@@ -111,11 +111,11 @@ const DocumentaryEvidence = () => {
           }
         });
 
-        notifications.show({
-          title: 'Documentary Evidences',
-          message: 'Documentary evidences uploaded successfully',
-          color: 'green',
-        });
+        // notifications.show({
+        //   title: 'Documentary Evidences',
+        //   message: 'Documentary evidences uploaded successfully',
+        //   color: 'green',
+        // });
       } catch (err) {
         notifications.show({
           title: 'Error',

@@ -12,16 +12,12 @@ export default function RFXDetail({ rfx }: any) {
       value: rfx?.description,
     },
     {
-      key: 'Procurment Referance',
-      value: rfx?.procurementReferenceNo,
+      key: 'Procurment Reference',
+      value: rfx?.procurementReferenceNumber,
     },
     {
       key: 'Budget Amount',
-      value: rfx?.budgetAmount,
-    },
-    {
-      key: 'Budget Amount Currency',
-      value: rfx?.budgetAmountCurrency,
+      value: `${rfx?.budgetAmountCurrency} ${rfx?.budgetAmount}`,
     },
   ];
   return <DetailTable data={rfxDetail} />;

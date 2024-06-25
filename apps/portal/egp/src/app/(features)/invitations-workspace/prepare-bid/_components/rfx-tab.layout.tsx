@@ -113,7 +113,10 @@ export default function RfxDetailTabs({
       selected?.status == 'ENDED'
     )
       router.push(`/invitations-workspace/prepare-bid/${rfxId}/price-schedule`);
-    else if (selected?.status == 'AUCTION' && !selected?.activeRound)
+    else if (
+      (selected?.status == 'AUCTION' && !selected?.activeRound) ||
+      selected?.status == 'EVALUATION'
+    )
       router.push(`/invitations-workspace/prepare-bid/${rfxId}`);
   }, [selected, rfxId]);
 
@@ -139,17 +142,21 @@ export default function RfxDetailTabs({
                   <Text>Closes in: </Text>
                 )}
                 {selected?.status == 'ENDED' && <Text>Auction Closed</Text>}
-                {selected?.status == 'AUCTION' && (
+                {(selected?.status == 'AUCTION' ||
+                  selected?.status == 'APPROVED') && (
                   <Timer
                     targetDate={
                       new Date(
-                        selected?.activeRound?.end ??
-                          selected?.nextRound?.start,
+                        new Date(
+                          selected?.activeRound?.end ??
+                            selected?.nextRound?.start,
+                        ).getTime() -
+                          new Date().getTimezoneOffset() * 60000, // Adjusting for timezone offset
                       )
                     }
                   />
                 )}
-                <Button
+                {/* <Button
                   variant="filled"
                   className="my-auto"
                   onClick={() => {
@@ -160,15 +167,20 @@ export default function RfxDetailTabs({
                   }}
                 >
                   Release Key
-                </Button>
+                </Button> */}
               </Flex>
             </div>
             <Stack className="ml-8 mb-6">
               <Flex className="items-center gap-4">
-                <Text>
-                  Round {selected?.activeRound?.round} of{' '}
-                  {selected?.rfxBidProcedure?.round}
-                </Text>
+                {selected?.activeRound?.round !== 0 && (
+                  <Text>
+                    Round {selected?.activeRound?.round} of{' '}
+                    {selected?.rfxBidProcedure?.round}
+                  </Text>
+                )}
+                {selected?.activeRound?.round == 0 && (
+                  <Text>Solicitation Phase</Text>
+                )}
               </Flex>
               <Flex className="items-center gap-4">
                 <Text>Submission Deadline: </Text>
@@ -176,6 +188,9 @@ export default function RfxDetailTabs({
               </Flex>
               {selected?.status == 'AUCTION' && !selected?.activeRound && (
                 <Text className="mx-auto">RFQ in Idle Time</Text>
+              )}
+              {selected?.status == 'EVALUATION' && !selected?.activeRound && (
+                <Text className="mx-auto">RFQ in Evaluation</Text>
               )}
               <Badge
                 onClick={() => {

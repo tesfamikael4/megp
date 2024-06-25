@@ -10,20 +10,12 @@ export default function ItemConfiguration() {
   );
   const generalDescription = [
     {
-      key: 'Name',
-      value: item?.name,
-    },
-    {
       key: 'Description',
       value: item?.description,
     },
     {
       key: 'Item Code',
       value: item?.itemCode,
-    },
-    {
-      key: 'Item Type',
-      value: item?.itemType,
     },
     {
       key: 'Quantity',
@@ -34,17 +26,21 @@ export default function ItemConfiguration() {
       value: item?.unitOfMeasure,
     },
     {
-      key: 'Estimated Price',
-      value: `${item?.estimatedPrice} ${item?.estimatedPriceCurrency}`,
+      key: 'Unit Price',
+      value: `${item?.estimatedPriceCurrency} ${item?.estimatedPrice}`,
     },
     {
-      key: 'Market Price',
-      value: `${item?.marketPrice} ${item?.marketPriceCurrency}`,
+      key: 'Calculated Amount',
+      value: `${(parseInt(item?.estimatedPrice ?? 0) * item?.estimatedPrice).toLocaleString('en-US', { style: 'currency', currency: item?.estimatedPriceCurrency })}`,
     },
-    {
-      key: 'has Bill of quantity',
-      value: `${item?.marketPrice}`,
-    },
+    // {
+    //   key: 'Market Price',
+    //   value: `${item?.marketPrice} ${item?.marketPriceCurrency}`,
+    // },
+    // {
+    //   key: 'has Bill of quantity',
+    //   value: `${item?.marketPrice}`,
+    // },
   ];
 
   return (

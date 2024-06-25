@@ -18,8 +18,10 @@ export const PreviewDocument = () => {
   const { id, bidderId, requirmentId, assessmentMode } = useParams();
   const [title, setTitle] = useState('');
   const [teamMembersAssessment, setTeamMembersAssessment] = useState([]);
-  const [getAttachedEvidence, { isLoading: isGettingAttachemnt }] =
-    useLazyGetEvidenceAttachmentQuery();
+  const [
+    getAttachedEvidence,
+    { data: attachedEvidence, isLoading: isGettingAttachemnt },
+  ] = useLazyGetEvidenceAttachmentQuery();
 
   const getTeamResult = async () => {
     try {
@@ -89,7 +91,9 @@ export const PreviewDocument = () => {
     >
       {page == 'documentPreview' ? (
         <embed
-          src={'https://arxiv.org/pdf/2405.19374'}
+          src={
+            attachedEvidence?.presignedUrl ?? 'https://arxiv.org/pdf/2405.19374'
+          }
           type="application/pdf"
           width="100%"
           height="400px"
