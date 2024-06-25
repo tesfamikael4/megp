@@ -34,7 +34,10 @@ export const ItemRule = () => {
       <Button onClick={open} className="mb-2">
         Add Rule
       </Button>
-      <ExpandableTable config={config} data={data?.items ?? []} />
+      <ExpandableTable
+        config={config}
+        data={data?.items?.filter((item) => item.name !== 'unit_price') ?? []}
+      />
       {/* <Group className="mt-2" justify="end">
         <Button>Save</Button>
       </Group> */}

@@ -4,13 +4,16 @@ import { ActionIcon, Tooltip } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight, IconUsers } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useLazyGetItemsQuery } from '@/store/api/tendering/technical-responsiveness.api';
-import { LotOverview } from '@/app/(features)/evaluation/_components/lot-overview';
+import {
+  useLazyGetItemsByBidderIdQuery,
+  useLazyGetItemsQuery,
+} from '@/store/api/tendering/technical-responsiveness.api';
+import { BidderOverView } from '@/app/(features)/evaluation/_components/bidder-overview';
 export default function BidOpening() {
   const router = useRouter();
-  const { tenderId, lotId } = useParams();
+  const { tenderId, lotId, bidderId } = useParams();
   const [getItems, { data: items, isLoading: isItemsLoading }] =
-    useLazyGetItemsQuery();
+    useLazyGetItemsByBidderIdQuery();
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isLoading: isItemsLoading,
@@ -22,7 +25,6 @@ export default function BidOpening() {
       {
         accessor: 'description',
       },
-
       {
         accessor: '',
         render: (record) => (
@@ -31,7 +33,7 @@ export default function BidOpening() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/${record.id}`,
+                `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/bidders/${bidderId}/${record.id}`,
               );
             }}
           >
@@ -42,40 +44,20 @@ export default function BidOpening() {
       },
     ],
   };
-
   return (
     <>
-      <LotOverview
-        basePath={`/evaluation/${tenderId}/${lotId}/responsiveness`}
+      <BidderOverView
+        basePath={`/evaluation/${tenderId}/${lotId}/responsiveness/bidders`}
         milestone="technicalResponsiveness"
-        teamAssessment
+        hideComplete
       />
-      <Section
-        title="Items List"
-        collapsible={false}
-        className="mt-2"
-        action={
-          <Tooltip label="Bidders List">
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              onClick={() => {
-                router.push(
-                  `/evaluation/team-assessment/${tenderId}/${lotId}/responsiveness/bidders`,
-                );
-              }}
-            >
-              <IconUsers size={14} />
-            </ActionIcon>
-          </Tooltip>
-        }
-      >
+      <Section title="Items List" collapsible={false} className="mt-2">
         <ExpandableTable
           config={config}
-          data={items?.items ?? []}
-          total={items?.total ?? 0}
+          data={items ?? []}
+          // total={items?.total ?? 0}
           onRequestChange={(request) => {
-            getItems({ lotId, collectionQuery: request });
+            getItems({ lotId, bidderId, collectionQuery: request });
           }}
         />
       </Section>
