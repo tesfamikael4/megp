@@ -17,6 +17,7 @@ import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
 import { REQUEST } from '@nestjs/core';
 import {
+  BdsSubmission,
   BidRegistration,
   EqcTechnicalScoring,
   Item,
@@ -654,35 +655,53 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
 
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const assessments = await manager
-      .getRepository(TechnicalScoringAssessment)
-      .exists({
-        where: {
-          bidRegistrationDetail: {
-            lotId: itemData.lotId,
-            // technicalItems: ArrayContains([itemData.itemId]),
+    const [assessments, assessmentCount, biddersCount, bdsSubmission] =
+      await Promise.all([
+        manager.getRepository(TechnicalScoringAssessment).exists({
+          where: {
+            bidRegistrationDetail: {
+              lotId: itemData.lotId,
+              // technicalItems: ArrayContains([itemData.itemId]),
+            },
+            submit: false,
+            evaluatorId: Not(req.user.userId),
           },
-          submit: false,
-          evaluatorId: Not(req.user.userId),
-        },
-      });
+        }),
+        manager.getRepository(TechnicalScoringAssessment).count({
+          where: {
+            bidRegistrationDetail: {
+              lotId: itemData.lotId,
+              // technicalItems: ArrayContains([itemData.itemId]),
+            },
+          },
+        }),
+        manager.getRepository(BiddersComparison).count({
+          where: {
+            bidRegistrationDetail: {
+              lotId: itemData.lotId,
+            },
+            passFail: true,
+            bidderStatus: BidderStatusEnum.TechnicalResponsivenessSucceeded,
+            isCurrent: true,
+          },
+        }),
+        manager.getRepository(BdsSubmission).findOne({
+          where: {
+            tenderId: itemData.tenderId,
+          },
+        }),
+      ]);
 
-    const assessmentCount = await manager
-      .getRepository(TechnicalScoringAssessment)
-      .count({
-        where: {
-          bidRegistrationDetail: {
-            lotId: itemData.lotId,
-            // technicalItems: ArrayContains([itemData.itemId]),
-          },
-        },
-      });
+    const teamType =
+      bdsSubmission.envelopType == 'single envelop'
+        ? TeamRoleEnum.FINANCIAL_EVALUATOR
+        : TeamRoleEnum.TECHNICAL_EVALUATOR;
 
     const members = await manager.getRepository(TeamMember).count({
       where: {
         team: {
           lotId: itemData.lotId,
-          teamType: TeamRoleEnum.TECHNICAL_EVALUATOR,
+          teamType: teamType,
         },
       },
     });
@@ -696,7 +715,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
       },
     );
 
-    if (!assessments && members == assessmentCount) {
+    if (!assessments && members * biddersCount == assessmentCount) {
       await manager.getRepository(TenderMilestone).update(
         {
           lotId: itemData.lotId,

@@ -13,7 +13,7 @@ import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { TechnicalScoringAssessmentDetail } from 'src/entities/technical-scoring-assessment-detail.entity';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous } from 'src/shared/authorization';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 import { TechnicalScoringAssessmentDetailService } from '../service/technical-scoring-assessment-detail.service';
 import { CompleteScoringBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
@@ -25,7 +25,7 @@ const options: ExtraCrudOptions = {
   // createDto: CreateTechnicalScoringAssessmentDetailDto,
 };
 
-@UseGuards(GroupMemberGuard(TeamRoleEnum.TECHNICAL_EVALUATOR))
+@UseGuards(GroupMemberGuard(TeamRoleEnum.FINANCIAL_EVALUATOR))
 @Controller('technical-scoring-assessment-detail')
 @ApiTags('Technical Scoring Assessment Detail Controller')
 export class TechnicalScoringAssessmentDetailController extends ExtraCrudController<TechnicalScoringAssessmentDetail>(
@@ -118,6 +118,7 @@ export class TechnicalScoringAssessmentDetailController extends ExtraCrudControl
   }
 
   @Put('submit-checklist')
+  @ApiBody({})
   async submitChecklist(@Body() itemData: any, @Req() req) {
     return await this.technicalScoringAssessmentDetailService.submit(
       itemData,
