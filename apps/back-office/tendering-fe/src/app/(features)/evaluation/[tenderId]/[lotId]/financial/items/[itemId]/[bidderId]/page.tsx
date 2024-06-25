@@ -10,6 +10,7 @@ import {
   useGetRulesByBidderIdQuery,
   useSaveBidPriceMutation,
 } from '@/store/api/tendering/bid-price-evaluation.api';
+import { useLazyGetItemBidderDetailsQuery } from '@/store/api/tendering/tendering.api';
 import {
   Alert,
   Box,
@@ -39,6 +40,8 @@ export default function BiderDetail() {
     useGetHasUnitPriceQuery({ lotId, itemId, bidderId });
   const [createUnitPrice, { isLoading: isCreatingUnitprice }] =
     useCreateUnitPriceMutation();
+  const [getBidderItemDetail, { data: itemBidderDetailData }] =
+    useLazyGetItemBidderDetailsQuery();
   const [save, { isLoading: isSaving }] = useSaveBidPriceMutation();
   const config: ExpandableTableConfig = {
     minHeight: 100,
@@ -125,6 +128,15 @@ export default function BiderDetail() {
   };
 
   useEffect(() => {
+    getBidderItemDetail({
+      tenderId,
+      lotId,
+      itemId,
+      bidderId,
+    });
+  }, [itemId]);
+
+  useEffect(() => {
     if (hasUnitPrice && !hasUnitPrice?.hasFormula) {
       initUnitPrice();
     }
@@ -137,8 +149,7 @@ export default function BiderDetail() {
       />
 
       <Section
-        title="Title"
-        subTitle="sub title"
+        title={`Item : ${itemBidderDetailData?.lots?.[0]?.items?.[0]?.name ?? ''}`}
         collapsible={false}
         className="mt-2"
       >
