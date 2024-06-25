@@ -38,6 +38,9 @@ export class RfxRevisionApprovalController extends ExtraCrudController<RfxRevisi
 
   @Get('can-submit/:rfxId')
   async canSubmit(@Param('rfxId') rfxId: string, @CurrentUser() user: any) {
-    return await this.revisionApprovalService.canSubmit(rfxId, user);
+    return await this.revisionApprovalService.canSubmitToRfxApproval(
+      rfxId,
+      user,
+    );
   }
 }

@@ -43,7 +43,7 @@ export class SolRoundService extends ExtraCrudService<SolRound> {
   async createZeroSolicitationRound(rfxBidProcedure: RfxBidProcedure) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const startingTime = rfxBidProcedure.invitationDate;
+    const startingTime = rfxBidProcedure.postingDate;
     const endingTime = rfxBidProcedure.submissionDeadline;
 
     const roundItem: CreateRoundDto = {

@@ -24,6 +24,10 @@ export class CreateRfxBidProcedureDTO {
 
   @ApiProperty()
   @IsString()
+  postingDate: any;
+
+  @ApiProperty()
+  @IsString()
   openingDate: any;
 
   @ApiProperty()

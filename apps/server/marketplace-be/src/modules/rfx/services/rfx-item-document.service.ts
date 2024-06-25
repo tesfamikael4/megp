@@ -6,6 +6,7 @@ import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { RfxItemDocument } from 'src/entities';
 import { CreateRfxItemDocumentDto } from '../dtos/rfx-document.dto';
+import { EMarketplaceBucketName } from 'src/utils/enums/bucket.enum';
 
 @Injectable()
 export class RfxItemDocumentService extends ExtraCrudService<RfxItemDocument> {
@@ -21,7 +22,7 @@ export class RfxItemDocumentService extends ExtraCrudService<RfxItemDocument> {
   async create(itemData: CreateRfxItemDocumentDto): Promise<any> {
     const file = await this.minIOService.generatePresignedUploadUrl(
       itemData.fileInfo as any,
-      'marketplace/',
+      EMarketplaceBucketName.RFQ_ITEM_DOCUMENTS,
     );
 
     const item = this.rfxItemDocumentRepository.create(itemData);

@@ -4,7 +4,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
@@ -26,7 +26,7 @@ export class RfxContractTerm extends Audit {
   @Column()
   rfxId: string;
 
-  @OneToOne(() => RFX, (rfx) => rfx.rfxContractTerms)
+  @ManyToOne(() => RFX, (rfx) => rfx.rfxContractTerms)
   @JoinColumn({ name: 'rfxId' })
   rfx: RFX;
 }

@@ -139,4 +139,71 @@ export class RfxRevisionApprovalService extends ExtraCrudService<RfxRevisionAppr
 
     return { canSubmit: true };
   }
+
+  async canSubmitToRfxApproval(rfxId: string, user: any) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const [teamMembersCount, isTeamLead, bidProcedure, revisionApprovals] =
+      await Promise.all([
+        entityManager.getRepository(RfxProcurementTechnicalTeam).count({
+          where: {
+            rfxId,
+          },
+        }),
+        entityManager.getRepository(RfxProcurementTechnicalTeam).exists({
+          where: {
+            userId: user.userId,
+            rfxId,
+            isTeamLead: true,
+          },
+        }),
+        entityManager.getRepository(RfxBidProcedure).findOne({
+          where: {
+            rfxId,
+          },
+          select: {
+            id: true,
+            reviewDeadline: true,
+          },
+        }),
+        entityManager.getRepository(RfxRevisionApproval).find({
+          where: {
+            rfxId,
+          },
+          select: {
+            id: true,
+            status: true,
+          },
+        }),
+      ]);
+
+    if (!isTeamLead)
+      return {
+        canSubmit: false,
+        reason: 'You are not a Technical Team Lead.',
+        isTeamLead: false,
+      };
+
+    const revisionCount = revisionApprovals.length;
+    const adjustResponse = revisionApprovals.some(
+      (revision) => revision.status == ERfxRevisionApprovalStatusEnum.ADJUST,
+    );
+
+    if (adjustResponse)
+      return {
+        canSubmit: false,
+        reason: 'Prepared RFQ is not Approved by team members.',
+        isTeamLead: true,
+      };
+
+    const now = new Date();
+    if (now < bidProcedure.reviewDeadline && revisionCount < teamMembersCount)
+      return {
+        canSubmit: false,
+        reason: 'Team Members Reviewal Period not ended.',
+        isTeamLead: true,
+      };
+
+    return { canSubmit: true, isTeamLead: true };
+  }
 }

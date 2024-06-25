@@ -23,7 +23,7 @@ export class RfxRevisionApproval extends Audit {
     enum: ERfxRevisionApprovalStatusEnum,
     default: ERfxRevisionApprovalStatusEnum.APPROVED,
   })
-  status: string;
+  status: ERfxRevisionApprovalStatusEnum;
 
   @Column('uuid')
   rfxId: string;

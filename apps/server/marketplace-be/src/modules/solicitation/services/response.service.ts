@@ -13,6 +13,7 @@ import { REQUEST } from '@nestjs/core';
 import { EncryptionHelperService } from '../../../utils/services/encryption-helper.service';
 import { SolRoundService } from './round.service';
 import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
+import { EMarketplaceBucketName } from 'src/utils/enums/bucket.enum';
 
 @Injectable()
 export class SolResponseService extends ExtraCrudService<SolResponse> {
@@ -65,7 +66,7 @@ export class SolResponseService extends ExtraCrudService<SolResponse> {
     for (const item of itemData.responses) {
       const url = await this.minIoService.generatePresignedUploadUrl(
         item.fileInfo,
-        'marketplace/',
+        EMarketplaceBucketName.SOLICITATION_RESPONSES,
       );
 
       preSignedResponse.push({
