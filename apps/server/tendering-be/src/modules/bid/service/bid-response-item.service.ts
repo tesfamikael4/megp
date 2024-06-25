@@ -91,7 +91,7 @@ export class BidResponseItemService {
       .getRepository(BidRegistrationDetail)
       .update(bidRegistrationDetail.id, {
         technicalItems: [
-          ...bidRegistrationDetail?.technicalItems,
+          ...(bidRegistrationDetail?.technicalItems ?? []),
           inputDto.itemId,
         ],
       });
@@ -187,6 +187,15 @@ export class BidResponseItemService {
     await manager
       .getRepository(BidResponseItem)
       .upsert(rateItem, ['bidRegistrationDetailId', 'itemId', 'key']);
+
+    await manager
+      .getRepository(BidRegistrationDetail)
+      .update(bidRegistrationDetail.id, {
+        financialItems: [
+          ...(bidRegistrationDetail?.financialItems ?? []),
+          inputDto.itemId,
+        ],
+      });
 
     return items;
   }
