@@ -270,7 +270,7 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                   </div>{' '}
                 </div>
                 <div className="flex gap-2 justify-between items-center">
-                  <div> &copy; 2023 PPDA </div>
+                  <div> &copy; {new Date().getFullYear()} PPDA </div>
                   <div className="flex gap-2 justify-between items-center">
                     <span>Powered by</span>
                     <Image

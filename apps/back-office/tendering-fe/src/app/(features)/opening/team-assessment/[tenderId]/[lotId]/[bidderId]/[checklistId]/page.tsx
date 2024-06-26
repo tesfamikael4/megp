@@ -78,11 +78,15 @@ export default function ChecklistDetail() {
                     {
                       accessor: 'checked',
                       title: 'Assessment',
-                      render: (record) => (record.checked ? 'Yes' : 'No'),
+                      render: (record) => record.qualified ?? '',
+                    },
+                    {
+                      accessor: 'remark',
+                      render: (record) => record.remark ?? '',
                     },
                   ],
                 }}
-                data={data ?? []}
+                data={data?.filter((d) => !d.isTeamAssessment) ?? []}
               />
             </Box>
           )}

@@ -1,5 +1,6 @@
 import { MenuItem } from '@megp/core-fe';
 import {
+  IconArrowFork,
   IconBuildingBank,
   IconFileStack,
   IconFolderOpen,
@@ -44,6 +45,16 @@ export const Menu: MenuItem[] = [
       {
         label: 'Workflow',
         link: '/workflow',
+      },
+    ],
+  },
+  {
+    label: 'Endorsement',
+    icon: IconArrowFork,
+    links: [
+      {
+        label: 'Evaluation Endorsement',
+        link: '/evaluation-endorsement',
       },
     ],
   },
