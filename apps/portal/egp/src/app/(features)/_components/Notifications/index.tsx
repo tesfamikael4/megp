@@ -5,13 +5,18 @@ import { findNotifDate } from './utils';
 
 // Notification component
 export interface NotificationProps {
-  opened: boolean;
-  setOpened: (any) => void;
-  user: any;
+  notifications: {
+    total: number;
+    items: {
+      id: string;
+      title: string;
+      content: string;
+      status: string;
+      createdAt: string;
+    }[];
+  };
 }
-const Notification = () => {
-  const { data: notifications } = useGetNotificationsQuery({});
-
+const Notification = ({ notifications }) => {
   return (
     <>
       <div
