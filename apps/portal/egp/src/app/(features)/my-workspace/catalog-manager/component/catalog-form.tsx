@@ -186,8 +186,13 @@ export default function CatalogForm({ mode }: any) {
       await deleteCatalog(id.toString()).unwrap();
       notify('Success', 'Catalog deleted successfully');
       router.push('/my-workspace/catalog-manager');
-    } catch {
-      notify('Error', 'Error in deleting');
+    } catch (err) {
+      err?.data?.message.startsWith('update or delete on table')
+        ? notify(
+            'Error',
+            'This Product has relation with Image or delivery location',
+          )
+        : notify('Error', 'Error in deleting');
     }
   };
   const onError = (err) => {

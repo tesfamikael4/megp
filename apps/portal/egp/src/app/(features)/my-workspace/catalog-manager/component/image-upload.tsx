@@ -16,7 +16,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { Section, logger, notify } from '@megp/core-fe';
+import { Section, notify } from '@megp/core-fe';
 import {
   IconDotsVertical,
   IconDownload,
@@ -26,7 +26,6 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-
 import {
   useGetFilesQuery,
   useLazyDownloadFilesQuery,
@@ -115,7 +114,6 @@ export const UploadImage = ({
 
         notify('Success', 'Document deleted successfully');
       } catch (err) {
-        logger.log(err);
         notify('Error', 'Something went wrong while deleting document');
       }
     };
@@ -175,7 +173,6 @@ export const UploadImage = ({
       await upload(file as unknown as FileList, document.name);
     } catch (error) {
       setIsLoading(false);
-      logger.log(error);
     }
   };
 
@@ -231,6 +228,7 @@ export const UploadImage = ({
       notify('Error', 'Something went wrong while deleting image');
     }
   };
+
   return (
     <Section
       title="Images"
@@ -240,7 +238,7 @@ export const UploadImage = ({
           <Button
             leftSection={<IconUpload size={18} />}
             onClick={open}
-            disabled={disableFields}
+            disabled={disableFields || productDocuments?.total >= 3}
           >
             Upload
           </Button>

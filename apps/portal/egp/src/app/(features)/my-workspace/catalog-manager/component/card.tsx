@@ -1,21 +1,22 @@
 import { useLazyReadItemQuery } from '@/store/api/item-master/item-master.api';
-import { Card, Group, Text, Image, Box, Badge } from '@mantine/core';
+import { Card, Group, Text, Image, Box, Badge, Divider } from '@mantine/core';
 import { IconPencil } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-
 import { useEffect } from 'react';
 
 export default function ProductCard({ data }) {
   const route = useRouter();
 
   const [triggerItem, { data: item }] = useLazyReadItemQuery();
+
   useEffect(() => {
     triggerItem(data.itemMasterId);
   }, [data.itemMasterId, triggerItem]);
+
   return (
     <Card
       shadow="sm"
-      padding="lg"
+      padding="sm"
       radius="md"
       withBorder
       key={data.id}
@@ -25,37 +26,21 @@ export default function ProductCard({ data }) {
         route.push(`catalog-manager/${data.itemMasterId}/product/${data.id}`);
       }}
     >
-      <Card.Section>
-        <Image
-          src={data?.presignedUrl}
-          className="h-48 mt-2 object-cover"
-          fit="contain"
-          w="auto"
-          h="auto"
-          alt="product image"
-        />
+      <Card.Section h={160}>
+        <Box className="h-120 relative w-full h-full overflow-hidden">
+          <Image
+            src={data?.presignedUrl}
+            unstyled
+            alt="Product image"
+            className="object-contain w-full h-full"
+          />
+        </Box>
       </Card.Section>
-      <Group justify="space-between" mt="sm" mb="xs">
-        <Text fw={500}>{data?.name}</Text>
-        <Badge color="#1D8E3F" size="md">
-          <Group
-            className="ml-auto cursor-pointer"
-            onClick={() => {
-              route.push(
-                `catalog-manager/${data.itemMasterId}/product/${data.id}`,
-              );
-            }}
-          >
-            <IconPencil size={14} />
-          </Group>{' '}
-        </Badge>
-      </Group>
+      <Divider my={'lg'} />
 
-      <Box className="">
-        <Text size="sm" c="dimmed" lineClamp={4}>
-          {item?.description}
-        </Text>
-      </Box>
+      <Text size="sm" c="dimmed" lineClamp={4}>
+        {item?.description}
+      </Text>
     </Card>
   );
 }

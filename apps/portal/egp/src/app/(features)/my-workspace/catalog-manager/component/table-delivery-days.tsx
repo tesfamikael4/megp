@@ -1,5 +1,12 @@
 'use client';
-import { Box, Button, Group, Modal, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Modal,
+  NumberFormatter,
+  Title,
+} from '@mantine/core';
 import { IconCirclePlus, IconTrash } from '@tabler/icons-react';
 
 import {
@@ -64,12 +71,31 @@ export const DeliverDays = () => {
       {
         accessor: 'quantity',
         title: 'Quantity',
+        render: (row: any) => (
+          <Box>
+            <NumberFormatter
+              value={row?.quantity}
+              decimalScale={0}
+              thousandSeparator
+            />
+          </Box>
+        ),
       },
       {
         accessor: 'actions',
+        title: (
+          <Group>
+            {' '}
+            <Group className="ml-auto">Actions</Group>
+          </Group>
+        ),
         render: (row: any) => (
           <Group className="ml-auto">
-            <Button variant="light" onClick={() => handleDelete(row.id)}>
+            <Button
+              className="ml-auto"
+              variant="light"
+              onClick={() => handleDelete(row.id)}
+            >
               <IconTrash size={14} color="red" />
             </Button>
           </Group>
