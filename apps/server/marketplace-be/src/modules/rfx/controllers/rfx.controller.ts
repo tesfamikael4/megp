@@ -64,9 +64,9 @@ export class RfxController extends EntityCrudController<RFX>(options) {
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
-  async rfxesOnReviewal(@Query('q') q?: string) {
+  async rfxesOnReviewal(@CurrentUser() user: any, @Query('q') q?: string) {
     const query = decodeCollectionQuery(q);
-    return await this.rfxService.getRfxesOnReviewal(query);
+    return await this.rfxService.getRfxesOnReviewal(query, user);
   }
 
   @Patch('cancel/:rfxId')

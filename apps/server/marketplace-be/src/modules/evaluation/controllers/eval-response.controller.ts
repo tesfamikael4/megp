@@ -117,6 +117,7 @@ export class EvalResponseController extends ExtraCrudController<EvalResponse>(
     );
   }
 
+
   @Patch('submit-vendor-eval/:solRegistrationId/:isTeamAssessment')
   @ApiOperation({
     summary:

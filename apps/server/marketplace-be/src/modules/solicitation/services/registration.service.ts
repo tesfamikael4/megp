@@ -128,7 +128,7 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     return rfxRegistration;
   }
 
-  async solicitationStatus(query: CollectionQuery) {
+  async solicitationStatus(query: CollectionQuery, user: any) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
     const dataQuery = QueryConstructor.constructQuery<RFX>(
@@ -138,6 +138,9 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
 
     dataQuery
       .where('rfxes.status = :status', { status: ERfxStatus.APPROVED })
+      .andWhere('rfxes.organizationId = :organizationId', {
+        organizationId: user.organization.id,
+      })
       .loadRelationCountAndMap(
         'rfxes.solRegistrationCount',
         'rfxes.solRegistrations',
