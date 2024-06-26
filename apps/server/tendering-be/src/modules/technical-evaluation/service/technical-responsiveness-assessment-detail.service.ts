@@ -447,7 +447,6 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
               },
             },
           },
-          personnelId: evaluatorId,
         },
       }),
     ]);
