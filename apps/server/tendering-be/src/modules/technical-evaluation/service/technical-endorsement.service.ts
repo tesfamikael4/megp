@@ -27,14 +27,14 @@ export class TechnicalEndorsementService {
     @Inject(REQUEST)
     private request: Request,
 
-    // private readonly minIoService: MinIOService,
+    private readonly minIoService: MinIOService,
 
     // private readonly pdfGeneratorService: PdfGeneratorService,
 
     // private readonly documentService: DocumentService,
 
-    // @Inject('ENDORSEMENT_RMQ_SERVICE')
-    // private readonly endorsementRMQClient: ClientProxy,
+    @Inject('WORKFLOW_RMQ_SERVICE')
+    private readonly endorsementRMQClient: ClientProxy,
   ) {}
   //initiate workflow for tender
 
@@ -53,7 +53,7 @@ export class TechnicalEndorsementService {
       manager.getRepository(Lot),
       query,
     )
-      .leftJoinAndSelect('tenders.tenderMilestones', 'tenderMilestones')
+      .leftJoinAndSelect('lots.tenderMilestones', 'tenderMilestones')
       .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true })
       .andWhere('tenderMilestones.milestoneNum = :milestoneNum', {
         milestoneNum: 307,
@@ -142,12 +142,12 @@ export class TechnicalEndorsementService {
       },
       { compliance, qualification, responsiveness, scoring },
     );
-    // await this.endorsementRMQClient.emit('initiate-workflow', {
-    //   name: 'technicalEndorsement',
-    //   id: itemData.lotId,
-    //   itemName: lot.name,
-    //   organizationId: itemData.organizationId,
-    // });
+    await this.endorsementRMQClient.emit('initiate-workflow', {
+      name: 'technicalEndorsement',
+      id: itemData.lotId,
+      itemName: lot.name,
+      organizationId: itemData.organizationId,
+    });
     return true;
   }
 

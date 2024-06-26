@@ -27,6 +27,8 @@ import { TechnicalScoringAssessmentDetailController } from './controller/technic
 import { TechnicalScoringAssessmentController } from './controller/technical-scoring-assessments.controller';
 import { TechnicalEndorsementService } from './service/technical-endorsement.service';
 import { TechnicalEndorsementController } from './controller/technical-endorsement.controller';
+import { MinIOModule } from 'src/shared/min-io';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -41,6 +43,21 @@ import { TechnicalEndorsementController } from './controller/technical-endorseme
       TechnicalScoringAssessmentDetail,
     ]),
     BidModule,
+    MinIOModule,
+    // UtilityModule,
+    ClientsModule.register([
+      {
+        name: 'WORKFLOW_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'workflow-initiate',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
   ],
   providers: [
     TechnicalPreliminaryAssessmentDetailService,

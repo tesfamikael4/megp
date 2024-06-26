@@ -570,7 +570,6 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
               },
             },
           },
-          personnelId: evaluatorId,
         },
       }),
     ]);

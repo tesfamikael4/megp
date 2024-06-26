@@ -330,7 +330,6 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
               },
             },
           },
-          personnelId: evaluatorId,
         },
       }),
     ]);

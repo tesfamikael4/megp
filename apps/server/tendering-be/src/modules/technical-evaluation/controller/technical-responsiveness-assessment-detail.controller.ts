@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Param, Put, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Put,
+  Query,
+  Req,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { TechnicalResponsivenessAssessmentDetail } from 'src/entities/technical-responsiveness-assessment-detail.entity';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CompleteResponsivenessBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
 import { TechnicalResponsivenessAssessmentDetailService } from '../service/technical-responsiveness-assessment-detail.service';
 
@@ -11,9 +20,10 @@ const options: ExtraCrudOptions = {
   entityIdName: 'technicalResponsivenessAssessmentId',
   // createDto: CreateTechnicalResponsivenessAssessmentDetailDto,
 };
-
 @Controller('technical-responsiveness-assessment-detail')
 @ApiTags('Technical Responsiveness Assessment Detail Controller')
+@ApiBearerAuth()
+@UseInterceptors(/* your interceptors if any */)
 export class TechnicalResponsivenessAssessmentDetailController extends ExtraCrudController<TechnicalResponsivenessAssessmentDetail>(
   options,
 ) {
