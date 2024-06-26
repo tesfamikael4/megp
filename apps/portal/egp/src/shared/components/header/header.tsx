@@ -1,7 +1,6 @@
 'use client';
 import styles from './header.module.scss';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import {
   Menu,
@@ -16,15 +15,15 @@ import {
   Flex,
   Text,
   Container,
-  Avatar,
   ActionIcon,
+  Indicator,
+  Tooltip,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-  IconBellRinging,
+  IconBell,
   IconChevronDown,
   IconLogout,
-  IconUser,
   IconUserCircle,
 } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
@@ -32,8 +31,21 @@ import { usePathname, useRouter } from 'next/navigation';
 import { IconSearch } from '@tabler/icons-react';
 import LogoIcon from './logo-icon';
 import Notification from '@/app/(features)/_components/Notifications';
+import { useGetNotificationsQuery } from '@/app/(features)/_api/notifications.api';
 
 function Header() {
+  const { data: notifications } = useGetNotificationsQuery({
+    where: [
+      [
+        {
+          column: 'status',
+          operator: '=',
+          value: 'new',
+        },
+      ],
+    ],
+  });
+
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
 
@@ -183,18 +195,22 @@ function Header() {
                     </Menu.Item>
                   </Menu.Dropdown>
                 </Menu>
-                <Menu withArrow position="bottom-end">
+                <Menu shadow="lg" width={320}>
                   <Menu.Target>
-                    <IconBellRinging
-                      size={20}
-                      stroke={1.2}
-                      className="cursor-pointer"
-                    />
+                    <Indicator
+                      size={18}
+                      radius={'xl'}
+                      label={notifications?.total}
+                      className="rounded-full"
+                      color="red"
+                    >
+                      <Tooltip label="Notifications">
+                        <IconBell size={24} stroke={1.5} />
+                      </Tooltip>
+                    </Indicator>
                   </Menu.Target>
-                  <Menu.Dropdown styles={{ dropdown: { padding: 0 } }}>
-                    <Menu.Item styles={{ item: { padding: 0 } }}>
-                      <Notification />
-                    </Menu.Item>
+                  <Menu.Dropdown>
+                    <Notification notifications={notifications} />
                   </Menu.Dropdown>
                 </Menu>
               </Group>

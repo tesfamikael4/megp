@@ -1,21 +1,26 @@
 import { Notifications } from '@/models/notification';
 import { vendorRegistrationApi } from '@/store/api/vendor_registration/api';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 const baseUrl = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 export const notificationsApi = vendorRegistrationApi.injectEndpoints({
   endpoints: (builder) => ({
     getNotifications: builder.query<
       { total: number; items: Notifications[] },
-      any
+      CollectionQuery
     >({
-      query: () => `notifications/get-my-notifications`,
-    }),
-    getNotificationsByUserId: builder.query<any, { id: string }>({
-      query: ({ id }) => `notifications/get-my-notifications`,
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `notifications/get-my-notifications${q}`,
+        };
+      },
     }),
   }),
 });
 
-export const { useGetNotificationsByUserIdQuery, useGetNotificationsQuery } =
-  notificationsApi;
+export const { useGetNotificationsQuery } = notificationsApi;
