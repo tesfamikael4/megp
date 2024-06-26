@@ -27,9 +27,14 @@ export class AreasOfBusinessInterestEntity extends Audit {
   @Column({ nullable: true })
   classification: string;// Classification of Contractor or consultants
   @Column({ nullable: true })
+  expiryDate: Date
+  @Column({ nullable: true })
   activationDate: string;
   @Column({ nullable: true })
-  expiryDate: Date
+  registrationDate: Date
+  @Column({ nullable: true })
+  registrationNumber: string
+
   @ManyToOne(() => VendorsEntity, (v) => v.areasOfBusinessInterest)
   @JoinColumn({ name: 'vendorId' })
   vendor: VendorsEntity;

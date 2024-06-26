@@ -31,6 +31,7 @@ import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { BusinessCategories } from 'src/modules/handling/enums/business-category.enum';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 import { PaymentReceiptCommand } from '../dto/payment-command.dto';
+import { BusinessInterestAreaDto } from '../dto/AdditionalService.dto';
 
 @Injectable()
 export class InvoiceService extends EntityCrudService<InvoiceEntity> {
@@ -62,10 +63,17 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     }
   }
 
-  async generateNewregistrationInvoice(
-    businesses: CreateAreasOfBusinessInterest[],
+  async generateNewRegistrationInvoice(
+    businessesInterestArea: BusinessInterestAreaDto,
     user: any,
   ) {
+    let businesses = [];
+    if (businessesInterestArea.areasOfBusinessInterest.length == 0) {
+      throw HttpStatus.BAD_REQUEST;
+    } else {
+      businesses = [...businessesInterestArea.areasOfBusinessInterest];
+    }
+
     try {
       const priceRangeIds = businesses.map((item) => item.priceRange);
       const vendor = await this.vendorsRepository.findOne({
@@ -88,9 +96,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       if (previousInvoice) {
         draftedBAs =
           await this.baService.getUserInprogressBusinessAreasByServiceId(
-            serviceBp.serviceId,
-            user.id,
-          );
+            serviceBp.serviceId, user.id);
 
         for (const ba of businesses) {
           // if (previousInvoice.paymentDetail.filter((item) => item.category == ba.category).length == 0) {
@@ -121,7 +127,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         }
       }
       const bas = [];
-      const areaOfBisunessInterests = [];
+      const areaOfBusinessInterests = [];
       for (const row of businesses) {
         const ba = new BusinessAreaEntity();
         ba.category = row.category;
@@ -136,19 +142,30 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         ba.priceRangeId = row.priceRange;
         ba.status = ApplicationStatus.PENDING;
         bas.push(ba);
-        areaOfBisunessInterests.push({
-          category: row.category,
-          priceRange: row.priceRange,
-          lineOfBusiness: row.lineOfBusiness,
-        });
+        if (row.category == BusinessCategories.GOODS || row.category == BusinessCategories.SERVICES) {
+          areaOfBusinessInterests.push({
+            category: row.category,
+            priceRange: row.priceRange,
+            ppdaRegistrationNumber: businessesInterestArea.ppdaRegistrationNumber,
+            ppdaRegistrationDate: businessesInterestArea.ppdaRegistrationDate,
+            expiryDate: businessesInterestArea.expiryDate,
+
+          });
+        } else {
+
+          areaOfBusinessInterests.push(row);
+        }
+
+
       }
 
       if (bas.length) {
         const isrvendor = await this.srRepository.findOne({
           where: { id: vendor.id },
         });
+        isrvendor.lineOfBusiness = [...businessesInterestArea.lineOfBusiness];
         const previousBA = isrvendor.areasOfBusinessInterest;
-        isrvendor.areasOfBusinessInterest = [...areaOfBisunessInterests, ...previousBA];
+        isrvendor.areasOfBusinessInterest = [...areaOfBusinessInterests, ...previousBA];
         await this.srRepository.update(
           isrvendor.id,
           isrvendor,

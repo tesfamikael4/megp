@@ -16,6 +16,7 @@ import {
 } from '../dto/vendor-initiation.dto';
 import { EntityCrudService } from 'src/shared/service';
 import {
+  AreasOfBusinessInterestEntity,
   BusinessAreaEntity,
   InvoiceEntity,
   IsrVendorsEntity,
@@ -501,7 +502,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   ///drfting vendor information
   async draftVendorNewRegistrationRequest(
     data: any,
-    userInfo: any,
+    user: any,
   ): Promise<any> {
     try {
       if (
@@ -588,7 +589,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           vendor.id = result.id;
           vendor.name = result.basic['name'];
           const previousInvoice = await this.invoiceService.getMyInvoice(
-            userInfo.id,
+            user.id,
             ServiceKeyEnum.NEW_REGISTRATION,
           );
           if (previousInvoice) {
@@ -604,7 +605,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               await this.invoiceService.generateInvoice(
                 priceRangeIds,
                 vendor,
-                userInfo,
+                user,
               );
             }
           } else {
@@ -618,14 +619,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             await this.invoiceService.generateInvoice(
               priceRangeIds,
               vendor,
-              userInfo,
+              user,
             );
           }
         } else if (
           data.initial.level.trim() === VendorStatusEnum.SUBMIT &&
           data.initial.status.trim() === VendorStatusEnum.SUBMIT
         ) {
-          return this.submitVendorInformation(data, userInfo);
+          const app = this.baService.getActiveApplicationByVendorId(result.id);
+          if (app == null) {
+            return this.submitVendorInformation(data, user);
+          } else {
+            return new HttpException("there_is_already_submitted_application", 400);
+          }
+
         }
         return { msg: 'Success' };
       }
@@ -1137,9 +1144,34 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       }
       return item;
     });
+
     vendorEntity.vendorAccounts = [...accounts];
-    vendorEntity.areasOfBusinessInterest =
-      isrVendorData.areasOfBusinessInterest;
+    if (isrVendorData.areasOfBusinessInterest?.lenght) {
+      const areasOfBusinessInterests: AreasOfBusinessInterestEntity[] = [];
+      isrVendorData.areasOfBusinessInterest.forEach(item => {
+        const bia = new AreasOfBusinessInterestEntity();
+        bia.category = item.category;
+        bia.priceRange = item.priceRange;
+        bia.expiryDate = item.expireDate;
+        bia.vendorId = item.vendorId;
+        if (bia.category == BusinessCategories.GOODS || bia.category == BusinessCategories.SERVICES) {
+          bia.registrationDate = item?.ppdaRegistrationDate;
+          bia.registrationNumber = item?.ppdaRegistrationNumber;
+
+        } else {
+          bia.registrationDate = item?.ncicRegistrationDate
+          bia.registrationNumber = item?.ncicRegistrationNumber;
+          bia.userType = item?.userType;
+          bia.classification = item?.classification;
+        }
+        areasOfBusinessInterests.push(bia);
+      });
+      vendorEntity.areasOfBusinessInterest = [...areasOfBusinessInterests];
+
+    }
+
+
+
     vendorEntity.beneficialOwnershipShareholders =
       isrVendorData.beneficialOwnershipShareholders;
     vendorEntity.registrationNumber =
@@ -1682,23 +1714,44 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
         for (const price of priceRanges) {
           for (const bi of vendorEntity?.areasOfBusinessInterest) {
+            let formattedBA = {};
             if (bi.priceRange == price.id) {
               const priceRange = this.commonService.formatPriceRange(price);
               // const lob = bi?.lineOfBusiness?.map((item: any) => item.name);
-              formattedAreaOfBi.push({
-                category: bi.category,
-                priceRange: priceRange,
-                ppdaRegistrationNumber: bi?.ppdaRegistrationNumber,
-                ppdaRegistrationDate: bi?.ppdaRegistrationDate,
-                expiryDate: bi?.expiryDate,
+              if (bi.category == BusinessCategories.GOODS || bi.category == BusinessCategories.SERVICES) {
+                vendorEntity.ppdaRegistrationNumber = bi?.ppdaRegistrationNumber;
+                vendorEntity.ppdaRegistrationDate = bi?.ppdaRegistrationDate;
+                vendorEntity.expiryDate = bi?.expiryDate;
+                formattedBA = {
+                  category: bi.category,
+                  priceRange: priceRange,
+                  ppdaRegistrationNumber: bi?.ppdaRegistrationNumber,
+                  ppdaRegistrationDate: bi?.ppdaRegistrationDate,
+                  expiryDate: bi?.expiryDate,
 
-                // lineOfBusiness: lob,
-              });
+                  // lineOfBusiness: lob,
+                }
+              } else {
+                formattedBA = {
+                  category: bi.category,
+                  priceRange: priceRange,
+                  userType: bi?.userType,
+                  classification: bi?.classification,
+                  expiryDate: bi?.expiryDate,
+                  ncicRegistrationNumber: bi?.ncicRegistrationNumber,
+                  ncicRegistrationDate: bi?.ncicRegistrationDate
+
+                }
+              }
+
+              formattedAreaOfBi.push(formattedBA);
             }
           }
         }
         vendorEntity.areasOfBusinessInterestView = formattedAreaOfBi;
       }
+
+
 
       // getting the preferential treatments  if any
       const keys = this.commonService.getPreferentialServices();
