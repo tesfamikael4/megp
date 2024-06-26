@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -25,12 +25,13 @@ export class EqcTechnicalScoringService extends ExtraCrudService<EqcTechnicalSco
   async update(id: string, itemData: any): Promise<EqcTechnicalScoring> {
     try {
       const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-      const item = await manager
-        .getRepository(EqcTechnicalScoring)
-        .findOneOrFail({
-          where: { id },
-          relations: ['children', 'lot'],
-        });
+      const item = await manager.getRepository(EqcTechnicalScoring).findOne({
+        where: { id },
+        relations: ['children', 'lot'],
+      });
+      if (!item) {
+        throw new BadRequestException('item_not_found');
+      }
 
       await manager
         .getRepository(EqcTechnicalScoring)
