@@ -24,6 +24,7 @@ import {
   PaymentCommand,
   PaymentReceiptCommand,
 } from '../dto/payment-command.dto';
+import { BusinessInterestAreaDto } from '../dto/AdditionalService.dto';
 
 @Controller('invoices')
 @ApiTags('Invoices')
@@ -80,12 +81,12 @@ export class InvoicesController {
 
   @Post('generate-new-registration-invoice')
   async generateNewRegistrationInvoice(
-    @Body() businesses: CreateAreasOfBusinessInterest[],
+    @Body() businessesInterestArea: BusinessInterestAreaDto,
     @CurrentUser() user: any,
   ) {
-    if (businesses.length > 0) {
-      const result = await this.invoiceService.generateNewregistrationInvoice(
-        businesses,
+    if (businessesInterestArea.areasOfBusinessInterest?.length > 0) {
+      const result = await this.invoiceService.generateNewRegistrationInvoice(
+        businessesInterestArea,
         user,
       );
       if (result) return HttpStatus.CREATED;

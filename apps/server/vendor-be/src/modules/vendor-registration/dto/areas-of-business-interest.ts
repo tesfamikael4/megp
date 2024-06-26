@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { AreasOfBusinessInterestEntity } from 'src/entities';
 
 export class CreateAreasOfBusinessInterest {
@@ -9,8 +9,7 @@ export class CreateAreasOfBusinessInterest {
   @IsNotEmpty()
   category: string;
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
+  @IsOptional()
   lineOfBusiness: any[];
   @ApiProperty()
   @IsUUID()

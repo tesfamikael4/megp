@@ -217,4 +217,8 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       },
     });
   }
+  async getActiveApplicationByVendorId(vendorId: string) {
+    const app = await this.businessAreaRepository.findOne({ where: { vendorId: vendorId, status: ApplicationStatus.PENDING } })
+    return app;
+  }
 }
