@@ -41,6 +41,9 @@ export class RFX extends Audit {
   @Column({ nullable: true })
   procurementReferenceNumber: string;
 
+  @Column({ nullable: true })
+  description: string;
+
   @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
   budgetAmount: number;
 

@@ -293,7 +293,7 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
         vendorId: user.organization.id,
       })
       .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedure')
-      .andWhere('rfxBidProcedure.postingDate > :now', {
+      .andWhere('rfxBidProcedure.postingDate < :now', {
         now,
       });
 

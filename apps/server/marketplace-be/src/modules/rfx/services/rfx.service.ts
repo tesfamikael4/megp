@@ -104,6 +104,7 @@ export class RfxService extends EntityCrudService<RFX> {
 
       const rfxPayload = {
         name: prResponse?.name,
+        description: prResponse?.description,
         procurementCategory: prResponse?.procurementMechanisms?.procurementType,
         procurementReferenceNumber: prResponse?.procurementReference,
         budgetAmount: Number(prResponse?.totalEstimatedAmount),
@@ -524,7 +525,7 @@ export class RfxService extends EntityCrudService<RFX> {
     ]);
   }
 
-  async getRfxesOnReviewal(query: CollectionQuery) {
+  async getRfxesOnReviewal(query: CollectionQuery, user) {
     const dataQuery = QueryConstructor.constructQuery<RFX>(
       this.rfxRepository,
       query,
@@ -536,10 +537,17 @@ export class RfxService extends EntityCrudService<RFX> {
       .where('rfxes.status IN (:...statuses)', {
         statuses: [ERfxStatus.TEAM_REVIEWAL, ERfxStatus.ADJUSTMENT],
       })
-      .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedures')
-      .andWhere('rfxBidProcedures.reviewDeadline < :now', {
-        now,
+      .leftJoin(
+        'rfxes.rfxProcurementTechnicalTeams',
+        'rfxProcurementTechnicalTeams',
+      )
+      .andWhere('rfxProcurementTechnicalTeams.userId = :userId', {
+        userId: user.userId,
       });
+    // .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedures')
+    // .andWhere('rfxBidProcedures.reviewDeadline > :now', {
+    //   now,
+    // });
 
     return await this.giveQueryResponse<RFX>(query, dataQuery);
   }

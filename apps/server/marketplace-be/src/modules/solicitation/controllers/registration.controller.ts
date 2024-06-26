@@ -46,8 +46,8 @@ export class SolRegistrationController extends ExtraCrudController<SolRegistrati
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
-  async solicitationStatus(@Query('q') q?: string) {
+  async solicitationStatus(@CurrentUser() user: any, @Query('q') q?: string) {
     const query = decodeCollectionQuery(q);
-    return await this.solRegistrationService.solicitationStatus(query);
+    return await this.solRegistrationService.solicitationStatus(query, user);
   }
 }
