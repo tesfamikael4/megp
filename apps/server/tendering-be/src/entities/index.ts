@@ -67,3 +67,5 @@ export * from './bid-registration-detail.entity';
 export * from './bid-registration.entity';
 
 export * from './technical-preliminary-assessment-detail.entity';
+
+export * from './document.entity';

@@ -9,7 +9,6 @@ import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
 import { REQUEST } from '@nestjs/core';
 import {
   BidRegistration,
-  BidRegistrationDetail,
   EqcQualification,
   SpdQualification,
 } from 'src/entities';
