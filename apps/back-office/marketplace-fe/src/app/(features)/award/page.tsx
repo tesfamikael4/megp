@@ -7,10 +7,16 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { ExpandableTable } from '@megp/core-fe';
 import RFXDetail from '../rfx/_components/configuration/rfx-detail';
-import { useLazyListRfxOnReviewQuery } from '@/store/api/rfx/rfx.api';
+import {
+  useLazyListRfxOnAwardQuery,
+  useLazyListRfxOnReviewQuery,
+} from '@/store/api/rfx/rfx.api';
+import { useLazyListQuery } from '../rfx/_api/rfx/rfx.api';
+import RFXHeader from '../assignment/_components/rfx-header';
 
-export default function Revision() {
-  const [trigger, { data, isFetching }] = useLazyListRfxOnReviewQuery();
+export default function Award() {
+  const [trigger, { data, isFetching }] = useLazyListRfxOnAwardQuery();
+  //   const [trigger, { data, isFetching }] = useLazyListQuery();
   const router = useRouter();
 
   const config = {
@@ -23,7 +29,6 @@ export default function Revision() {
       },
       { accessor: 'budgetAmount', title: 'Budget Amount' },
       { accessor: 'budgetCode', title: 'Budget Code' },
-      { accessor: 'status', title: 'Status' },
       {
         accessor: 'id',
         title: '',
@@ -32,7 +37,7 @@ export default function Revision() {
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/revision/${rfx.id}`);
+              router.push(`/award/${rfx.id}`);
             }}
           >
             <IconChevronRight />
@@ -55,7 +60,7 @@ export default function Revision() {
   };
 
   return (
-    <Section title="Submitted for review" collapsible={false}>
+    <Section title="Awarded RFQs" collapsible={false}>
       <Box className="">
         <ExpandableTable
           config={config}

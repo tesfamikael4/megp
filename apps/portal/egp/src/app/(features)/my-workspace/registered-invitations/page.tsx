@@ -3,10 +3,9 @@ import { ActionIcon, Box, Flex, Text } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { ExpandableTable } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
-import { useLazyInvitationsQuery } from '../_api/invitation-registration.api';
-import { notifications } from '@mantine/notifications';
+import { useLazyRegisteredInvitationsQuery } from '../_api/invitation-registration.api';
 export default function MyInvitationsPage() {
-  const [trigger, { data, isFetching }] = useLazyInvitationsQuery();
+  const [trigger, { data, isFetching }] = useLazyRegisteredInvitationsQuery();
   const router = useRouter();
 
   const config = {

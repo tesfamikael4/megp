@@ -22,6 +22,20 @@ export const getInvitationsApi = createApi({
       },
       providesTags: ['product-invitation'],
     }),
+    registeredInvitations: builder.query<any, any>({
+      query: (collectionQuery: CollectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `/sol-registrations/my-registrations${q}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['product-invitation'],
+    }),
     rfxDetail: builder.query<any, any>({
       query: (id: string) => {
         return {
@@ -48,4 +62,5 @@ export const {
   useLazyInvitationsQuery,
   useRfxDetailQuery,
   useRegisterMutation,
+  useLazyRegisteredInvitationsQuery,
 } = getInvitationsApi;

@@ -38,6 +38,16 @@ export const rfxOtherApi = createApi({
         return { url: `rfxs/evaluation${q}` };
       },
     }),
+    listRfxOnAward: builder.query<any, CollectionQuery>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `rfxs/award${q}` };
+      },
+    }),
     getCatalogueItems: builder.query<any, any>({
       query: (collectionQuery) => {
         let q = '';
@@ -315,6 +325,19 @@ export const rfxOtherApi = createApi({
       }),
       providesTags: ['eval-responses:LIST'],
     }),
+    getWinners: builder.query<
+      any,
+      { collectionQuery: CollectionQuery; itemId: string }
+    >({
+      query: ({ collectionQuery, itemId }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `sol-round-awards/winner/${itemId}${q}` };
+      },
+    }),
   }),
 });
 
@@ -322,6 +345,7 @@ export const {
   useLazyListRfxsQuery,
   useLazyListRfxOnReviewQuery,
   useLazyListRfxOnEvaluationQuery,
+  useLazyListRfxOnAwardQuery,
   useLazyGetCatalogueItemsQuery,
   useSubmitForReviewMutation,
   useLazyCanSubmitForReviewQuery,
@@ -355,4 +379,5 @@ export const {
   useCancelRFXMutation,
   useMakeRFXOpenMutation,
   useMakeRFXClosedMutation,
+  useLazyGetWinnersQuery,
 } = rfxOtherApi;
