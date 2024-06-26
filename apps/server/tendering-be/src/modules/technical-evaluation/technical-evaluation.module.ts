@@ -25,6 +25,8 @@ import { TechnicalScoringAssessmentDetailService } from './service/technical-sco
 import { TechnicalScoringAssessmentService } from './service/technical-scoring-assessment.service';
 import { TechnicalScoringAssessmentDetailController } from './controller/technical-scoring-assessment-detail.controller';
 import { TechnicalScoringAssessmentController } from './controller/technical-scoring-assessments.controller';
+import { TechnicalEndorsementService } from './service/technical-endorsement.service';
+import { TechnicalEndorsementController } from './controller/technical-endorsement.controller';
 
 @Module({
   imports: [
@@ -49,6 +51,7 @@ import { TechnicalScoringAssessmentController } from './controller/technical-sco
     TechnicalResponsivenessAssessmentService,
     TechnicalScoringAssessmentDetailService,
     TechnicalScoringAssessmentService,
+    TechnicalEndorsementService,
   ],
   controllers: [
     TechnicalPreliminaryAssessmentController,
@@ -59,6 +62,7 @@ import { TechnicalScoringAssessmentController } from './controller/technical-sco
     TechnicalResponsivenessAssessmentController,
     TechnicalScoringAssessmentDetailController,
     TechnicalScoringAssessmentController,
+    TechnicalEndorsementController,
   ],
 })
 export class EvaluationModule {}

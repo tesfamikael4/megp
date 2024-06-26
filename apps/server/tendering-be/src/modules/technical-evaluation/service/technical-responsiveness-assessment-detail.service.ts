@@ -456,7 +456,10 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       responsivenessDetailCount.length == 0 ? false : !evaluationChecklist;
     response.canTeamAssess =
       responsivenessDetailCount.length == 0 ? false : !canTeam;
-    response.canTeamAssess = teamMemberCount * biddersCount == scoringCount;
+    response.canTeamAssess =
+      teamMemberCount != scoringCount
+        ? false
+        : teamMemberCount * biddersCount == scoringCount;
 
     if (isTeamLead) {
       const [teamCompleted, responsivenessDetailCount] = await Promise.all([
