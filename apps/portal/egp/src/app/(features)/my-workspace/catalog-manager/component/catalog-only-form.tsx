@@ -317,6 +317,8 @@ export const CatalogDetalForm = ({
                 className={`${mode == 'new' ? 'w-full' : 'w-3/4'}`}
                 value={value}
                 onChange={onChange}
+                allowDecimal={false}
+                thousandSeparator
                 error={errors?.quantity?.message?.toString() ?? ''}
               />
             )}
