@@ -469,16 +469,6 @@ export class BidOpeningChecklistAssessmentDetailService extends ExtraCrudService
     return response;
   }
 
-  // async complete(itemData: CompleteBidChecklistDto) {
-  //   const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-  //   await this.bidOpeningChecklistAssessmentDetailRepository.update(
-  //     { tenderId: itemData.tenderId },
-  //     {
-  //       submit: true,
-  //     },
-  //   );
-  // }
-
   async canComplete(
     tenderId: string,
     req: any,
