@@ -1,20 +1,15 @@
+'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Select, Stack, Textarea } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Section } from '@megp/core-fe';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import {
-  useCreateMutation,
-  useLazyReadQuery,
-  useUpdateMutation,
-} from '../_api/eval-response.api';
 import { useParams } from 'next/navigation';
 import {
   useCreateEvalMutation,
   useLazyGetMyResponseQuery,
-  useUpdateEvalMutation,
 } from '@/store/api/rfx/rfx.api';
 
 const schema = z.object({
@@ -37,7 +32,8 @@ export default function Compliance() {
   const { id, bidderId, requirmentId, assessmentMode } = useParams();
 
   const [saveResponse, { isLoading: isSaving }] = useCreateEvalMutation();
-  const [getMyResponse, { data: myResponse }] = useLazyGetMyResponseQuery();
+  const [getMyResponse, { data: myResponse, isSuccess }] =
+    useLazyGetMyResponseQuery();
 
   const onSubmit = async (data: FormSchema) => {
     try {
@@ -48,7 +44,12 @@ export default function Compliance() {
           rfxDocumentaryEvidenceId: requirmentId?.toString(),
           isTeamAssessment: assessmentMode == 'team' ? true : false,
           ...data,
-        }));
+        }).unwrap());
+      notifications.show({
+        title: 'Success',
+        message: 'Saved assessment successfully.',
+        color: 'green',
+      });
     } catch {
       notifications.show({
         title: 'Failed to save compliance',
@@ -67,10 +68,8 @@ export default function Compliance() {
   }, [requirmentId, id]);
 
   useEffect(() => {
-    if (myResponse) {
-      reset(myResponse);
-    }
-  }, [myResponse]);
+    reset(myResponse);
+  }, [isSuccess]);
 
   return (
     <Section title="Compliance" collapsible={false}>

@@ -17,7 +17,7 @@ export default function Evaluation() {
       { accessor: 'name', title: 'Name', width: 200 },
       {
         accessor: 'procurementReferenceNumber',
-        title: 'Ref',
+        title: 'Reference Number',
         width: 200,
       },
       {

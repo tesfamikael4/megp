@@ -58,7 +58,7 @@ export default function WorkflowPage() {
       } else if (mode == 'APPROVE')
         await handleApprove({
           rfxId: id as string,
-          status: 'APPROVE',
+          status: 'APPROVED',
         }).unwrap();
       else if (mode == 'APPROVED')
         await handleSubmit({
@@ -90,7 +90,7 @@ export default function WorkflowPage() {
               loading={isAdjusting}
               onClick={async () => await handleSubmitForApproval('ADJUST')}
             >
-              Adjust
+              Send back
             </Button>
             <Button
               className="bg-green-500"

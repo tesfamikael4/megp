@@ -38,6 +38,9 @@ export default function Preparation() {
         accessor: 'procurementCategory',
       },
       {
+        accessor: 'status',
+      },
+      {
         accessor: 'id',
         title: '',
         render: (rfx) => (
@@ -66,10 +69,6 @@ export default function Preparation() {
   const onRequestChange = (request: any) => {
     trigger({
       ...request,
-      // where: [
-      //   [{ column: 'status', operator: '=', value: 'DRAFT' }],
-      //   [{ column: 'status', operator: '=', value: 'PENDING' }],
-      // ],
     });
   };
   return (
