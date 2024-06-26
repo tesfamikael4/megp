@@ -206,7 +206,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     )
       .leftJoinAndSelect('tenders.tenderMilestones', 'tenderMilestones')
       .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true })
-      .andWhere('tenderMilestones.milestoneNum >= :milestoneNum', {
+      .andWhere('tenderMilestones.milestoneNum = :milestoneNum', {
         milestoneNum: 303,
       });
     const response = new DataResponseFormat<Tender>();
@@ -579,7 +579,10 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
       complianceDetailCount.length == 0 ? false : !evaluationChecklist;
     response.canTeamAssess =
       complianceDetailCount.length == 0 ? false : !canTeam;
-    response.canTeamAssess = teamMemberCount * biddersCount == complianceCount;
+    response.canTeamAssess =
+      teamMemberCount != complianceCount
+        ? false
+        : teamMemberCount * biddersCount == complianceCount;
 
     if (isTeamLead) {
       const [teamCompleted, complianceDetailCount] = await Promise.all([

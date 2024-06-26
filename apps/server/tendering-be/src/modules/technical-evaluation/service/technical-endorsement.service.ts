@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
-import { Lot } from 'src/entities';
+import { Lot, Tender } from 'src/entities';
 import { SubmittedEvaluation } from 'src/entities/submitted-evaluations.entity';
 import { TechnicalPreliminaryAssessment } from 'src/entities/technical-preliminary-assessment.entity';
 import { TechnicalQualificationAssessment } from 'src/entities/technical-qualification-assessments.entity';
@@ -10,6 +10,12 @@ import { TechnicalScoringAssessment } from 'src/entities/technical-scoring-asses
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { DocumentService } from 'src/modules/utility/pdf-generator/service/document.service';
 import { PdfGeneratorService } from 'src/modules/utility/pdf-generator/service/pdf-generator.service';
+import { DataResponseFormat } from 'src/shared/api-data';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { MinIOService } from 'src/shared/min-io';
@@ -21,16 +27,48 @@ export class TechnicalEndorsementService {
     @Inject(REQUEST)
     private request: Request,
 
-    private readonly minIoService: MinIOService,
+    // private readonly minIoService: MinIOService,
 
-    private readonly pdfGeneratorService: PdfGeneratorService,
+    // private readonly pdfGeneratorService: PdfGeneratorService,
 
-    private readonly documentService: DocumentService,
+    // private readonly documentService: DocumentService,
 
-    @Inject('ENDORSEMENT_RMQ_SERVICE')
-    private readonly endorsementRMQClient: ClientProxy,
+    // @Inject('ENDORSEMENT_RMQ_SERVICE')
+    // private readonly endorsementRMQClient: ClientProxy,
   ) {}
   //initiate workflow for tender
+
+  async getLots(query: CollectionQuery, req?: any) {
+    query.where.push([
+      {
+        column: 'organizationId',
+        value: req.user.organization.id,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    // query.includes.push('tenders.tenderMilestones')
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const dataQuery = QueryConstructor.constructQuery<Lot>(
+      manager.getRepository(Lot),
+      query,
+    )
+      .leftJoinAndSelect('tenders.tenderMilestones', 'tenderMilestones')
+      .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true })
+      .andWhere('tenderMilestones.milestoneNum = :milestoneNum', {
+        milestoneNum: 307,
+      });
+    const response = new DataResponseFormat<Lot>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
   async initiateWorkflow(
     itemData: {
       tenderId: string;
@@ -104,12 +142,12 @@ export class TechnicalEndorsementService {
       },
       { compliance, qualification, responsiveness, scoring },
     );
-    await this.endorsementRMQClient.emit('initiate-workflow', {
-      name: 'technicalEndorsement',
-      id: itemData.lotId,
-      itemName: lot.name,
-      organizationId: itemData.organizationId,
-    });
+    // await this.endorsementRMQClient.emit('initiate-workflow', {
+    //   name: 'technicalEndorsement',
+    //   id: itemData.lotId,
+    //   itemName: lot.name,
+    //   organizationId: itemData.organizationId,
+    // });
     return true;
   }
 
@@ -141,27 +179,27 @@ export class TechnicalEndorsementService {
       ...organization,
     });
 
-    const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');
+    // const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');
 
-    const fileInfo = await this.minIoService.uploadBuffer(
-      buffer,
-      'preBudgetPlanReport.pdf',
-      'application/pdf',
-      'megp',
-    );
+    // const fileInfo = await this.minIoService.uploadBuffer(
+    //   buffer,
+    //   'preBudgetPlanReport.pdf',
+    //   'application/pdf',
+    //   'megp',
+    // );
 
-    await this.documentService.create(
-      {
-        fileInfo,
-        title: itemName,
-        itemId: lotId,
-        type: 'technicalEvaluation',
-        version: 1,
-        key: 'onApprovalSubmit',
-      },
-      organization,
-    );
-    return buffer;
+    // await this.documentService.create(
+    //   {
+    //     fileInfo,
+    //     title: itemName,
+    //     itemId: lotId,
+    //     type: 'technicalEvaluation',
+    //     version: 1,
+    //     key: 'onApprovalSubmit',
+    //   },
+    //   organization,
+    // );
+    // return buffer;
   }
 
   private async changeMilestone(

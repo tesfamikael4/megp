@@ -3,12 +3,8 @@ import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { TechnicalResponsivenessAssessmentDetail } from 'src/entities/technical-responsiveness-assessment-detail.entity';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
-import { AllowAnonymous } from 'src/shared/authorization';
 import { ApiTags } from '@nestjs/swagger';
-import {
-  CompleteBidderEvaluationDto,
-  CompleteResponsivenessBidderEvaluationDto,
-} from '../dto/technical-preliminary-assessment.dto';
+import { CompleteResponsivenessBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
 import { TechnicalResponsivenessAssessmentDetailService } from '../service/technical-responsiveness-assessment-detail.service';
 
 const options: ExtraCrudOptions = {

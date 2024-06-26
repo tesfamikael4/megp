@@ -340,7 +340,9 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
     response.canTeamAssess =
       qualificationDetailCount.length == 0 ? false : !canTeam;
     response.canTeamAssess =
-      teamMemberCount * biddersCount == qualificationCount;
+      teamMemberCount != qualificationCount
+        ? false
+        : teamMemberCount * biddersCount == qualificationCount;
 
     if (isTeamLead) {
       const [teamCompleted, qualificationDetailCount] = await Promise.all([
