@@ -62,6 +62,7 @@ export const CatalogDetalForm = ({
       });
     }
   }, [catalog, reset]);
+
   onError = (err) => logger.error(err);
   const ProductButton = () => {
     return (
@@ -88,7 +89,9 @@ export const CatalogDetalForm = ({
   return (
     <>
       <Box mih={'80vh'} className="w-full p-4">
-        <Stack className={`${mode == 'new' ? 'grid grid-cols-2 gap-4' : ''}`}>
+        <Stack
+          className={`${mode == 'new' ? 'grid grid-cols-2 gap-4 w-full' : 'w-3/4'}`}
+        >
           {template?.properties?.map((item, index) => {
             const nameToValidate = item.displayName
               .toLowerCase()
@@ -96,9 +99,7 @@ export const CatalogDetalForm = ({
             const uomFieldName = `${nameToValidate}_uom`;
 
             return item.dataType == 'string' ? (
-              <Box
-                className={`grid ${mode == 'new' ? `${item.uom.length !== 0 ? 'grid-cols-2 gap-2' : ''}` : `  ${item.uom.length !== 0 ? 'grid-cols-2 gap-2' : 'w-3/4'}`}`}
-              >
+              <Flex gap={'sm'} className="w-full">
                 <Controller
                   key={index}
                   name={nameToValidate}
@@ -108,6 +109,7 @@ export const CatalogDetalForm = ({
                       label={item?.displayName}
                       value={value}
                       onChange={onChange}
+                      className={` ${item.uom.length != 0 ? 'w-2/4' : 'w-full'}`}
                       placeholder={item?.displayName}
                       required={item?.validation?.min}
                       error={
@@ -126,7 +128,8 @@ export const CatalogDetalForm = ({
                         name={uomFieldName}
                         onChange={onChange}
                         value={value}
-                        className={`${mode == 'detail' && 'w-2/4'}`}
+                        placeholder={`${item?.displayName} UoM`}
+                        className="w-2/4"
                         error={errors?.uom?.message?.toString() ?? ''}
                         data={item?.uom?.map((uom) => {
                           return {
@@ -138,11 +141,9 @@ export const CatalogDetalForm = ({
                     )}
                   />
                 )}
-              </Box>
+              </Flex>
             ) : item.dataType == 'number' ? (
-              <Box
-                className={`grid ${mode == 'new' ? `${item.uom.length !== 0 ? 'grid-cols-2 gap-2' : ''}` : `  ${item.uom.length !== 0 ? 'grid-cols-2 gap-2' : 'w-3/4'}`}`}
-              >
+              <Flex gap={'sm'} className="w-full">
                 {' '}
                 <Controller
                   key={index}
@@ -151,6 +152,7 @@ export const CatalogDetalForm = ({
                   render={({ field: { value, onChange } }) => (
                     <NumberInput
                       label={item?.displayName}
+                      className={` ${item.uom.length != 0 ? 'w-2/4' : 'w-full'}`}
                       value={value}
                       onChange={onChange}
                       placeholder={item?.displayName}
@@ -170,8 +172,9 @@ export const CatalogDetalForm = ({
                         label={'Unit of Measurement'}
                         name={uomFieldName}
                         onChange={onChange}
+                        placeholder={`${item?.displayName} UoM`}
                         value={value}
-                        className={`${mode == 'detail' && 'w-2/4'}`}
+                        className="w-2/4"
                         error={errors?.uom?.message?.toString() ?? ''}
                         data={item?.uom?.map((uom) => {
                           return {
@@ -183,7 +186,7 @@ export const CatalogDetalForm = ({
                     )}
                   />
                 )}
-              </Box>
+              </Flex>
             ) : item.dataType == 'boolean' ? (
               <Controller
                 key={index}
@@ -191,7 +194,6 @@ export const CatalogDetalForm = ({
                 control={control}
                 render={({ field: { name, value, onChange } }) => (
                   <Checkbox
-                    className="mt-auto"
                     label={item?.displayName}
                     name={name}
                     value={value}
@@ -202,9 +204,7 @@ export const CatalogDetalForm = ({
                 )}
               />
             ) : item.dataType == 'singleSelect' ? (
-              <Box
-                className={`grid ${mode == 'new' ? `${item.uom.length !== 0 ? 'grid-cols-2 gap-2' : ''}` : `  ${item.uom.length !== 0 ? 'grid-cols-2 gap-2' : 'w-3/4'}`}`}
-              >
+              <Flex gap={'sm'} className="w-full">
                 <Controller
                   key={index}
                   name={nameToValidate}
@@ -214,6 +214,7 @@ export const CatalogDetalForm = ({
                       name="name"
                       label={item?.displayName}
                       value={value}
+                      className={` ${item.uom.length != 0 ? 'w-2/4' : 'w-full'}`}
                       data={
                         item?.validation?.enum?.map((i) => {
                           return {
@@ -241,8 +242,9 @@ export const CatalogDetalForm = ({
                         label={'Unit of Measurement'}
                         name={uomFieldName}
                         onChange={onChange}
+                        placeholder={`${item?.displayName} UoM`}
                         value={value}
-                        className={`${mode == 'detail' && 'w-2/4'}`}
+                        className={'w-2/4'}
                         error={errors?.uom?.message?.toString() ?? ''}
                         data={item?.uom?.map((uom) => {
                           return {
@@ -254,7 +256,7 @@ export const CatalogDetalForm = ({
                     )}
                   />
                 )}
-              </Box>
+              </Flex>
             ) : item.dataType == 'multiSelect' ? (
               <Flex gap={'sm'} className="w-full">
                 <Controller
@@ -274,8 +276,9 @@ export const CatalogDetalForm = ({
                           };
                         }) || []
                       }
+                      className={` ${item.uom.length != 0 ? 'w-2/4' : 'w-full'}`}
                       onChange={onChange}
-                      placeholder={item?.displayName}
+                      placeholder={value == '' ? item?.displayName : ''}
                       withAsterisk={item?.validation?.isRequired ?? false}
                       error={
                         errors?.[nameToValidate]?.message?.toString() ?? ''
@@ -292,8 +295,9 @@ export const CatalogDetalForm = ({
                         label={'Unit of Measurement'}
                         name={uomFieldName}
                         onChange={onChange}
+                        placeholder={`${item?.displayName} UoM`}
                         value={value}
-                        className={`${mode == 'detail' && 'w-2/4'}`}
+                        className={` ${mode == 'detail' && 'w-2/4'}`}
                         error={errors?.uom?.message?.toString() ?? ''}
                         data={item?.uom?.map((uom) => {
                           return {
@@ -314,7 +318,7 @@ export const CatalogDetalForm = ({
             render={({ field: { name, value, onChange } }) => (
               <NumberInput
                 label={'Quantity'}
-                className={`${mode == 'new' ? 'w-full' : 'w-3/4'}`}
+                className="w-full"
                 value={value}
                 onChange={onChange}
                 allowDecimal={false}

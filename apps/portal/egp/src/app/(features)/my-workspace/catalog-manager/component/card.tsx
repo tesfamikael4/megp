@@ -21,12 +21,12 @@ export default function ProductCard({ data }) {
       withBorder
       key={data.id}
       className={`w-full cursor-pointer`}
-      h={290}
+      h={200}
       onClick={() => {
         route.push(`catalog-manager/${data.itemMasterId}/product/${data.id}`);
       }}
     >
-      <Card.Section h={160}>
+      <Card.Section h={100}>
         <Box className="h-120 relative w-full h-full overflow-hidden">
           <Image
             src={data?.presignedUrl}
