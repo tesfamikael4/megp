@@ -10,11 +10,16 @@ import {
   Text,
 } from '@mantine/core';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, use, useEffect, useState } from 'react';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useReadQuery } from '../../_api/rfx/rfx.api';
 import { logger } from '@megp/core-fe';
-import { useSubmitForReviewMutation } from '@/store/api/rfx/rfx.api';
+import {
+  useCancelRFXMutation,
+  useLazyCanSubmitForReviewQuery,
+  useMakeRFXOpenMutation,
+  useSubmitForReviewMutation,
+} from '@/store/api/rfx/rfx.api';
 import { notifications } from '@mantine/notifications';
 import { useDisclosure } from '@mantine/hooks';
 import { DateTimePicker } from '@mantine/dates';
@@ -32,18 +37,37 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
   const { data, isLoading: isGettingDetail } = useReadQuery(id?.toString());
   const [submitForReview, { isLoading: isSubmitting }] =
     useSubmitForReviewMutation();
+  // const [submitStatus, { data: canSubmitForReview }] =
+  //   useLazyCanSubmitForReviewQuery();
   const [opened, { open, close }] = useDisclosure(false);
+  const [rfxType, setRfxType] = useState('invitation');
   const [reviewDeadline, setReviewDeadline] = useState<Date | null>(null);
+  const [cancelRFX, { isLoading: isCancelling }] = useCancelRFXMutation();
+  const [makeRFXOpen, { isLoading: isMakingRFXOpen }] =
+    useMakeRFXOpenMutation();
+  const [makeRFXClosed, { isLoading: isMakingRFXClosed }] =
+    useMakeRFXOpenMutation();
 
-  const handleSubmit = async () => {
+  // useEffect(() => {
+  //   submitStatus({ rfxId: id.toString() });
+  // }, [id]);
+
+  const handleSubmit = async ({ mode }: { mode: string }) => {
     try {
-      await submitForReview({ id: id.toString(), reviewDeadline }).unwrap();
+      if (mode == 'submit' && rfxType == 'invitation')
+        await submitForReview({ id: id.toString(), reviewDeadline }).unwrap();
+      else if (mode == 'cancel')
+        await cancelRFX({ rfxId: id.toString() }).unwrap();
+      else if (mode == 'submit' && rfxType == 'open')
+        await makeRFXOpen({ rfxId: id.toString() });
+      else if (mode == 'close')
+        await makeRFXClosed({ rfxId: id.toString() }).unwrap();
       notifications.show({
         title: 'Success',
         color: 'green',
-        message: 'RFQ Submitted Successfully',
+        message: `RFQ ${mode == 'submit' && rfxType == 'invitation' ? 'Submitted' : mode == 'cancel' ? 'Cancelled' : mode == 'close' ? 'Made Closed' : mode == 'submit' && rfxType == 'open' ? 'Made Open' : ''} Successfully`,
       });
-      router.push('/revision');
+      mode == 'submit' && router.push('/revision');
     } catch (err: any) {
       notifications.show({
         title: 'Error',
@@ -70,7 +94,7 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
             <Button
               className="ml-auto"
               loading={isSubmitting}
-              onClick={handleSubmit}
+              onClick={async () => await handleSubmit({ mode: 'submit' })}
             >
               Continue
             </Button>
@@ -84,9 +108,50 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
               onClick={() => router.push('/rfx')}
             />
             <Text className="font-semibold text-xl">{data?.name ?? ''}</Text>
-            <Button className="ml-auto" loading={isSubmitting} onClick={open}>
-              Submit for review
-            </Button>
+            <Flex className="ml-auto gap-2">
+              <Button
+                className="bg-red-500"
+                loading={isCancelling}
+                onClick={async () => await handleSubmit({ mode: 'cancel' })}
+              >
+                Cancel RFX
+              </Button>
+              {!data?.isOpen && (
+                <Button
+                  variant={'outline'}
+                  loading={isMakingRFXOpen}
+                  onClick={() => {
+                    setRfxType('open');
+                    open();
+                  }}
+                  // disabled={!canSubmitForReview?.status}
+                >
+                  Make RFQ Open
+                </Button>
+              )}
+              {data?.isOpen && (
+                <Button
+                  variant={'outline'}
+                  loading={isMakingRFXClosed}
+                  onClick={() => {
+                    handleSubmit({ mode: 'close' });
+                  }}
+                  // disabled={!canSubmitForReview?.status}
+                >
+                  Make RFQ Closed
+                </Button>
+              )}
+              <Button
+                loading={isSubmitting}
+                onClick={() => {
+                  setRfxType('invitation');
+                  open();
+                }}
+                // disabled={!canSubmitForReview?.status}
+              >
+                Submit for review
+              </Button>
+            </Flex>
           </Flex>
           <Flex gap={10} className="mt-2 ml-2 ">
             <Box

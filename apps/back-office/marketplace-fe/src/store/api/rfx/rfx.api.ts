@@ -81,6 +81,12 @@ export const rfxOtherApi = createApi({
         body: data,
       }),
     }),
+    canSubmitForReview: builder.query<any, { rfxId: string }>({
+      query: (data) => ({
+        url: `rfx/can-submit-for-review/${data.rfxId}`,
+        method: 'GET',
+      }),
+    }),
     getPreSigned: builder.query<any, { id: string }>({
       query: (data) => ({
         url: `documents/getDocumentByItemId/${data.id}`,
@@ -110,6 +116,24 @@ export const rfxOtherApi = createApi({
     cancelInvitation: builder.mutation<any, any>({
       query: (data) => ({
         url: `rfx-product-invitations/remove-invitees/${data.id}`,
+        method: 'POST',
+      }),
+    }),
+    cancelRFX: builder.mutation<any, { rfxId: string }>({
+      query: (data) => ({
+        url: `rfxs/cancel/${data.rfxId}`,
+        method: 'PATCH',
+      }),
+    }),
+    makeRFXOpen: builder.mutation<any, { rfxId: string }>({
+      query: (data) => ({
+        url: `rfxs/make-rfx-open/${data.rfxId}`,
+        method: 'POST',
+      }),
+    }),
+    makeRFXClosed: builder.mutation<any, { rfxId: string }>({
+      query: (data) => ({
+        url: `rfxs/make-close-rfx/${data.rfxId}`,
         method: 'POST',
       }),
     }),
@@ -300,6 +324,7 @@ export const {
   useLazyListRfxOnEvaluationQuery,
   useLazyGetCatalogueItemsQuery,
   useSubmitForReviewMutation,
+  useLazyCanSubmitForReviewQuery,
   useGetPreSignedQuery,
   useLazyGetPreSignedQuery,
   useSubmitForApprovalMutation,
@@ -327,4 +352,7 @@ export const {
   useLazyGetTeamMembersEvalQuery,
   useSubmitRFXEvaluationMutation,
   useLazyGetPresignedForEvalDocQuery,
+  useCancelRFXMutation,
+  useMakeRFXOpenMutation,
+  useMakeRFXClosedMutation,
 } = rfxOtherApi;

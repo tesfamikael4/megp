@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { logger } from '@megp/core-fe';
 import { IconDeviceFloppy } from '@tabler/icons-react';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -21,6 +21,8 @@ import {
 } from '../../_api/rfx/contract-conditions.api';
 import { useParams } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
+import { StatusContext } from '@/contexts/rfx-status.context';
+import { ERfxStatus } from '@/enums/rfx-status';
 
 const schema = z.object({
   liquidityDamage: z.number(),
@@ -50,6 +52,8 @@ export default function ContractConditionsForm() {
     getContractConditions,
     { data: contractConditions, isLoading: isGettingConditions },
   ] = useLazyListByIdQuery();
+
+  const { status, loading } = useContext(StatusContext);
 
   const onSubmit = async (data: ContractConditionsSchema) => {
     try {
@@ -90,26 +94,8 @@ export default function ContractConditionsForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <Stack>
-        <LoadingOverlay visible={isGettingConditions} />
+        <LoadingOverlay visible={isGettingConditions || loading} />
         <Flex className="gap-4">
-          {/* <Controller
-            name="warrantyPeriod"
-            control={control}
-            render={({ field: { name, value, onChange } }) => (
-              <NumberInput
-                name={name}
-                label="Warranty Period (in days)"
-                placeholder="Warranty Period (in days)"
-                value={value}
-                className="w-full"
-                suffix=" days"
-                allowNegative={false}
-                onChange={onChange}
-                error={errors?.warrantyPeriod?.message}
-                withAsterisk
-              />
-            )}
-          /> */}
           <Controller
             name="liquidityDamage"
             control={control}
@@ -126,6 +112,12 @@ export default function ContractConditionsForm() {
                 onChange={onChange}
                 error={errors?.liquidityDamage?.message}
                 withAsterisk
+                disabled={
+                  !(
+                    status == ERfxStatus.DRAFT ||
+                    status == ERfxStatus.ADJUSTMENT
+                  )
+                }
               />
             )}
           />
@@ -145,28 +137,15 @@ export default function ContractConditionsForm() {
                 onChange={onChange}
                 error={errors?.liquidityDamageLimit?.message}
                 withAsterisk
+                disabled={
+                  !(
+                    status == ERfxStatus.DRAFT ||
+                    status == ERfxStatus.ADJUSTMENT
+                  )
+                }
               />
             )}
           />
-        </Flex>
-        <Flex className="gap-4">
-          {/* <Controller
-            name="paymentMode"
-            control={control}
-            render={({ field: { name, value, onChange } }) => (
-              <MultiSelect
-                name={name}
-                label="Payment Mode"
-                placeholder="Payment Mode"
-                data={['Cash', 'Bank', 'Check']}
-                value={value}
-                className="w-full"
-                onChange={onChange}
-                error={errors?.paymentMode?.message}
-                withAsterisk
-              />
-            )}
-          /> */}
         </Flex>
         <Flex className="gap-4">
           <Controller
@@ -184,6 +163,12 @@ export default function ContractConditionsForm() {
                 allowNegative={false}
                 error={errors?.paymentReleasePeriod?.message}
                 withAsterisk
+                disabled={
+                  !(
+                    status == ERfxStatus.DRAFT ||
+                    status == ERfxStatus.ADJUSTMENT
+                  )
+                }
               />
             )}
           />
@@ -204,6 +189,12 @@ export default function ContractConditionsForm() {
                   'Vendor shall provide item at specified date.',
                 ]}
                 error={errors?.contractTerms?.message}
+                disabled={
+                  !(
+                    status == ERfxStatus.DRAFT ||
+                    status == ERfxStatus.ADJUSTMENT
+                  )
+                }
               />
             )}
           />
@@ -218,6 +209,9 @@ export default function ContractConditionsForm() {
               checked={value}
               onChange={(event) =>
                 setValue('isPartialAllowed', event.currentTarget.checked)
+              }
+              disabled={
+                !(status == ERfxStatus.DRAFT || status == ERfxStatus.ADJUSTMENT)
               }
             />
           )}

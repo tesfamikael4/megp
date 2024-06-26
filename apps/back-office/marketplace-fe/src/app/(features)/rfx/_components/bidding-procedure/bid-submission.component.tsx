@@ -9,7 +9,7 @@ import {
   Switch,
 } from '@mantine/core';
 import { logger } from '@megp/core-fe';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import { z } from 'zod';
@@ -22,6 +22,8 @@ import {
 } from '../../_api/rfx/bidding-procedure.api';
 import { useParams } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
+import { StatusContext } from '@/contexts/rfx-status.context';
+import { ERfxStatus } from '@/enums/rfx-status';
 
 const schema = z.object({
   bidValidityPeriod: z.number(),
@@ -77,6 +79,8 @@ export default function BidSubmission() {
   const [createProcedure, { isLoading: isCreating }] = useCreateMutation();
   const [updateProcedure, { isLoading: isUpdating }] = useUpdateMutation();
 
+  const { status, loading } = useContext(StatusContext);
+
   const onSubmit = async (data: FormSchema) => {
     try {
       if (biddingProcedure && biddingProcedure?.items?.length > 0) {
@@ -126,8 +130,48 @@ export default function BidSubmission() {
   return (
     <form onSubmit={handleSubmit(onSubmit, onError)}>
       <Stack className="w-full">
-        <LoadingOverlay visible={isGettingProcedure} />
+        <LoadingOverlay visible={isGettingProcedure || loading} />
         <Flex className="gap-4">
+          <Controller
+            name="postingDate"
+            control={control}
+            render={({ field: { name, value } }) => {
+              const submissionDeadline = watch('submissionDeadline');
+              const maxDate =
+                submissionDeadline &&
+                !isNaN(new Date(submissionDeadline).getTime())
+                  ? new Date(
+                      new Date(submissionDeadline).getTime() - 5 * 60 * 1000,
+                    )
+                  : new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+              return (
+                <DateTimePicker
+                  name={name}
+                  withAsterisk
+                  label="Posting Date"
+                  placeholder="Posting Date"
+                  value={value ? new Date(value) : null}
+                  maxDate={maxDate}
+                  minDate={new Date()}
+                  className="w-1/2"
+                  disabled={
+                    !(
+                      status == ERfxStatus.DRAFT ||
+                      status == ERfxStatus.ADJUSTMENT
+                    )
+                  }
+                  onChange={(value) => {
+                    setValue(
+                      'postingDate',
+                      value?.toISOString() ?? new Date().toISOString(),
+                    );
+                  }}
+                  error={errors?.postingDate?.message}
+                />
+              );
+            }}
+          />
           <Controller
             name="submissionDeadline"
             control={control}
@@ -140,6 +184,12 @@ export default function BidSubmission() {
                 value={value ? new Date(value) : null}
                 minDate={new Date()}
                 className="w-full"
+                disabled={
+                  !(
+                    status == ERfxStatus.DRAFT ||
+                    status == ERfxStatus.ADJUSTMENT
+                  )
+                }
                 onChange={(value) => {
                   setValue(
                     'submissionDeadline',
@@ -150,6 +200,9 @@ export default function BidSubmission() {
               />
             )}
           />
+        </Flex>
+
+        <Flex className="gap-4">
           <Controller
             name="openingDate"
             control={control}
@@ -178,44 +231,13 @@ export default function BidSubmission() {
                       value?.toISOString() ?? new Date().toISOString(),
                     );
                   }}
-                  error={errors?.openingDate?.message}
-                />
-              );
-            }}
-          />
-        </Flex>
-
-        <Flex className="gap-4">
-          <Controller
-            name="postingDate"
-            control={control}
-            render={({ field: { name, value } }) => {
-              const submissionDeadline = watch('submissionDeadline');
-              const maxDate =
-                submissionDeadline &&
-                !isNaN(new Date(submissionDeadline).getTime())
-                  ? new Date(
-                      new Date(submissionDeadline).getTime() - 5 * 60 * 1000,
+                  disabled={
+                    !(
+                      status == ERfxStatus.DRAFT ||
+                      status == ERfxStatus.ADJUSTMENT
                     )
-                  : new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-              return (
-                <DateTimePicker
-                  name={name}
-                  withAsterisk
-                  label="Posting Date"
-                  placeholder="Posting Date"
-                  value={value ? new Date(value) : null}
-                  maxDate={maxDate}
-                  minDate={new Date()}
-                  className="w-1/2"
-                  onChange={(value) => {
-                    setValue(
-                      'postingDate',
-                      value?.toISOString() ?? new Date().toISOString(),
-                    );
-                  }}
-                  error={errors?.postingDate?.message}
+                  }
+                  error={errors?.openingDate?.message}
                 />
               );
             }}
@@ -234,6 +256,12 @@ export default function BidSubmission() {
                 error={errors?.bidValidityPeriod?.message}
                 allowNegative={false}
                 suffix=" days"
+                disabled={
+                  !(
+                    status == ERfxStatus.DRAFT ||
+                    status == ERfxStatus.ADJUSTMENT
+                  )
+                }
                 withAsterisk
               />
             )}
@@ -255,6 +283,12 @@ export default function BidSubmission() {
                 min={0}
                 max={100}
                 error={errors?.deltaPercentage?.message}
+                disabled={
+                  !(
+                    status == ERfxStatus.DRAFT ||
+                    status == ERfxStatus.ADJUSTMENT
+                  )
+                }
                 withAsterisk
               />
             )}
@@ -273,6 +307,12 @@ export default function BidSubmission() {
                   onChange={(event) =>
                     setValue('isReverseAuction', event.currentTarget.checked)
                   }
+                  disabled={
+                    !(
+                      status == ERfxStatus.DRAFT ||
+                      status == ERfxStatus.ADJUSTMENT
+                    )
+                  }
                 />
               )}
             />
@@ -285,14 +325,20 @@ export default function BidSubmission() {
                     render={({ field: { name, value, onChange } }) => (
                       <NumberInput
                         name={name}
-                        label="No Of Rounds"
-                        placeholder="No Of Rounds"
+                        label="Number Of Rounds"
+                        placeholder="Number Of Rounds"
                         value={value}
                         className="w-[calc(50%-0.5rem)]"
                         onChange={onChange}
                         error={errors?.round?.message}
                         allowNegative={false}
                         withAsterisk
+                        disabled={
+                          !(
+                            status == ERfxStatus.DRAFT ||
+                            status == ERfxStatus.ADJUSTMENT
+                          )
+                        }
                       />
                     )}
                   />
@@ -311,6 +357,12 @@ export default function BidSubmission() {
                         allowNegative={false}
                         error={errors?.round?.message}
                         withAsterisk
+                        disabled={
+                          !(
+                            status == ERfxStatus.DRAFT ||
+                            status == ERfxStatus.ADJUSTMENT
+                          )
+                        }
                       />
                     )}
                   />
@@ -331,6 +383,12 @@ export default function BidSubmission() {
                         error={errors?.round?.message}
                         allowNegative={false}
                         withAsterisk
+                        disabled={
+                          !(
+                            status == ERfxStatus.DRAFT ||
+                            status == ERfxStatus.ADJUSTMENT
+                          )
+                        }
                       />
                     )}
                   />
@@ -349,6 +407,12 @@ export default function BidSubmission() {
                         suffix=" %"
                         allowNegative={false}
                         withAsterisk
+                        disabled={
+                          !(
+                            status == ERfxStatus.DRAFT ||
+                            status == ERfxStatus.ADJUSTMENT
+                          )
+                        }
                       />
                     )}
                   />

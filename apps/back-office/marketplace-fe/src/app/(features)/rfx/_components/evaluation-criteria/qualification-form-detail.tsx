@@ -16,10 +16,11 @@ import {
   useUpdateMutation,
   useCreateMutation,
 } from '../../_api/rfx/qualification.api';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
 import { Qualification } from '@/models/tender/qualification.model';
+import { StatusContext } from '@/contexts/rfx-status.context';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';

@@ -16,10 +16,8 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { useEffect, useState } from 'react';
-import { logger } from '@megp/core-fe';
+import { useContext, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useLazyListQuery } from '../../_api/product-catalogue/product-catalogue.api';
 import CatalogForm from './item-catalogue-form.component';
 import {
   useCreateMutation,
@@ -35,11 +33,10 @@ import {
 } from '@/store/api/rfx/rfx.api';
 import { useLazyReadQuery } from '../../_api/rfx/items.api';
 import Invitation from '../invitation/invitation.component';
-import { IconArrowBack, IconBan, IconTrash } from '@tabler/icons-react';
-import {
-  useLazyGetItemTemplateQuery,
-  useLazyGetProductCataloguesQuery,
-} from '@/store/api/rfx/item.api';
+import { IconArrowBack, IconTrash } from '@tabler/icons-react';
+import { useLazyGetProductCataloguesQuery } from '@/store/api/rfx/item.api';
+import { ERfxStatus } from '@/enums/rfx-status';
+import { StatusContext } from '@/contexts/rfx-status.context';
 
 function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
   if (totalItems <= 0 || itemsPerPage <= 0) {
@@ -87,6 +84,7 @@ export default function ItemCatalogue() {
     makeOpenInvitation,
     { isLoading: isMakingOpen, isSuccess: isMadeOpen },
   ] = useMakeOpenInvitationMutation();
+  const { status, loading } = useContext(StatusContext);
 
   useEffect(() => {
     getItem(itemId.toString());
@@ -117,8 +115,6 @@ export default function ItemCatalogue() {
       })
       .flat();
     setFilterConditions(where);
-    logger.log(where);
-    logger.log(filterConditions);
 
     getCatalogueItems({
       skip: from,
@@ -274,7 +270,10 @@ export default function ItemCatalogue() {
           loading={isSavingReqts || isUpdatingReqts}
           onSave={onSave}
           data={technicalRequirments?.items?.[0]?.technicalSpecification}
-          disabled={selected?.status == 'INVITATION_PREPARED'}
+          disabled={
+            selected?.status == 'INVITATION_PREPARED' ||
+            !(status == ERfxStatus.DRAFT || status == ERfxStatus.ADJUSTMENT)
+          }
           itemCode={selected?.itemCode}
         />
       </Stack>
@@ -297,6 +296,9 @@ export default function ItemCatalogue() {
             leftSection={<IconTrash stroke="sm" />}
             onClick={removeInvitations}
             loading={isCancellingInvitation}
+            disabled={
+              !(status == ERfxStatus.DRAFT || status == ERfxStatus.ADJUSTMENT)
+            }
           >
             Remove Invitations
           </Button>
@@ -342,7 +344,8 @@ export default function ItemCatalogue() {
                   visible={
                     isGettingCatalogue ||
                     isGettingTechnicalReqts ||
-                    isGettingItemDetail
+                    isGettingItemDetail ||
+                    loading
                   }
                 />
                 <Group className="ml-auto">

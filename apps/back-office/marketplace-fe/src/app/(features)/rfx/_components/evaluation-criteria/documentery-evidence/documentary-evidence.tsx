@@ -16,10 +16,12 @@ import {
 } from '@tabler/icons-react';
 import DocumentaryForm from './documentary-form';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { modals } from '@mantine/modals';
 import { type DocumentaryEvidence } from '@/models/tender/documentary-evidence.model';
 import { notifications } from '@mantine/notifications';
+import { StatusContext } from '@/contexts/rfx-status.context';
+import { ERfxStatus } from '@/enums/rfx-status';
 
 export default function DocumentaryEvidence() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -27,6 +29,8 @@ export default function DocumentaryEvidence() {
   const [mode, setMode] = useState<'new' | 'detail'>('new');
   const { id } = useParams();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
+
+  const { status, loading } = useContext(StatusContext);
 
   const config = {
     columns: [
@@ -47,7 +51,7 @@ export default function DocumentaryEvidence() {
     ],
     isExpandable: false,
     isSearchable: true,
-    isLoading: isFetching || isDeleting,
+    isLoading: isFetching || isDeleting || loading,
     primaryColumn: 'evidenceTitle',
   };
 
@@ -113,6 +117,9 @@ export default function DocumentaryEvidence() {
               setMode('detail');
               open();
             }}
+            disabled={
+              !(status == ERfxStatus.DRAFT || status == ERfxStatus.ADJUSTMENT)
+            }
           >
             View
           </Menu.Item>
@@ -121,6 +128,9 @@ export default function DocumentaryEvidence() {
             color="red"
             leftSection={<IconTrash size={15} />}
             onClick={openDeleteModal}
+            disabled={
+              !(status == ERfxStatus.DRAFT || status == ERfxStatus.ADJUSTMENT)
+            }
           >
             Delete
           </Menu.Item>
@@ -134,7 +144,12 @@ export default function DocumentaryEvidence() {
       title="List Of Criteria"
       collapsible={false}
       action={
-        <Button onClick={open}>
+        <Button
+          onClick={open}
+          disabled={
+            !(status == ERfxStatus.DRAFT || status == ERfxStatus.ADJUSTMENT)
+          }
+        >
           <IconPlus size={14} /> Add
         </Button>
       }
