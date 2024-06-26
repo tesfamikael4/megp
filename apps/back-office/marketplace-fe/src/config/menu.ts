@@ -1,6 +1,7 @@
 import { MenuItem } from '@megp/core-fe';
 import {
   IconAdjustmentsHorizontal,
+  IconAward,
   IconBuildingBank,
   IconList,
   IconListCheck,
@@ -28,6 +29,11 @@ export const Menu: MenuItem[] = [
     label: 'Evaluation',
     icon: IconListCheck,
     link: '/evaluation',
+  },
+  {
+    label: 'Award',
+    icon: IconAward,
+    link: '/award',
   },
   {
     label: 'Adminstration',

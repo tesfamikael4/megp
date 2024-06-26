@@ -139,6 +139,15 @@ export const invitationItemsApi = createApi({
       },
       invalidatesTags: ['invitation-items'],
     }),
+    getAwardedRfqs: builder.query<any, any>({
+      query: ({ id }) => {
+        return {
+          url: `sol-round-awards/my-awards`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['invitation-items'],
+    }),
   }),
 });
 
@@ -155,4 +164,5 @@ export const {
   useLazyGetUploadedEvidencesQuery,
   useAcceptInvitationMutation,
   useWithdrawInvitationMutation,
+  useLazyGetAwardedRfqsQuery,
 } = invitationItemsApi;
