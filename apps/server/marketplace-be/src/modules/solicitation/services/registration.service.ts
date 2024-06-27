@@ -131,18 +131,18 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
   async getMyRegistrations(query: CollectionQuery, user: any) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const dataQuery = QueryConstructor.constructQuery<SolRegistration>(
-      entityManager.getRepository(SolRegistration),
+    const dataQuery = QueryConstructor.constructQuery<RFX>(
+      entityManager.getRepository(RFX),
       query,
     );
 
     dataQuery
-      .where('sol_registrations.vendorId = :vendorId', {
+      .leftJoin('rfxes.solRegistrations', 'solRegistration')
+      .where('solRegistration.vendorId = :vendorId', {
         vendorId: user.organization.id,
-      })
-      .leftJoinAndSelect('sol_registrations.rfx', 'rfx');
+      });
 
-    return await this.giveQueryResponse<SolRegistration>(query, dataQuery);
+    return await this.giveQueryResponse<RFX>(query, dataQuery);
   }
 
   async solicitationStatus(query: CollectionQuery, user: any) {
