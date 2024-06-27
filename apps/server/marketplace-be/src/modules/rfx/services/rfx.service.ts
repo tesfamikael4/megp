@@ -565,7 +565,7 @@ export class RfxService extends EntityCrudService<RFX> {
     const rfx = await this.rfxRepository.findOne({
       where: {
         id: rfxId,
-        status: In(validStatuses),
+        // status: In(validStatuses),
       },
     });
 

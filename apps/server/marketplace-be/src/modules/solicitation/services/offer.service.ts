@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import {
+  OpenedOffer,
   RFXItem,
   RfxProductInvitation,
   SolOffer,
@@ -91,13 +92,13 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
         'Invitation is not Accepted. Please Accept First',
       );
 
-    if (currentRound.round >= 1) {
-      await this.checkPreviousRoundOfferExists(
-        currentRound.round,
-        itemData,
-        user,
-      );
-    }
+    // if (currentRound.round >= 1) {
+    //   await this.checkPreviousRoundOfferExists(
+    //     currentRound.round,
+    //     itemData,
+    //     user,
+    //   );
+    // }
 
     const registration = await registrationRepo.findOne({
       where: {
@@ -185,6 +186,24 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     const taxedPrice = +price * (1 + +tax / 100);
 
     return { ...offer, price: +price, tax: +tax, taxedPrice };
+  }
+
+  async getVendorsSolicitationOffer(solRegistrationId: string) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    return await entityManager.getRepository(OpenedOffer).find({
+      where: {
+        solRegistrationId,
+        solRound: {
+          round: 0,
+        },
+      },
+      relations: {
+        rfxItem: {
+          technicalRequirement: true,
+        },
+      },
+    });
   }
 
   private async getValidRound(rfxId: string) {
