@@ -424,6 +424,9 @@ export default function BidSubmission() {
             leftSection={<IconDeviceFloppy />}
             type="submit"
             loading={isCreating || isUpdating}
+            disabled={
+              !(status == ERfxStatus.DRAFT || status == ERfxStatus.ADJUSTMENT)
+            }
           >
             Save
           </Button>

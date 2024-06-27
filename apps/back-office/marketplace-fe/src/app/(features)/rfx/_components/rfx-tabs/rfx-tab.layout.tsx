@@ -23,6 +23,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import { useDisclosure } from '@mantine/hooks';
 import { DateTimePicker } from '@mantine/dates';
+import { ERfxStatus } from '@/enums/rfx-status';
 
 export default function RFXTabs({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -124,7 +125,12 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
                     setRfxType('open');
                     open();
                   }}
-                  // disabled={!canSubmitForReview?.status}
+                  disabled={
+                    !(
+                      data?.status == ERfxStatus.ADJUSTMENT ||
+                      data?.status == ERfxStatus.DRAFT
+                    )
+                  }
                 >
                   Make RFQ Open
                 </Button>
@@ -136,7 +142,12 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
                   onClick={() => {
                     handleSubmit({ mode: 'close' });
                   }}
-                  // disabled={!canSubmitForReview?.status}
+                  disabled={
+                    !(
+                      data?.status == ERfxStatus.ADJUSTMENT ||
+                      data?.status == ERfxStatus.DRAFT
+                    )
+                  }
                 >
                   Make RFQ Closed
                 </Button>
@@ -147,7 +158,12 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
                   setRfxType('invitation');
                   open();
                 }}
-                // disabled={!canSubmitForReview?.status}
+                disabled={
+                  !(
+                    data?.status == ERfxStatus.ADJUSTMENT ||
+                    data?.status == ERfxStatus.DRAFT
+                  )
+                }
               >
                 Submit for review
               </Button>

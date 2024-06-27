@@ -42,14 +42,12 @@ export function Items({
         render: (value) => (
           <>
             <Badge
-              color={value?.status === 'INVITATION_PREPARED' ? 'green' : 'red'}
+              color={value?.status === 'DRAFT' ? 'red' : 'green'}
               variant="light"
               fw={700}
               radius={'sm'}
             >
-              {value?.status == 'INVITATION_PREPARED'
-                ? 'Prepared'
-                : 'Not Prepared'}
+              {value?.status == 'DRAFT' ? 'Not Prepared' : 'Prepared'}
             </Badge>
           </>
         ),
