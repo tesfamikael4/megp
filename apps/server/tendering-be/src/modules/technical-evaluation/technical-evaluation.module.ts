@@ -29,6 +29,7 @@ import { TechnicalEndorsementService } from './service/technical-endorsement.ser
 import { TechnicalEndorsementController } from './controller/technical-endorsement.controller';
 import { MinIOModule } from 'src/shared/min-io';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { UtilityModule } from '../utility/utility.module';
 
 @Module({
   imports: [
@@ -44,7 +45,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ]),
     BidModule,
     MinIOModule,
-    // UtilityModule,
+    UtilityModule,
     ClientsModule.register([
       {
         name: 'WORKFLOW_RMQ_SERVICE',
@@ -81,5 +82,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     TechnicalScoringAssessmentController,
     TechnicalEndorsementController,
   ],
+  exports: [TechnicalEndorsementService],
 })
 export class EvaluationModule {}
