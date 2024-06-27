@@ -18,9 +18,7 @@ import {
   ESolRegistrationStatus,
 } from 'src/utils/enums';
 import * as crypto from 'crypto';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { ClientProxy } from '@nestjs/microservices';
-import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
@@ -119,11 +117,6 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     };
 
     this.rmsRMQClient.emit('record-registration', registrationEventPayload);
-    // this.amqpConnection.publish(
-    //   'rms',
-    //   'record-registration',
-    //   registrationEventPayload,
-    // );
 
     return rfxRegistration;
   }
