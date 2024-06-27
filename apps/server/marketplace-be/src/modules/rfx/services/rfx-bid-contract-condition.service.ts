@@ -96,7 +96,7 @@ export class RfxBidContractConditionService extends ExtraCrudService<RfxBidContr
 
     const rfxConditionUpdate =
       this.rfxBidContractConditionRepository.create(itemData);
-    await this.rfxBidContractConditionRepository.update(id, itemData);
+    await this.rfxBidContractConditionRepository.update(id, rfxConditionUpdate);
     return rfxConditionUpdate;
   }
 }
