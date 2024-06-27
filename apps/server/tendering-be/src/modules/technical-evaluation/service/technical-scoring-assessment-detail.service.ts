@@ -31,12 +31,15 @@ import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
+import { TechnicalEndorsementService } from './technical-endorsement.service';
 
 @Injectable()
 export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<TechnicalScoringAssessmentDetail> {
   constructor(
     @InjectRepository(TechnicalScoringAssessmentDetail)
     private readonly technicalScoringAssessmentDetailRepository: Repository<TechnicalScoringAssessmentDetail>,
+
+    private readonly technicalEndorsementService: TechnicalEndorsementService,
 
     @Inject(REQUEST) private request: Request,
   ) {
@@ -716,50 +719,71 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
     );
 
     if (!assessments && members * biddersCount == assessmentCount) {
-      await manager.getRepository(TenderMilestone).update(
-        {
-          lotId: itemData.lotId,
-          tenderId: itemData.tenderId,
-        },
-        {
-          isCurrent: false,
-        },
-      );
-      await manager.getRepository(TenderMilestone).insert({
-        lotId: itemData.lotId,
-
+      await this.changeMilestone(manager, itemData, bdsSubmission.envelopType);
+      await this.technicalEndorsementService.initiateWorkflow({
         tenderId: itemData.tenderId,
-        milestoneNum: TenderMilestoneEnum.FinancialCompliance,
-        milestoneTxt: 'FinancialCompliance',
-        isCurrent: true,
+        lotId: itemData.lotId,
+        organizationId: req.user.organizationId,
+        organizationName: req.user.organizationName,
       });
-
-      const technicalScoringAssessment = await manager
-        .getRepository(TechnicalScoringAssessment)
-        .find({
-          where: {
-            // bidderId: itemData.bidderId,
-            bidRegistrationDetail: {
-              lotId: itemData.lotId,
-            },
-          },
-        });
-
-      const biddersComparison = technicalScoringAssessment.map((list) => {
-        return {
-          bidRegistrationDetailId: list.bidRegistrationDetailId,
-          milestoneNum: TenderMilestoneEnum.TechnicalScoring,
-          milestoneTxt: 'TechnicalScoring',
-          bidderStatus: list.totalPoints >= 70 ? 310 : 309,
-          bidderStatusTxt:
-            list.totalPoints >= 70
-              ? 'TechnicalScoringSucceeded'
-              : 'TechnicalScoringFailed',
-          passFail: list.totalPoints >= 70 ? true : false,
-        };
-      });
-      await manager.getRepository(BiddersComparison).insert(biddersComparison);
     }
+  }
+
+  private async changeMilestone(
+    manager: EntityManager,
+    itemData: any,
+    envelopType,
+  ) {
+    await manager.getRepository(TenderMilestone).update(
+      {
+        lotId: itemData.lotId,
+        tenderId: itemData.tenderId,
+      },
+      {
+        isCurrent: false,
+      },
+    );
+    const milestoneData = {
+      lotId: itemData.lotId,
+      tenderId: itemData.tenderId,
+      milestoneNum:
+        envelopType === 'two envelop'
+          ? TenderMilestoneEnum.TechnicalEndorsement
+          : TenderMilestoneEnum.FinancialCompliance,
+      milestoneTxt:
+        envelopType === 'two envelop'
+          ? 'TechnicalEndorsement'
+          : 'FinancialCompliance',
+      isCurrent: true,
+    };
+
+    await manager.getRepository(TenderMilestone).insert(milestoneData);
+
+    const technicalScoringAssessment = await manager
+      .getRepository(TechnicalScoringAssessment)
+      .find({
+        where: {
+          // bidderId: itemData.bidderId,
+          bidRegistrationDetail: {
+            lotId: itemData.lotId,
+          },
+        },
+      });
+
+    const biddersComparison = technicalScoringAssessment.map((list) => {
+      return {
+        bidRegistrationDetailId: list.bidRegistrationDetailId,
+        milestoneNum: TenderMilestoneEnum.TechnicalScoring,
+        milestoneTxt: 'TechnicalScoring',
+        bidderStatus: list.totalPoints >= 70 ? 310 : 309,
+        bidderStatusTxt:
+          list.totalPoints >= 70
+            ? 'TechnicalScoringSucceeded'
+            : 'TechnicalScoringFailed',
+        passFail: list.totalPoints >= 70 ? true : false,
+      };
+    });
+    await manager.getRepository(BiddersComparison).insert(biddersComparison);
   }
 
   async evaluatorReport(
