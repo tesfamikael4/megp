@@ -4,7 +4,6 @@ export class BusinessInterstAreaEntityChange1719314691897 implements MigrationIn
     name = 'BusinessInterstAreaEntityChange1719314691897'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "business_interest_area" ADD "expiryDate" TIMESTAMP`);
         await queryRunner.query(`ALTER TABLE "business_interest_area" ADD "registrationDate" TIMESTAMP`);
         await queryRunner.query(`ALTER TABLE "business_interest_area" ADD "registrationNumber" character varying`);
         await queryRunner.query(`ALTER TABLE "business_interest_area" DROP COLUMN "activationDate"`);
@@ -16,7 +15,7 @@ export class BusinessInterstAreaEntityChange1719314691897 implements MigrationIn
         await queryRunner.query(`ALTER TABLE "business_interest_area" ADD "activationDate" date`);
         await queryRunner.query(`ALTER TABLE "business_interest_area" DROP COLUMN "registrationNumber"`);
         await queryRunner.query(`ALTER TABLE "business_interest_area" DROP COLUMN "registrationDate"`);
-        await queryRunner.query(`ALTER TABLE "business_interest_area" DROP COLUMN "expiryDate"`);
+
     }
 
 }

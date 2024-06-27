@@ -275,6 +275,32 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
+  async formBusinessArea(bi: any, priceRange: string) {
+    let formattedBA = {};
+    if (bi.category == BusinessCategories.GOODS || bi.category == BusinessCategories.SERVICES) {
+      formattedBA = {
+        category: bi.category,
+        priceRange: priceRange,
+        registrationNumber: bi?.ppdaRegistrationNumber,
+        registrationDate: bi?.ppdaRegistrationDate,
+        expiryDate: bi?.expiryDate,
+        // lineOfBusiness: lob,
+      }
+    } else {
+      formattedBA = {
+        category: bi.category,
+        priceRange: priceRange,
+        userType: bi?.userType,
+        classification: bi?.classification,
+        expiryDate: bi?.expiryDate,
+        registrationNumber: bi?.ncicRegistrationNumber,
+        registrationDate: bi?.ncicRegistrationDate
+
+      }
+    }
+    return formattedBA;
+  }
+
 
   async formatData(data: any, profile: string = null) {
     delete data.basic?.address;
@@ -283,11 +309,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     for (const ba of data.areasOfBusinessInterest) {
       if (!profile) {
         const priceRange = await this.pricingService.findOne(ba.priceRange);
-        const bi = {
-          category: ba.category,
-          //  lineOfBusiness: ba.lineOfBusiness?.map((lob: any) => lob.name),
-          priceRange: this.commonService.formatPriceRange(priceRange),
-        };
+        const priceRangeText = this.commonService.formatPriceRange(priceRange);
+        const bi = await this.formBusinessArea(ba, priceRangeText);
         formattedData.areasOfBusinessInterest.push(bi);
       }
     }
@@ -315,6 +338,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     formattedData.preferential = [];
     for (const pt of data?.preferential ?? []) {
       const formatted = this.commonService.reduceAttributes(pt);
+
       formattedData.preferential.push(formatted);
     }
     // formattedData.lineOfBusiness = [];
@@ -345,7 +369,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
       if (!(result instanceof Readable)) {
         throw new Error(
-          'Certificate function did not return a Readable stream',
+          'Generate document function did not return a Readable stream',
         );
       }
       return fileId;
@@ -626,7 +650,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           data.initial.level.trim() === VendorStatusEnum.SUBMIT &&
           data.initial.status.trim() === VendorStatusEnum.SUBMIT
         ) {
-          const app = this.baService.getActiveApplicationByVendorId(result.id);
+          const app = await this.baService.getActiveApplicationByVendorId(data.id);
           if (app == null) {
             return this.submitVendorInformation(data, user);
           } else {
@@ -744,9 +768,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       vendorsEntity.areasOfBusinessInterest = [...BusinessInterestData];
 
     }
-
-
-
     return vendorsEntity;
   };
 

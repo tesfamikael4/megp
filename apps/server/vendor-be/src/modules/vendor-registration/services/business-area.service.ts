@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Not, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { BusinessAreaResponseDto } from '../dto/business-area.dto';
-import { BusinessAreaEntity } from 'src/entities';
+import { BusinessAreaEntity, WorkflowInstanceEntity } from 'src/entities';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
@@ -218,7 +218,22 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     });
   }
   async getActiveApplicationByVendorId(vendorId: string) {
-    const app = await this.businessAreaRepository.findOne({ where: { vendorId: vendorId, status: ApplicationStatus.PENDING } })
+    const app = await this.businessAreaRepository
+      .createQueryBuilder('ba')
+      .innerJoinAndMapOne(
+        'ba.workflow',
+        WorkflowInstanceEntity,
+        'workflow',
+        'workflow.id=ba.instanceId',
+      )
+      .where('ba.vendorId=:vendorId and ba.status=:baStatus and workflow.status=:appStatus',
+        {
+          vendorId: vendorId,
+          baStatus: ApplicationStatus.PENDING,
+          appStatus: ApplicationStatus.INPROGRESS
+        })
+      .getOne();
+    // const app = await this.businessAreaRepository.findOne({ where: { vendorId: vendorId, status: ApplicationStatus.PENDING } })
     return app;
   }
 }
