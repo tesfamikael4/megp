@@ -45,6 +45,7 @@ import {
 import { WorkflowHandlerService } from './workflow-handler.service';
 import { ClientProxy } from '@nestjs/microservices';
 import currentTime from 'src/utils/services/time-provider';
+import { EMarketplaceBucketName } from 'src/utils/enums/bucket.enum';
 
 @Injectable()
 export class RfxService extends EntityCrudService<RFX> {
@@ -405,7 +406,7 @@ export class RfxService extends EntityCrudService<RFX> {
       buffer,
       'rfxReview.pdf',
       'application/pdf',
-      'megp',
+      EMarketplaceBucketName.RFQ_PREPARATION_REVIEWAL_DOCUMENTS,
     );
 
     // transaction
