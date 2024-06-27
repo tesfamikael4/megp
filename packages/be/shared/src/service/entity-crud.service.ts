@@ -1,6 +1,10 @@
 import { Repository, DeepPartial, ObjectLiteral } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CollectionQuery, QueryConstructor } from '../collection-query';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 
 @Injectable()
@@ -59,7 +63,7 @@ export class EntityCrudService<T extends ObjectLiteral> {
 
   async findAllArchived(query: CollectionQuery, req?: any) {
     query.where.push([
-      { column: 'deletedAt', value: '', operator: 'IsNotNull' },
+      { column: 'deletedAt', value: '', operator: FilterOperators.IsNotNull },
     ]);
 
     const dataQuery = QueryConstructor.constructQuery<T>(
