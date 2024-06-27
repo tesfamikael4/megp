@@ -66,6 +66,10 @@ export default function RfxDetailTabs({
     );
 
     useEffect(() => {
+      if (timeLeft == 0) {
+        location.reload();
+        return;
+      }
       const timer = setTimeout(() => {
         setTimeLeft(getTimeDifference(new Date(), targetDate));
       }, 1000);
@@ -147,11 +151,8 @@ export default function RfxDetailTabs({
                   <Timer
                     targetDate={
                       new Date(
-                        new Date(
-                          selected?.activeRound?.end ??
-                            selected?.nextRound?.start,
-                        ).getTime() -
-                          new Date().getTimezoneOffset() * 60000, // Adjusting for timezone offset
+                        selected?.activeRound?.endingTime ??
+                          selected?.nextRound?.startingTime,
                       )
                     }
                   />

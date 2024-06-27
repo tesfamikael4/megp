@@ -17,6 +17,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconDeviceFloppy,
+  IconExclamationCircle,
 } from '@tabler/icons-react';
 import {
   useAcceptInvitationMutation,
@@ -201,7 +202,7 @@ export default function InvitationDetail({
           {selected?.status == 'ENDED' &&
             openedOffer?.[lastOffer]?.rank == 1 && (
               <Paper className="p-y-2 px-6 rounded-sm" withBorder>
-                <Flex className="items-center gap-4">
+                <Flex className="items-center gap-4 p-4">
                   <IconAward color="green" />
                   <Text c="green">
                     Congratulations! You have been announced winner for this
@@ -210,11 +211,24 @@ export default function InvitationDetail({
                 </Flex>
               </Paper>
             )}
+          {/* {!openedOffer?.[lastOffer]?.price &&
+            selected?.activeRound?.round != 0 && (
+              <Paper className="p-y-2 px-6 rounded-sm" withBorder>
+                <Flex className="items-center gap-4 p-4">
+                  <IconExclamationCircle color="red" />
+                  <Text c="red">
+                    You haven&apos;t placed a bid for the item in the previous
+                    round. Thus you cannot procced.
+                  </Text>
+                </Flex>
+              </Paper>
+            )} */}
           {selected?.status == 'ENDED' && (
-            <Paper withBorder className="py-2 px-4 rounded-sm">
+            <Paper withBorder className="py-2 px-4 rounded-sm  bg-white">
               <Flex className="items-center gap-2">
                 <Avatar color="blue">{openedOffer?.[lastOffer]?.rank}</Avatar>
-                You ranked at {openedOffer?.[lastOffer]?.rank} with price of{' '}
+                You ranked at {openedOffer?.[lastOffer]?.rank} {` `}with price
+                of{' '}
                 {openedOffer?.[lastOffer]?.price?.toLocaleString('en-US', {
                   style: 'currency',
                   currency: 'MKW',
@@ -226,12 +240,12 @@ export default function InvitationDetail({
           {product?.rfxItem.solRoundAwards?.[0] &&
             selected?.status != 'ENDED' && (
               <Stack>
-                <Flex className="gap-2 items-center">
+                <Flex className="gap-2 items-center w-fit bg-blue-100 p-4 rounded-md">
                   <Avatar>{openedOffer?.[lastOffer]?.rank}</Avatar>
                   <Text className="text-gray-600">You ranked at: </Text>
                   <Text>
                     {' '}
-                    {openedOffer?.[lastOffer]?.rank}
+                    {openedOffer?.[lastOffer]?.rank} {` `}
                     with price of:{' '}
                   </Text>
                   <Text>

@@ -156,10 +156,6 @@ const DocumentaryEvidence = () => {
     fetchUploadedEvidences();
   }, [rfxId, documentaryEvidences]);
 
-  logger.log(files);
-  logger.log(documentaryEvidences?.items);
-  logger.log(uploadedFiles);
-
   return (
     <>
       <Section title="Attach Documentary Evidence" defaultCollapsed={false}>
