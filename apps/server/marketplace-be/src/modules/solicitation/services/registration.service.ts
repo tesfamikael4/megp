@@ -137,10 +137,10 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     );
 
     dataQuery
-      .where('solRegistrations.vendorId = :vendorId', {
+      .where('sol_registrations.vendorId = :vendorId', {
         vendorId: user.organization.id,
       })
-      .leftJoinAndSelect('solRegistrations.rfx', 'rfx');
+      .leftJoinAndSelect('sol_registrations.rfx', 'rfx');
 
     return await this.giveQueryResponse<SolRegistration>(query, dataQuery);
   }
