@@ -45,7 +45,7 @@ export class SolRegistrationController extends ExtraCrudController<SolRegistrati
   })
   async getMyRegistrations(@CurrentUser() user: any, @Query('q') q?: string) {
     const query = decodeCollectionQuery(q);
-    return await this.solRegistrationService.getMyRegistrations(user, query);
+    return await this.solRegistrationService.getMyRegistrations(query, user);
   }
 
   @Get('solicitation-status')
