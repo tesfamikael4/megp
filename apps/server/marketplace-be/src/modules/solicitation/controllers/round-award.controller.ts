@@ -5,6 +5,7 @@ import {
   ExtraCrudController,
   JwtGuard,
   decodeCollectionQuery,
+  CurrentUser,
 } from 'megp-shared-be';
 import { SolRoundAward } from 'src/entities';
 import { SolRoundAwardService } from '../services/round-award.service';
@@ -22,6 +23,33 @@ export class SolRoundAwardController extends ExtraCrudController<SolRoundAward>(
 ) {
   constructor(private readonly rfxResponseItemService: SolRoundAwardService) {
     super(rfxResponseItemService);
+  }
+
+  @Get('my-awards')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getMyAwards(@CurrentUser() user: any, @Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.rfxResponseItemService.getMyAwardedRfxes(user, query);
+  }
+
+  @Get('winner/:rfxItemId')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getWinner(
+    @Param('rfxItemId') rfxItemId: string,
+    @Query('q') q?: string,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.rfxResponseItemService.getAwardWinner(rfxItemId, query);
   }
 
   @Get('round-winner/:rfxItemId/:round')

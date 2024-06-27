@@ -8,7 +8,7 @@ import {
   QueryConstructor,
 } from 'megp-shared-be';
 import { RFX, SolBookmark, SolRegistration } from 'src/entities';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
 import { EncryptionHelperService } from '../../../utils/services/encryption-helper.service';
 import { REQUEST } from '@nestjs/core';
 import { CreateRegistrationDto } from '../dtos/registration.dto';
@@ -128,6 +128,23 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     return rfxRegistration;
   }
 
+  async getMyRegistrations(query: CollectionQuery, user: any) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const dataQuery = QueryConstructor.constructQuery<SolRegistration>(
+      entityManager.getRepository(SolRegistration),
+      query,
+    );
+
+    dataQuery
+      .where('solRegistrations.vendorId = :vendorId', {
+        vendorId: user.organization.id,
+      })
+      .leftJoinAndSelect('solRegistrations.rfx', 'rfx');
+
+    return await this.giveQueryResponse<SolRegistration>(query, dataQuery);
+  }
+
   async solicitationStatus(query: CollectionQuery, user: any) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
@@ -154,12 +171,18 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
           }),
       );
 
-    const response = new DataResponseFormat<RFX>();
+    return await this.giveQueryResponse<RFX>(query, dataQuery);
+  }
+
+  async giveQueryResponse<T>(
+    query: CollectionQuery,
+    dataQuery: SelectQueryBuilder<T>,
+  ) {
+    const response = new DataResponseFormat<T>();
     if (query.count) {
       response.total = await dataQuery.getCount();
     } else {
       const [result, total] = await dataQuery.getManyAndCount();
-
       response.total = total;
       response.items = result;
     }

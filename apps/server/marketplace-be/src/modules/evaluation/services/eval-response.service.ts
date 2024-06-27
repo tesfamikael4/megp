@@ -1,22 +1,35 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import {
   EvalItemResponse,
   EvalResponse,
   OpenedItemResponse,
+  OpenedOffer,
   OpenedResponse,
   RFX,
+  RFXItem,
+  RfxBidProcedure,
   RfxProcurementTechnicalTeam,
   SolRegistration,
   SolResponse,
+  SolRound,
+  SolRoundAward,
   TeamMember,
 } from 'src/entities';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, MoreThanOrEqual, Repository } from 'typeorm';
 import { CreateEvalResponseDto } from '../dtos/eval-response.dto';
 import {
+  EInvitationStatus,
+  ERfxItemStatus,
   ERfxStatus,
   ESolRegistrationStatus,
+  ESolRoundStatus,
   EvaluationResponse,
 } from 'src/utils/enums';
 import { REQUEST } from '@nestjs/core';
@@ -316,17 +329,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     // GENERATE PDF
 
     if (isTeamEvaluation) {
-      const eventPayload = {
-        id: rfxId,
-        itemName: rfx.name,
-        organizationId: rfx.organizationId,
-        name: 'RFQEvaluationApproval',
-      };
-      await entityManager
-        .getRepository(RFX)
-        .update(rfxId, { status: ERfxStatus.SUBMITTED_EVALUATION });
-
-      this.workflowRMQClient.emit('initiate-workflow', eventPayload);
+      const [items, procedure] = await this.filterItems(rfxId, 0);
+      await this.calculateRoundWinner(items, procedure.deltaPercentage);
+      await this.sendToEvaluators(rfx);
     }
   }
 
@@ -719,5 +724,124 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
       .getMany();
 
     return documentaryEvidences;
+  }
+
+  async calculateRoundWinner(items: RFXItem[], delta: number) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const roundAwardRepo = entityManager.getRepository(SolRoundAward);
+    const openedOfferRepo = entityManager.getRepository(OpenedOffer);
+    const itemRepo = entityManager.getRepository(RFXItem);
+
+    const solRoundAwards = [];
+    const rankedOffers = [];
+
+    for (const item of items) {
+      if (item.openedOffers.length == 0) {
+        await itemRepo.update(item.id, {
+          status: ERfxItemStatus.ENDED,
+        });
+        continue;
+      }
+      const sortedOffers = item.openedOffers.sort(
+        (a, b) => a.calculatedPrice - b.calculatedPrice,
+      );
+
+      const offerRank = sortedOffers.map((offer, index) => ({
+        ...offer,
+        updatedAt: undefined,
+        rank: index + 1,
+      }));
+      rankedOffers.push(...offerRank);
+
+      const minPriceOffer = sortedOffers[0];
+
+      const decrement = (minPriceOffer.price * delta) / 100;
+      const nextRoundStartingPrice = minPriceOffer.price - decrement;
+
+      solRoundAwards.push({
+        rfxProductInvitationId: minPriceOffer.rfxProductInvitationId,
+        solOfferId: minPriceOffer.solOfferId,
+        openedOfferId: minPriceOffer.id,
+        rfxItemId: minPriceOffer.rfxItemId,
+        solRoundId: minPriceOffer.solRoundId,
+        winnerPrice: minPriceOffer.price,
+        nextRoundStartingPrice,
+      });
+    }
+
+    const createdRoundAwards = roundAwardRepo.create(solRoundAwards);
+    await Promise.all([
+      roundAwardRepo.upsert(createdRoundAwards, ['rfxItemId', 'solRoundId']),
+      openedOfferRepo.upsert(rankedOffers, ['id']),
+    ]);
+  }
+
+  async filterItems(
+    rfxId: string,
+    round: number,
+  ): Promise<[RFXItem[], RfxBidProcedure]> {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const itemRepo = entityManager.getRepository(RFXItem);
+    const rfxRepo = entityManager.getRepository(RFX);
+    const roundRepo = entityManager.getRepository(SolRound);
+    const procedureRepo = entityManager.getRepository(RfxBidProcedure);
+
+    const [validItems, rfxBidProcedure] = await Promise.all([
+      itemRepo
+        .createQueryBuilder('rfx_items')
+        .where('rfx_items.rfxId = :rfxId', { rfxId })
+        .andWhere('rfx_items.status = :status', {
+          status: ERfxItemStatus.APPROVED,
+        })
+        .leftJoinAndSelect('rfx_items.openedOffers', 'openedOffers')
+        .leftJoin('openedOffers.solRound', 'solRound')
+        .leftJoin('openedOffers.rfxProductInvitation', 'rfxProductInvitations')
+        .andWhere('solRound.round = :round', { round })
+        .andWhere('rfxProductInvitations.status IN (:...statuses)', {
+          statuses: [EInvitationStatus.ACCEPTED, EInvitationStatus.COMPLY],
+        })
+        .getMany(),
+      procedureRepo.findOne({
+        where: { rfxId },
+        select: { id: true, deltaPercentage: true },
+      }),
+    ]);
+
+    if (validItems.length == 0) {
+      await Promise.all([
+        rfxRepo.update(rfxId, {
+          status: ERfxStatus.ENDED,
+        }),
+        roundRepo.update(
+          { round: MoreThanOrEqual(round), rfxId },
+          {
+            status: ESolRoundStatus.CANCELLED,
+          },
+        ),
+      ]);
+      throw new NotFoundException(
+        `No valid items found for this RFQ id ${rfxId}`,
+      );
+    }
+
+    return [validItems, rfxBidProcedure];
+  }
+
+  private async sendToEvaluators(rfx: RFX) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const eventPayload = {
+      id: rfx.id,
+      itemName: rfx.name,
+      organizationId: rfx.organizationId,
+      name: 'RFQEvaluationApproval',
+    };
+    await entityManager
+      .getRepository(RFX)
+      .update(rfx.id, { status: ERfxStatus.SUBMITTED_EVALUATION });
+
+    this.workflowRMQClient.emit('initiate-workflow', eventPayload);
   }
 }
