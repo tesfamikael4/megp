@@ -257,7 +257,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     fontSize: 12,
-    marginLeft: 20,
     paddingHorizontal: 20,
     paddingVertical: 5,
   },
