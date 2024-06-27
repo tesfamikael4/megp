@@ -338,6 +338,13 @@ export const rfxOtherApi = createApi({
         return { url: `sol-round-awards/winner/${itemId}${q}` };
       },
     }),
+    getItemSpecificationEval: builder.query<any, { bidderId: string }>({
+      query: (data) => ({
+        url: `/sol-offers/vendors-offer/${data?.bidderId}`,
+        method: 'GET',
+      }),
+      providesTags: ['eval-responses:LIST'],
+    }),
   }),
 });
 
@@ -380,4 +387,5 @@ export const {
   useMakeRFXOpenMutation,
   useMakeRFXClosedMutation,
   useLazyGetWinnersQuery,
+  useLazyGetItemSpecificationEvalQuery,
 } = rfxOtherApi;
