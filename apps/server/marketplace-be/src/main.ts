@@ -47,7 +47,7 @@ async function bootstrap() {
     app,
     new DocumentBuilder()
       .setTitle('Market Place  API')
-      .setDescription('My Market Place API')
+      .setDescription('Market Place API')
       .addBearerAuth()
       .build(),
   );
