@@ -7,6 +7,8 @@ import {
   Flex,
   Group,
   Modal,
+  NumberFormatter,
+  Stack,
   Text,
 } from '@mantine/core';
 import { Section, logger, notify } from '@megp/core-fe';
@@ -18,11 +20,15 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { useLazyReadQuery } from '../_api/activities.api';
-import { useLazyReadQuery as useLazyReadPostActivityQuery } from '../_api/post-activity.api';
 import { useParams } from 'next/navigation';
-import { useCreateMultipleItemsMutation } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
-import { useCreateMultipleItemsMutation as usePostCreateMultipleItemsMutation } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import {
+  useCreateMultipleItemsMutation,
+  useLazyReadActivityQuery,
+} from '@/store/api/pre-budget-plan/pre-budget-plan.api';
+import {
+  useCreateMultipleItemsMutation as usePostCreateMultipleItemsMutation,
+  useLazyReadPostActivityQuery,
+} from '@/store/api/post-budget-plan/post-budget-plan.api';
 import { notifications } from '@mantine/notifications';
 import {
   useDeleteMutation,
@@ -57,7 +63,7 @@ export function Items({
   const [data, setData] = useState<any[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [newItems, setNewItems] = useState<any[]>([]);
-  const [getPreActivity, { data: preActivity }] = useLazyReadQuery();
+  const [getPreActivity, { data: preActivity }] = useLazyReadActivityQuery();
   const [getPostActivity, { data: postActivity }] =
     useLazyReadPostActivityQuery();
   const [addPreItems, { isLoading: isPreAddingItems }] =
@@ -68,10 +74,13 @@ export function Items({
     useLazyListByIdQuery();
   const [listPostById, { data: postList, isSuccess: isPostSuccess }] =
     useLazyListPostByIdQuery();
-  const [removePre] = useDeleteMutation();
-  const [removePost] = useDeletePostMutation();
-  const [updatePre, { isLoading: isPreUpdating }] = useUpdateMutation();
-  const [updatePost, { isLoading: isPostUpdating }] = useUpdatePostMutation();
+  const [removePre, { isSuccess: isPreDeleted }] = useDeleteMutation();
+  const [removePost, { isSuccess: isPostDeleted }] = useDeletePostMutation();
+  const [updatePre, { isLoading: isPreUpdating, isSuccess: isPreUpdated }] =
+    useUpdateMutation();
+  const [updatePost, { isLoading: isPostUpdating, isSuccess: isPostUpdated }] =
+    useUpdatePostMutation();
+
   const { id } = useParams();
 
   const config = {
@@ -361,7 +370,16 @@ export function Items({
     page == 'pre'
       ? getPreActivity(id as string)
       : getPostActivity(id as string);
-  }, [id, getPreActivity, page, getPostActivity]);
+  }, [
+    id,
+    getPreActivity,
+    isPreDeleted,
+    isPreUpdated,
+    page,
+    getPostActivity,
+    isPostDeleted,
+    isPostUpdated,
+  ]);
 
   useEffect(() => {
     if (page == 'pre' && isPreSuccess) {
@@ -386,6 +404,39 @@ export function Items({
         </Group>
       }
     >
+      <Flex direction="column" align="end">
+        <Stack unstyled>
+          <Group>
+            <Text size="sm" fw={700}>
+              Est Amount:
+            </Text>
+
+            <NumberFormatter
+              value={
+                page == 'pre'
+                  ? preActivity?.estimatedAmount
+                  : postActivity?.estimatedAmount
+              }
+              prefix={`${page == 'pre' ? preActivity?.currency : postActivity?.currency} `}
+              thousandSeparator
+            />
+          </Group>
+          <Group>
+            <Text size="sm" fw={700}>
+              Cal Amount:
+            </Text>
+            <NumberFormatter
+              value={
+                page == 'pre'
+                  ? preActivity?.calculatedAmount
+                  : postActivity?.calculatedAmount
+              }
+              prefix={`${page == 'pre' ? preActivity?.currency : postActivity?.currency} `}
+              thousandSeparator
+            />
+          </Group>
+        </Stack>
+      </Flex>
       <Box>
         {newItems.length !== 0 && (
           <>

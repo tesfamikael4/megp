@@ -94,7 +94,7 @@ export default function NewActivity() {
               }
               onClick={() => setCurrentTab('identification')}
             >
-              Activity Identification
+              Identification
             </Box>
             <Box
               className={
