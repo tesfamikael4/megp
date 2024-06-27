@@ -200,14 +200,15 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     // query.includes.push('tenders.tenderMilestones')
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
+    const milestones = [303, 304, 305, 307];
     const dataQuery = QueryConstructor.constructQuery<Tender>(
       manager.getRepository(Tender),
       query,
     )
       .leftJoinAndSelect('tenders.tenderMilestones', 'tenderMilestones')
       .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true })
-      .andWhere('tenderMilestones.milestoneNum = :milestoneNum', {
-        milestoneNum: 303,
+      .andWhere('tenderMilestones.milestoneNum IN (:...milestones)', {
+        milestones,
       });
     const response = new DataResponseFormat<Tender>();
     if (query.count) {

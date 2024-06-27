@@ -29,9 +29,9 @@ export class TechnicalEndorsementService {
 
     private readonly minIoService: MinIOService,
 
-    // private readonly pdfGeneratorService: PdfGeneratorService,
+    private readonly pdfGeneratorService: PdfGeneratorService,
 
-    // private readonly documentService: DocumentService,
+    private readonly documentService: DocumentService,
 
     @Inject('WORKFLOW_RMQ_SERVICE')
     private readonly endorsementRMQClient: ClientProxy,
@@ -69,15 +69,12 @@ export class TechnicalEndorsementService {
     return response;
   }
 
-  async initiateWorkflow(
-    itemData: {
-      tenderId: string;
-      lotId: string;
-      organizationId: string;
-      organizationName: string;
-    },
-    req: any,
-  ) {
+  async initiateWorkflow(itemData: {
+    tenderId: string;
+    lotId: string;
+    organizationId: string;
+    organizationName: string;
+  }) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     await this.changeMilestone(manager, itemData);
     const [lot, compliance, qualification, responsiveness, scoring] =
@@ -142,8 +139,8 @@ export class TechnicalEndorsementService {
       },
       { compliance, qualification, responsiveness, scoring },
     );
-    await this.endorsementRMQClient.emit('initiate-workflow', {
-      name: 'technicalEndorsement',
+    this.endorsementRMQClient.emit('initiate-workflow', {
+      name: 'TechnicalEndorsement',
       id: itemData.lotId,
       itemName: lot.name,
       organizationId: itemData.organizationId,
@@ -179,27 +176,27 @@ export class TechnicalEndorsementService {
       ...organization,
     });
 
-    // const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');
+    const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');
 
-    // const fileInfo = await this.minIoService.uploadBuffer(
-    //   buffer,
-    //   'preBudgetPlanReport.pdf',
-    //   'application/pdf',
-    //   'megp',
-    // );
+    const fileInfo = await this.minIoService.uploadBuffer(
+      buffer,
+      'technicalEndorsement.pdf',
+      'application/pdf',
+      'megp',
+    );
 
-    // await this.documentService.create(
-    //   {
-    //     fileInfo,
-    //     title: itemName,
-    //     itemId: lotId,
-    //     type: 'technicalEvaluation',
-    //     version: 1,
-    //     key: 'onApprovalSubmit',
-    //   },
-    //   organization,
-    // );
-    // return buffer;
+    await this.documentService.create(
+      {
+        fileInfo,
+        title: itemName,
+        itemId: lotId,
+        type: 'technicalEvaluation',
+        version: 1,
+        key: 'onApprovalSubmit',
+      },
+      organization,
+    );
+    return buffer;
   }
 
   private async changeMilestone(
