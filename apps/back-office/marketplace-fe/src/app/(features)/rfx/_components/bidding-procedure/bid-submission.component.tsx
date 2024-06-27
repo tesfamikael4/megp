@@ -136,15 +136,6 @@ export default function BidSubmission() {
             name="postingDate"
             control={control}
             render={({ field: { name, value } }) => {
-              const submissionDeadline = watch('submissionDeadline');
-              const maxDate =
-                submissionDeadline &&
-                !isNaN(new Date(submissionDeadline).getTime())
-                  ? new Date(
-                      new Date(submissionDeadline).getTime() - 5 * 60 * 1000,
-                    )
-                  : new Date(Date.now() - 24 * 60 * 60 * 1000);
-
               return (
                 <DateTimePicker
                   name={name}
@@ -152,7 +143,6 @@ export default function BidSubmission() {
                   label="Posting Date"
                   placeholder="Posting Date"
                   value={value ? new Date(value) : null}
-                  maxDate={maxDate}
                   minDate={new Date()}
                   className="w-1/2"
                   disabled={
@@ -175,30 +165,38 @@ export default function BidSubmission() {
           <Controller
             name="submissionDeadline"
             control={control}
-            render={({ field: { name, value } }) => (
-              <DateTimePicker
-                name={name}
-                withAsterisk
-                label="Submission Deadline"
-                placeholder="Submission Deadline"
-                value={value ? new Date(value) : null}
-                minDate={new Date()}
-                className="w-1/2"
-                disabled={
-                  !(
-                    status == ERfxStatus.DRAFT ||
-                    status == ERfxStatus.ADJUSTMENT
-                  )
-                }
-                onChange={(value) => {
-                  setValue(
-                    'submissionDeadline',
-                    value?.toISOString() ?? new Date().toISOString(),
-                  );
-                }}
-                error={errors?.submissionDeadline?.message}
-              />
-            )}
+            render={({ field: { name, value } }) => {
+              const postingDate = watch('postingDate');
+              const minDate =
+                postingDate && !isNaN(new Date(postingDate).getTime())
+                  ? new Date(new Date(postingDate).getTime() + 5 * 60 * 1000)
+                  : new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+              return (
+                <DateTimePicker
+                  name={name}
+                  withAsterisk
+                  label="Submission Deadline"
+                  placeholder="Submission Deadline"
+                  value={value ? new Date(value) : null}
+                  minDate={minDate}
+                  className="w-1/2"
+                  disabled={
+                    !(
+                      status == ERfxStatus.DRAFT ||
+                      status == ERfxStatus.ADJUSTMENT
+                    )
+                  }
+                  onChange={(value) => {
+                    setValue(
+                      'submissionDeadline',
+                      value?.toISOString() ?? new Date().toISOString(),
+                    );
+                  }}
+                  error={errors?.submissionDeadline?.message}
+                />
+              );
+            }}
           />
         </Flex>
 

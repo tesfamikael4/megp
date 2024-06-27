@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import {
+  OpenedOffer,
   RFXItem,
   RfxProductInvitation,
   SolOffer,
@@ -16,7 +17,11 @@ import {
   Repository,
 } from 'typeorm';
 import { CreateOfferDto } from '../dtos/offer.dto';
-import { EInvitationStatus, ERfxItemStatus } from 'src/utils/enums';
+import {
+  EInvitationStatus,
+  ERfxItemStatus,
+  ESolRoundStatus,
+} from 'src/utils/enums';
 import { EncryptionHelperService } from '../../../utils/services/encryption-helper.service';
 import { REQUEST } from '@nestjs/core';
 
@@ -87,13 +92,13 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
         'Invitation is not Accepted. Please Accept First',
       );
 
-    if (currentRound.round >= 1) {
-      await this.checkPreviousRoundOfferExists(
-        currentRound.round,
-        itemData,
-        user,
-      );
-    }
+    // if (currentRound.round >= 1) {
+    //   await this.checkPreviousRoundOfferExists(
+    //     currentRound.round,
+    //     itemData,
+    //     user,
+    //   );
+    // }
 
     const registration = await registrationRepo.findOne({
       where: {
@@ -137,9 +142,25 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     rfxProductInvitationId: string,
     user: any,
   ) {
+    const previousRound = await this.solRoundRepository.findOne({
+      where: {
+        endingTime: LessThanOrEqual(new Date()),
+        status: ESolRoundStatus.COMPLETED,
+      },
+      order: {
+        round: 'DESC',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!previousRound) return { round: null };
+
     const offer = await this.solOfferRepository.findOne({
       where: {
         rfxProductInvitationId,
+        solRoundId: previousRound.id,
         solRegistration: {
           vendorId: user.organization.id,
         },
@@ -147,12 +168,9 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
       relations: {
         solRegistration: true,
       },
-      order: {
-        createdAt: 'DESC',
-      },
     });
 
-    if (!offer) return;
+    if (!offer) return { price: null };
 
     const price = this.encryptionHelperService.decryptedData(
       offer.encryptedPrice,
@@ -168,6 +186,24 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
     const taxedPrice = +price * (1 + +tax / 100);
 
     return { ...offer, price: +price, tax: +tax, taxedPrice };
+  }
+
+  async getVendorsSolicitationOffer(solRegistrationId: string) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    return await entityManager.getRepository(OpenedOffer).find({
+      where: {
+        solRegistrationId,
+        solRound: {
+          round: 0,
+        },
+      },
+      relations: {
+        rfxItem: {
+          technicalRequirement: true,
+        },
+      },
+    });
   }
 
   private async getValidRound(rfxId: string) {

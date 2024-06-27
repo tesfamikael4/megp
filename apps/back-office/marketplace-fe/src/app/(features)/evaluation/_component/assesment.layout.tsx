@@ -12,6 +12,7 @@ import {
 } from '@/store/api/rfx/rfx.api';
 import { useParams, useRouter } from 'next/navigation';
 import { logger } from '@megp/core-fe';
+import ItemSpecification from './item-specification.component';
 
 export default function AsssesmentLayout({
   children,
@@ -47,13 +48,14 @@ export default function AsssesmentLayout({
   return (
     <Stack>
       <BidderHeader />
-      <Flex className="gap-2">
-        <Box className="w-1/4">
+      <Flex className="gap-2 ">
+        <Flex className="w-1/4 flex-col gap-2">
           <Requirments />
-        </Box>
+          <ItemSpecification />
+        </Flex>
         <LoadingOverlay visible={isGettingRequirments} />
         {requirments && requirmentId && (
-          <Box className="w-2/4">
+          <Box className="w-2/4 h-fit">
             <PreviewDocument />
           </Box>
         )}

@@ -39,15 +39,11 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
 
     if (!rfx) throw new NotFoundException('Draft RFQ not found');
 
-    // itemData.openingDate = currentTime(new Date(itemData.openingDate));
-    // itemData.submissionDeadline = currentTime(
-    //   new Date(itemData.submissionDeadline),
-    // );
     if (!itemData.isReverseAuction) {
       itemData.minimumBidDecrementPercentage = null;
       itemData.roundDuration = null;
       itemData.idleTime = null;
-      itemData.round = null;
+      itemData.round = 0;
     }
 
     const rfxBidContract = this.rfxBidProcedureRepository.create(itemData);
@@ -79,7 +75,7 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
       itemData.minimumBidDecrementPercentage = null;
       itemData.roundDuration = null;
       itemData.idleTime = null;
-      itemData.round = null;
+      itemData.round = 0;
     }
 
     const rfxDocUpdate = this.rfxBidProcedureRepository.create(itemData);
