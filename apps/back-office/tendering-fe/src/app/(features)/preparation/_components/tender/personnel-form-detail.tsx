@@ -50,7 +50,7 @@ export default function PersonnelFormDetail({
         tenderId: id,
       });
       notify('Success', 'Personnel created successfully');
-      returnFunction;
+      returnFunction();
     } catch (err) {
       notify('Error', 'Error in creating Personnel');
     }

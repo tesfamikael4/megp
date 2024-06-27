@@ -41,11 +41,11 @@ export default function TenderPersonnelList() {
   };
 
   const onReturnFunction = () => {
+    close();
     trigger({
       id: id.toString() ?? '',
       collectionQuery: {},
     });
-    close();
   };
 
   return (
