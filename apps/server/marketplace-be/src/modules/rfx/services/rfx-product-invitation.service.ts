@@ -297,8 +297,8 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
         now,
       })
       .leftJoin('rfxes.solRegistrations', 'solRegistrations')
-      .andWhere('solRegistrations.vendorId != :vendorId', {
-        vendorId: user.organization.id,
+      .andWhere('solRegistrations.vendorId != :bidderId', {
+        bidderId: user.organization.id,
       });
 
     return await this.giveQueryResponse<RFX>(query, dataQuery);
