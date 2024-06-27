@@ -735,12 +735,11 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
 
     const solRoundAwards = [];
     const rankedOffers = [];
+    const endedItemIds = [];
 
     for (const item of items) {
       if (item.openedOffers.length == 0) {
-        await itemRepo.update(item.id, {
-          status: ERfxItemStatus.ENDED,
-        });
+        endedItemIds.push(item.id);
         continue;
       }
       const sortedOffers = item.openedOffers.sort(
@@ -772,6 +771,9 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
 
     const createdRoundAwards = roundAwardRepo.create(solRoundAwards);
     await Promise.all([
+      endedItemIds.length > 0
+        ? itemRepo.update(endedItemIds, { status: ERfxItemStatus.ENDED })
+        : Promise.resolve(),
       roundAwardRepo.upsert(createdRoundAwards, ['rfxItemId', 'solRoundId']),
       openedOfferRepo.upsert(rankedOffers, ['id']),
     ]);
