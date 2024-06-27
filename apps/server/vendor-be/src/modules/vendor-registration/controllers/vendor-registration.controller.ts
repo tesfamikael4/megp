@@ -45,7 +45,7 @@ export class VendorRegistrationsController {
   */
   @Get('get-vendor-by-userId')
   async getVendorByUserId(@CurrentUser() user: any) {
-    user.id = "1dcda690-2447-43ca-898d-95b5ed4c5b0c";
+    //user.id = "1dcda690-2447-43ca-898d-95b5ed4c5b0c";
     // return await this.regService.getVendorByUserId(userInfo.id);
     return await this.regService.vendorDetailByUserId(user.id);
   }

@@ -324,11 +324,26 @@ const PdfDocumentTemplate = async (data) => {
                     title: 'Category',
                   },
                   { accessor: 'priceRange', title: 'Price Range' },
-
-                  // {
-                  //   accessor: 'lineOfBusiness',
-                  //   title: 'Line Of Business',
-                  // },
+                  {
+                    accessor: 'registrationNumber',
+                    title: 'Registration Number',
+                  },
+                  {
+                    accessor: 'registrationDate',
+                    title: 'Registration Date',
+                  },
+                  {
+                    accessor: 'expiryDate',
+                    title: 'expiry Date',
+                  },
+                  {
+                    accessor: 'userType',
+                    title: 'User Type',
+                  },
+                  {
+                    accessor: 'classification',
+                    title: 'classification',
+                  },
                 ],
                 data: data?.areasOfBusinessInterest,
               }}
@@ -341,19 +356,20 @@ const PdfDocumentTemplate = async (data) => {
                 Approved Purpose of Registration
               </Text>
             ) : null}
-
-            <ReactPdfTableGrid3
-              config={{
-                columns: [
-                  {
-                    accessor: 'category',
-                    title: 'Category',
-                  },
-                  { accessor: 'priceRange', title: 'Price Range' },
-                ],
-                data: data?.previousBusinessInterestAreas,
-              }}
-            />
+            {data?.previousBusinessInterestAreas?.length ? (
+              <ReactPdfTableGrid3
+                config={{
+                  columns: [
+                    {
+                      accessor: 'category',
+                      title: 'Category',
+                    },
+                    { accessor: 'priceRange', title: 'Price Range' },
+                  ],
+                  data: data?.previousBusinessInterestAreas,
+                }}
+              />
+            ) : null}
           </View>
 
           {/*Business Lines*/}
@@ -387,10 +403,10 @@ const PdfDocumentTemplate = async (data) => {
                       title: 'Preferential service',
                     },
                     { accessor: 'certiNumber', title: 'certificate Number' },
-                    {
-                      accessor: 'status',
-                      title: 'Status',
-                    },
+                    // {
+                    //   accessor: 'status',
+                    //   title: 'Status',
+                    // },
                   ],
                   data: data?.preferential,
                 }}
