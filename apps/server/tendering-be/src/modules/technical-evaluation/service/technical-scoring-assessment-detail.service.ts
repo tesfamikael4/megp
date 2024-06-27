@@ -257,15 +257,15 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
       // check: checklists.some((x) => x.eqcTechnicalScoringId === treeNode.id),
       check:
         checklists &&
-        checklists.find((x) => x.eqcTechnicalScoringId == treeNode.id)
+          checklists.find((x) => x.eqcTechnicalScoringId == treeNode.id)
           ? true
           : false,
       children: treeNode.children
         ? await Promise.all(
-            treeNode.children.map((child) =>
-              this.traverseAndMap(child, checklists),
-            ),
-          )
+          treeNode.children.map((child) =>
+            this.traverseAndMap(child, checklists),
+          ),
+        )
         : [],
     };
     return tree;
@@ -719,12 +719,12 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
     );
 
     if (!assessments && members * biddersCount == assessmentCount) {
-      await this.changeMilestone(manager, itemData, bdsSubmission.envelopType);
+      await this.changeMilestone(manager, itemData, 'two envelop');
       await this.technicalEndorsementService.initiateWorkflow({
         tenderId: itemData.tenderId,
         lotId: itemData.lotId,
-        organizationId: req.user.organizationId,
-        organizationName: req.user.organizationName,
+        organizationId: req.user.organization.id,
+        organizationName: req.user.organization.name,
       });
     }
   }

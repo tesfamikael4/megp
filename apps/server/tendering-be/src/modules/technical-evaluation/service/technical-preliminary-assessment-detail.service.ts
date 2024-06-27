@@ -136,9 +136,9 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
           (x) =>
             x.technicalPreliminaryAssessment.bidRegistrationDetail
               .bidRegistration.bidderId ==
-              bidder.bidRegistrationDetail.bidRegistration.bidderId &&
+            bidder.bidRegistrationDetail.bidRegistration.bidderId &&
             x.technicalPreliminaryAssessment.isTeamAssessment ==
-              isTeamAssessment,
+            isTeamAssessment,
         ).length
       ) {
         response.items.push({
@@ -150,9 +150,9 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
           (x) =>
             x.technicalPreliminaryAssessment.bidRegistrationDetail
               .bidRegistration.bidderId ==
-              bidder.bidRegistrationDetail.bidRegistration.bidderId &&
+            bidder.bidRegistrationDetail.bidRegistration.bidderId &&
             x.technicalPreliminaryAssessment.isTeamAssessment ==
-              isTeamAssessment,
+            isTeamAssessment,
         ).length == 0
       ) {
         response.items.push({
@@ -200,7 +200,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     // query.includes.push('tenders.tenderMilestones')
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const milestones = [303, 304, 305, 307];
+    const milestones = [303, 304, 305, 306, 323];
     const dataQuery = QueryConstructor.constructQuery<Tender>(
       manager.getRepository(Tender),
       query,
