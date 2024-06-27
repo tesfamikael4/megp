@@ -1,4 +1,3 @@
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import {
   BadRequestException,
   Inject,
@@ -13,7 +12,6 @@ import {
   RFXItem,
   RfxBidProcedure,
   RfxProductInvitation,
-  SolOffer,
   SolRound,
   SolRoundAward,
   TeamMember,
@@ -28,28 +26,21 @@ import {
   EInvitationStatus,
   ERfxItemStatus,
   ERfxStatus,
-  ESolOfferStatus,
   ESolRoundStatus,
   EvaluationResponse,
 } from 'src/utils/enums';
 import { SchedulerService } from 'src/utils/services/scheduler.service';
-import currentTime from 'src/utils/services/time-provider';
 import { DataSource, EntityManager, In, MoreThanOrEqual, Not } from 'typeorm';
 
 @Injectable()
 export class WorkflowHandlerService {
   constructor(
     private dataSource: DataSource,
-    // private readonly amqpConnection: AmqpConnection,
     @Inject('RMS_RMQ_SERVICE')
     private readonly rmsRMQClient: ClientProxy,
     private readonly schedulerService: SchedulerService,
     private readonly openerService: OpenerService,
   ) {}
-
-  // emitEvent(exchange: string, routingKey: string, payload: any) {
-  //   this.amqpConnection.publish(exchange, routingKey, payload);
-  // }
 
   async handleEvaluationApproval(payload: any) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -415,12 +406,12 @@ export class WorkflowHandlerService {
       );
     }
 
-    const [items, procedure] = await this.filterItems(rfxId, 0, entityManager);
-    await this.calculateRoundWinner(
-      items,
-      procedure.deltaPercentage,
-      entityManager,
-    );
+    // const [items, procedure] = await this.filterItems(rfxId, 0, entityManager);
+    // await this.calculateRoundWinner(
+    //   items,
+    //   procedure.deltaPercentage,
+    //   entityManager,
+    // );
 
     const rounds = await this.scheduleNextRounds(rfxId, entityManager);
     if (Array.isArray(rounds)) {

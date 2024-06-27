@@ -295,6 +295,10 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
       .leftJoin('rfxes.rfxBidProcedure', 'rfxBidProcedure')
       .andWhere('rfxBidProcedure.postingDate < :now', {
         now,
+      })
+      .leftJoin('rfxes.solRegistrations', 'solRegistrations')
+      .andWhere('solRegistrations.vendorId != :vendorId', {
+        vendorId: user.organization.id,
       });
 
     return await this.giveQueryResponse<RFX>(query, dataQuery);

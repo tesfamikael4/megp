@@ -583,8 +583,7 @@ export class RfxService extends EntityCrudService<RFX> {
     );
 
     dataQuery
-      .where('rfxes.status = :status', { status: ERfxStatus.DRAFT })
-      .andWhere('rfxes.organizationId = :organizationId', {
+      .where('rfxes.organizationId = :organizationId', {
         organizationId: user.organization.id,
       })
       .leftJoin(
@@ -627,20 +626,20 @@ export class RfxService extends EntityCrudService<RFX> {
     );
 
     dataQuery
-      // .where('rfxes.status = :status', { status: ERfxStatus.DRAFT })
-      .where('rfxes.organizationId = :organizationId', {
+      .where('rfxes.status = :status', { status: ERfxStatus.ENDED })
+      .andWhere('rfxes.organizationId = :organizationId', {
         organizationId: user.organization.id,
       })
       .leftJoin(
         'rfxes.rfxProcurementTechnicalTeams',
         'rfxProcurementTechnicalTeams',
-      )
-      .andWhere('rfxProcurementTechnicalTeams.userId = :userId', {
-        userId: user.userId,
-      })
-      .andWhere('rfxProcurementTechnicalTeams.isTeamLead = :isTeamLead', {
-        isTeamLead: true,
-      });
+      );
+    // .andWhere('rfxProcurementTechnicalTeams.userId = :userId', {
+    //   userId: user.userId,
+    // })
+    // .andWhere('rfxProcurementTechnicalTeams.isTeamLead = :isTeamLead', {
+    //   isTeamLead: true,
+    // });
 
     return await this.giveQueryResponse<RFX>(query, dataQuery);
   }

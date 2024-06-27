@@ -36,6 +36,18 @@ export class SolRegistrationController extends ExtraCrudController<SolRegistrati
     super(solRegistrationService);
   }
 
+  @Get('my-registrations')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getMyRegistrations(@CurrentUser() user: any, @Query('q') q?: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.solRegistrationService.getMyRegistrations(user, query);
+  }
+
   @Get('solicitation-status')
   @ApiOperation({
     summary: 'Back-Office Solicitation Status Checks',
