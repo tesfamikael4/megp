@@ -221,6 +221,9 @@ export default function ContractConditionsForm() {
             leftSection={<IconDeviceFloppy />}
             type="submit"
             loading={isCreatingConditons || isUpdateConditons}
+            disabled={
+              !(status == ERfxStatus.DRAFT || status == ERfxStatus.ADJUSTMENT)
+            }
           >
             Save
           </Button>

@@ -325,6 +325,12 @@ export default function ItemCatalogue() {
                 leftSection={<IconTrash stroke="sm" />}
                 onClick={removeInvitations}
                 loading={isCancellingInvitation}
+                disabled={
+                  !(
+                    status == ERfxStatus.DRAFT ||
+                    status == ERfxStatus.ADJUSTMENT
+                  )
+                }
               >
                 Remove from invitation
               </Button>
@@ -348,33 +354,36 @@ export default function ItemCatalogue() {
                     loading
                   }
                 />
-                <Group className="ml-auto">
-                  <Radio.Group
-                    value={invitationMode}
-                    onChange={setInvitationMode}
-                  >
-                    <Flex className="gap-4">
-                      <Radio value="selected" label="Invite Selected" />
-                      <Radio value="random" label="Random" />
-                      <Radio value="all" label="All" />
-                    </Flex>
-                  </Radio.Group>
-                  <Button
-                    disabled={
-                      !invitationMode ||
-                      (invitationMode == 'selected' &&
-                        selectedSuppliers?.length == 0)
-                    }
-                    onClick={async () => {
-                      invitationMode == 'random'
-                        ? open()
-                        : await inviteSuppliers();
-                    }}
-                    loading={isInviting || isMakingOpen}
-                  >
-                    Add to invitation
-                  </Button>
-                </Group>
+                {(status == ERfxStatus.DRAFT ||
+                  status == ERfxStatus.ADJUSTMENT) && (
+                  <Group className="ml-auto">
+                    <Radio.Group
+                      value={invitationMode}
+                      onChange={setInvitationMode}
+                    >
+                      <Flex className="gap-4">
+                        <Radio value="selected" label="Invite Selected" />
+                        <Radio value="random" label="Random" />
+                        <Radio value="all" label="All" />
+                      </Flex>
+                    </Radio.Group>
+                    <Button
+                      disabled={
+                        !invitationMode ||
+                        (invitationMode == 'selected' &&
+                          selectedSuppliers?.length == 0)
+                      }
+                      onClick={async () => {
+                        invitationMode == 'random'
+                          ? open()
+                          : await inviteSuppliers();
+                      }}
+                      loading={isInviting || isMakingOpen}
+                    >
+                      Add to invitation
+                    </Button>
+                  </Group>
+                )}
                 <Flex wrap={'wrap'} className="gap-4">
                   {catalogueItems?.items?.map((item) => (
                     <Card
