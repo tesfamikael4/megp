@@ -50,11 +50,6 @@ export default function TenderSpd({
         },
       },
     ],
-    onSave: (selected) => {
-      // logger.log(selected[0]);
-      // onSelect(selected);
-      close();
-    },
     searchable: true,
     disableMultiSelect: true,
     selectable: true,
@@ -73,7 +68,6 @@ export default function TenderSpd({
         total={data?.total ?? 0}
         onDone={(data) => {
           onSelect(data);
-          close();
           returnFunction();
         }}
         onRequestChange={onRequestChange}

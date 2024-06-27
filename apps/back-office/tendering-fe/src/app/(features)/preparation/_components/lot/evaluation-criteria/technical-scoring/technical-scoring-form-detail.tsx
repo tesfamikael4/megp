@@ -17,7 +17,7 @@ import {
 } from '@/app/(features)/preparation/_api/lot/technical-scoring.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import {
   RequirementCondition,
   TechnicalScoring,
@@ -162,8 +162,8 @@ export function TechnicalScoringFormDetail({
               label="Point"
               name={name}
               value={value}
-              min={selected ? selected?.validation?.min : 0}
-              max={selected ? selected?.validation?.max : 0}
+              min={mode === 'detail' ? selected?.validation?.min : 0}
+              max={mode === 'detail' ? selected?.validation?.max : 100}
               className="w-1/2"
               onChange={(d) => onChange(parseInt(d as string))}
               error={

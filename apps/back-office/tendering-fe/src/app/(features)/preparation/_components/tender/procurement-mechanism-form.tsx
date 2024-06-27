@@ -31,7 +31,7 @@ export default function ProcurementMechanismForm({
   const ProcurementMechanismSchema: ZodType<Partial<ProcurementMechanism>> =
     z.object({
       invitationType: z.enum(['direct', 'limited', 'open']),
-      stageType: z.enum(['single', 'multiple']),
+      stageType: z.enum(['single', 'multiple']).default('single'),
       marketApproach: z.enum(['local', 'national', 'international']),
     });
   const {

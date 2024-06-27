@@ -154,7 +154,7 @@ export default function GeneralProvision() {
           placeholder="Delivery Site"
           withAsterisk
           className="w-1/2"
-          label="deliverySite"
+          label="Delivery Site"
           error={
             errors?.deliverySite
               ? errors?.deliverySite?.message?.toString()

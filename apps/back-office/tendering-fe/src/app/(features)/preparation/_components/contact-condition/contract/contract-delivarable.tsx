@@ -6,6 +6,7 @@ import {
   NumberInput,
   MultiSelect,
   LoadingOverlay,
+  TagsInput,
 } from '@mantine/core';
 import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
@@ -103,19 +104,14 @@ export default function ContractDelivarable() {
           name="deliverable"
           control={control}
           render={({ field: { value, name, onChange } }) => (
-            <MultiSelect
+            <TagsInput
               label="Deliverable"
               name={name}
               value={value}
               onChange={onChange}
               className="w-1/2"
               withAsterisk
-              data={deliverableList?.map((tag) => ({
-                value: tag.name,
-                label: tag.name,
-              }))}
-              searchable
-              clearable
+              placeholder="Add Delivarables"
               error={errors.deliverable?.message as string | undefined}
             />
           )}
