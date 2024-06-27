@@ -1,10 +1,12 @@
 import { baseQuery } from '@/store/base-query';
 import { encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
+// import { useDeleteItemMutation } from '../pr/pr.api';
 
 export const postBudgetPlanApi = createApi({
   reducerPath: 'postBudgetPlanApi',
   tagTypes: [
+    'post-budget-plan-items',
     'post-budget-plan',
     'post-budget-timeline',
     'post-budget-requisitioner',
@@ -39,12 +41,20 @@ export const postBudgetPlanApi = createApi({
       }),
       invalidatesTags: ['post-budget-plan'],
     }),
+    // createMultipleItems: builder.mutation<any, any>({
+    //   query: (data) => ({
+    //     url: 'post-budget-plan-items/bulk-create',
+    //     method: 'POST',
+    //     body: data,
+    //   }),
+    // }),
     createMultipleItems: builder.mutation<any, any>({
       query: (data) => ({
         url: 'post-budget-plan-items/bulk-create',
         method: 'POST',
         body: data,
       }),
+      invalidatesTags: ['post-budget-plan-items'],
     }),
     createPostActivityTimeline: builder.mutation<any, any[]>({
       query: (timeline: any[]) => ({
@@ -172,6 +182,10 @@ export const postBudgetPlanApi = createApi({
       }) =>
         `submitted-plan/compare-plan/${toBeCompare}/${comparedWith}/${activityId}`,
     }),
+    readPostActivity: builder.query<any, any>({
+      query: (id: string) => `post-budget-plan-activities/${id}`,
+      providesTags: ['post-budget-plan-items'],
+    }),
   }),
 });
 
@@ -202,4 +216,5 @@ export const {
   useLazyGetDifQuery,
   useLazyGetPreviousVersionsQuery,
   useLazyGetDifDetailQuery,
+  useLazyReadPostActivityQuery,
 } = postBudgetPlanApi;

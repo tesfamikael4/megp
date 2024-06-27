@@ -193,19 +193,19 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
                       getItemMaster(collectionQuery);
                     }}
                   />
+                  <Group justify="end" mt={5}>
+                    <Button
+                      onClick={() => {
+                        onDone(selectedItems);
+                        close();
+                        setSelectedItems([]);
+                      }}
+                    >
+                      Done
+                    </Button>
+                  </Group>
                 </Box>
               </Flex>
-              <Group justify="end" mt={40}>
-                <Button
-                  onClick={() => {
-                    onDone(selectedItems);
-                    close();
-                    setSelectedItems([]);
-                  }}
-                >
-                  Done
-                </Button>
-              </Group>
             </>
           )}
         </Box>

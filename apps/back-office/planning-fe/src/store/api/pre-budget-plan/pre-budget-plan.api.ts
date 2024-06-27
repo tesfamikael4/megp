@@ -126,6 +126,17 @@ export const preBudgetPlanApi = createApi({
     isValidPlan: builder.query<any, any>({
       query: (id) => `pre-budget-plans/check-ncb/${id}`,
     }),
+    readActivity: builder.query<any, any>({
+      query: (id) => `pre-budget-plan-activities/${id}`,
+      providesTags: ['pre-budget-plan', 'pre-budget-plan-items'],
+    }),
+    deleteItem: builder.mutation<any, any>({
+      query: (id) => ({
+        url: `pre-budget-plan-items/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['pre-budget-plan-items'],
+    }),
   }),
 });
 
@@ -150,4 +161,6 @@ export const {
   useLazyGetApprovalDocumentsQuery,
   useLazyGetApprovalDocumentDetailByIdQuery,
   useLazyIsValidPlanQuery,
+  useLazyReadActivityQuery,
+  useDeleteItemMutation,
 } = preBudgetPlanApi;
