@@ -54,7 +54,7 @@ export function GroupMemberGuard(teamType: TeamRoleEnum): Type<CanActivate> {
       });
 
       const teamType =
-        tender.bdsSubmission.envelopType == 'two envelop'
+        tender.bdsSubmission.envelopType == 'single envelop'
           ? TeamRoleEnum.FINANCIAL_EVALUATOR
           : tender.tenderMilestones[0].milestoneNum < 320
             ? TeamRoleEnum.TECHNICAL_EVALUATOR

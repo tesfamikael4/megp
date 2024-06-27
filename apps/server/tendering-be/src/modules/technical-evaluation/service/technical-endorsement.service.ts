@@ -38,6 +38,10 @@ export class TechnicalEndorsementService {
   ) {}
   //initiate workflow for tender
 
+  async endorsementResult(data: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    await this.changeMilestone(manager, data);
+  }
   async getLots(query: CollectionQuery, req?: any) {
     query.where.push([
       {
@@ -76,7 +80,6 @@ export class TechnicalEndorsementService {
     organizationName: string;
   }) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    await this.changeMilestone(manager, itemData);
     const [lot, compliance, qualification, responsiveness, scoring] =
       await Promise.all([
         manager.getRepository(Lot).findOne({
@@ -130,15 +133,17 @@ export class TechnicalEndorsementService {
         }),
       ]);
 
-    await this.pdfGenerator(
-      itemData.lotId,
-      lot.name,
-      {
-        organizationId: itemData.organizationId,
-        organizationName: itemData.organizationName,
-      },
-      { compliance, qualification, responsiveness, scoring },
-    );
+    // await this.pdfGenerator(
+    //   itemData.lotId,
+    //   lot.name,
+    //   {
+    //     organizationId: itemData.organizationId,
+    //     organizationName: itemData.organizationName,
+    //   },
+    //   { compliance, qualification, responsiveness, scoring },
+    // );
+
+    //initiate workflow
     this.endorsementRMQClient.emit('initiate-workflow', {
       name: 'TechnicalEndorsement',
       id: itemData.lotId,
@@ -201,23 +206,32 @@ export class TechnicalEndorsementService {
 
   private async changeMilestone(
     manager: EntityManager,
-    itemData: { tenderId: string; lotId: string },
+    itemData: { status: string; lotId: string },
   ) {
-    await manager.getRepository(TenderMilestone).update(
-      {
-        lotId: itemData.lotId,
-        tenderId: itemData.tenderId,
-      },
-      {
-        isCurrent: false,
-      },
-    );
-    await manager.getRepository(TenderMilestone).insert({
-      lotId: itemData.lotId,
-      tenderId: itemData.tenderId,
-      milestoneNum: TenderMilestoneEnum.TechnicalEndorsement,
-      milestoneTxt: 'TechnicalEndorsement',
-      isCurrent: true,
-    });
+    const { status, lotId } = itemData;
+
+    // Update all milestones to set isCurrent to false for the given lotId
+    await manager
+      .getRepository(TenderMilestone)
+      .update({ lotId }, { isCurrent: false });
+
+    // Conditional update or insert based on status
+    if (status === 'Rejected') {
+      await manager.getRepository(TenderMilestone).update(
+        { lotId },
+        {
+          milestoneNum: TenderMilestoneEnum.FinancialCompliance,
+          milestoneTxt: 'FinancialCompliance',
+          isCurrent: true,
+        },
+      );
+    } else {
+      await manager.getRepository(TenderMilestone).insert({
+        lotId,
+        milestoneNum: TenderMilestoneEnum.FinancialCompliance,
+        milestoneTxt: 'FinancialCompliance',
+        isCurrent: true,
+      });
+    }
   }
 }
