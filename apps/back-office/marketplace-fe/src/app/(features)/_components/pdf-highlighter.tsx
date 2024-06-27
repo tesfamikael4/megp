@@ -299,7 +299,7 @@ function CustomTip({
             onChange={(e) => {
               setValue(e.target.value);
             }}
-            placeholder="Your comment..."
+            placeholder="Your comment...."
             value={value}
           />
           <Group className="mt-2" justify="end">
