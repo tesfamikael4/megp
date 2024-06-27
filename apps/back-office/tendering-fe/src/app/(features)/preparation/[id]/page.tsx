@@ -134,7 +134,6 @@ export default function TenderDetailPage() {
     setFile(value);
   }
   const onUpdate = (data) => {
-    logger.log(data);
     update({ ...data, id: id?.toString() })
       .unwrap()
       .then(() => {

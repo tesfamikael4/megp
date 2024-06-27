@@ -43,9 +43,11 @@ type FormSchema = z.infer<typeof schema>;
 export default function InvitationDetail({
   product,
   showAction,
+  mode,
 }: {
   product: any;
   showAction?: boolean;
+  mode?: string;
 }) {
   const {
     register,
@@ -190,6 +192,12 @@ export default function InvitationDetail({
               Withdraw
             </Button>
           ) : null}
+          {mode == 'award' && (
+            <Flex className="gap-2 ml-auto">
+              <Button className="bg-red-600">Reject Award</Button>
+              <Button className="bg-green-600">Accept Award</Button>
+            </Flex>
+          )}
           {selected?.status == 'ENDED' &&
             openedOffer?.[lastOffer]?.rank == 1 && (
               <Paper className="p-y-2 px-6 rounded-sm" withBorder>
@@ -222,6 +230,7 @@ export default function InvitationDetail({
                   <Avatar>{openedOffer?.[lastOffer]?.rank}</Avatar>
                   <Text className="text-gray-600">You ranked at: </Text>
                   <Text>
+                    {' '}
                     {openedOffer?.[lastOffer]?.rank}
                     with price of:{' '}
                   </Text>
@@ -281,8 +290,8 @@ export default function InvitationDetail({
                       className="w-full"
                       onChange={onChange}
                       max={parseInt(
-                        product?.solRoundAwards?.[0]?.nextRoundStartingPrice ??
-                          100000000000,
+                        product?.rfxItem?.solRoundAwards?.[0]
+                          ?.nextRoundStartingPrice ?? 100000000000,
                       )}
                       clampBehavior="strict"
                       thousandSeparator=","

@@ -45,6 +45,7 @@ import {
 import { WorkflowHandlerService } from './workflow-handler.service';
 import { ClientProxy } from '@nestjs/microservices';
 import currentTime from 'src/utils/services/time-provider';
+import { EMarketplaceBucketName } from 'src/utils/enums/bucket.enum';
 
 @Injectable()
 export class RfxService extends EntityCrudService<RFX> {
@@ -405,7 +406,7 @@ export class RfxService extends EntityCrudService<RFX> {
       buffer,
       'rfxReview.pdf',
       'application/pdf',
-      'megp',
+      EMarketplaceBucketName.RFQ_PREPARATION_REVIEWAL_DOCUMENTS,
     );
 
     // transaction
@@ -583,8 +584,7 @@ export class RfxService extends EntityCrudService<RFX> {
     );
 
     dataQuery
-      .where('rfxes.status = :status', { status: ERfxStatus.DRAFT })
-      .andWhere('rfxes.organizationId = :organizationId', {
+      .where('rfxes.organizationId = :organizationId', {
         organizationId: user.organization.id,
       })
       .leftJoin(
@@ -627,20 +627,20 @@ export class RfxService extends EntityCrudService<RFX> {
     );
 
     dataQuery
-      // .where('rfxes.status = :status', { status: ERfxStatus.DRAFT })
-      .where('rfxes.organizationId = :organizationId', {
+      .where('rfxes.status = :status', { status: ERfxStatus.ENDED })
+      .andWhere('rfxes.organizationId = :organizationId', {
         organizationId: user.organization.id,
       })
       .leftJoin(
         'rfxes.rfxProcurementTechnicalTeams',
         'rfxProcurementTechnicalTeams',
-      )
-      .andWhere('rfxProcurementTechnicalTeams.userId = :userId', {
-        userId: user.userId,
-      })
-      .andWhere('rfxProcurementTechnicalTeams.isTeamLead = :isTeamLead', {
-        isTeamLead: true,
-      });
+      );
+    // .andWhere('rfxProcurementTechnicalTeams.userId = :userId', {
+    //   userId: user.userId,
+    // })
+    // .andWhere('rfxProcurementTechnicalTeams.isTeamLead = :isTeamLead', {
+    //   isTeamLead: true,
+    // });
 
     return await this.giveQueryResponse<RFX>(query, dataQuery);
   }

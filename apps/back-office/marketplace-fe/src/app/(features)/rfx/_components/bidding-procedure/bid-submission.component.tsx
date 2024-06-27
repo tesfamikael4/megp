@@ -183,7 +183,7 @@ export default function BidSubmission() {
                 placeholder="Submission Deadline"
                 value={value ? new Date(value) : null}
                 minDate={new Date()}
-                className="w-full"
+                className="w-1/2"
                 disabled={
                   !(
                     status == ERfxStatus.DRAFT ||
@@ -224,7 +224,7 @@ export default function BidSubmission() {
                   placeholder="Opening Date"
                   value={value ? new Date(value) : null}
                   minDate={minDate}
-                  className="w-full"
+                  className="w-1/2"
                   onChange={(value) => {
                     setValue(
                       'openingDate',

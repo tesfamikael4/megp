@@ -63,3 +63,8 @@ export enum ERfxRevisionApprovalStatusEnum {
   APPROVED = 'APPROVED',
   ADJUST = 'ADJUST',
 }
+
+export enum ERfxProcuredBy {
+  AUCTIONING = 'AUCTIONING',
+  PURCHASING = 'PURCHASING',
+}

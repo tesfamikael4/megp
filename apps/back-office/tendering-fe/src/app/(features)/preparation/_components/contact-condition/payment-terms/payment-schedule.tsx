@@ -6,6 +6,7 @@ import {
   MultiSelect,
   NumberInput,
   Stack,
+  TagsInput,
   TextInput,
 } from '@mantine/core';
 import { notify, logger } from '@megp/core-fe';
@@ -165,19 +166,14 @@ export default function PaymentSchedule() {
           name="requiredDocuments"
           control={control}
           render={({ field: { value, name, onChange } }) => (
-            <MultiSelect
+            <TagsInput
               label="Required Documents"
               name={name}
               value={value}
               onChange={onChange}
               className="w-1/2"
               withAsterisk
-              data={requiredDcoument?.map((tag) => ({
-                value: tag.id,
-                label: tag.name,
-              }))}
-              searchable
-              clearable
+              placeholder="Add required documents"
               error={errors.requiredDocuments?.message as string | undefined}
             />
           )}

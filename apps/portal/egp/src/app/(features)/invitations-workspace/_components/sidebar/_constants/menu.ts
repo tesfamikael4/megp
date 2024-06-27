@@ -38,6 +38,6 @@ export const managementLinks: MenuLinks.SidebarLinks[] = [
   {
     label: 'Award Notice',
     icon: IconChecklist,
-    link: `/vendor/my-tenders/award-notice`,
+    link: `/award-notice`,
   },
 ];

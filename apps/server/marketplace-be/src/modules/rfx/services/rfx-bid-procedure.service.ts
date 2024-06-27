@@ -43,6 +43,12 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
     // itemData.submissionDeadline = currentTime(
     //   new Date(itemData.submissionDeadline),
     // );
+    if (!itemData.isReverseAuction) {
+      itemData.minimumBidDecrementPercentage = null;
+      itemData.roundDuration = null;
+      itemData.idleTime = null;
+      itemData.round = null;
+    }
 
     const rfxBidContract = this.rfxBidProcedureRepository.create(itemData);
     await this.rfxBidProcedureRepository.insert(rfxBidContract);
@@ -69,12 +75,12 @@ export class RfxBidProcedureService extends ExtraCrudService<RfxBidProcedure> {
 
     await this.rfxService.validateUpdateRequest(rfx);
 
-    // if (itemData.openingDate)
-    //   itemData.openingDate = currentTime(new Date(itemData.openingDate));
-    // if (itemData.submissionDeadline)
-    //   itemData.submissionDeadline = currentTime(
-    //     new Date(itemData.submissionDeadline),
-    //   );
+    if (!itemData.isReverseAuction) {
+      itemData.minimumBidDecrementPercentage = null;
+      itemData.roundDuration = null;
+      itemData.idleTime = null;
+      itemData.round = null;
+    }
 
     const rfxDocUpdate = this.rfxBidProcedureRepository.create(itemData);
     await this.rfxBidProcedureRepository.update(id, itemData);

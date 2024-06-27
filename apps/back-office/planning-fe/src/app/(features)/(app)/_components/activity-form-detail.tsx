@@ -201,6 +201,7 @@ export const FormDetail = ({
       notify('Error', 'Estimated Amount should be greater than 0');
     }
   };
+
   const onDelete = async () => {
     try {
       if (page == 'pre') {
@@ -446,6 +447,7 @@ export const FormDetail = ({
           onCreate={handleSubmit(onCreate)}
           onReset={onReset}
           onUpdate={handleSubmit(onUpdate)}
+          // onCancel={handleSubmit(onCancel)}
           onDelete={handleSubmit(onDelete)}
           disabled={disableFields}
         />

@@ -9,6 +9,47 @@ import {
 } from '@react-pdf/renderer';
 
 export const rfxPdf = async ({ rfx }: any) => {
+  const bidProcedureData = [
+    {
+      key: 'Bid Validity Period',
+      value: `${rfx?.rfxBidProcedure?.bidValidityPeriod} days`,
+    },
+    {
+      key: 'Posting Date',
+      value: rfx?.rfxBidProcedure?.postingDate,
+    },
+    {
+      key: 'Submission Deadline',
+      value: rfx?.rfxBidProcedure?.submissionDeadline,
+    },
+    {
+      key: 'Opening Date',
+      value: rfx?.rfxBidProcedure?.openingDate,
+    },
+    {
+      key: 'Percentage Quantity Change',
+      value: `${rfx?.rfxBidProcedure?.deltaPercentage} %`,
+    },
+  ];
+
+  const reverseData = [
+    {
+      key: 'Number Of Rounds',
+      value: rfx?.rfxBidProcedure?.round,
+    },
+    {
+      key: 'Minimum Bid Decrement Percentage',
+      value: `${rfx?.rfxBidProcedure?.minimumBidDecrementPercentage} %`,
+    },
+    {
+      key: 'Round Duration',
+      value: `${rfx?.rfxBidProcedure?.roundDuration} mins`,
+    },
+  ];
+
+  rfx?.rfxBidProcedure?.isReverseAuction &&
+    reverseData?.map((reverseItem) => bidProcedureData.push(reverseItem));
+
   const buffer = await renderToBuffer(
     <Document title={rfx?.name}>
       <Page size="A4" style={styles.page}>
@@ -97,7 +138,7 @@ export const rfxPdf = async ({ rfx }: any) => {
                 });
               return (
                 <View style={styles.activity} key={item?.id}>
-                  <Text style={{ fontSize: '7px' }}>Item {index + 1}</Text>
+                  <Text style={{ fontSize: '10px' }}>Item {index + 1}</Text>
                   <ReactPdfTable data={descriptionConfig} config={{}} />
 
                   <Text style={{ marginVertical: '4px' }}>
@@ -116,66 +157,11 @@ export const rfxPdf = async ({ rfx }: any) => {
             <Text>Bid Procedure</Text>
           </View>
           <View style={styles.activityDetail}>
-            <ReactPdfTable
-              data={[
-                {
-                  key: 'Bid Validity Period',
-                  value: rfx?.rfxBidProcedure?.bidValidityPeriod,
-                },
-                {
-                  key: 'Submission Deadline',
-                  value: rfx?.rfxBidProcedure?.submissionDeadline,
-                },
-                {
-                  key: 'Opening Date',
-                  value: rfx?.rfxBidProcedure?.openingDate,
-                },
-                {
-                  key: 'Invitation Date',
-                  value: rfx?.rfxBidProcedure?.invitationDate,
-                },
-                {
-                  key: 'Percentage Quantity Change',
-                  value: rfx?.rfxBidProcedure?.deltaPercentage,
-                },
-                {
-                  key: 'Is reverse aution',
-                  value: rfx?.rfxBidProcedure?.isReverseAuction,
-                },
-                {
-                  key: 'Round',
-                  value: rfx?.rfxBidProcedure?.round,
-                },
-                {
-                  key: 'Minimum Bid Decrement Percentage',
-                  value: rfx?.rfxBidProcedure?.minimumBidDecrementPercentage,
-                },
-                {
-                  key: 'Round Duration',
-                  value: rfx?.rfxBidProcedure?.roundDuration,
-                },
-              ]}
-              config={{}}
-            />
+            <ReactPdfTable data={bidProcedureData} config={{}} />
           </View>
 
           <View style={styles.activity}>
             <Text>Qualification Criteria</Text>
-          </View>
-          <View style={styles.activityDetail}>
-            <ReactPdfTableGrid3
-              config={{
-                columns: [
-                  {
-                    accessor: 'criteria',
-                  },
-                ],
-                data: rfx?.rfxBidQualifications,
-              }}
-            />
-          </View>
-          <View style={styles.activity}>
-            <Text>Documentary Evidences</Text>
           </View>
           <View style={styles.activityDetail}>
             <ReactPdfTableGrid3
@@ -192,7 +178,7 @@ export const rfxPdf = async ({ rfx }: any) => {
               }}
             />
           </View>
-          <View style={styles.activity}>
+          {/* <View style={styles.activity}>
             <Text>Procurment Technical Team</Text>
           </View>
           <View style={styles.activityDetail}>
@@ -206,7 +192,7 @@ export const rfxPdf = async ({ rfx }: any) => {
                 data: rfx?.rfxProcurementTechnicalTeams,
               }}
             />
-          </View>
+          </View> */}
 
           <View style={styles.activity}>
             <Text>Contract Conditions</Text>
@@ -215,36 +201,24 @@ export const rfxPdf = async ({ rfx }: any) => {
             <ReactPdfTable
               data={[
                 {
-                  key: 'Delivery Period',
-                  value: rfx?.rfxBidContractCondition?.deliveryPeriod,
-                },
-                {
-                  key: 'Delivery Site',
-                  value: rfx?.rfxBidContractCondition?.deliverySite,
-                },
-                {
-                  key: 'Warranty Period',
-                  value: rfx?.rfxBidContractCondition?.warrantyPeriod,
-                },
-                {
                   key: 'Liquidity Damage',
-                  value: rfx?.rfxBidContractCondition?.liquidityDamage,
+                  value: `${rfx?.rfxBidContractCondition?.liquidityDamage} %`,
                 },
                 {
                   key: 'Liquidity Damage Limit',
-                  value: rfx?.rfxBidContractCondition?.liquidityDamageLimit,
+                  value: `${rfx?.rfxBidContractCondition?.liquidityDamageLimit} %`,
                 },
                 {
-                  key: 'Payment Term',
-                  value: rfx?.rfxBidContractCondition?.paymentTerm,
-                },
-                {
-                  key: 'Payment Mode',
-                  value: rfx?.rfxBidContractCondition?.paymentMode,
-                },
-                {
-                  key: 'Payment Release Period',
+                  key: 'Payment Release Period After Invoicing',
                   value: rfx?.rfxBidContractCondition?.paymentReleasePeriod,
+                },
+                {
+                  key: 'Is partial payment allowed?',
+                  value: `${
+                    rfx?.rfxBidContractCondition?.isPartialAllowed
+                      ? 'Yes'
+                      : 'No'
+                  }`,
                 },
               ]}
               config={{}}
@@ -283,7 +257,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     fontSize: 12,
-    marginLeft: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
   },
   activityDetail: {
     paddingHorizontal: 20,

@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateRFXDto {
   @ApiProperty()
@@ -20,6 +26,6 @@ export class ChangeRFXStatusDto {
 
 export class UpdateRFXDto {
   @ApiProperty()
-  @IsOptional()
+  @IsString()
   reviewDeadline: string;
 }
