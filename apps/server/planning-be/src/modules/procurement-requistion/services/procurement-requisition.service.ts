@@ -592,6 +592,68 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     }
     return response;
   }
+  async getProcurementRequisitionsForMarketplace(
+    query: CollectionQuery,
+    user?: any,
+  ) {
+    query.includes.push('procurementRequisitionTechnicalTeams');
+
+    query.where.push([
+      {
+        column: 'status',
+        value: ProcurementRequisitionStatusEnum.APPROVED,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'procurementApplication',
+        value: ProcurementApplication.AUCTIONING,
+        operator: FilterOperators.EqualTo,
+      },
+      {
+        column: 'procurementApplication',
+        value: ProcurementApplication.PURCHASING,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'organizationId',
+        value: user.organization.id,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'procurementRequisitionTechnicalTeams.userId',
+        value: user.userId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'isUsed',
+        value: false,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<ProcurementRequisition>(
+      this.repositoryProcurementRequisition,
+      query,
+    );
+
+    const response = new DataResponseFormat<ProcurementRequisition>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
 
   async getProcurementRequisitionStatus(query: CollectionQuery, req?: any) {
     query.where.push([
