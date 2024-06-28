@@ -122,7 +122,21 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
 
     return budget;
   }
+  async getActivityByBudgetId(budgetId: string): Promise<any> {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
+    const activities = await manager
+      .getRepository(PostBudgetPlanActivity)
+      .find({
+        where: {
+          budgetId,
+        },
+      });
+
+    if (!activities) throw new NotFoundException('Activity not found');
+
+    return activities;
+  }
   async addBudget(payload: PostAddBudgetDTO): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
