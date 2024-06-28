@@ -131,6 +131,23 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
       user,
     );
   }
+  @Get('get-procurement-requisitions-for-marketplace')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getProcurementRequisitionsForMarketplace(
+    @Query('q') q?: string,
+    @CurrentUser() user?: any,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.procurementRequisitionService.getProcurementRequisitionsForMarketplace(
+      query,
+      user,
+    );
+  }
 
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
