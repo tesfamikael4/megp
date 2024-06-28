@@ -64,6 +64,12 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
   async getPostBudgetPlansWithBudgetId(@Param('budgetId') budgetId: string) {
     return await this.postBudgetPlanActivityService.getBudgets(budgetId);
   }
+  @Get('get-by-budget-id/:budgetId')
+  async getActivityByBudgetId(@Param('budgetId') budgetId: string) {
+    return await this.postBudgetPlanActivityService.getActivityByBudgetId(
+      budgetId,
+    );
+  }
 
   @Post('change-budget')
   async changeBudget(@Body() payload: any) {

@@ -214,19 +214,24 @@ export class TechnicalEndorsementService {
         .getRepository(TenderMilestone)
         .update({ lotId }, { isCurrent: false });
 
+      const lot = await manager.getRepository(Lot).findOne({
+        where: {
+          id: lotId,
+        },
+      });
       // Conditional update or insert based on status
       if (status === 'Rejected') {
-        await manager.getRepository(TenderMilestone).update(
-          { lotId },
-          {
-            milestoneNum: TenderMilestoneEnum.FinancialCompliance,
-            milestoneTxt: 'FinancialCompliance',
-            isCurrent: true,
-          },
-        );
+        await manager.getRepository(TenderMilestone).insert({
+          lotId,
+          tenderId: lot.tenderId,
+          milestoneNum: TenderMilestoneEnum.TechnicalScoring,
+          milestoneTxt: 'TechnicalScoring',
+          isCurrent: true,
+        });
       } else {
         await manager.getRepository(TenderMilestone).insert({
           lotId,
+          tenderId: lot.tenderId,
           milestoneNum: TenderMilestoneEnum.FinancialCompliance,
           milestoneTxt: 'FinancialCompliance',
           isCurrent: true,
