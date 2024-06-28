@@ -26,6 +26,8 @@ export class TenderApprovalService {
     activityId: string;
     itemId: string;
   }) {
+    console.log('🚀 ~ TenderApprovalService ~ tender approval started');
+
     if (!data.itemId) {
       throw new RpcException('incomplete_data');
     }
@@ -66,9 +68,13 @@ export class TenderApprovalService {
       return data;
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      console.log('🚀 ~ TenderApprovalService ~ tender approval error', {
+        error,
+      });
       throw error;
     } finally {
       await queryRunner.release();
+      console.log('🚀 ~ TenderApprovalService ~ tender approval completed');
     }
   }
 
