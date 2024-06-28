@@ -11,6 +11,7 @@ import {
   BidRegistration,
   EqcQualification,
   SpdQualification,
+  Tender,
 } from 'src/entities';
 import { TeamMember } from 'src/entities/team-member.entity';
 import { CompleteBidderEvaluationDto } from '../dto/technical-preliminary-assessment.dto';
@@ -19,6 +20,7 @@ import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
+import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 
 @Injectable()
 export class TechnicalQualificationAssessmentDetailService extends ExtraCrudService<TechnicalQualificationAssessmentDetail> {
@@ -248,6 +250,24 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
       canTeamAssess: false,
     };
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const tender = await manager.getRepository(Tender).findOne({
+      where: {
+        tenderMilestones: {
+          isCurrent: true,
+        },
+      },
+      relations: {
+        tenderMilestones: true,
+        bdsSubmission: true,
+      },
+    });
+
+    const teamType =
+      tender.bdsSubmission.envelopType == 'single envelop'
+        ? TeamRoleEnum.FINANCIAL_EVALUATOR
+        : tender.tenderMilestones[0].milestoneNum < 320
+          ? TeamRoleEnum.TECHNICAL_EVALUATOR
+          : TeamRoleEnum.FINANCIAL_EVALUATOR;
     const evaluatorId = req.user.userId;
     const [
       isTeamLead,
@@ -329,10 +349,12 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
                 id: lotId,
               },
             },
+            teamType,
           },
         },
       }),
     ]);
+
     response.isTeamLead.isTeam = isTeamLead;
     response.hasCompleted =
       qualificationDetailCount.length == 0 ? false : !evaluationChecklist;

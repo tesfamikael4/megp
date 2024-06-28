@@ -22,6 +22,7 @@ import {
   BidRegistrationDetail,
   Item,
   SorTechnicalRequirement,
+  Tender,
 } from 'src/entities';
 import { TeamMember } from 'src/entities/team-member.entity';
 import {
@@ -34,6 +35,7 @@ import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 import { DataResponseFormat } from 'src/shared/api-data';
+import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 
 @Injectable()
 export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudService<TechnicalResponsivenessAssessmentDetail> {
@@ -365,6 +367,24 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       canTeamAssess: false,
     };
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const tender = await manager.getRepository(Tender).findOne({
+      where: {
+        tenderMilestones: {
+          isCurrent: true,
+        },
+      },
+      relations: {
+        tenderMilestones: true,
+        bdsSubmission: true,
+      },
+    });
+
+    const teamType =
+      tender.bdsSubmission.envelopType == 'single envelop'
+        ? TeamRoleEnum.FINANCIAL_EVALUATOR
+        : tender.tenderMilestones[0].milestoneNum < 320
+          ? TeamRoleEnum.TECHNICAL_EVALUATOR
+          : TeamRoleEnum.FINANCIAL_EVALUATOR;
     const evaluatorId = req.user.userId;
     const [
       isTeamLead,
@@ -446,6 +466,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
                 id: lotId,
               },
             },
+            teamType,
           },
         },
       }),
