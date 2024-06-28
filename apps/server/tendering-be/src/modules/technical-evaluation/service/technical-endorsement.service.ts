@@ -19,7 +19,7 @@ import {
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { MinIOService } from 'src/shared/min-io';
-import { EntityManager } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 
 @Injectable()
 export class TechnicalEndorsementService {
@@ -35,13 +35,10 @@ export class TechnicalEndorsementService {
 
     @Inject('WORKFLOW_RMQ_SERVICE')
     private readonly endorsementRMQClient: ClientProxy,
+
+    private dataSource: DataSource,
   ) {}
   //initiate workflow for tender
-
-  async endorsementResult(data: any) {
-    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    await this.changeMilestone(manager, data);
-  }
   async getLots(query: CollectionQuery, req?: any) {
     query.where.push([
       {
@@ -145,7 +142,7 @@ export class TechnicalEndorsementService {
 
     //initiate workflow
     this.endorsementRMQClient.emit('initiate-workflow', {
-      name: 'TechnicalEndorsement',
+      name: 'TechnicalEndorsementApproval',
       id: itemData.lotId,
       itemName: lot.name,
       organizationId: itemData.organizationId,
@@ -204,34 +201,42 @@ export class TechnicalEndorsementService {
     return buffer;
   }
 
-  private async changeMilestone(
-    manager: EntityManager,
-    itemData: { status: string; lotId: string },
-  ) {
-    const { status, lotId } = itemData;
+  async endorsementResult(itemData: { status: string; lotId: string }) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const manager: EntityManager = queryRunner.manager;
+      const { status, lotId } = itemData;
 
-    // Update all milestones to set isCurrent to false for the given lotId
-    await manager
-      .getRepository(TenderMilestone)
-      .update({ lotId }, { isCurrent: false });
+      // Update all milestones to set isCurrent to false for the given lotId
+      await manager
+        .getRepository(TenderMilestone)
+        .update({ lotId }, { isCurrent: false });
 
-    // Conditional update or insert based on status
-    if (status === 'Rejected') {
-      await manager.getRepository(TenderMilestone).update(
-        { lotId },
-        {
+      // Conditional update or insert based on status
+      if (status === 'Rejected') {
+        await manager.getRepository(TenderMilestone).update(
+          { lotId },
+          {
+            milestoneNum: TenderMilestoneEnum.FinancialCompliance,
+            milestoneTxt: 'FinancialCompliance',
+            isCurrent: true,
+          },
+        );
+      } else {
+        await manager.getRepository(TenderMilestone).insert({
+          lotId,
           milestoneNum: TenderMilestoneEnum.FinancialCompliance,
           milestoneTxt: 'FinancialCompliance',
           isCurrent: true,
-        },
-      );
-    } else {
-      await manager.getRepository(TenderMilestone).insert({
-        lotId,
-        milestoneNum: TenderMilestoneEnum.FinancialCompliance,
-        milestoneTxt: 'FinancialCompliance',
-        isCurrent: true,
-      });
+        });
+      }
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 }
