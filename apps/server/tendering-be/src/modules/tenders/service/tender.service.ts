@@ -337,8 +337,13 @@ export class TenderService extends EntityCrudService<Tender> {
   }
 
   async changeStatus(input: ChangeTenderStatusDto) {
-    const tender = await this.tenderRepository.findOneBy({
-      id: input.id,
+    const tender = await this.tenderRepository.findOne({
+      where: {
+        id: input.id,
+      },
+      relations: {
+        spd: true,
+      },
     });
 
     if (!tender) {
@@ -356,6 +361,14 @@ export class TenderService extends EntityCrudService<Tender> {
       .update({ id: input.id }, { status: input.status });
 
     if (input.status == TenderStatusEnum.APPROVAL) {
+      const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
+        spdId: tender.spd.spdId,
+        type: 'invitation',
+      });
+      if (!spdTemplate) {
+        throw new BadRequestException('spd_invitation_not_found');
+      }
+
       this.tenderingRMQClient.emit('initiate-workflow', {
         id: tender.id,
         name: 'tenderApproval',

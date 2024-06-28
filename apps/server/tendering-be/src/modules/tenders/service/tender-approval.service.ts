@@ -103,7 +103,7 @@ export class TenderApprovalService {
       type: 'invitation',
     });
     if (!spdTemplate) {
-      throw new BadRequestException('spd_document_not_found');
+      throw new BadRequestException('spd_invitation_not_found');
     }
 
     const fileReadable = await this.minIOService.downloadBuffer(
