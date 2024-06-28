@@ -76,6 +76,7 @@ export class TenderApprovalService {
       await queryRunner.rollbackTransaction();
       this.logger.error('🚀 ~ TenderApprovalService ~ tender approval error', {
         error,
+        data,
       });
       throw error;
     } finally {
