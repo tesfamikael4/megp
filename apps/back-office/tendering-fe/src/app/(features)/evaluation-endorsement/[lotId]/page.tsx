@@ -15,7 +15,7 @@ export default function EvaluationEndorsement() {
         workflow={
           <WorkflowHandling
             itemId={lotId as string}
-            itemKey={'TechnicalEndorsement'}
+            itemKey={'TechnicalEndorsementApproval'}
           />
         }
       />
