@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SpdTemplate, Tender } from 'src/entities';
 import { DataSource, EntityManager, Repository } from 'typeorm';
@@ -7,11 +12,12 @@ import { TenderStatusEnum } from 'src/shared/enums/tender-status.enum';
 import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
 import { REQUEST } from '@nestjs/core';
-import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class TenderApprovalService {
+  private readonly logger = new Logger(TenderApprovalService.name);
+
   constructor(
     @InjectRepository(Tender)
     private readonly tenderRepository: Repository<Tender>,
@@ -26,7 +32,7 @@ export class TenderApprovalService {
     activityId: string;
     itemId: string;
   }) {
-    console.log('🚀 ~ TenderApprovalService ~ tender approval started');
+    this.logger.log('🚀 ~ TenderApprovalService ~ tender approval started');
 
     if (!data.itemId) {
       throw new RpcException('incomplete_data');
@@ -68,13 +74,13 @@ export class TenderApprovalService {
       return data;
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      console.log('🚀 ~ TenderApprovalService ~ tender approval error', {
+      this.logger.error('🚀 ~ TenderApprovalService ~ tender approval error', {
         error,
       });
       throw error;
     } finally {
       await queryRunner.release();
-      console.log('🚀 ~ TenderApprovalService ~ tender approval completed');
+      this.logger.log('🚀 ~ TenderApprovalService ~ tender approval completed');
     }
   }
 
