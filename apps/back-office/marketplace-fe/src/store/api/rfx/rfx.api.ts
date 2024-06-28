@@ -8,6 +8,18 @@ export const rfxOtherApi = createApi({
   tagTypes: ['eval-responses:LIST'],
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api/'),
   endpoints: (builder) => ({
+    listPRs: builder.query<any, CollectionQuery>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `procurement-requisitions/get-procurement-requisitions-for-marketplace${q}`,
+        };
+      },
+    }),
     listRfxs: builder.query<any, CollectionQuery>({
       query: (collectionQuery) => {
         let q = '';
@@ -349,6 +361,7 @@ export const rfxOtherApi = createApi({
 });
 
 export const {
+  useLazyListPRsQuery,
   useLazyListRfxsQuery,
   useLazyListRfxOnReviewQuery,
   useLazyListRfxOnEvaluationQuery,

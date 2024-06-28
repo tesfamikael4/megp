@@ -6,6 +6,7 @@ import { ExpandableTable } from '@megp/core-fe';
 import { DetailRequisition } from '../_components/detail-requisition-list';
 import { useRouter } from 'next/navigation';
 import { IconArrowLeft } from '@tabler/icons-react';
+import { useLazyListPRsQuery } from '@/store/api/rfx/rfx.api';
 
 const fakeData = [
   {
@@ -20,7 +21,7 @@ const fakeData = [
 
 export default function RFXPage() {
   const router = useRouter();
-  const [trigger, { data, isLoading }] = useLazyListQuery();
+  const [trigger, { data, isLoading }] = useLazyListPRsQuery();
 
   const config = {
     columns: [
@@ -58,27 +59,34 @@ export default function RFXPage() {
   const onRequestChange = (request: any) => {
     trigger({
       ...request,
-      where: [
-        [
-          {
-            column: 'isUsed',
-            operator: '=',
-            value: 'false',
-          },
-        ],
-        [
-          {
-            column: 'procurementApplication',
-            operator: '=',
-            value: 'purchasing',
-          },
-          {
-            column: 'procurementApplication',
-            operator: '=',
-            value: 'auctioning',
-          },
-        ],
-      ],
+      // where: [
+      //   [
+      //     {
+      //       column: 'isUsed',
+      //       operator: '=',
+      //       value: 'false',
+      //     },
+      //   ],
+      //   // [
+      //   //   {
+      //   //     column: 'status',
+      //   //     operator: '=',
+      //   //     value: 'APPROVED',
+      //   //   },
+      //   // ],
+      //   [
+      //     {
+      //       column: 'procurementApplication',
+      //       operator: '=',
+      //       value: 'purchasing',
+      //     },
+      //     {
+      //       column: 'procurementApplication',
+      //       operator: '=',
+      //       value: 'auctioning',
+      //     },
+      //   ],
+      // ],
       orderBy: [
         {
           column: 'createdAt',
