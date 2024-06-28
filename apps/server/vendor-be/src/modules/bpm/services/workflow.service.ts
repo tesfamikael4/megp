@@ -267,15 +267,15 @@ export class WorkflowService {
         if (!status) {
           throw new BadRequestException('Something went wrong');
         }
-        const lastExecutedTask = await this.getPrviousHandler(
+        const lastExecutedTask = await this.getPreviousHandler(
           workflowInstance.id,
         );
+        const data = { remark: nextCommand.remark, ...nextCommand.data };
         const transferableData: any = { ...currentTaskHandlerCopy.data };
-        const fileInfo = {
-          documentId: transferableData?.documentId,
-          fileId: transferableData?.fileId
-        };
-        const data = { remark: nextCommand.remark, ...nextCommand.data, ...fileInfo };
+        const fileInfo: any = nextCommand?.data;
+        data['documentId'] = fileInfo?.documentId ? fileInfo.documentId : transferableData?.documentId;
+        data['fileId'] = fileInfo?.fileId ? fileInfo?.fileId : transferableData?.fileId
+
         currentTaskHandler.data = data;
         currentTaskHandler.taskId = task.id;
         currentTaskHandler.previousHandlerId = lastExecutedTask
@@ -356,7 +356,7 @@ export class WorkflowService {
     return activities;
   }
 
-  private async getPrviousHandler(
+  private async getPreviousHandler(
     instanceId: string,
   ): Promise<TaskTrackerEntity> {
     const trackers = await this.trackerRepository.find({
@@ -674,8 +674,8 @@ export class WorkflowService {
   getInstance(id: string) {
     return this.workflowInstanceRepository.findOne({ where: { id: id } });
   }
-  getRequestedAppByVendorId(requestorId: string) {
-    return this.workflowInstanceRepository.findOne({
+  async getRequestedAppByVendorId(requestorId: string) {
+    return await this.workflowInstanceRepository.findOne({
       relations: { service: true },
       where: { requestorId: requestorId, status: ApplicationStatus.INPROGRESS },
     });

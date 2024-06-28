@@ -1771,9 +1771,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         }
         vendorEntity.areasOfBusinessInterestView = formattedAreaOfBi;
       }
-
-
-
       // getting the preferential treatments  if any
       const keys = this.commonService.getPreferentialServices();
       const ptResult = await this.ptService.getPreferentialTreatments(
@@ -1799,9 +1796,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           );
           vendorEntity.invoice = invoice;
         }
-        vendorEntity.service = this.workflowService.getRequestedAppByVendorId(
+        const appInprogress = await this.workflowService.getRequestedAppByVendorId(
           vendorEntity.id,
         );
+        if (appInprogress) {
+          vendorEntity.service = appInprogress.service;
+        }
         const lineOfBusiness = vendorEntity.lineOfBusiness ? [...vendorEntity.lineOfBusiness] : [];
         vendorEntity.lineOfBusinessView = lineOfBusiness?.map((item) => item?.name);
       }
@@ -2200,6 +2200,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         metaData: true,
         status: true,
         userId: true,
+        lineOfBusiness: true,
         vendorAccounts: {
           id: true,
           accountHolderFullName: true,
@@ -2225,13 +2226,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         areasOfBusinessInterest: {
           id: true,
           category: true,
-          lineOfBusiness: true,
+          registrationNumber: true,
+          registrationDate: true,
+          expiryDate: true,
+          classification: true,
+          userType: true,
+          // lineOfBusiness: true,
         },
         isrVendor: { id: true, businessAreas: true },
       },
       relations: {
         areasOfBusinessInterest: true,
-        //  shareholders: true,
         beneficialOwnershipShareholders: true,
         vendorAccounts: true,
         isrVendor: { businessAreas: { servicePrice: true, BpService: true } },
@@ -2239,29 +2244,30 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
     if (!vendorData) throw new HttpException('Vendor not found', 404);
     const { isrVendor, ...rest } = vendorData;
-    const bussinessAreas = [];
+    const businessAreas = [];
     for (const ba of vendorData.isrVendor?.businessAreas) {
       //   const business = BusinessAreaDetailResponseDto.toResponse(ba);
-      let businessarea = {};
-      let bl = [];
+      let businessArea = {};
       const priceRange = this.commonService.formatPriceRange(ba.servicePrice);
-      for (const lob of vendorData.areasOfBusinessInterest) {
-        if (lob.category == ba.category) {
-          bl = lob?.lineOfBusiness?.map((item: any) => item.name);
-          businessarea = {
+      for (const bia of vendorData.areasOfBusinessInterest) {
+        if (bia.category == ba.category) {
+          businessArea = {
             category: ba.category,
             ValueRange: priceRange,
-            lineOfBusiness: bl,
             approvedAt: ba.approvedAt,
             expireDate: ba.expireDate,
+            registrationNumber: bia.registrationNumber,
+            registrationDate: bia.registrationDate,
             //  certificateUrl: ba.certificateUrl,
           };
           break;
         }
       }
-      bussinessAreas.push(businessarea);
+      businessAreas.push(businessArea);
     }
-    rest.areasOfBusinessInterest = bussinessAreas;
+    rest.areasOfBusinessInterest = [...businessAreas];
+    const lineOfBusinesses = rest.lineOfBusiness ? rest.lineOfBusiness : [];
+    rest.lineOfBusiness = lineOfBusinesses.map((item) => item?.name);
     const certificate = await this.baService.getCerteficate(vendorData.id);
     const preferentails = await this.ptService.getMyPreferentialTreatments(
       vendorData.userId,

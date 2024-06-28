@@ -109,6 +109,7 @@ export class ApplicationExcutionService {
     let response = WorkflowInstanceResponse.toResponse(instance);
     delete response.businessProcess;
     const bas = instance.isrVendor?.businessAreas;
+
     const businessInterest = [];
     if (bas.length > 0) {
       for (const range of bas) {
@@ -118,9 +119,6 @@ export class ApplicationExcutionService {
           const bia = instance.isrVendor?.areasOfBusinessInterest.find(
             (item: any) => item.category == range.category,
           );
-          // const lobs = bia?.lineOfBusiness?.map((item: any) => {
-          //   return item.name;
-          // });
 
           businessInterest.push({
             category: bia?.category,
