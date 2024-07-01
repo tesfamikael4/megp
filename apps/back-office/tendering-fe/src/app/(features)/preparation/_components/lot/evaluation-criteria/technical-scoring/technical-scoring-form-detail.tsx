@@ -94,7 +94,7 @@ export function TechnicalScoringFormDetail({
 
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, id: id?.toString(), spdId: id });
+      await update({ ...data, id: parentId });
       notify('Success', 'technical scoring updated successfully');
       returnFunction();
     } catch {
@@ -103,7 +103,7 @@ export function TechnicalScoringFormDetail({
   };
   const onDelete = async () => {
     try {
-      await remove(id?.toString());
+      await remove(parentId ?? '');
       notify('Success', 'technical scoring  deleted successfully');
       returnFunction();
     } catch {
@@ -154,6 +154,7 @@ export function TechnicalScoringFormDetail({
         {...register('requirement')}
       />
       <div className="flex space-x-4">
+        {logger.log(selected?.validation)}
         <Controller
           name="point"
           control={control}
@@ -162,6 +163,7 @@ export function TechnicalScoringFormDetail({
               label="Point"
               name={name}
               value={value}
+              allowDecimal={true}
               min={mode === 'detail' ? selected?.validation?.min : 0}
               max={mode === 'detail' ? selected?.validation?.max : 100}
               className="w-1/2"

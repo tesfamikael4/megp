@@ -69,7 +69,7 @@ export function SpdTechnicalScoringFormDetail({
     data: selected,
     isSuccess: selectedSuccess,
     isLoading,
-  } = useReadQuery(id?.toString());
+  } = useReadQuery(parentId ?? '');
 
   useEffect(() => {
     if (id) {
