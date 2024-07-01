@@ -249,7 +249,6 @@ export class WorkflowService {
         stateMetaData['type'] = currentTask.taskType;
         taskInfo.handlerType = task.handlerType;
         taskInfo.taskType = task.taskType;
-        console.log(' taskInfo.taskType ', taskInfo.taskType);
         const notification = {
           userId: workflowInstance.userId,
           applicationNumber: workflowInstance?.applicationNumber,
@@ -275,7 +274,6 @@ export class WorkflowService {
         const fileInfo: any = nextCommand?.data;
         data['documentId'] = fileInfo?.documentId ? fileInfo.documentId : transferableData?.documentId;
         data['fileId'] = fileInfo?.fileId ? fileInfo?.fileId : transferableData?.fileId
-
         currentTaskHandler.data = data;
         currentTaskHandler.taskId = task.id;
         currentTaskHandler.previousHandlerId = lastExecutedTask
