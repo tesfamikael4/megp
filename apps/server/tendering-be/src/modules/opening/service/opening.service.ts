@@ -34,17 +34,15 @@ export class OpeningService extends ExtraCrudService<Opening> {
     super(openingRepository);
   }
 
-  async create(itemData: Opening, req?: any): Promise<any> {
-    if (req?.user?.organization) {
-      itemData.organizationId = req.user.organization.id;
-      itemData.organizationName = req.user.organization.name;
-    }
+  async create(itemData: any, req?: any): Promise<any> {
+    itemData.organizationId = req.user.organization.id;
+    itemData.organizationName = req.user.organization.name;
     //change tenderId
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const teamMember = await manager.getRepository(TeamMember).findOne({
       where: {
         team: {
-          tender: itemData.tender,
+          tenderId: itemData.tenderId,
         },
       },
       relations: {
@@ -78,8 +76,8 @@ export class OpeningService extends ExtraCrudService<Opening> {
 
     await this.createMilestoneRecord(manager, itemData);
 
-    const item = this.openingRepository.create(itemData);
-    await this.openingRepository.insert(item);
+    const item = manager.getRepository(Opening).create(itemData);
+    await manager.getRepository(Opening).insert(item);
     return item;
   }
 

@@ -14,7 +14,7 @@ import { Item } from './tender-item.entity';
 import { FinancialBidPriceAssessment } from './financial-bid-price-assessment.entity';
 
 @Entity({ name: 'formula_implementations' })
-@Unique(['lotId', 'name'])
+@Unique(['lotId', 'name', 'itemId', 'bidderId'])
 export class FormulaImplementation extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

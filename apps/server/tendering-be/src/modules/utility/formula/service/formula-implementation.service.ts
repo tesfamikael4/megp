@@ -106,6 +106,8 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
         where: {
           name: 'unit_price',
           lotId: formulaImplementation.lotId,
+          itemId: formulaImplementation.itemId,
+          bidderId: formulaImplementation.bidderId,
         },
       });
 
