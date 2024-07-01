@@ -23,10 +23,12 @@ import { useLazyListByIdQuery } from '../_api/bid-form.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
+  pId: string;
 }
 
 export function SpdProfessionalSettingFormDetail({
   mode,
+  pId,
 }: Readonly<FormDetailProps>) {
   const spdSchema: ZodType<Partial<SpdProfessionalSetting>> = z.object({
     requirement: z.string().min(1, { message: 'This field is required' }),
@@ -65,7 +67,7 @@ export function SpdProfessionalSettingFormDetail({
     data: selected,
     isSuccess: selectedSuccess,
     isLoading,
-  } = useReadQuery(id?.toString());
+  } = useReadQuery(pId?.toString());
 
   useEffect(() => {
     logger.log(errors);
@@ -87,7 +89,7 @@ export function SpdProfessionalSettingFormDetail({
 
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, id: id?.toString(), spdId: id });
+      await update({ ...data, id: pId, spdId: id });
       notify('Success', 'technical scoring updated successfully');
     } catch {
       notify('Error', 'Error in updating technical scoring');

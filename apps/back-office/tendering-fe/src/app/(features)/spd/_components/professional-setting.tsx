@@ -34,6 +34,7 @@ export default function SpdProfessionalSetting() {
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'new' | 'detail'>('new');
+  const [pId, setId] = useState('');
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const config = {
     columns: [
@@ -111,6 +112,7 @@ export default function SpdProfessionalSetting() {
               leftSection={<IconEye size={15} />}
               onClick={() => {
                 setMode('detail');
+                setId(data.id);
                 open();
                 // handleViewer();
               }}
@@ -174,7 +176,7 @@ export default function SpdProfessionalSetting() {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <SpdProfessionalSettingFormDetail mode={mode} />
+          <SpdProfessionalSettingFormDetail mode={mode} pId={pId} />
         </Box>
       </Modal>
     </Section>

@@ -65,7 +65,7 @@ export const DetailRequisition = ({
   const onClickPRSelection = async () => {
     try {
       const result = await convert({ prId: requisition?.id }).unwrap();
-      if (result) router.push(`/tender/${result?.id}?tab=configuration`);
+      if (result) router.push(`/preparation/${result?.id}?tab=configuration`);
       notify('Success', 'Converted to Tender successfully.');
     } catch (err) {
       notify('Error', err?.data?.message ?? 'Error while creating Tender.');
