@@ -10,19 +10,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { BidGuarantee } from 'src/entities/bid-guarantee.entity';
-import { Lot } from 'src/entities';
+import { Lot, SpdTemplate } from 'src/entities';
 import {
   CreateBidGuaranteeDto,
   UpdateGuaranteeStatusDto,
 } from '../dto/bid-guarantee.dto';
-import {
-  BidGuaranteeStatusEnum,
-  SpdTemplateEnum,
-  SpdTemplateTypeEnum,
-} from 'src/shared/enums';
+import { BidGuaranteeStatusEnum, SpdTemplateTypeEnum } from 'src/shared/enums';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
-import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
 import { DocxService } from 'src/shared/docx/docx.service';
 import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 import {
@@ -156,7 +151,7 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
     if (updateGuaranteeStatusDto.status == BidGuaranteeStatusEnum.REQUESTED) {
       const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-      const spdTemplate = await manager.getRepository(SpdBidForm).findOneBy({
+      const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
         type: SpdTemplateTypeEnum.BID_SECURITY,
         spd: {
           tenderSpds: {
@@ -179,7 +174,15 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
         await this.documentManipulatorService.streamToBuffer(fileReadable);
 
       const docx = await this.docxService.generateDocx(fileBuffer, {
-        public_body: guarantee.bidderName,
+        public_body: guarantee.organizationName,
+        bidderName: guarantee.bidderName,
+        bidDate: guarantee.bidderName,
+        nameOfContract: '1',
+        bankName: guarantee.guarantorName,
+        country: 'Malawi',
+        day: new Date().getDate(),
+        month: new Date().getMonth,
+        year: new Date().getFullYear(),
       });
 
       const pdfBuffer =

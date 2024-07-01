@@ -5,9 +5,6 @@ import { ExtraCrudService } from 'src/shared/service';
 import { DocxService } from 'src/shared/docx/docx.service';
 import { MinIOService, BucketNameEnum } from 'src/shared/min-io';
 import { SpdTemplate } from 'src/entities/spd-template.entity';
-import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
-import { join } from 'path';
-import * as fs from 'fs';
 import { FileHelperService } from 'src/shared/document-manipulator/file-helper.service';
 import { SpdTemplateEnum, SpdTemplateTypeEnum } from 'src/shared/enums';
 
@@ -19,7 +16,6 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     private readonly docxService: DocxService,
     private readonly minIOService: MinIOService,
     private readonly fileHelperService: FileHelperService,
-    private readonly documentManipulatorService: DocumentManipulatorService,
   ) {
     super(spdTemplateRepository);
   }
@@ -115,29 +111,6 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     } catch (error) {
       throw error;
     }
-  }
-
-  async mergePdf() {
-    const basePath = process.cwd();
-    const file1 = join(basePath, '1.pdf');
-    const file2 = join(basePath, '2.pdf');
-    const pdfBuffer1 = fs.readFileSync(file1);
-    const pdfBuffer2 = fs.readFileSync(file2);
-    const pdfBuffers = [pdfBuffer1, pdfBuffer2];
-
-    await this.documentManipulatorService.mergePdf(pdfBuffers);
-  }
-  async mergeDocx() {
-    const basePath = process.cwd();
-    const file1 = join(basePath, '1.docx');
-    const file2 = join(basePath, '3.docx');
-    const docxBuffers = [fs.readFileSync(file1), fs.readFileSync(file2)];
-
-    await this.documentManipulatorService.mergeDocx(docxBuffers);
-  }
-
-  async merge() {
-    return await this.documentManipulatorService.merge();
   }
 
   private getValidationProperties(type: string) {
