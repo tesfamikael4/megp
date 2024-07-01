@@ -51,6 +51,9 @@ export class FinancialPriceAnalysisDetail extends OrgAudit {
   @Column()
   marketUnitPrice: number;
 
+  @Column({ nullable: true })
+  remark: string;
+
   @Column()
-  difference: number;
+  accept: boolean;
 }
