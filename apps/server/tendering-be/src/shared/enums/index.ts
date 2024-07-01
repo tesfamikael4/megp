@@ -4,3 +4,4 @@ export * from './account-verification-type.enum';
 export * from './revision-approval.enum';
 export * from './envelop-type.enum';
 export * from './bid.enum';
+export * from './spd-template.enum';

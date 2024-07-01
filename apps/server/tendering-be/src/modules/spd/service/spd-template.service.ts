@@ -9,6 +9,7 @@ import { DocumentManipulatorService } from 'src/shared/document-manipulator/docu
 import { join } from 'path';
 import * as fs from 'fs';
 import { FileHelperService } from 'src/shared/document-manipulator/file-helper.service';
+import { SpdTemplateEnum, SpdTemplateTypeEnum } from 'src/shared/enums';
 
 @Injectable()
 export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
@@ -141,33 +142,40 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
 
   private getValidationProperties(type: string) {
     let validationProperties = [];
-    if (type == 'main-document') {
-      validationProperties = ['public_body', 'bds', 'scc'];
-    } else if (type === 'bds') {
+    if (type == SpdTemplateTypeEnum.MAIN_DOCUMENT) {
       validationProperties = [
-        'public_body',
-        'clarification_deadline_date',
-        'clarification_deadline_time',
-        'incoterm_edition',
-        'opening_date_date',
-        'opening_date_time',
+        SpdTemplateEnum.PUBLIC_BODY,
+        SpdTemplateEnum.BDS,
+        SpdTemplateEnum.SCC,
       ];
-    } else if (type === 'scc') {
-      validationProperties = ['public_body', 'procurement_reference_no'];
-    } else if (type === 'bid-security') {
+    } else if (type === SpdTemplateTypeEnum.BDS) {
       validationProperties = [
-        'public_body',
-        'bidderName',
-        'bidDate',
-        'nameOfContract',
-        'bankName',
-        'country',
-        'day',
-        'month',
-        'year',
+        SpdTemplateEnum.PUBLIC_BODY,
+        SpdTemplateEnum.CLARIFICATION_DEADLINE_DATE,
+        SpdTemplateEnum.CLARIFICATION_DEADLINE_TIME,
+        SpdTemplateEnum.INCOTERM_EDITION,
+        SpdTemplateEnum.OPENING_DATE_DATE,
+        SpdTemplateEnum.OPENING_DATE_TIME,
+      ];
+    } else if (type === SpdTemplateTypeEnum.SCC) {
+      validationProperties = [
+        SpdTemplateEnum.PUBLIC_BODY,
+        SpdTemplateEnum.PROCUREMENT_REFERENCE_NO,
+      ];
+    } else if (type === SpdTemplateTypeEnum.BID_SECURITY) {
+      validationProperties = [
+        SpdTemplateEnum.PUBLIC_BODY,
+        SpdTemplateEnum.BIDDER_NAME,
+        SpdTemplateEnum.BID_DATE,
+        SpdTemplateEnum.NAME_OF_CONTRACT,
+        SpdTemplateEnum.BANK_NAME,
+        SpdTemplateEnum.COUNTRY,
+        SpdTemplateEnum.DAY,
+        SpdTemplateEnum.MONTH,
+        SpdTemplateEnum.YEAR,
       ];
     } else {
-      validationProperties = ['public_body'];
+      validationProperties = [SpdTemplateEnum.PUBLIC_BODY];
     }
     return validationProperties;
   }

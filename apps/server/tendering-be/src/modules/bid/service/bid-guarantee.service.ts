@@ -15,7 +15,11 @@ import {
   CreateBidGuaranteeDto,
   UpdateGuaranteeStatusDto,
 } from '../dto/bid-guarantee.dto';
-import { BidGuaranteeStatusEnum } from 'src/shared/enums';
+import {
+  BidGuaranteeStatusEnum,
+  SpdTemplateEnum,
+  SpdTemplateTypeEnum,
+} from 'src/shared/enums';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
@@ -153,7 +157,7 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
       const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
       const spdTemplate = await manager.getRepository(SpdBidForm).findOneBy({
-        type: 'bid-security',
+        type: SpdTemplateTypeEnum.BID_SECURITY,
         spd: {
           tenderSpds: {
             tender: {

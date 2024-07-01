@@ -13,7 +13,6 @@ import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { AllowAnonymous } from 'src/shared/authorization';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
 import { SpdTemplate } from 'src/entities/spd-template.entity';
 import { SpdTemplateService } from '../service/spd-template.service';
 

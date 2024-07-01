@@ -13,6 +13,7 @@ import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
 import { REQUEST } from '@nestjs/core';
 import { RpcException } from '@nestjs/microservices';
+import { SpdTemplateTypeEnum } from 'src/shared/enums';
 
 @Injectable()
 export class TenderApprovalService {
@@ -100,7 +101,7 @@ export class TenderApprovalService {
 
     const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
       spdId: tender.spd.spdId,
-      type: 'invitation',
+      type: SpdTemplateTypeEnum.INVITATION,
     });
     if (!spdTemplate) {
       throw new BadRequestException('spd_invitation_not_found');

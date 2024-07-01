@@ -17,7 +17,7 @@ import {
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { EntityCrudService } from 'src/shared/service';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import {
   ChangeTenderStatusDto,
   CreateTenderDto,
@@ -34,6 +34,7 @@ import {
   TenderStatusEnum,
 } from 'src/shared/enums/tender-status.enum';
 import { ClientProxy } from '@nestjs/microservices';
+import { SpdTemplateTypeEnum } from 'src/shared/enums';
 
 @Injectable()
 export class TenderService extends EntityCrudService<Tender> {
@@ -365,8 +366,12 @@ export class TenderService extends EntityCrudService<Tender> {
     if (input.status == TenderStatusEnum.APPROVAL) {
       const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
         spdId: tender.spd.spdId,
-        type: 'invitation',
+        type: In([
+          SpdTemplateTypeEnum.INVITATION,
+          SpdTemplateTypeEnum.BID_SECURITY,
+        ]),
       });
+
       if (!spdTemplate) {
         throw new BadRequestException('spd_invitation_not_found');
       }
@@ -400,7 +405,7 @@ export class TenderService extends EntityCrudService<Tender> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
       spdId: tender.spd.spdId,
-      type: 'main-document',
+      type: SpdTemplateTypeEnum.MAIN_DOCUMENT,
     });
     if (!spdTemplate) {
       throw new BadRequestException('spd_document_not_found');
@@ -410,10 +415,16 @@ export class TenderService extends EntityCrudService<Tender> {
     let scc = tender.spd.scc;
 
     if (!bds) {
-      bds = await this.getDownloadUrl(tender.spd.spdId, 'bds');
+      bds = await this.getDownloadUrl(
+        tender.spd.spdId,
+        SpdTemplateTypeEnum.BDS,
+      );
     }
     if (!scc) {
-      scc = await this.getDownloadUrl(tender.spd.spdId, 'scc');
+      scc = await this.getDownloadUrl(
+        tender.spd.spdId,
+        SpdTemplateTypeEnum.SCC,
+      );
     }
 
     const bdsHtml = await this.downloadAndConvert(bds, {
@@ -512,7 +523,7 @@ export class TenderService extends EntityCrudService<Tender> {
 
     const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
       spdId: tender.spd.spdId,
-      type: 'invitation',
+      type: SpdTemplateTypeEnum.INVITATION,
     });
     if (!spdTemplate) {
       throw new BadRequestException('spd_document_not_found');
