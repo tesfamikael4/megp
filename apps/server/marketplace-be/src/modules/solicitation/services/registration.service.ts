@@ -58,25 +58,25 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     const vendorId = req.user.organization.id;
     const vendorName = req.user.organization.name;
 
-    const registeredVendor = await this.solRegistrationRepository.count({
+    const registeredVendor = await this.solRegistrationRepository.exists({
       where: {
         rfxId: itemData.rfxId,
         vendorId,
       },
     });
 
-    if (registeredVendor > 0) {
+    if (registeredVendor) {
       throw new BadRequestException('RFQ Already Registered');
     }
 
-    const solBookmark = await manager.getRepository(SolBookmark).count({
+    const solBookmark = await manager.getRepository(SolBookmark).exists({
       where: {
         rfxId: itemData.rfxId,
         vendorId,
       },
     });
 
-    if (solBookmark == 1) {
+    if (solBookmark) {
       await manager.getRepository(SolBookmark).update(
         {
           rfxId: itemData.rfxId,

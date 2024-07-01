@@ -255,12 +255,11 @@ export class WorkflowHandlerService {
 
     const solRoundAwards = [];
     const rankedOffers = [];
+    const endedItems = [];
 
     for (const item of items) {
       if (item.openedOffers.length == 0) {
-        await itemRepo.update(item.id, {
-          status: ERfxItemStatus.ENDED,
-        });
+        endedItems.push(item.id);
         continue;
       }
       const sortedOffers = item.openedOffers.sort(
@@ -292,6 +291,9 @@ export class WorkflowHandlerService {
 
     const createdRoundAwards = roundAwardRepo.create(solRoundAwards);
     await Promise.all([
+      endedItems.length > 0
+        ? itemRepo.update(endedItems, { status: ERfxItemStatus.ENDED })
+        : Promise.resolve(),
       roundAwardRepo.insert(createdRoundAwards),
       openedOfferRepo.upsert(rankedOffers, ['id']),
     ]);

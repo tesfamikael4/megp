@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import {
+  AwardNote,
   EvalItemResponse,
   EvalResponse,
   OpenedItemResponse,
@@ -37,6 +38,7 @@ import { CreateEvalAssessmentDto } from '../dtos/eval-assessment.dto';
 import { EvalAssessment } from 'src/entities/eval-assessment.entity';
 import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
 import { ClientProxy } from '@nestjs/microservices';
+import { CreateAwardNoteDTO } from 'src/modules/award/dtos/award-note.dto';
 
 @Injectable()
 export class EvalResponseService extends ExtraCrudService<EvalResponse> {
@@ -329,7 +331,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     // GENERATE PDF
 
     if (isTeamEvaluation) {
-      const [items, procedure] = await this.filterItems(rfxId, 0);
+      const [items, procedure] = await this.filterItems(rfx, 0);
       await this.calculateRoundWinner(items, procedure.deltaPercentage);
       await this.sendToEvaluators(rfx);
     }
@@ -780,7 +782,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
   }
 
   async filterItems(
-    rfxId: string,
+    rfx: RFX,
     round: number,
   ): Promise<[RFXItem[], RfxBidProcedure]> {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
@@ -788,12 +790,13 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     const itemRepo = entityManager.getRepository(RFXItem);
     const rfxRepo = entityManager.getRepository(RFX);
     const roundRepo = entityManager.getRepository(SolRound);
+    const awardNoteRepo = entityManager.getRepository(AwardNote);
     const procedureRepo = entityManager.getRepository(RfxBidProcedure);
 
     const [validItems, rfxBidProcedure] = await Promise.all([
       itemRepo
         .createQueryBuilder('rfx_items')
-        .where('rfx_items.rfxId = :rfxId', { rfxId })
+        .where('rfx_items.rfxId = :rfxId', { rfxId: rfx.id })
         .andWhere('rfx_items.status = :status', {
           status: ERfxItemStatus.APPROVED,
         })
@@ -806,25 +809,36 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         })
         .getMany(),
       procedureRepo.findOne({
-        where: { rfxId },
+        where: { rfxId: rfx.id },
         select: { id: true, deltaPercentage: true },
       }),
     ]);
 
     if (validItems.length == 0) {
+      const awardNote: CreateAwardNoteDTO = awardNoteRepo.create({
+        name: rfx.name,
+        prId: rfx.prId,
+        rfxId: rfx.id,
+        description: rfx.description,
+        procurementReferenceNumber: rfx.procurementReferenceNumber,
+        organizationId: rfx.organizationId,
+        organizationName: rfx.organizationName,
+      });
+
       await Promise.all([
-        rfxRepo.update(rfxId, {
+        awardNoteRepo.insert(awardNote),
+        rfxRepo.update(rfx.id, {
           status: ERfxStatus.ENDED,
         }),
         roundRepo.update(
-          { round: MoreThanOrEqual(round), rfxId },
+          { round: MoreThanOrEqual(round), rfxId: rfx.id },
           {
             status: ESolRoundStatus.CANCELLED,
           },
         ),
       ]);
       throw new NotFoundException(
-        `No valid items found for this RFQ id ${rfxId}`,
+        `No valid items found for this RFQ id ${rfx.id}`,
       );
     }
 

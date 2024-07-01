@@ -23,7 +23,7 @@ export class ApplyRfxProductInvitationDto {
   catalogueImages: any;
 
   @ApiProperty()
-  @IsObject()
+  @IsArray()
   catalogueDeliveryValues: any;
 
   vendorId: string;

@@ -9,6 +9,7 @@ export * from './rfx-bid-contract-condition.entity';
 export * from './rfx-product-invitation.entity';
 export * from './rfx-item-document.entity';
 export * from './document.entity';
+export * from './rfx-documentary-evidence.entity';
 export * from './rfx-revision-approval.entity';
 export * from './rfx-contract-term.entity';
 
@@ -26,5 +27,9 @@ export * from './opened-offer.entity';
 
 export * from './eval-response.entity';
 export * from './eval-item-response.entity';
+export * from './eval-assessment.entity';
 
 export * from './team-member.entity';
+
+export * from './award-item.entity';
+export * from './award-note.entity';

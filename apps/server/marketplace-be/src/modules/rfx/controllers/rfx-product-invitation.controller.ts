@@ -40,6 +40,30 @@ export class RfxProductInvitationController extends ExtraCrudController<RfxProdu
     super(rfxBidInvitationService);
   }
 
+  @Get('my-rfx-items-with-spec/:rfxId')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  @ApiOperation({
+    summary:
+      'List of items for a given RFX. Includes specification for Open RFQ',
+  })
+  async myRfxItemsWithSpec(
+    @Param('rfxId') rfxId: string,
+    @CurrentUser() user: any,
+    @Query('q') q?: string,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.rfxBidInvitationService.myRfxItemsWithSpec(
+      rfxId,
+      user,
+      query,
+    );
+  }
+
   @Post('apply-on-invitation')
   @ApiBody({})
   async applyOnInvitation(

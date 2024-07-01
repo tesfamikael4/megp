@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import {
+  AwardNote,
   OpenedItemResponse,
   OpenedOffer,
   OpenedResponse,
@@ -20,6 +21,7 @@ import {
   SolRoundAward,
 } from 'src/entities';
 import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
+import { CreateAwardNoteDTO } from 'src/modules/award/dtos/award-note.dto';
 import {
   EInvitationStatus,
   ERfxItemStatus,
@@ -53,10 +55,14 @@ export class OpenerService {
           try {
             const round = payload.round;
 
-            await checkValidRfx(entityManager);
+            const rfx = await checkValidRfx(entityManager);
             await openResponses(entityManager);
 
-            const [items, rfxBidProcedure] = await filterItems(entityManager);
+            const [items, rfxBidProcedure] = await filterItems(
+              rfx,
+              payload.round,
+              entityManager,
+            );
 
             if (round > 0) {
               // Solicitation (Round 0) Winners are calculated after evaluation approval
@@ -79,11 +85,14 @@ export class OpenerService {
     }
 
     async function filterItems(
+      rfx: RFX,
+      round: number,
       entityManager: EntityManager,
     ): Promise<[RFXItem[], RfxBidProcedure]> {
       const itemRepo = entityManager.getRepository(RFXItem);
       const rfxRepo = entityManager.getRepository(RFX);
       const roundRepo = entityManager.getRepository(SolRound);
+      const awardNoteRepo = entityManager.getRepository(AwardNote);
       const procedureRepo = entityManager.getRepository(RfxBidProcedure);
 
       const [validItems, rfxBidProcedure] = await Promise.all([
@@ -99,7 +108,7 @@ export class OpenerService {
             'openedOffers.rfxProductInvitation',
             'rfxProductInvitations',
           )
-          .andWhere('solRound.round = :round', { round: payload.round })
+          .andWhere('solRound.round = :round', { round })
           .andWhere('rfxProductInvitations.status IN (:...statuses)', {
             statuses: [EInvitationStatus.ACCEPTED, EInvitationStatus.COMPLY],
           })
@@ -116,7 +125,17 @@ export class OpenerService {
       ]);
 
       if (validItems.length == 0) {
+        const awardNote: CreateAwardNoteDTO = awardNoteRepo.create({
+          name: rfx.name,
+          prId: rfx.prId,
+          rfxId: rfx.id,
+          description: rfx.description,
+          procurementReferenceNumber: rfx.procurementReferenceNumber,
+          organizationId: rfx.organizationId,
+          organizationName: rfx.organizationName,
+        });
         await Promise.all([
+          awardNoteRepo.insert(awardNote),
           payload.round == 0
             ? itemRepo.update(
                 {
@@ -131,7 +150,7 @@ export class OpenerService {
             status: ERfxStatus.ENDED,
           }),
           roundRepo.update(
-            { round: MoreThanOrEqual(payload.round), rfxId: payload.rfxId },
+            { round: MoreThanOrEqual(payload.round), rfxId: rfx.id },
             {
               status: ESolRoundStatus.CANCELLED,
             },
@@ -150,7 +169,7 @@ export class OpenerService {
       const roundRepo = entityManager.getRepository(SolRound);
 
       const [activeRfx, activeRound] = await Promise.all([
-        rfxRepo.exists({
+        rfxRepo.findOne({
           where: {
             status: In([ERfxStatus.APPROVED, ERfxStatus.AUCTION]),
             id: payload.rfxId,
@@ -174,6 +193,7 @@ export class OpenerService {
           `No Active Round found for this RFQ id ${payload.rfxId}`,
         );
       }
+      return activeRfx;
     }
     async function endRound(entityManager: EntityManager) {
       const roundRepo = entityManager.getRepository(SolRound);
