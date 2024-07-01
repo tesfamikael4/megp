@@ -79,4 +79,16 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl:
       process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/api',
   },
+  {
+    entity: 'purchase-orders',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
+  },
+  {
+    entity: 'po-terms',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
+  },
+  {
+    entity: 'po-shipments',
+    baseUrl: process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api',
+  },
 ];

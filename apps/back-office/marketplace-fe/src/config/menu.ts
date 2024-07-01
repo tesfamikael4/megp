@@ -3,6 +3,7 @@ import {
   IconAdjustmentsHorizontal,
   IconAward,
   IconBuildingBank,
+  IconCreditCard,
   IconList,
   IconListCheck,
 } from '@tabler/icons-react';
@@ -29,6 +30,11 @@ export const Menu: MenuItem[] = [
     label: 'Evaluation',
     icon: IconListCheck,
     link: '/evaluation',
+  },
+  {
+    label: 'Purchase Order',
+    icon: IconCreditCard,
+    link: '/purchase-order',
   },
   {
     label: 'Award',
