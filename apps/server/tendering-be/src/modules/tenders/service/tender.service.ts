@@ -80,7 +80,9 @@ export class TenderService extends EntityCrudService<Tender> {
 
       const prResponse = prRequest.data;
 
-      if (prResponse.status !== 'APPROVED') {
+      if (!prResponse) {
+        throw new BadRequestException('pr_not_found');
+      } else if (prResponse.status !== 'APPROVED') {
         throw new BadRequestException('pr_is_not_approved');
       } else if (prResponse.isUsed) {
         throw new BadRequestException('pr_already_used');

@@ -28,7 +28,7 @@ import {
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
-import { writeFileSync } from 'fs';
+
 @Injectable()
 export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
   constructor(

@@ -60,6 +60,23 @@ export class BidGuaranteeController extends ExtraCrudController<BidGuarantee>(
     );
   }
 
+  @Get('list/:id')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  @IgnoreTenantInterceptor()
+  async findAll(
+    @Param('id') id: string,
+    @Query('q') q: string,
+    @Req() req?: any,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return this.service.findAll(id, query, options);
+  }
+
   @Get('can-create/:lotId')
   async canCreate(@Param('lotId') lotId: string): Promise<boolean> {
     try {
