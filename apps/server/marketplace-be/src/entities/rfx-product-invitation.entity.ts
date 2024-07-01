@@ -32,7 +32,7 @@ export class RfxProductInvitation extends Audit {
   catalogueImages: any[];
 
   @Column({ type: 'jsonb' })
-  catalogueDeliveryValues: string;
+  catalogueDeliveryValues: any;
 
   @Column({ type: 'uuid' })
   vendorId: string;

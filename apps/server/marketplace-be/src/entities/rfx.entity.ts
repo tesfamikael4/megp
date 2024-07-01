@@ -1,31 +1,31 @@
 import { Audit } from 'megp-shared-be';
 import {
-  Check,
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from 'typeorm';
-import { RFXItem } from './rfx-items.entity';
-import { RfxProcurementMechanism } from './rfx-procurement-mechanism.entity';
-import { RfxProcurementTechnicalTeam } from './rfx-procurement-technical-team.entity';
-import { RfxBidProcedure } from './rfx-bid-procedure.entity';
-import { RfxBidContractCondition } from './rfx-bid-contract-condition.entity';
+import {
+  AwardNote,
+  EvalAssessment,
+  RfxDocumentaryEvidence,
+  EvalResponse,
+  RFXItem,
+  RfxBidContractCondition,
+  RfxBidProcedure,
+  RfxContractTerm,
+  RfxProcurementMechanism,
+  RfxProcurementTechnicalTeam,
+  RfxRevisionApproval,
+  SolBookmark,
+  SolRegistration,
+  SolResponse,
+  SolRound,
+  TeamMember,
+} from '.';
 import { ERfxStatus } from 'src/utils/enums';
-import { RfxDocumentaryEvidence } from './rfx-documentary-evidence.entity';
-import { RfxRevisionApproval } from './rfx-revision-approval.entity';
-import { SolRegistration } from './sol-registration.entity';
-import { SolRound } from './sol-round.entity';
-import { SolResponse } from './sol-response.entity';
-import { SolBookmark } from './sol-bookmark.entity';
-import { EvalResponse } from './eval-response.entity';
-import { TeamMember } from './team-member.entity';
-import { EvalAssessment } from './eval-assessment.entity';
-import { RfxContractTerm } from './rfx-contract-term.entity';
 
 @Entity({ name: 'rfxes' })
 export class RFX extends Audit {
@@ -150,4 +150,7 @@ export class RFX extends Audit {
 
   @OneToMany(() => EvalAssessment, (response) => response.rfx)
   evaluationAssessments: EvalAssessment[];
+
+  @OneToOne(() => AwardNote, (award) => award.rfx)
+  awardNote: AwardNote;
 }
