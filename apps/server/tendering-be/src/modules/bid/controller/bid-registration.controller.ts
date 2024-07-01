@@ -18,7 +18,7 @@ import {
   CreateBidRegistrationStatusDto,
 } from '../dto/bid-registration.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
-import { JwtGuard } from 'src/shared/authorization';
+import { CurrentUser, JwtGuard } from 'src/shared/authorization';
 import { VendorGuard } from 'src/shared/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
@@ -68,9 +68,9 @@ export class BidRegistrationController extends ExtraCrudController<BidRegistrati
   @Post('submit')
   async submitLot(
     @Body() itemData: CreateBidRegistrationStatusDto,
-    @Req() req?: any,
+    @CurrentUser() user?: any,
   ) {
-    return await this.bidRegistrationService.submitLot(itemData, req);
+    return await this.bidRegistrationService.submitLot(itemData, user);
   }
 
   @Get('all-bidders/:tenderId')

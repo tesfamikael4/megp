@@ -223,17 +223,63 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
         },
         relations: {
           bidRegistration: true,
+          bidResponseItems: true,
         },
       });
+
     if (!bidRegistrationDetail) {
       throw new BadRequestException('bid_registration_not_found');
+    } else if (
+      !bidRegistrationDetail.financialItems &&
+      bidRegistrationDetail.financialItems.length < 1
+    ) {
+      throw new BadRequestException('financial_items_not_found');
+    } else if (
+      !bidRegistrationDetail.technicalItems &&
+      bidRegistrationDetail.technicalItems.length < 1
+    ) {
+      throw new BadRequestException('technical_items_not_found');
+    } else if (
+      bidRegistrationDetail.financialItems.length !=
+        bidRegistrationDetail.technicalItems.length ||
+      !bidRegistrationDetail.financialItems.every((x) =>
+        bidRegistrationDetail.technicalItems.some((y) => y == x),
+      )
+    ) {
+      throw new BadRequestException('item_mis_match');
     }
+
+    bidRegistrationDetail.financialItems.forEach((element) => {
+      const rate = bidRegistrationDetail.bidResponseItems.find(
+        (x) => x.itemId == element && x.key == 'rate',
+      );
+      const billOfMaterial = bidRegistrationDetail.bidResponseItems.find(
+        (x) => x.itemId == element && x.key == 'billOfMaterial',
+      );
+      const specification = bidRegistrationDetail.bidResponseItems.find(
+        (x) => x.itemId == element && x.key == 'specification',
+      );
+      const procurementCategory = bidRegistrationDetail.bidResponseItems.find(
+        (x) => x.itemId == element && x.key == 'procurementCategory',
+      );
+      if (!rate || !billOfMaterial || !specification || !procurementCategory) {
+        throw new BadRequestException('required_values_not_filled');
+      }
+    });
 
     await manager
       .getRepository(BidRegistrationDetail)
       .update(bidRegistrationDetail.id, {
         status: BidRegistrationDetailStatusEnum.SUBMITTED,
       });
+
+    const { bidRegistration, bidResponseItems, ...rest } =
+      bidRegistrationDetail;
+
+    return {
+      ...rest,
+      status: BidRegistrationDetailStatusEnum.SUBMITTED,
+    };
   }
 
   async getAllBiddersByTenderId(tenderId: string, query: CollectionQuery) {
