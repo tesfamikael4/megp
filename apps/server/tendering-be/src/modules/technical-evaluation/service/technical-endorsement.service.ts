@@ -219,7 +219,6 @@ export class TechnicalEndorsementService {
           id: lotId,
         },
       });
-      // Conditional update or insert based on status
       if (status === 'Rejected') {
         await manager.getRepository(TenderMilestone).insert({
           lotId,

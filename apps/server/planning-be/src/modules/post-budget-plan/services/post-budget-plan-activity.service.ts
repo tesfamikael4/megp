@@ -122,7 +122,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
 
     return budget;
   }
-  async getActivityByBudgetId(budgetId: string): Promise<any> {
+  async getActivityByBudgetId(budgetId: string, req: any): Promise<any> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
     const activities = await manager
@@ -130,6 +130,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
       .find({
         where: {
           budgetId,
+          organizationId: req.user.organization.id,
         },
       });
 

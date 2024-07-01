@@ -200,7 +200,7 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
     // query.includes.push('tenders.tenderMilestones')
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const milestones = [303, 304, 305, 306, 323];
+    const milestones = [303, 304, 305, 306, 322];
     const dataQuery = QueryConstructor.constructQuery<Tender>(
       manager.getRepository(Tender),
       query,
