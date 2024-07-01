@@ -1167,7 +1167,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
 
     vendorEntity.vendorAccounts = [...accounts];
-    if (isrVendorData.areasOfBusinessInterest?.lenght) {
+    if (isrVendorData.areasOfBusinessInterest?.length) {
       const areasOfBusinessInterests: AreasOfBusinessInterestEntity[] = [];
       isrVendorData.areasOfBusinessInterest.forEach(item => {
         const bia = new AreasOfBusinessInterestEntity();

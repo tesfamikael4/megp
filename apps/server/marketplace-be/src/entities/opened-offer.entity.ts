@@ -8,13 +8,16 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { RFXItem } from './rfx-items.entity';
-import { SolRound } from './sol-round.entity';
-import { RfxProductInvitation } from './rfx-product-invitation.entity';
+import {
+  AwardItem,
+  RFXItem,
+  RfxProductInvitation,
+  SolOffer,
+  SolRegistration,
+  SolRound,
+  SolRoundAward,
+} from '.';
 import { ESolOfferStatus } from 'src/utils/enums';
-import { SolRegistration } from './sol-registration.entity';
-import { SolOffer } from './sol-offer.entity';
-import { SolRoundAward } from './sol-round-award.entity';
 
 @Entity({ name: 'opened_offers' })
 @Unique(['rfxItemId', 'vendorId', 'solRoundId', 'rfxProductInvitationId'])
@@ -84,4 +87,7 @@ export class OpenedOffer extends Audit {
 
   @OneToOne(() => SolRoundAward, (roundAward) => roundAward.openedOffer)
   solRoundAwards: SolRoundAward[];
+
+  @OneToOne(() => AwardItem, (awardItem) => awardItem.openedOffer)
+  awardItem: AwardItem;
 }

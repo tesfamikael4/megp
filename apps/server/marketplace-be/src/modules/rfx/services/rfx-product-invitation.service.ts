@@ -41,6 +41,7 @@ import {
   ERfxItemStatus,
   ERfxStatus,
   ESolRegistrationStatus,
+  ESolRoundStatus,
 } from 'src/utils/enums';
 import { REQUEST } from '@nestjs/core';
 import currentTime from 'src/utils/services/time-provider';
@@ -102,7 +103,7 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
     itemData.solRegistrationId = solRegistration.id;
 
     const invitation = this.rfxBidInvitationRepository.create(itemData);
-    await this.rfxBidInvitationRepository.insert(invitation);
+    await this.rfxBidInvitationRepository.upsert(invitation, ['id']);
     return invitation;
   }
 
@@ -217,11 +218,6 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
         where: {
           id: rfxId,
           status: In(validStatuses),
-          items: {
-            rfxProductInvitations: {
-              vendorId: user.organization.id,
-            },
-          },
         },
         relations: {
           rfxBidProcedure: true,
@@ -503,13 +499,25 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
           rfxItem: {
             rfxId,
           },
+          solRound: {
+            status: ESolRoundStatus.COMPLETED,
+          },
+        },
+        relations: {
+          solRound: true,
         },
         select: {
           id: true,
           createdAt: true,
+          solRound: {
+            id: true,
+            round: true,
+          },
         },
         order: {
-          createdAt: 'DESC',
+          solRound: {
+            round: 'DESC',
+          },
         },
       });
 
@@ -546,6 +554,32 @@ export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvi
 
     return await this.giveQueryResponse<RfxProductInvitation>(query, dataQuery);
   }
+
+  async myRfxItemsWithSpec(rfxId: string, user: any, query: CollectionQuery) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const dataQuery = QueryConstructor.constructQuery<RFXItem>(
+      entityManager.getRepository(RFXItem),
+      query,
+    )
+      .where('rfx_items.rfxId = :rfxId', { rfxId })
+      .leftJoinAndSelect(
+        'rfx_items.rfxProductInvitations',
+        'rfxProductInvitations',
+        'rfxProductInvitations.vendorId = :vendorId',
+        {
+          vendorId: user.organization.id,
+        },
+      )
+      .leftJoinAndSelect(
+        'rfx_items.technicalRequirement',
+        'rfxTechnicalRequirement',
+      )
+      .leftJoinAndSelect('rfx_items.rfxItemDocuments', 'rfxItemDocuments');
+
+    return await this.giveQueryResponse<RFXItem>(query, dataQuery);
+  }
+
   private async getRefinedProductCatalogues(
     productCatalogueIds: string[],
   ): Promise<any[]> {

@@ -8,17 +8,20 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { RFX } from './rfx.entity';
-import { RfxTechnicalRequirement } from './rfx-technical-requirement.entity';
+import {
+  AwardItem,
+  EvalItemResponse,
+  OpenedItemResponse,
+  OpenedOffer,
+  RFX,
+  RfxItemDocument,
+  RfxProductInvitation,
+  RfxTechnicalRequirement,
+  SolItemResponse,
+  SolOffer,
+  SolRoundAward,
+} from '.';
 import { ERfxItemStatus } from 'src/utils/enums';
-import { RfxProductInvitation } from './rfx-product-invitation.entity';
-import { RfxItemDocument } from './rfx-item-document.entity';
-import { SolOffer } from './sol-offer.entity';
-import { SolItemResponse } from './sol-item-response.entity';
-import { OpenedItemResponse } from './opened-item-response.entity';
-import { OpenedOffer } from './opened-offer.entity';
-import { EvalItemResponse } from './eval-item-response.entity';
-import { SolRoundAward } from './sol-round-award.entity';
 
 @Entity({ name: 'rfx_items' })
 export class RFXItem extends Audit {
@@ -122,4 +125,7 @@ export class RFXItem extends Audit {
 
   @OneToMany(() => SolRoundAward, (roundAward) => roundAward.rfxItem)
   solRoundAwards: SolRoundAward[];
+
+  @OneToOne(() => AwardItem, (awardItem) => awardItem.rfxItem)
+  awardItem: AwardItem;
 }
