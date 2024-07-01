@@ -91,8 +91,10 @@ export class BidResponseItemService {
       .getRepository(BidRegistrationDetail)
       .update(bidRegistrationDetail.id, {
         technicalItems: [
-          ...(bidRegistrationDetail?.technicalItems ?? []),
-          inputDto.itemId,
+          ...new Set([
+            ...(bidRegistrationDetail?.technicalItems ?? []),
+            inputDto.itemId,
+          ]),
         ],
       });
 
@@ -192,8 +194,10 @@ export class BidResponseItemService {
       .getRepository(BidRegistrationDetail)
       .update(bidRegistrationDetail.id, {
         financialItems: [
-          ...(bidRegistrationDetail?.financialItems ?? []),
-          inputDto.itemId,
+          ...new Set([
+            ...(bidRegistrationDetail?.financialItems ?? []),
+            inputDto.itemId,
+          ]),
         ],
       });
 
