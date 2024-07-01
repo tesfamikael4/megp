@@ -199,7 +199,6 @@ export class BidResponseLotService {
       if (error?.message == 'invalid_password') {
         return false;
       }
-
       throw error;
     }
   }
