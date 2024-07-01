@@ -1,11 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BidRegistrationDetail, Item } from 'src/entities';
+import { BdsSubmission, BidRegistrationDetail, Item } from 'src/entities';
 import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
 import { FinancialPriceAnalysisDetail } from 'src/entities/financial-price-analysis-detail.entity';
 import { FinancialPriceAnalysis } from 'src/entities/financial-price-analysis.entity';
+import { TenderMilestone } from 'src/entities/tender-milestone.entity';
+import { TechnicalEndorsementService } from 'src/modules/technical-evaluation/service/technical-endorsement.service';
 import { CollectionQuery } from 'src/shared/collection-query';
+import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
+import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
 
@@ -16,6 +20,8 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
   constructor(
     @InjectRepository(FinancialPriceAnalysisDetail)
     private readonly financialPriceAnalysisDetailRepository: Repository<FinancialPriceAnalysisDetail>,
+
+    private readonly technicalEndorsementService: TechnicalEndorsementService,
 
     @Inject(REQUEST)
     private request: Request,
@@ -178,5 +184,58 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
     }
 
     return priceAnalyses;
+  }
+
+  async financialEndorsement(
+    itemData: { lotId: any; tenderId: any },
+    req: any,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const [bdsSubmission] = await Promise.all([
+      manager.getRepository(BdsSubmission).findOne({
+        where: {
+          tenderId: itemData.tenderId,
+        },
+      }),
+    ]);
+
+    const teamType =
+      bdsSubmission.envelopType == 'single envelop'
+        ? TeamRoleEnum.FINANCIAL_EVALUATOR
+        : TeamRoleEnum.TECHNICAL_EVALUATOR;
+
+    await this.changeMilestone(manager, itemData, bdsSubmission.envelopType);
+    await this.technicalEndorsementService.initiateWorkflow({
+      tenderId: itemData.tenderId,
+      lotId: itemData.lotId,
+      organizationId: req.user.organization.id,
+      organizationName: req.user.organization.name,
+    });
+  }
+
+  private async changeMilestone(
+    manager: EntityManager,
+    itemData: { lotId: any; tenderId: any },
+    envelopType,
+  ) {
+    await manager.getRepository(TenderMilestone).update(
+      {
+        lotId: itemData.lotId,
+        tenderId: itemData.tenderId,
+      },
+      {
+        isCurrent: false,
+      },
+    );
+    const milestoneData = {
+      lotId: itemData.lotId,
+      tenderId: itemData.tenderId,
+      milestoneNum: TenderMilestoneEnum.FinalEndorsement,
+      milestoneTxt: 'FinalEndorsement',
+      isCurrent: true,
+    };
+
+    await manager.getRepository(TenderMilestone).insert(milestoneData);
   }
 }
