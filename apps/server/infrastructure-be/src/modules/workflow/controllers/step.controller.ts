@@ -1,6 +1,14 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ExtraCrudOptions } from 'megp-shared-be';
+import { AllowAnonymous, ApiKeyGuard, ExtraCrudOptions } from 'megp-shared-be';
 import { ExtraCrudController } from 'megp-shared-be';
 import { Step } from 'src/entities/step.entity';
 import { StepService } from '../services/step.service';
@@ -27,6 +35,19 @@ export class StepController extends ExtraCrudController<Step>(options) {
     @Param('activityId') activityId: string,
     @CurrentUser() user,
   ): Promise<any> {
-    return this.stepService.orderStep(activityId, user.organization.id);
+    return await this.stepService.orderStep(activityId, user.organization.id);
+  }
+
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  @Get('get-by-activity-name/:activityName/:organizationId')
+  async getStepByActivityName(
+    @Param('activityId') activityName: string,
+    @Param('organizationId') organizationId: string,
+  ): Promise<any> {
+    return await this.stepService.getStepByActivityName(
+      activityName,
+      organizationId,
+    );
   }
 }
