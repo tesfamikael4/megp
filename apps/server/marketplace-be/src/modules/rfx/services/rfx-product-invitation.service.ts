@@ -44,7 +44,6 @@ import {
   ESolRoundStatus,
 } from 'src/utils/enums';
 import { REQUEST } from '@nestjs/core';
-import currentTime from 'src/utils/services/time-provider';
 
 @Injectable()
 export class RfxProductInvitationService extends ExtraCrudService<RfxProductInvitation> {

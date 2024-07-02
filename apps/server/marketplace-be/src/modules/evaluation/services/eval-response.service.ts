@@ -39,6 +39,7 @@ import { EvalAssessment } from 'src/entities/eval-assessment.entity';
 import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateAwardNoteDTO } from 'src/modules/award/dtos/award-note.dto';
+import { EvalApprovalService } from './eval-approval.service';
 
 @Injectable()
 export class EvalResponseService extends ExtraCrudService<EvalResponse> {
@@ -62,6 +63,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
     @Inject('WORKFLOW_EVALUATION_RMQ_SERVICE')
     private readonly workflowRMQClient: ClientProxy,
     @Inject(REQUEST) private readonly request: Request,
+    private readonly evalApprovalService: EvalApprovalService,
   ) {
     super(evalResponseRepository);
   }
@@ -334,6 +336,10 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
       const [items, procedure] = await this.filterItems(rfx, 0);
       await this.calculateRoundWinner(items, procedure.deltaPercentage);
       await this.sendToEvaluators(rfx);
+      await this.evalApprovalService.createApprovalsOnSubmission(
+        rfx.id,
+        user.organization.id,
+      );
     }
   }
 

@@ -69,6 +69,21 @@ export class RfxController extends EntityCrudController<RFX>(options) {
     return await this.rfxService.getEvaluationRfxes(query, user);
   }
 
+  @Get('evaluation-approval')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getEvaluationApprovalRfxes(
+    @CurrentUser() user: any,
+    @Query('q') q?: string,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.rfxService.getEvaluationApprovalRfxes(query, user);
+  }
+
   @Get('revision')
   @ApiQuery({
     name: 'q',

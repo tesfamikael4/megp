@@ -34,6 +34,9 @@ export * from './team-member.entity';
 export * from './award-item.entity';
 export * from './award-note.entity';
 
+export * from './eval-approval-details.entity';
+export * from './eval-approval.entity';
+
 export * from './acceptance-receive.entity';
 export * from './acceptance-note.entity';
 export * from './acceptance-item.entity';
@@ -54,3 +57,4 @@ export * from './receiving-note.entity';
 export * from './shipment-and-handling.entity';
 export * from './receiving-item.entity';
 export * from './receiving-attachment.entity';
+

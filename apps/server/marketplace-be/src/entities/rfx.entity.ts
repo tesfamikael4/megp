@@ -24,6 +24,7 @@ import {
   SolResponse,
   SolRound,
   TeamMember,
+  EvalApproval
 } from '.';
 import { ERfxStatus } from 'src/utils/enums';
 
@@ -153,4 +154,7 @@ export class RFX extends Audit {
 
   @OneToOne(() => AwardNote, (award) => award.rfx)
   awardNote: AwardNote;
+  
+  @OneToMany(() => EvalApproval, (approval) => approval.rfx)
+  evalApprovals: EvalApproval[];
 }

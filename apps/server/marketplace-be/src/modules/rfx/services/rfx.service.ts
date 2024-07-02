@@ -645,6 +645,27 @@ export class RfxService extends EntityCrudService<RFX> {
     return await this.giveQueryResponse<RFX>(query, dataQuery);
   }
 
+  async getEvaluationApprovalRfxes(query: CollectionQuery, user: any) {
+    const dataQuery = QueryConstructor.constructQuery<RFX>(
+      this.rfxRepository,
+      query,
+    );
+
+    dataQuery
+      .where('rfxes.status = :status', {
+        status: ERfxStatus.SUBMITTED_EVALUATION,
+      })
+      .andWhere('rfxes.organizationId = :organizationId', {
+        organizationId: user.organization.id,
+      })
+      .leftJoin('rfxes.evalApprovals', 'evalApproval')
+      .andWhere('evalApproval.evaluatorId = :userId', {
+        userId: user.userId,
+      });
+
+    return await this.giveQueryResponse<RFX>(query, dataQuery);
+  }
+
   private async giveQueryResponse<T>(
     query: CollectionQuery,
     dataQuery: SelectQueryBuilder<T>,
