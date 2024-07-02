@@ -35,10 +35,10 @@ export const guaranteeApi = createApi({
       },
     }),
     getGuarantees: builder.query<any, any>({
-      query: () => `bid-guarantees`,
+      query: (id) => `bid-guarantees/list/${id}`,
     }),
     getGuarantee: builder.query<any, any>({
-      query: (id) => `bid-guarantees/list/${id}`,
+      query: (id) => `bid-guarantees/${id}`,
     }),
     read: builder.query<BidSecurity, string>({
       query: (id) => `bid-guarantees/${id}`,
@@ -50,9 +50,9 @@ export const {
   useSaveRequestMutation,
   useUpdateRequestMutation,
   useSubmitRequestMutation,
-  useLazyGetGuaranteeQuery,
-  useGetGuaranteeQuery,
+  useLazyGetGuaranteesQuery,
   useGetGuaranteesQuery,
+  useGetGuaranteeQuery,
   useReadQuery,
   useLazyReadQuery,
 } = guaranteeApi;
