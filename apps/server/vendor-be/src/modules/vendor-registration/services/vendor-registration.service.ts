@@ -1722,6 +1722,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         where: {
           userId: userId,
           status: In(this.updateVendorEnums),
+          businessAreas: { status: Not(In([ApplicationStatus.CANCELED, ApplicationStatus.REJECTED])) }
         },
       });
 
@@ -1732,44 +1733,50 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         );
         const priceRanges =
           await this.pricingService.findPriceRangeByIds(pricesIds);
-
+        const bias = [];
         for (const price of priceRanges) {
           for (const bi of vendorEntity?.areasOfBusinessInterest) {
             let formattedBA = {};
-            if (bi.priceRange == price.id) {
-              const priceRange = this.commonService.formatPriceRange(price);
-              // const lob = bi?.lineOfBusiness?.map((item: any) => item.name);
-              if (bi.category == BusinessCategories.GOODS || bi.category == BusinessCategories.SERVICES) {
-                vendorEntity.ppdaRegistrationNumber = bi?.ppdaRegistrationNumber;
-                vendorEntity.ppdaRegistrationDate = bi?.ppdaRegistrationDate;
-                vendorEntity.expiryDate = bi?.expiryDate;
-                formattedBA = {
-                  category: bi.category,
-                  priceRange: priceRange,
-                  ppdaRegistrationNumber: bi?.ppdaRegistrationNumber,
-                  ppdaRegistrationDate: bi?.ppdaRegistrationDate,
-                  expiryDate: bi?.expiryDate,
+            const foundBIA = vendorEntity?.businessAreas?.find((item: BusinessAreaEntity) => item.category == bi.category)
+            if (foundBIA) {
+              if (bi.priceRange == price.id) {
+                bias.push(bi);
+                const priceRange = this.commonService.formatPriceRange(price);
+                // const lob = bi?.lineOfBusiness?.map((item: any) => item.name);
+                if (bi.category == BusinessCategories.GOODS || bi.category == BusinessCategories.SERVICES) {
+                  vendorEntity.ppdaRegistrationNumber = bi?.ppdaRegistrationNumber;
+                  vendorEntity.ppdaRegistrationDate = bi?.ppdaRegistrationDate;
+                  vendorEntity.expiryDate = bi?.expiryDate;
+                  formattedBA = {
+                    category: bi.category,
+                    priceRange: priceRange,
+                    ppdaRegistrationNumber: bi?.ppdaRegistrationNumber,
+                    ppdaRegistrationDate: bi?.ppdaRegistrationDate,
+                    expiryDate: bi?.expiryDate,
 
-                  // lineOfBusiness: lob,
-                }
-              } else {
-                formattedBA = {
-                  category: bi.category,
-                  priceRange: priceRange,
-                  userType: bi?.userType,
-                  classification: bi?.classification,
-                  expiryDate: bi?.expiryDate,
-                  ncicRegistrationNumber: bi?.ncicRegistrationNumber,
-                  ncicRegistrationDate: bi?.ncicRegistrationDate
+                    // lineOfBusiness: lob,
+                  }
+                } else {
+                  formattedBA = {
+                    category: bi.category,
+                    priceRange: priceRange,
+                    userType: bi?.userType,
+                    classification: bi?.classification,
+                    expiryDate: bi?.expiryDate,
+                    ncicRegistrationNumber: bi?.ncicRegistrationNumber,
+                    ncicRegistrationDate: bi?.ncicRegistrationDate
 
+                  }
                 }
+
+                formattedAreaOfBi.push(formattedBA);
               }
 
-              formattedAreaOfBi.push(formattedBA);
             }
           }
         }
         vendorEntity.areasOfBusinessInterestView = formattedAreaOfBi;
+        vendorEntity.areasOfBusinessInterest = [...bias];
       }
       // getting the preferential treatments  if any
       const keys = this.commonService.getPreferentialServices();
