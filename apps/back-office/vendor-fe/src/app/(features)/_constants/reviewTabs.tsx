@@ -5,7 +5,7 @@ export const accordionTabs = (countryOfRegistration: string) => [
   },
   {
     tabValue: 'address',
-    tabName: 'Address Information',
+    tabName: 'Company Address Information',
   },
   {
     tabValue: 'contactPersons',
@@ -109,6 +109,7 @@ export const formatColumns = (countryOfRegistration) => ({
     { name: 'countryOfResidence' },
     { name: 'share' },
     { name: 'votingRights' },
+    { name: 'authorityToAppointGov' },
   ],
 
   bankAccountDetails: [
@@ -121,7 +122,6 @@ export const formatColumns = (countryOfRegistration) => ({
     { name: 'branchAddress' },
     { name: 'IBAN' },
     { name: 'isDefualt' },
-    { name: 'authorityToAppointGov' },
   ],
 
   service: [{ name: 'name', displayName: 'Service Type' }],

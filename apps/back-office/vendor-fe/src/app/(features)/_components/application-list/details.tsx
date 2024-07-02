@@ -4,9 +4,22 @@ import {
   usePickTaskMutation,
   useUnpickTaskMutation,
 } from '@/store/api/vendor_request_handler/new-registration-api';
-import { Avatar, Box, Flex, Paper, Button, Skeleton } from '@mantine/core';
+import {
+  Avatar,
+  Box,
+  Flex,
+  Paper,
+  Button,
+  Skeleton,
+  ActionIcon,
+} from '@mantine/core';
 import { Section, logger } from '@megp/core-fe';
-import { IconClockHour2, IconTicket, IconProgress } from '@tabler/icons-react';
+import {
+  IconClockHour2,
+  IconTicket,
+  IconProgress,
+  IconArrowLeft,
+} from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import TaskHandler from '@/app/(features)/_components/task-handler';
@@ -151,11 +164,18 @@ export default function RequestDetail({
       <Paper className="p-3">
         <Flex direction="row" className="items-center">
           <Flex direction="row" className="w-8/12">
-            <Box className="p-3">
+            <Flex className="p-3" align={'center'} gap={2}>
+              <ActionIcon>
+                <IconArrowLeft
+                  size={20}
+                  stroke={1.5}
+                  onClick={() => router.back()}
+                />
+              </ActionIcon>
               <Avatar color="white" radius="xl" size="lg" bg={color}>
                 {initials}
               </Avatar>
-            </Box>
+            </Flex>
             <Flex
               direction="column"
               className="w-full border-r-[1px] text-sm justify-center"
