@@ -1,17 +1,20 @@
 import { useLazyGetLotQuery } from '@/app/(features)/_api/registration.api';
 import { useGetRegisteredBidQuery } from '@/store/api/registered-bid/registered-bid.api';
 import { Table, Text } from '@mantine/core';
-import { logger } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
 
-export const TableForm = ({ lotId }: { lotId?: any }) => {
+interface Props {
+  errorMessage?: any;
+  lotId?: any;
+}
+export const TableForm = ({ lotId, errorMessage }: Props) => {
   const { id } = useParams();
   const { data: data } = useGetRegisteredBidQuery(id?.toString());
   const [triggerLot, { data: lot }] = useLazyGetLotQuery();
   useEffect(() => {
     triggerLot(lotId?.toString());
-  }, [lotId]);
+  }, [lotId, triggerLot]);
   return (
     <div>
       {' '}
@@ -59,6 +62,11 @@ export const TableForm = ({ lotId }: { lotId?: any }) => {
                       ' ' +
                       lot?.bdsBidSecurity?.bidSecurityCurrency}
               </Text>
+              {errorMessage && (
+                <Text color="red" size="sm">
+                  {errorMessage}
+                </Text>
+              )}
             </Table.Td>
           </Table.Tr>
           <Table.Tr className=" border-2 ">

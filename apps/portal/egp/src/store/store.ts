@@ -35,6 +35,7 @@ import { getBidFormApi } from '@/app/(features)/tender-workspace/_api/bid-form';
 import { documentaryEvidenceResponseApi } from '@/app/(features)/tender-workspace/_api/documentary-evidence-bid-response.api';
 import { getInvitationsApi } from '@/app/(features)/my-workspace/_api/invitation-registration.api';
 import { invitationItemsApi } from '@/app/(features)/invitations-workspace/_api/items.api';
+import { guaranteeDocumentApi } from './api/guarantee-document/guarantee-document.api';
 
 export const store = configureStore({
   reducer: {
@@ -71,6 +72,7 @@ export const store = configureStore({
       documentaryEvidenceResponseApi.reducer,
     [getInvitationsApi.reducerPath]: getInvitationsApi.reducer,
     [invitationItemsApi.reducerPath]: invitationItemsApi.reducer,
+    [guaranteeDocumentApi.reducerPath]: guaranteeDocumentApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) => {
@@ -80,6 +82,7 @@ export const store = configureStore({
       ...middleware,
       getCatalogApi.middleware,
       itemMasterApi.middleware,
+      guaranteeDocumentApi.middleware,
     );
   },
 });

@@ -32,7 +32,7 @@ import { logger } from '@megp/core-fe';
 import { CollectionQuery } from '@megp/entity';
 import { IconAt } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import { TableForm } from '../../components/table';
@@ -76,20 +76,18 @@ export function FormDetail({ mode }: Props) {
   });
 
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
-  const { id } = useParams();
-  const { lotId } = useParams();
-  const { guaranteeId } = useParams();
+  const { id, lotId, guaranteeId } = useParams();
   const { data: tenderData, isSuccess: tenderSuccess } =
     useGetRegisteredBidQuery(id?.toString());
 
   const { data: guarantor } = useGetOrganazationQuery('FINANCIAL_INSTITUTION');
   const [trigger, { data }] = useLazyGetUintByIdQuery();
   const guarantorId = watch('guarantorId');
-
-  const [submit] = useSubmitRequestMutation();
   const [save] = useSaveRequestMutation();
-  const [update, { isLoading: isUpdating }] = useUpdateRequestMutation();
+  const [update] = useUpdateRequestMutation();
+  const [submit] = useSubmitRequestMutation();
 
   const [triggerLot, { data: lot }] = useLazyGetLotQuery();
 
@@ -120,10 +118,19 @@ export function FormDetail({ mode }: Props) {
 
   useEffect(() => {
     triggerLot(lotId?.toString());
-  }, [lotId]);
+    setValue(
+      'revisedValidityDate',
+      tenderData?.bdsPreparation.bidValidityPeriod,
+    );
+  }, [
+    lotId,
+    setValue,
+    tenderData?.bdsPreparation.bidValidityPeriod,
+    triggerLot,
+  ]);
   const onSubmit = async (data) => {
     try {
-      await update({
+      await submit({
         ...data,
         id: guaranteeId?.toString(),
         status: 'REQUESTED',
@@ -146,6 +153,10 @@ export function FormDetail({ mode }: Props) {
     }
   };
   const onSave = async (data) => {
+    if (!lot?.bdsBidSecurity?.bidSecurityAmount) {
+      setErrorMessage('Guarantee amount is required.');
+      return;
+    }
     try {
       const result = await save({
         ...data,
@@ -202,7 +213,7 @@ export function FormDetail({ mode }: Props) {
       setValue('guarantorBranchId', selected?.guarantorBranchId);
       setValue('guarantorId', selected?.guarantorId);
     }
-  }, [mode, reset, selected, selectedSuccess]);
+  }, [mode, reset, selected, selectedSuccess, setValue]);
 
   return (
     <>
@@ -213,16 +224,18 @@ export function FormDetail({ mode }: Props) {
             <Flex className="w-full py-2 mb-3  " justify={'space-between'}>
               <Text fw={600}>Tender/Lot Information</Text>
               <Flex gap={10}>
-                <Button
-                  w={100}
-                  h={35}
-                  onClick={handleSubmit(onSubmit, (err) => logger.log(err))}
-                >
-                  Submit
-                </Button>
+                {selected?.status == 'DRAFT' && (
+                  <Button
+                    w={100}
+                    h={35}
+                    onClick={handleSubmit(onSubmit, (err) => logger.log(err))}
+                  >
+                    Submit
+                  </Button>
+                )}
               </Flex>
             </Flex>
-            <TableForm lotId={lotId} />
+            <TableForm lotId={lotId} errorMessage={errorMessage} />
             <Text fw={600} className="mb-5">
               Contact Person
             </Text>
@@ -330,9 +343,6 @@ export function FormDetail({ mode }: Props) {
                       placeholder="Guarantee Validity Date"
                       name={name}
                       value={value}
-                      defaultValue={
-                        tenderData?.bdsPreparation.bidValidityPeriod
-                      }
                       onChange={(d) => onChange(parseInt(d as string))}
                       error={
                         errors?.revisedValidityDate

@@ -1,26 +1,26 @@
 'use client';
-import {
-  useGetGuaranteeQuery,
-  useGetGuaranteesQuery,
-} from '@/store/api/guarantee/guarantee.api';
+import { useLazyGetGuaranteesQuery } from '@/store/api/guarantee/guarantee.api';
 import { useGetRegisteredBidQuery } from '@/store/api/registered-bid/registered-bid.api';
 import { Box, Button, Divider, Flex, Text } from '@mantine/core';
 import { useParams, useRouter } from 'next/navigation';
-import { logger } from '@megp/core-fe';
 import Table from '../components/table/table';
+import { useEffect } from 'react';
 
 const GuaranteePage = () => {
   const router = useRouter();
   const { id } = useParams();
   const { lotId } = useParams();
 
-  const { data: guarantee } = useGetGuaranteeQuery(lotId.toString());
+  const [trigger, { data: guarantees }] = useLazyGetGuaranteesQuery();
 
   const { data: tenderData } = useGetRegisteredBidQuery(id?.toString());
 
   const handleButtonClick = () => {
     router.push(`/tender-workspace/${id}/my-lots/${lotId}/guarantee/new`);
   };
+  useEffect(() => {
+    trigger(lotId.toString());
+  }, [lotId, trigger]);
 
   return (
     <>
@@ -31,18 +31,21 @@ const GuaranteePage = () => {
         <Box className=" w-full p-6 min-h-screen bg-white">
           <Flex direction={'column'} className="w-full py-2 mb-3 ">
             <Flex justify="space-between">
-              {/* {data?.status === 'REJECTED' && (
-              <Button onClick={handleButtonClick}>New Guarantee</Button>
-            )} */}
               <Text fw={600} fz="xl">
                 Guarantee List
               </Text>
-              <Button onClick={handleButtonClick}>New Guarantee</Button>
+
+              <Button
+                disabled={guarantees?.status === 'APPROVED'}
+                onClick={handleButtonClick}
+              >
+                New Guarantee
+              </Button>
             </Flex>
             <Divider />
           </Flex>
 
-          <Table data={guarantee} tenderData={tenderData} />
+          <Table data={guarantees} tenderData={tenderData} />
         </Box>
       </Box>
     </>

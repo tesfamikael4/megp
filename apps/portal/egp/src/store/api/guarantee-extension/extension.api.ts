@@ -17,9 +17,10 @@ export const extensionApi = createApi({
       },
     }),
     getGuaranteeExtension: builder.query<any, any>({
-      query: (id) => `guarantee-extensions.list/${id}`,
+      query: (id) => `guarantee-extensions/list/${id}`,
     }),
   }),
 });
 
-export const { useExtendGuaranteeMutation } = extensionApi;
+export const { useExtendGuaranteeMutation, useGetGuaranteeExtensionQuery } =
+  extensionApi;
