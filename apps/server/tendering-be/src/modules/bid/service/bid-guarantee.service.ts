@@ -139,7 +139,7 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
     });
   }
 
-  async updateStatus(
+  async submitGuaranteeRequest(
     id: string,
     updateGuaranteeStatusDto: UpdateGuaranteeStatusDto,
   ): Promise<BidGuarantee> {
@@ -148,55 +148,59 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
       throw new NotFoundException('Guarantee not found');
     }
 
-    if (updateGuaranteeStatusDto.status == BidGuaranteeStatusEnum.REQUESTED) {
-      const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-      const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
-        type: SpdTemplateTypeEnum.BID_SECURITY,
-        spd: {
-          tenderSpds: {
-            tender: {
-              lots: {
-                id: guarantee.lotId,
-              },
+    const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
+      type: SpdTemplateTypeEnum.BID_SECURITY,
+      spd: {
+        tenderSpds: {
+          tender: {
+            lots: {
+              id: guarantee.lotId,
             },
           },
         },
-      });
-      if (!spdTemplate) {
-        throw new BadRequestException('template_not_found');
-      }
-      const fileReadable = await this.minIOService.downloadBuffer(
-        spdTemplate.documentDocx,
-      );
-
-      const fileBuffer =
-        await this.documentManipulatorService.streamToBuffer(fileReadable);
-
-      const docx = await this.docxService.generateDocx(fileBuffer, {
-        public_body: guarantee.organizationName,
-        bidderName: guarantee.bidderName,
-        bidDate: guarantee.bidderName,
-        nameOfContract: '1',
-        bankName: guarantee.guarantorName,
-        country: 'Malawi',
-        day: new Date().getDate(),
-        month: new Date().getMonth,
-        year: new Date().getFullYear(),
-      });
-
-      const pdfBuffer =
-        await this.documentManipulatorService.convertDocxToPdf(docx);
-
-      updateGuaranteeStatusDto.document = await this.minIOService.uploadBuffer(
-        pdfBuffer,
-        guarantee.referenceNumber + '-bid_security.pdf',
-        'application/pdf',
-        BucketNameEnum.BID_SECURITY_DOCUMENT,
-      );
+      },
+    });
+    if (!spdTemplate) {
+      throw new BadRequestException('template_not_found');
     }
+    const fileReadable = await this.minIOService.downloadBuffer(
+      spdTemplate.documentDocx,
+    );
 
-    return await super.update(id, updateGuaranteeStatusDto);
+    const fileBuffer =
+      await this.documentManipulatorService.streamToBuffer(fileReadable);
+
+    const docx = await this.docxService.generateDocx(fileBuffer, {
+      public_body: guarantee.organizationName,
+      bidderName: guarantee.bidderName,
+      bidDate: guarantee.bidderName,
+      nameOfContract: '1',
+      bankName: guarantee.guarantorName,
+      country: 'Malawi',
+      day: new Date().getDate(),
+      month: new Date().getMonth,
+      year: new Date().getFullYear(),
+    });
+
+    const pdfBuffer =
+      await this.documentManipulatorService.convertDocxToPdf(docx);
+
+    const document = await this.minIOService.uploadBuffer(
+      pdfBuffer,
+      guarantee.referenceNumber + '-bid_security.pdf',
+      'application/pdf',
+      BucketNameEnum.BID_SECURITY_DOCUMENT,
+    );
+
+    updateGuaranteeStatusDto.document = document;
+
+    await manager
+      .getRepository(BidGuarantee)
+      .update(id, updateGuaranteeStatusDto as any);
+
+    return { ...guarantee, document };
   }
 
   async downloadDocument(id: string) {

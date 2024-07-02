@@ -41,7 +41,7 @@ export class BidGuaranteeController extends ExtraCrudController<BidGuarantee>(
     @Param('id') id: string,
     @Body() status: UpdateGuaranteeStatusDto,
   ): Promise<BidGuarantee> {
-    return await this.bidGuaranteeService.updateStatus(id, status);
+    return await this.bidGuaranteeService.submitGuaranteeRequest(id, status);
   }
 
   @Get('fetch-bid-guarantees')

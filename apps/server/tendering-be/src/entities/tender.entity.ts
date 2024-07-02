@@ -122,6 +122,7 @@ export class Tender extends Audit {
   @OneToOne(
     () => ProcurementMechanism,
     (procurementMechanism) => procurementMechanism.tender,
+    { cascade: true },
   )
   procurementMechanism: ProcurementMechanism;
 
