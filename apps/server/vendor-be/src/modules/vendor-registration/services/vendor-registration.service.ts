@@ -2050,7 +2050,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const uploadedFileName = await this.fileService.uploadDocuments(
         file,
         user,
-        subDirectory,
+        subDirectory
       );
       const paymentReceipt = {
         transactionNumber: paymentReceiptDto?.transactionNumber,
