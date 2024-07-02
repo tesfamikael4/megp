@@ -1,12 +1,12 @@
 import { baseQuery } from '@/store/base-query';
-import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
+import { encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const priceAnalysis = createApi({
   reducerPath: 'priceAnalysis',
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
-  tagTypes: ['currency', 'formula'],
+  tagTypes: ['currency', 'formula', 'complete'],
   endpoints: (builder) => ({
     getPassedBidders: builder.query<any, any>({
       query: ({ lotId, collectionQuery }) => {
@@ -37,11 +37,45 @@ export const priceAnalysis = createApi({
         };
       },
     }),
+
+    completePriceAnalysis: builder.mutation<any, any>({
+      query: (data: { lotId: string; bidderId: string }) => {
+        return {
+          url: `/financial-price-analysis-detail/complete-bidder-evaluation`,
+          method: 'PUT',
+          body: data,
+        };
+      },
+      invalidatesTags: ['complete'],
+    }),
+
+    submitPriceAnalysisEvaluation: builder.mutation<any, any>({
+      query: (data: { tenderId: string; isTeamLead: boolean }) => {
+        return {
+          url: `/financial-price-analysis-detail/submit`,
+          method: 'PUT',
+          body: data,
+        };
+      },
+      invalidatesTags: ['complete'],
+    }),
+    getCanPriceAnalysisComplete: builder.query<any, any>({
+      query: (lotId) => {
+        return {
+          url: `/financial-price-analysis-detail/can-complete/${lotId}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['complete'],
+    }),
   }),
 });
 
 export const {
   useLazyGetPassedBiddersQuery,
   useLazyGetBidderItemsQuery,
+  useCompletePriceAnalysisMutation,
   useSaveMarketPriceAnalysisMutation,
+  useSubmitPriceAnalysisEvaluationMutation,
+  useLazyGetCanPriceAnalysisCompleteQuery,
 } = priceAnalysis;
