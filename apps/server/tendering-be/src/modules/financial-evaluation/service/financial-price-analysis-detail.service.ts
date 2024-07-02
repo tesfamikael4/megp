@@ -257,7 +257,7 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
         },
       });
 
-    await this.initiateFinancialEndorsement(itemData, req);
+    await this.initiateFinancialEndorsement(itemData.lotId, req);
 
     await manager.getRepository(FinancialPriceAnalysis).update(
       {

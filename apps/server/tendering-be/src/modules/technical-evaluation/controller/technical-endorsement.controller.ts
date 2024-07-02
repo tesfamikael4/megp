@@ -21,4 +21,8 @@ export class TechnicalEndorsementController {
   async handleApprovedWorkflow(@Body() data: any) {
     return await this.technicalEndorsementService.endorsementResult(data);
   }
+  @EventPattern('tendering-workflow.FinancialEndorsementApproval')
+  async handleFinancialApprovedWorkflow(@Body() data: any) {
+    return await this.technicalEndorsementService.endorsementResult(data);
+  }
 }

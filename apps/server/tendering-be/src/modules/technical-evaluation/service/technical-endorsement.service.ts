@@ -49,6 +49,7 @@ export class TechnicalEndorsementService {
     ]);
     // query.includes.push('tenders.tenderMilestones')
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const milestones = [307, 360];
 
     const dataQuery = QueryConstructor.constructQuery<Lot>(
       manager.getRepository(Lot),
@@ -56,8 +57,8 @@ export class TechnicalEndorsementService {
     )
       .leftJoinAndSelect('lots.tenderMilestones', 'tenderMilestones')
       .andWhere('tenderMilestones.isCurrent = :isCurrent', { isCurrent: true })
-      .andWhere('tenderMilestones.milestoneNum = :milestoneNum', {
-        milestoneNum: 307,
+      .andWhere('tenderMilestones.milestoneNum IN (:...milestones)', {
+        milestones,
       });
     const response = new DataResponseFormat<Lot>();
     if (query.count) {
@@ -210,33 +211,45 @@ export class TechnicalEndorsementService {
       const manager: EntityManager = queryRunner.manager;
       const { status, lotId } = itemData;
 
-      // Update all milestones to set isCurrent to false for the given lotId
+      const milestone = await manager
+        .getRepository(TenderMilestone)
+        .findOne({ where: { lotId, isCurrent: true } });
+
       await manager
         .getRepository(TenderMilestone)
         .update({ lotId }, { isCurrent: false });
 
-      const lot = await manager.getRepository(Lot).findOne({
-        where: {
-          id: lotId,
-        },
+      const lot = await manager
+        .getRepository(Lot)
+        .findOne({ where: { id: lotId } });
+
+      const nextMilestoneNum =
+        milestone.milestoneNum == TenderMilestoneEnum.TechnicalEndorsement
+          ? status === 'Rejected'
+            ? TenderMilestoneEnum.TechnicalScoring
+            : TenderMilestoneEnum.FinancialCompliance
+          : status === 'Rejected'
+            ? TenderMilestoneEnum.PriceAnalysis
+            : TenderMilestoneEnum.Awarding;
+
+      const nextMilestoneTxt =
+        milestone.milestoneNum == TenderMilestoneEnum.TechnicalEndorsement
+          ? status === 'Rejected'
+            ? 'TechnicalScoring'
+            : 'FinancialCompliance'
+          : status === 'Rejected'
+            ? 'PriceAnalysis'
+            : 'Awarding';
+
+      await manager.getRepository(TenderMilestone).insert({
+        lotId,
+        tenderId: lot.tenderId,
+        milestoneNum: nextMilestoneNum,
+        milestoneTxt: nextMilestoneTxt,
+        isCurrent: true,
       });
-      if (status === 'Rejected') {
-        await manager.getRepository(TenderMilestone).insert({
-          lotId,
-          tenderId: lot.tenderId,
-          milestoneNum: TenderMilestoneEnum.TechnicalScoring,
-          milestoneTxt: 'TechnicalScoring',
-          isCurrent: true,
-        });
-      } else {
-        await manager.getRepository(TenderMilestone).insert({
-          lotId,
-          tenderId: lot.tenderId,
-          milestoneNum: TenderMilestoneEnum.FinancialCompliance,
-          milestoneTxt: 'FinancialCompliance',
-          isCurrent: true,
-        });
-      }
+
+      await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;
