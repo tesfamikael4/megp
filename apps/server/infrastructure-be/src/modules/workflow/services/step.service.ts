@@ -77,4 +77,20 @@ export class StepService extends ExtraCrudService<Step> {
     });
     return { items, total };
   }
+
+  async getStepByActivityName(
+    activityName: string,
+    organizationId: string,
+  ): Promise<any> {
+    const [items, total] = await this.repositoryStep.findAndCount({
+      where: {
+        organizationId: organizationId,
+        activity: {
+          name: activityName,
+        },
+      },
+      order: { order: 'ASC' },
+    });
+    return { items, total };
+  }
 }
