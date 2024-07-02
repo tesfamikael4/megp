@@ -20,6 +20,7 @@ import {
   SolItemResponse,
   SolOffer,
   SolRoundAward,
+  EvalApprovalDetail
 } from '.';
 import { ERfxItemStatus } from 'src/utils/enums';
 
@@ -128,4 +129,9 @@ export class RFXItem extends Audit {
 
   @OneToOne(() => AwardItem, (awardItem) => awardItem.rfxItem)
   awardItem: AwardItem;
+  @OneToMany(
+    () => EvalApprovalDetail,
+    (evalApprovalDetail) => evalApprovalDetail.rfxItem,
+  )
+  evalApprovalDetails: EvalApprovalDetail[];
 }

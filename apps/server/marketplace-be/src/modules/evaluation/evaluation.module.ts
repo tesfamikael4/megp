@@ -26,6 +26,11 @@ import { TeamMemberController } from './controllers/team-member.controller';
 import { TeamMemberService } from './services/team-member.service';
 import { EvalAssessment } from 'src/entities/eval-assessment.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { EvalApproval, EvalApprovalDetail } from '../../entities';
+import { EvalApprovalController } from './controllers/eval-approval.controller';
+import { EvalApprovalDetailController } from './controllers/eval-approval-detail.controller';
+import { EvalApprovalDetailService } from './services/eval-approval-detail.service';
+import { EvalApprovalService } from './services/eval-approval.service';
 
 @Module({
   imports: [
@@ -41,6 +46,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       EvalResponse,
       EvalItemResponse,
       EvalAssessment,
+      EvalApproval,
+      EvalApprovalDetail,
     ]),
     ScheduleModule.forRoot(),
     MinIOModule,
@@ -63,6 +70,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     EvalResponseController,
     EvalItemResponseController,
     TeamMemberController,
+    EvalApprovalController,
+    EvalApprovalDetailController,
   ],
   providers: [
     ReSchedulerService,
@@ -71,6 +80,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     EvalResponseService,
     EvalItemResponseService,
     TeamMemberService,
+    EvalApprovalService,
+    EvalApprovalDetailService,
   ],
   exports: [OpenerService, ReSchedulerService],
 })
