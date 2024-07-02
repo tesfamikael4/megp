@@ -1,10 +1,23 @@
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { FinancialPriceAnalysisDetail } from 'src/entities/financial-price-analysis-detail.entity';
 import { FinancialPriceAnalysisDetailService } from '../service/financial-price-analysis-detail.service';
+import {
+  CompleteFinancialAnalysisDto,
+  submitPriceAnalysisDto,
+} from '../dto/financial-assessment.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'financialPriceAnalysisId',
@@ -57,5 +70,28 @@ export class FinancialPriceAnalysisDetailController extends ExtraCrudController<
       items,
       req,
     );
+  }
+  @Put('complete-bidder-evaluation')
+  async completeBidderEvaluation(
+    @Body() itemData: CompleteFinancialAnalysisDto,
+    @Req() req,
+  ) {
+    return await this.financialPriceAnalysisDetailService.completeBidderEvaluation(
+      itemData,
+      req,
+    );
+  }
+
+  @Get('can-complete/:lotId')
+  async canComplete(@Param('lotId') lotId: string, @Req() req) {
+    return await this.financialPriceAnalysisDetailService.canComplete(
+      lotId,
+      req,
+    );
+  }
+
+  @Put('submit')
+  async submitChecklist(@Body() itemData: submitPriceAnalysisDto, @Req() req) {
+    return await this.financialPriceAnalysisDetailService.submit(itemData, req);
   }
 }

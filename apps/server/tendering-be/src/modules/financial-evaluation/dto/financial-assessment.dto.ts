@@ -41,3 +41,22 @@ export class priceAnalysisBulkCreate {
   @IsNotEmpty()
   bidderId: string;
 }
+
+export class CompleteFinancialAnalysisDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidderId: string;
+}
+
+export class submitPriceAnalysisDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+}
