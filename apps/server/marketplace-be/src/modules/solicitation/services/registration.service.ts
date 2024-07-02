@@ -112,7 +112,8 @@ export class SolRegistrationService extends ExtraCrudService<SolRegistration> {
     await registrationReo.insert(rfxRegistration);
 
     const registrationEventPayload = {
-      ...rfx,
+      ...rfxRegistration,
+      userId: vendorId,
       objectType: 'RFX',
     };
 

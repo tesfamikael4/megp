@@ -79,6 +79,7 @@ export class SolBookmarkService extends ExtraCrudService<SolBookmark> {
 
     const bookmarkEventPayload = {
       ...bookmarkData,
+      userId: req.user.organization.id,
       objectType: 'RFX',
     };
     this.rmsRMQClient.emit('record-bookmark', bookmarkEventPayload);
