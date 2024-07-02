@@ -62,6 +62,14 @@ export class LotService extends ExtraCrudService<Lot> {
         });
         await manager.getRepository(Lot).insert(lot);
 
+        await manager.getRepository(TenderMilestone).insert({
+          tenderId: itemData.tenderId,
+          lotId: lot.id,
+          isCurrent: true,
+          milestoneNum: TenderMilestoneEnum.Initiation,
+          milestoneTxt: 'Initiation',
+        });
+
         itemData.lotId = lot.id;
       }
 

@@ -118,7 +118,7 @@ export class Lot extends Audit {
   @OneToMany(
     () => TenderMilestone,
     (tenderTenderMilestone) => tenderTenderMilestone.lot,
-    { cascade: true },
+    { cascade: true, onDelete: 'CASCADE' },
   )
   tenderMilestones: TenderMilestone[];
 
