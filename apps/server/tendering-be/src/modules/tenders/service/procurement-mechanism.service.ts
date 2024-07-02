@@ -21,7 +21,10 @@ export class ProcurementMechanismService extends ExtraCrudService<ProcurementMec
   }
 
   async update(id: string, itemData: any) {
-    const item = this.procurementMechanismRepository.create(itemData) as any;
+    const item = this.procurementMechanismRepository.create({
+      ...itemData,
+      tenderId: id,
+    }) as any;
     item.PRProcurementMechanisms ??= {};
     await this.procurementMechanismRepository.upsert(item, ['tenderId']);
     return {
