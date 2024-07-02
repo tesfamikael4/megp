@@ -13,6 +13,7 @@ type InitialState = {
   from: Date | null;
   to: Date | null;
   countryOfRegistration: string;
+  type?: 'micro' | 'ibm' | '';
 };
 const initialState: InitialState = {
   trackingNumber: '',
@@ -21,11 +22,14 @@ const initialState: InitialState = {
   from: null,
   to: null,
   countryOfRegistration: '',
+  type: '',
 };
 export default function RequestsSidebar({
   handleFilter,
+  isPreferential,
 }: {
   handleFilter: (filter: Partial<InitialState>) => void;
+  isPreferential?: boolean;
 }) {
   const [filter, setFilter] = useState(initialState);
 
@@ -46,7 +50,8 @@ export default function RequestsSidebar({
     !filter.from &&
     !filter.to &&
     !filter.customerName &&
-    !filter.countryOfRegistration;
+    !filter.countryOfRegistration &&
+    !filter.type;
 
   return (
     <Section
@@ -66,6 +71,20 @@ export default function RequestsSidebar({
           onChange={(e) => updateFilter(`countryOfRegistration`, e)}
         />
       </Box>
+      {isPreferential && (
+        <Box className={styles.formGroup}>
+          <Text>Preferential Service</Text>
+          <Select
+            value={filter.type}
+            data={['Mirco', 'IBM', 'Small', 'Medium', 'marginalized_group']}
+            searchable
+            type="string"
+            name="type"
+            placeholder="Preferential Service"
+            onChange={(e) => updateFilter(`type`, e)}
+          />
+        </Box>
+      )}
       <Box className={styles.formGroup}>
         <Text>Tracking Number</Text>
         <TextInput

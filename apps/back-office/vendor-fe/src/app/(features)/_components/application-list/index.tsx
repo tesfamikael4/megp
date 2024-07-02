@@ -99,6 +99,15 @@ export default function ApplicationList({
         },
       ]);
     }
+    if (filter.type) {
+      newWhere.push([
+        {
+          column: 'service.key',
+          operator: 'ILIKE',
+          value: `${filter.type}`,
+        },
+      ]);
+    }
     if (filter.from) {
       const isoDateString = new Date(filter.from).toISOString();
       const _from = isoDateString.split('T')[0];
@@ -277,7 +286,10 @@ export default function ApplicationList({
         ) : null}
       </Section>
       <Box className="w-2/6">
-        <RequestsSidebar handleFilter={handleFilter} />
+        <RequestsSidebar
+          handleFilter={handleFilter}
+          isPreferential={serviceKey === 'preferential'}
+        />
       </Box>
     </Flex>
   );
