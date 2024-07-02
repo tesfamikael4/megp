@@ -20,7 +20,7 @@ export default function GuaranteeDetail() {
             className="overflow-scroll"
           >
             <embed
-              src={document?.document?.presignedUrl}
+              src={document?.presignedUrl}
               type="application/pdf"
               width="100%"
               height="800px"
