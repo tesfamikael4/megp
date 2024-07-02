@@ -76,6 +76,17 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           },
         },
       },
+      {
+        name: 'ERROR_LOG_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'error-log',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
     ]),
   ],
   controllers: [

@@ -21,6 +21,7 @@ import { BiddersComparisonModule } from './modules/bidders/bidders-comparison.mo
 import { ExchangeRateModule } from './modules/utility/exchange-rate/exchange-rate.module';
 import { FormulaModule } from './modules/utility/formula/formula.module';
 import { FinancialEvaluationModule } from './modules/financial-evaluation/financial-evaluation.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -41,6 +42,19 @@ import { FinancialEvaluationModule } from './modules/financial-evaluation/financ
     ExchangeRateModule,
     FormulaModule,
     FinancialEvaluationModule,
+    ClientsModule.register([
+      {
+        name: 'ERROR_LOG_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'rabbit-mq-error-log',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
   ],
   providers: [
     EventEmitterModule,

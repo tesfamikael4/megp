@@ -40,7 +40,7 @@ export class TenderController extends EntityCrudController<Tender>(options) {
     super(tenderService);
   }
 
-  @UseFilters(new RabbitMQExceptionFilter())
+  @UseFilters(RabbitMQExceptionFilter)
   @EventPattern('tendering-workflow.tenderApproval')
   async tenderApproval(@Body() data: any) {
     return await this.tenderApprovalService.tenderApproval(data);
