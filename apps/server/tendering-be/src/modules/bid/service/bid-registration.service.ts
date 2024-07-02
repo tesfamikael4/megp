@@ -273,7 +273,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     if (!bdsSubmission) {
       throw new BadRequestException('bds_submission_not_found');
     } else if (bdsSubmission.submissionDeadline < new Date()) {
-      throw new BadRequestException('submission_expired');
+      throw new BadRequestException('submission_deadline_passed');
     }
 
     await manager
