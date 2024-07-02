@@ -209,7 +209,8 @@ export class TechnicalEndorsementService {
     await queryRunner.startTransaction();
     try {
       const manager: EntityManager = queryRunner.manager;
-      const { status, lotId } = itemData;
+      const status = itemData.status;
+      const lotId = itemData.lotId;
 
       const milestone = await manager
         .getRepository(TenderMilestone)
