@@ -1,6 +1,7 @@
 'use client';
 import { useCompleteBidPriceEvaluationMutation } from '@/store/api/tendering/bid-price-evaluation.api';
 import { useCompleteEvaluationMutation } from '@/store/api/tendering/preliminary-compliance.api';
+import { useCompletePriceAnalysisMutation } from '@/store/api/tendering/price-analysis.api';
 import { useCompleteQualificationEvaluationMutation } from '@/store/api/tendering/technical-qualification';
 import { useCompleteResponsivenessEvaluationMutation } from '@/store/api/tendering/technical-responsiveness.api';
 import { useCompleteScoringEvaluationMutation } from '@/store/api/tendering/technical-scoring.api';
@@ -46,6 +47,10 @@ export const BidderOverView = ({
     useCompleteScoringEvaluationMutation();
   const [completeBidPriceEvaluation, { isLoading: isBidPriceCompleting }] =
     useCompleteBidPriceEvaluationMutation();
+  const [
+    completePriceAnalysisEvaluation,
+    { isLoading: isPriceAnalysisCompleting },
+  ] = useCompletePriceAnalysisMutation();
 
   useEffect(() => {
     getBidder({
@@ -85,6 +90,11 @@ export const BidderOverView = ({
         await completeBidPriceEvaluation({
           lotId: lotId as string,
           itemId: itemId as string,
+          bidderId: bidderId as string,
+        }).unwrap();
+      } else if (milestone == 'priceAnalysis') {
+        await completePriceAnalysisEvaluation({
+          lotId: lotId as string,
           bidderId: bidderId as string,
         }).unwrap();
       }
@@ -128,7 +138,8 @@ export const BidderOverView = ({
                 isQualificationCompleting ||
                 isResponsivenessCompleting ||
                 isScoringCompleting ||
-                isBidPriceCompleting
+                isBidPriceCompleting ||
+                isPriceAnalysisCompleting
               }
             >
               Complete

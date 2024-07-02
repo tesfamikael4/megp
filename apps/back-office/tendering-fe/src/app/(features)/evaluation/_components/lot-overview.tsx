@@ -5,6 +5,10 @@ import {
   useSubmitPreliminaryEvaluationMutation,
 } from '@/store/api/tendering/preliminary-compliance.api';
 import {
+  useLazyGetCanPriceAnalysisCompleteQuery,
+  useSubmitPriceAnalysisEvaluationMutation,
+} from '@/store/api/tendering/price-analysis.api';
+import {
   useLazyGetCanQualificationCompleteQuery,
   useSubmitQualificationEvaluationMutation,
 } from '@/store/api/tendering/technical-qualification';
@@ -64,8 +68,12 @@ export const LotOverview = ({
     useSubmitScoringEvaluationMutation();
   const [submitBidPriceEvaluation, { isLoading: isBidPriceLoading }] =
     useSubmitBidPriceEvaluationMutation();
+  const [submitPriceAnalysisEvaluation, { isLoading: isPriceAnalysisLoading }] =
+    useSubmitPriceAnalysisEvaluationMutation();
   const [getCanPreliminaryComplete, { data: preliminaryCanSubmitData }] =
     useLazyGetCanPreliminaryCompleteQuery();
+  const [getCanPriceAnalysisComplete, { data: priceAnalysisCanSubmitData }] =
+    useLazyGetCanPriceAnalysisCompleteQuery();
   const [getCanQualificationComplete, { data: qualificationCanSubmitData }] =
     useLazyGetCanQualificationCompleteQuery();
   const [getCanResponsivenessComplete, { data: responsivenessCanSubmitData }] =
@@ -117,6 +125,11 @@ export const LotOverview = ({
           lotId: lotId as string,
           tenderId: tenderId as string,
         }).unwrap();
+      } else if (milestone === 'priceAnalysis') {
+        await submitPriceAnalysisEvaluation({
+          lotId: lotId as string,
+          tenderId: tenderId as string,
+        }).unwrap();
       }
       notify('Success', 'Evaluation successfully completed');
     } catch (err) {
@@ -141,6 +154,9 @@ export const LotOverview = ({
           lotId as string,
         ).unwrap();
         setLotStatus(res);
+      } else if (milestone === 'priceAnalysis') {
+        const res = await getCanPriceAnalysisComplete(lotId as string).unwrap();
+        setLotStatus(res);
       }
     } catch {
       notify('Error', 'Net Err');
@@ -156,6 +172,7 @@ export const LotOverview = ({
     preliminaryCanSubmitData,
     qualificationCanSubmitData,
     responsivenessCanSubmitData,
+    priceAnalysisCanSubmitData,
   ]);
   return (
     <Box pos="relative">
@@ -262,7 +279,8 @@ export const LotOverview = ({
                   isQualificationLoading ||
                   isResponsivenessLoading ||
                   isScoringLoading ||
-                  isBidPriceLoading
+                  isBidPriceLoading ||
+                  isPriceAnalysisLoading
                 }
                 disabled={
                   (milestone === 'technicalScoring'

@@ -40,7 +40,9 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/evaluation-endorsement/${record.id}`);
+              router.push(
+                `/evaluation-endorsement/${record.tenderId}/${record.id}`,
+              );
             }}
           >
             <IconChevronRight size={14} />
