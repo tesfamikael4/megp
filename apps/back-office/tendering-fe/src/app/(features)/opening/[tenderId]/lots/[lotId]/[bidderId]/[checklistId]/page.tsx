@@ -5,7 +5,7 @@ import { ChecklistAssessment } from '../_components/assesment';
 import { useParams } from 'next/navigation';
 import { useLazyGetSpdDetailQuery } from '@/store/api/tendering/tender-opening.api';
 import { useEffect } from 'react';
-
+import Document from '../../../../../_components/document';
 export default function ChecklistDetail() {
   const { checklistId } = useParams();
   const [getSbd, { data }] = useLazyGetSpdDetailQuery();
@@ -22,12 +22,7 @@ export default function ChecklistDetail() {
           collapsible={false}
           className="h-full overflow-scroll"
         >
-          <embed
-            src={'https://arxiv.org/pdf/1708.08021'}
-            type="application/pdf"
-            width="100%"
-            height="400px"
-          />
+          <Document />
         </Section>
       </Box>
       <Box className=" bg-white w-1/3">
