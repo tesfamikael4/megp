@@ -32,6 +32,7 @@ import { DataResponseFormat } from 'src/shared/api-data';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 import { TechnicalEndorsementService } from './technical-endorsement.service';
+import { EndorsementTypeEnum } from 'src/shared/enums/endorsement-type.enum';
 
 @Injectable()
 export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<TechnicalScoringAssessmentDetail> {
@@ -723,6 +724,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
       await this.technicalEndorsementService.initiateWorkflow({
         tenderId: itemData.tenderId,
         lotId: itemData.lotId,
+        endorsementType: EndorsementTypeEnum.TECHNICAL_ENDORSEMENT,
         organizationId: req.user.organization.id,
         organizationName: req.user.organization.name,
       });

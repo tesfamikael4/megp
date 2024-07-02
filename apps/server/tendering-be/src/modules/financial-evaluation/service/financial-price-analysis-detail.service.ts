@@ -1,19 +1,29 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BdsSubmission, BidRegistrationDetail, Item } from 'src/entities';
+import { BidRegistrationDetail, Item, Tender } from 'src/entities';
 import { BiddersComparison } from 'src/entities/bidders-comparison.entity';
 import { FinancialPriceAnalysisDetail } from 'src/entities/financial-price-analysis-detail.entity';
 import { FinancialPriceAnalysis } from 'src/entities/financial-price-analysis.entity';
 import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TechnicalEndorsementService } from 'src/modules/technical-evaluation/service/technical-endorsement.service';
 import { CollectionQuery } from 'src/shared/collection-query';
-import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
+import { AwardTypeEnum } from 'src/shared/enums';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
 
-import { ArrayContains, EntityManager, In, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
+import {
+  CompleteFinancialAnalysisDto,
+  submitPriceAnalysisDto,
+} from '../dto/financial-assessment.dto';
+import { EndorsementTypeEnum } from 'src/shared/enums/endorsement-type.enum';
 
 @Injectable()
 export class FinancialPriceAnalysisDetailService extends ExtraCrudService<FinancialPriceAnalysisDetail> {
@@ -104,6 +114,9 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
         name: item.name,
         offeredUnitPrice: item.openedBidResponseItems[0].value?.value?.rate,
         marketPrice: analysis ? analysis.marketUnitPrice : false,
+        calculatedBidUnitPrice: analysis.calculatedBidUnitPrice,
+        remark: analysis.remark,
+        accept: analysis.accept,
       };
     });
     return response;
@@ -111,7 +124,6 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
 
   async bulkCreate(items: any, req: any): Promise<any> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const offeredItemsId = [];
 
     const offeredItems = await manager
       .getRepository(BidRegistrationDetail)
@@ -185,39 +197,118 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
 
     return priceAnalyses;
   }
-
-  async financialEndorsement(
-    itemData: { lotId: any; tenderId: any },
+  async completeBidderEvaluation(
+    itemData: CompleteFinancialAnalysisDto,
     req: any,
   ) {
+    // const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    // const assessment = await manager
+    //   .getRepository(FinancialPriceAnalysis)
+    //   .findOne({
+    //     where: {
+    //       bidderId: itemData.bidderId,
+    //       lotId: itemData.lotId
+    //     },
+    //     relations: {
+    //       financialPriceAnalysisDetails: true,
+    //     },
+    //   });
+    // await manager.getRepository(FinancialPriceAnalysis).update(
+    //   {
+    //     id: assessment.id,
+    //   },
+    //   {
+    //     isComplete: true,
+    //   },
+    // );
+  }
+
+  async canComplete(
+    lotId: string,
+    req: any,
+  ): Promise<{
+    hasCompleted: boolean;
+  }> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const [bdsSubmission] = await Promise.all([
-      manager.getRepository(BdsSubmission).findOne({
+    const assessment = await manager
+      .getRepository(FinancialPriceAnalysis)
+      .find({
         where: {
-          tenderId: itemData.tenderId,
+          lotId: lotId,
         },
-      }),
-    ]);
+        relations: {
+          financialPriceAnalysisDetails: true,
+        },
+      });
+    return { hasCompleted: !assessment.find((x) => !x.isComplete) };
+  }
+  async submit(itemData: submitPriceAnalysisDto, req?: any): Promise<any> {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const teamType =
-      bdsSubmission.envelopType == 'single envelop'
-        ? TeamRoleEnum.FINANCIAL_EVALUATOR
-        : TeamRoleEnum.TECHNICAL_EVALUATOR;
+    const assessment = await manager
+      .getRepository(FinancialPriceAnalysis)
+      .find({
+        where: {
+          lotId: itemData.lotId,
+        },
+        relations: {
+          financialPriceAnalysisDetails: true,
+        },
+      });
 
-    await this.changeMilestone(manager, itemData, bdsSubmission.envelopType);
-    await this.technicalEndorsementService.initiateWorkflow({
-      tenderId: itemData.tenderId,
-      lotId: itemData.lotId,
-      organizationId: req.user.organization.id,
-      organizationName: req.user.organization.name,
+    await this.initiateFinancialEndorsement(itemData, req);
+
+    await manager.getRepository(FinancialPriceAnalysis).update(
+      {
+        id: In(assessment.map((list) => list.id)),
+      },
+      {
+        isComplete: true,
+      },
+    );
+  }
+  async initiateFinancialEndorsement(lotId: any, req: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const tender = await manager.getRepository(Tender).findOne({
+      where: {
+        lots: {
+          id: lotId,
+        },
+      },
+      relations: {
+        bdsEvaluation: true,
+      },
+      select: {
+        id: true,
+        bdsEvaluation: {
+          id: true,
+          awardType: true,
+        },
+      },
     });
+
+    if (tender.bdsEvaluation?.awardType == AwardTypeEnum.LOT_BASED) {
+      await this.changeMilestone(manager, {
+        lotId: lotId,
+        tenderId: tender.id,
+      });
+      await this.technicalEndorsementService.initiateWorkflow({
+        tenderId: tender.id,
+        lotId: lotId,
+        endorsementType: EndorsementTypeEnum.FINANCIAL_ENDORSEMENT,
+        organizationId: req.user.organization.id,
+        organizationName: req.user.organization.name,
+      });
+    } else {
+      throw new BadRequestException('Item Based not implemented yet');
+    }
   }
 
   private async changeMilestone(
     manager: EntityManager,
     itemData: { lotId: any; tenderId: any },
-    envelopType,
   ) {
     await manager.getRepository(TenderMilestone).update(
       {

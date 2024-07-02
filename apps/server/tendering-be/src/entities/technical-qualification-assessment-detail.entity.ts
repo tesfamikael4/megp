@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { TechnicalQualificationAssessment } from './technical-qualification-assessments.entity';
 import { OrgAudit } from 'src/shared/entities';
-import { SpdQualification } from './spd-qualification.entity';
 import { EvaluationStatusEnum } from 'src/shared/enums/evaluation-status.enum';
 import { EqcQualification } from './eqc-qualification.entity';
 

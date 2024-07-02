@@ -73,6 +73,7 @@ export class TechnicalEndorsementService {
   async initiateWorkflow(itemData: {
     tenderId: string;
     lotId: string;
+    endorsementType: string;
     organizationId: string;
     organizationName: string;
   }) {
@@ -142,7 +143,7 @@ export class TechnicalEndorsementService {
 
     //initiate workflow
     this.endorsementRMQClient.emit('initiate-workflow', {
-      name: 'TechnicalEndorsementApproval',
+      name: itemData.endorsementType,
       id: itemData.lotId,
       itemName: lot.name,
       organizationId: itemData.organizationId,
