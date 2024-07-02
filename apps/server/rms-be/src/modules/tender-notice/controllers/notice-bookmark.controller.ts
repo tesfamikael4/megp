@@ -14,7 +14,7 @@ const options: ExtraCrudOptions = {
 };
 
 @Controller('notice-bookmarks')
-@ApiTags('Tender Notices')
+@ApiTags('Tender Bookmarks')
 export class NoticeBookmarkController extends ExtraCrudController<NoticeBookmark>(
   options,
 ) {

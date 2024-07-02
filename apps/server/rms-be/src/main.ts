@@ -26,6 +26,17 @@ async function bootstrap() {
     },
   });
 
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [process.env.RMQ_URL],
+      queue: 'error-log',
+      queueOptions: {
+        durable: false,
+      },
+    },
+  });
+
   app.startAllMicroservices();
   app.enableCors();
 
