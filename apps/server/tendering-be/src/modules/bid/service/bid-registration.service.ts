@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Tender } from 'src/entities';
+import { BdsSubmission, Tender } from 'src/entities';
 import { BidBookmark } from 'src/entities/bid-bookmark.entity';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
@@ -266,6 +266,15 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
         throw new BadRequestException('required_values_not_filled');
       }
     });
+
+    const bdsSubmission = await manager.getRepository(BdsSubmission).findOneBy({
+      tenantId: bidRegistrationDetail.bidRegistration.tenantId,
+    });
+    if (!bdsSubmission) {
+      throw new BadRequestException('bds_submission_not_found');
+    } else if (bdsSubmission.submissionDeadline < new Date()) {
+      throw new BadRequestException('submission_expired');
+    }
 
     await manager
       .getRepository(BidRegistrationDetail)
