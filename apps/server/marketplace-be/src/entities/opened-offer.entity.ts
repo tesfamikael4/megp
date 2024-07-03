@@ -28,16 +28,16 @@ export class OpenedOffer extends Audit {
   @Column()
   vendorId: string;
 
-  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
+  @Column({ type: 'numeric' })
   price: number;
 
-  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
+  @Column({ type: 'numeric' })
   tax: number;
 
   @Column({ nullable: true })
   rank: number;
 
-  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
+  @Column({ type: 'numeric' })
   calculatedPrice: number;
 
   @Column({
