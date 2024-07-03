@@ -43,13 +43,10 @@ export class TenderService extends EntityCrudService<Tender> {
     private readonly tenderRepository: Repository<Tender>,
     private readonly minIOService: MinIOService,
     private readonly documentManipulatorService: DocumentManipulatorService,
-
     @Inject('WORKFLOW_RMQ_SERVICE')
     private readonly workflowRMQClient: ClientProxy,
-
     @Inject('RMS_RMQ_SERVICE')
     private readonly rmsRMQClient: ClientProxy,
-
     @Inject(REQUEST) private request: Request,
   ) {
     super(tenderRepository);
