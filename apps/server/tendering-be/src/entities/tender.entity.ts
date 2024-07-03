@@ -43,10 +43,10 @@ export class Tender extends Audit {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column()
   procurementCategory: string;
 
-  @Column({ nullable: true })
+  @Column({ unique: true })
   procurementReferenceNumber: string;
 
   @Column({ type: 'numeric', default: 0 })
@@ -58,7 +58,7 @@ export class Tender extends Audit {
   @Column()
   budgetCode: string;
 
-  @Column()
+  @Column({ unique: true })
   prId: string;
 
   @Column({ type: 'numeric', default: 0 })

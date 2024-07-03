@@ -45,7 +45,10 @@ export class TenderService extends EntityCrudService<Tender> {
     private readonly documentManipulatorService: DocumentManipulatorService,
 
     @Inject('WORKFLOW_RMQ_SERVICE')
-    private readonly tenderingRMQClient: ClientProxy,
+    private readonly workflowRMQClient: ClientProxy,
+
+    @Inject('RMS_RMQ_SERVICE')
+    private readonly rmsRMQClient: ClientProxy,
 
     @Inject(REQUEST) private request: Request,
   ) {
@@ -57,13 +60,6 @@ export class TenderService extends EntityCrudService<Tender> {
       const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
       const prId = itemData.prId;
-      const prExists = await this.tenderRepository.existsBy({
-        prId,
-      });
-
-      if (prExists) {
-        throw new Error('PR already used in a tender');
-      }
 
       const PR_BASE_ENDPOINT =
         process.env.PR_BASE_ENDPOINT ??
@@ -346,6 +342,7 @@ export class TenderService extends EntityCrudService<Tender> {
       },
       relations: {
         spd: true,
+        bdsSubmission: true,
       },
     });
 
@@ -376,12 +373,23 @@ export class TenderService extends EntityCrudService<Tender> {
         throw new BadRequestException('spd_invitation_not_found');
       }
 
-      this.tenderingRMQClient.emit('initiate-workflow', {
+      this.workflowRMQClient.emit('initiate-workflow', {
         id: tender.id,
         name: 'tenderApproval',
         itemName: tender.name,
         organizationId: tender.organizationId,
       });
+    } else if (input.status == TenderStatusEnum.PUBLISHED) {
+      const deadline = new Date(tender.bdsSubmission.submissionDeadline);
+
+      const approvePayload = {
+        ...tender,
+        publishmentDate: new Date(),
+        closingDate: deadline,
+        objectType: 'TENDER',
+      };
+
+      this.rmsRMQClient.emit('record-notice', approvePayload);
     }
   }
 
