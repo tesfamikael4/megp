@@ -186,6 +186,11 @@ export const postBudgetPlanApi = createApi({
       query: (id: string) => `post-budget-plan-activities/${id}`,
       providesTags: ['post-budget-plan-items'],
     }),
+    getActivityByBudgetId: builder.query<any, any>({
+      query: (id: string) =>
+        `post-budget-plan-activities/get-by-budget-id/${id}`,
+      providesTags: ['post-budget-plan-items'],
+    }),
   }),
 });
 
@@ -217,4 +222,5 @@ export const {
   useLazyGetPreviousVersionsQuery,
   useLazyGetDifDetailQuery,
   useLazyReadPostActivityQuery,
+  useLazyGetActivityByBudgetIdQuery,
 } = postBudgetPlanApi;
