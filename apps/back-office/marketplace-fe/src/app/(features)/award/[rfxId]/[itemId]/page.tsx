@@ -95,7 +95,11 @@ export default function ItemDetail() {
                   )}
                 </Flex>
               </Flex>
-              {showItemDetail && <ItemConfiguration />}
+              {showItemDetail && (
+                <Box className="p-4">
+                  <ItemConfiguration />
+                </Box>
+              )}
             </Stack>
           </Container>
         </Box>

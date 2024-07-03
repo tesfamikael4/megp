@@ -1,13 +1,29 @@
-import React from 'react';
-import { Text, Card, Flex, Button, Avatar, Box, rgba } from '@mantine/core';
+import React, { useState } from 'react';
+import {
+  Text,
+  Card,
+  Flex,
+  Button,
+  Avatar,
+  Box,
+  rgba,
+  Modal,
+  Stack,
+} from '@mantine/core';
 import classes from './TenderCard.module.css';
 import { IconBookmark, IconTools } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { Tender } from '@/models/tender/tender.model';
 import Moment from 'moment';
+import { RFX } from '@/models/rfx/rfx.model';
+import { useDisclosure } from '@mantine/hooks';
+import { useLazyGetRfxItemsQuery } from '../../procurement-notice/_api/rfx.api';
+import Items from '../../invitations-workspace/prepare-bid/_components/price-schedule/item.component';
+import { DetailTable } from '../detail-table/detail-table';
+import InvitationDetail from '../../invitations-workspace/prepare-bid/_components/price-schedule/invitation-detail.component';
 
 interface TenderCardProps {
-  color: string;
+  color?: string;
   tender?: Tender;
   handleViewMore?: () => void;
   handleRegister?: () => void;
@@ -22,9 +38,19 @@ const TenderCard = ({
   tender,
 }: TenderCardProps) => {
   const router = useRouter();
+
   const handleNavigation = () => {
     router.push(`/procurement-notice/${tender?.id}`);
   };
+
+  const handleRegister = () => {
+    if (tender?.objectType === 'RFX') {
+      router.push(`/procurement-notice/rfx/${tender?.id}`);
+    } else {
+      router.push(`/procurement-notice/tender/${tender?.id}`);
+    }
+  };
+
   return (
     <>
       {tender && (
@@ -32,13 +58,13 @@ const TenderCard = ({
           <Box
             className=" absolute top-0 left-5 rounded-b-lg p-2 py-1"
             c={textColor}
-            bg={color}
+            bg={tender?.objectType === 'RFX' ? 'blue' : 'green'}
             fw={700}
             fz={'xs'}
           >
             12 | Days Left
           </Box>
-          {tender.isBookmarked && (
+          {tender && tender.isBookmarked && (
             <Box
               className=" absolute top-0 right-4 rounded-b-lg p-2 py-1 cursor-pointer"
               fz={'xs'}
@@ -60,7 +86,7 @@ const TenderCard = ({
                   }}
                   className="font-semibold"
                 >
-                  {tender.name}
+                  {tender && tender.name}
                 </Text>
                 <Text
                   c="dimmed"
@@ -71,8 +97,7 @@ const TenderCard = ({
                     md: '20px',
                   }}
                 >
-                  Lorem ipsum dolor sit amet, consectetur lorem adipiscing elit.
-                  Nam hendrerit nisi sed sollicitud
+                  {tender && tender.description}
                 </Text>
                 <Flex
                   direction={'column'}
@@ -93,7 +118,7 @@ const TenderCard = ({
                       md: 8,
                     }}
                   >
-                    {tender.organizationName}
+                    {tender && tender.organizationName}
                   </Text>
                   <Box className="flex flex-col gap-0">
                     <Flex align={'center'} className={classes.dateInfo} gap={5}>
@@ -107,7 +132,7 @@ const TenderCard = ({
                         lh={'sm'}
                       >
                         {' '}
-                        {Moment(tender.bdsSubmission.invitationDate).format(
+                        {Moment(tender.publishmentDate).format(
                           'MMMM Do YYYY, h:mm:ss a',
                         )}{' '}
                       </Text>
@@ -123,7 +148,7 @@ const TenderCard = ({
                         lh={'sm'}
                       >
                         {' '}
-                        {Moment(tender.bdsSubmission.submissionDeadline).format(
+                        {Moment(tender && tender.closingDate).format(
                           'MMMM Do YYYY, h:mm:ss a',
                         )}{' '}
                       </Text>
@@ -131,7 +156,7 @@ const TenderCard = ({
                   </Box>
                 </Flex>
                 <Flex columnGap={'md'} mt={'sm'} justify={'flex-end'}>
-                  <Button>Bid Now</Button>
+                  <Button onClick={handleRegister}>Register</Button>
                   <Button
                     variant="outline"
                     fz={'xs'}

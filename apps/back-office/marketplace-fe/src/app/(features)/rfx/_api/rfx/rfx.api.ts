@@ -1,11 +1,11 @@
-import { Tender } from '@/models/tender/tender.model';
+import { RFQ } from '@/models/tender/rfq.model';
 import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
 // get base tender api
 const rfxApi = entityApi.entitySliceApi['rfxs'];
 
-export const rfxSliceApi: typeof EntitySliceApi = createEntitySlice<Tender>(
+export const rfxSliceApi: typeof EntitySliceApi = createEntitySlice<RFQ>(
   rfxApi,
   'rfxs',
 );

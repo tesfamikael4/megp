@@ -33,6 +33,8 @@ import { getBidFormApi } from '@/app/(features)/tender-workspace/_api/bid-form';
 import { documentaryEvidenceResponseApi } from '@/app/(features)/tender-workspace/_api/documentary-evidence-bid-response.api';
 import { getInvitationsApi } from '@/app/(features)/my-workspace/_api/invitation-registration.api';
 import { invitationItemsApi } from '@/app/(features)/invitations-workspace/_api/items.api';
+import { getRfxsApi } from '@/app/(features)/procurement-notice/_api/rfx.api';
+import { rmsApi } from '@/app/(features)/procurement-notice/_api/rms.api';
 
 const middleware = [
   vendorRegistrationApi.middleware,
@@ -65,6 +67,8 @@ const middleware = [
   documentaryEvidenceResponseApi.middleware,
   getInvitationsApi.middleware,
   invitationItemsApi.middleware,
+  getRfxsApi.middleware,
+  rmsApi.middleware,
 ];
 
 export { middleware };

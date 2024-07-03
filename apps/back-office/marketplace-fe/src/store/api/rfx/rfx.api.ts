@@ -50,6 +50,16 @@ export const rfxOtherApi = createApi({
         return { url: `rfxs/evaluation${q}` };
       },
     }),
+    listRfxOnEvaluationApproval: builder.query<any, CollectionQuery>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `rfxs/evaluation-approval${q}` };
+      },
+    }),
     listRfxOnAward: builder.query<any, CollectionQuery>({
       query: (collectionQuery) => {
         let q = '';
@@ -365,6 +375,7 @@ export const {
   useLazyListRfxsQuery,
   useLazyListRfxOnReviewQuery,
   useLazyListRfxOnEvaluationQuery,
+  useLazyListRfxOnEvaluationApprovalQuery,
   useLazyListRfxOnAwardQuery,
   useLazyGetCatalogueItemsQuery,
   useSubmitForReviewMutation,

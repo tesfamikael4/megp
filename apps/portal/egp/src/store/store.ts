@@ -35,6 +35,8 @@ import { getBidFormApi } from '@/app/(features)/tender-workspace/_api/bid-form';
 import { documentaryEvidenceResponseApi } from '@/app/(features)/tender-workspace/_api/documentary-evidence-bid-response.api';
 import { getInvitationsApi } from '@/app/(features)/my-workspace/_api/invitation-registration.api';
 import { invitationItemsApi } from '@/app/(features)/invitations-workspace/_api/items.api';
+import { getRfxsApi } from '@/app/(features)/procurement-notice/_api/rfx.api';
+import { rmsApi } from '@/app/(features)/procurement-notice/_api/rms.api';
 import { guaranteeDocumentApi } from './api/guarantee-document/guarantee-document.api';
 
 export const store = configureStore({
@@ -72,6 +74,8 @@ export const store = configureStore({
       documentaryEvidenceResponseApi.reducer,
     [getInvitationsApi.reducerPath]: getInvitationsApi.reducer,
     [invitationItemsApi.reducerPath]: invitationItemsApi.reducer,
+    [getRfxsApi.reducerPath]: getRfxsApi.reducer,
+    [rmsApi.reducerPath]: rmsApi.reducer,
     [guaranteeDocumentApi.reducerPath]: guaranteeDocumentApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',

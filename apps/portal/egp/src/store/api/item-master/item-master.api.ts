@@ -37,6 +37,12 @@ export const itemMasterApi = createApi({
     readItem: builder.query({
       query: (id: string) => `/item-masters/${id}`,
     }),
+    getItemTemplate: builder.query<any, { id: string }>({
+      query: (data) => ({
+        url: `specification-templates/itemCode/${data.id}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -47,4 +53,5 @@ export const {
   useLazyGetItemsQuery,
   useGetClassificationsQuery,
   useLazyGetClassificationsQuery,
+  useLazyGetItemTemplateQuery,
 } = itemMasterApi;

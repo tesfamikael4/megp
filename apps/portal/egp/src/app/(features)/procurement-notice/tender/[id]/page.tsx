@@ -8,16 +8,16 @@ import {
   Modal,
   Text,
 } from '@mantine/core';
-import { useLazyGetFilesQuery } from '../_api/invitation-document.api';
-import { useBookmarkMutation } from '../_api/bookmark.api';
+import { useLazyGetFilesQuery } from '../../_api/invitation-document.api';
+import { useBookmarkMutation } from '../../_api/bookmark.api';
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
 import { notify } from '@megp/core-fe';
-import { FileViewer } from '../../_components/file-viewer';
-import { TenderFormDetail } from '../../_components/tender-form';
+import { FileViewer } from '../../../_components/file-viewer';
+import { TenderFormDetail } from '../../../_components/tender-form';
 import { useEffect } from 'react';
-import { useGetTenderQuery } from '../_api/tender.api';
+import { useGetTenderQuery } from '../../_api/tender.api';
 
 export default function TenderDetailPage() {
   const [opened, { open, close }] = useDisclosure(false);
