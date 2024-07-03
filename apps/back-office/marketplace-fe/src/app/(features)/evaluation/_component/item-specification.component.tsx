@@ -57,7 +57,7 @@ export default function ItemSpecification() {
   );
 }
 
-const ItemDetailSpec = ({ itemSpec }: any) => {
+export const ItemDetailSpec = ({ itemSpec }: any) => {
   const specificationDetails = Object.entries(itemSpec || {})
     .filter(([key]) => key !== 'url')
     .map(([key, value]) => ({

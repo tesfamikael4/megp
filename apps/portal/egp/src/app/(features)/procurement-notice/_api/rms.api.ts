@@ -2,13 +2,13 @@ import { baseQuery } from '@/store/base-query';
 import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-export const getTendersApi = createApi({
-  reducerPath: 'getTendersApi',
-  tagTypes: ['active-tender'],
+export const rmsApi = createApi({
+  reducerPath: 'rmsApi',
+  tagTypes: ['rms'],
   refetchOnFocus: true,
-  baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
+  baseQuery: baseQuery(process.env.NEXT_PUBLIC_RMS_API ?? '/rms/api/'),
   endpoints: (builder) => ({
-    getTenders: builder.query<any, any>({
+    getTendersAndRFXs: builder.query<any, CollectionQuery>({
       query: (collectionQuery: CollectionQuery) => {
         let q = '';
         if (collectionQuery) {
@@ -16,23 +16,26 @@ export const getTendersApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/tenders/active-tenders/${q}`,
+          url: `/tender-notices${q}`,
           method: 'GET',
         };
       },
-      providesTags: ['active-tender'],
+      providesTags: ['rms'],
     }),
-    getTender: builder.query<any, any>({
+    getRFX: builder.query<any, any>({
       query: (id: string) => {
         return {
           url: `/tenders/${id}`,
           method: 'GET',
         };
       },
-      providesTags: ['active-tender'],
+      providesTags: ['rms'],
     }),
   }),
 });
 
-export const { useGetTendersQuery, useLazyGetTendersQuery, useGetTenderQuery } =
-  getTendersApi;
+export const {
+  useGetTendersAndRFXsQuery,
+  useLazyGetTendersAndRFXsQuery,
+  useGetRFXQuery,
+} = rmsApi;

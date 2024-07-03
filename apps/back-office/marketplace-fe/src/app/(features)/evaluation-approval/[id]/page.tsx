@@ -1,49 +1,67 @@
 'use client';
 
-import { PDFHighlighter } from '../../_components/pdf-highlighter';
 import { useParams } from 'next/navigation';
-import { Box, LoadingOverlay } from '@mantine/core';
-import { useGetPreSignedQuery } from '@/store/api/rfx/rfx.api';
-import { useEffect, useState } from 'react';
-import { logger } from '@megp/core-fe';
+import { Box, Flex, Stack } from '@mantine/core';
+import { useContext } from 'react';
+import { Section } from '@megp/core-fe';
 import { WorkflowHandling } from '../../_components/workflow';
+import { StatusContext } from '@/contexts/rfx-status.context';
+import { DetailTable } from '../../rfx/_components/detail-table';
+import QualificationCriterion from '../_components/qualification-criterion.component';
+import Items from '../_components/items.component';
 
 export default function WorkflowPage() {
   const { id } = useParams();
-  const { data, isLoading } = useGetPreSignedQuery({ id: id.toString() });
-  const [fileUrl, setFileUrl] = useState<string>('');
 
-  useEffect(() => {
-    const getFile = async () => {
-      fetch(data?.presignedUrl)
-        .then((response) => response.blob())
-        .then((blob) => {
-          const objectURL = URL.createObjectURL(blob);
-          setFileUrl(objectURL);
-        })
-        .catch((error) => {
-          logger.error('Error Fetching PDF:', error);
-        });
-    };
-    if (data) getFile();
-  }, [data]);
+  const { data: rfq } = useContext(StatusContext);
+
+  const rfqConfig = [
+    {
+      key: 'Reference Number',
+      value: `${rfq?.procurementReferenceNumber}`,
+    },
+    {
+      key: 'Title',
+      value: `${rfq?.name}`,
+    },
+    {
+      key: 'Description',
+      value: `${rfq?.description}`,
+    },
+    {
+      key: 'Calculated Amount',
+      value: `${rfq?.budgetAmount.toLocaleString('en-US', {
+        style: 'currency',
+        currency: rfq?.budgetAmountCurrency ?? 'MKW',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        currencyDisplay: 'code',
+      })}`,
+    },
+  ];
 
   return (
     <Box className="min-h-screen">
-      <LoadingOverlay visible={isLoading} className="m-auto" />
-      {true && (
-        <PDFHighlighter
-          title={data?.document.fileInfo.originalname}
-          objectId={data?.document.itemId as string}
-          pdfUrl={fileUrl}
-          workflow={
-            <WorkflowHandling
-              itemId={id as string}
-              itemKey={'RFQEvaluationApproval'}
-            />
-          }
-        />
-      )}
+      <Flex>
+        <Stack className="w-4/5">
+          <p className="font-bold text-xl">RFQ</p>
+          <Section title={rfq?.name}>
+            <Stack>
+              <DetailTable data={rfqConfig} />
+              <p className="font-medium text-xl">Qualification Criterion</p>
+              <QualificationCriterion />
+            </Stack>
+          </Section>
+          <p className="font-bold text-xl">Items</p>
+          <Items />
+        </Stack>
+        <Box className="w-1/5">
+          <WorkflowHandling
+            itemId={id as string}
+            itemKey={'RFQEvaluationApproval'}
+          />
+        </Box>
+      </Flex>
     </Box>
   );
 }

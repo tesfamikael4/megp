@@ -8,7 +8,7 @@ export const invitationItemsApi = createApi({
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api/'),
   endpoints: (builder) => ({
-    getItems: builder.query<
+    getMyItems: builder.query<
       any,
       { id: string; collectionQuery: CollectionQuery | undefined }
     >({
@@ -148,11 +148,38 @@ export const invitationItemsApi = createApi({
       },
       providesTags: ['invitation-items'],
     }),
+    giveSpecForOpen: builder.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: `/rfx-product-invitations/apply-on-invitation`,
+          method: 'POST',
+          body: data,
+        };
+      },
+      invalidatesTags: ['invitation-items'],
+    }),
+    getRfxItemWithSpec: builder.query<
+      any,
+      { rfxId: string; collectionQuery: CollectionQuery }
+    >({
+      query: ({ collectionQuery, rfxId }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `/rfx-product-invitations/my-rfx-items-with-spec/${rfxId}${q}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['invitation-items'],
+    }),
   }),
 });
 
 export const {
-  useLazyGetItemsQuery,
+  useLazyGetMyItemsQuery,
   useLazyGetMatchedProductsQuery,
   useLazyRfxDetailQuery,
   useGetItemOfferQuery,
@@ -165,4 +192,6 @@ export const {
   useAcceptInvitationMutation,
   useWithdrawInvitationMutation,
   useLazyGetAwardedRfqsQuery,
+  useGiveSpecForOpenMutation,
+  useLazyGetRfxItemWithSpecQuery,
 } = invitationItemsApi;

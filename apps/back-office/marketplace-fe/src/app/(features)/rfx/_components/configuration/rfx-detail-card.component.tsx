@@ -32,6 +32,10 @@ export default function RFXDetailCard() {
         },
       )}`,
     },
+    {
+      key: 'Procured By',
+      value: selectedRFX?.procuredBy,
+    },
   ];
   return (
     <Section title="RFQ Detail" collapsible={true} defaultCollapsed>

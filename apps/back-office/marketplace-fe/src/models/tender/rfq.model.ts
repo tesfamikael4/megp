@@ -1,8 +1,8 @@
-export interface Tender {
+export interface RFQ {
   id: string;
   name: string;
   description: string;
-  procurementReferenceNo: string;
+  procurementReferenceNumber: string;
   budgetAmount: number;
   budgetAmountCurrency: string;
   budgetCode: string;
@@ -12,6 +12,8 @@ export interface Tender {
   marketEstimateCurrency: string;
   status: Status;
   metadata: { [key: string]: any };
+  isOpen: boolean;
+  procuredBy: 'auctioning' | 'purchasing';
 }
 
 export type Status = 'draft' | 'submitted' | 'approved';

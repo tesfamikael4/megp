@@ -3,24 +3,31 @@ import React from 'react';
 import { ExpandableTable } from '@megp/core-fe';
 import { CollectionQuery } from '@megp/entity';
 import { useParams, useRouter } from 'next/navigation';
-import { useLazyGetItemsQuery } from '../../../_api/items.api';
-import { ActionIcon } from '@mantine/core';
+import { useLazyGetMyItemsQuery } from '../../../_api/items.api';
+import { ActionIcon, LoadingOverlay, Stack } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
+import { DetailTable } from '@/app/(features)/_components/detail-table/detail-table';
+import { useLazyGetRfxItemsQuery } from '@/app/(features)/procurement-notice/_api/rfx.api';
 
 export default function Items({
   layout,
   viewMode,
   id,
+  mode,
 }: {
   layout?: 'partition';
   viewMode?: 'list' | 'detail';
+  mode?: 'open' | 'closed';
   id?;
 }) {
-  const [getItems, { data: itemsList, isLoading: isFetching }] =
-    useLazyGetItemsQuery();
+  const [getMyItems, { data: myItemsList, isLoading: isFetching }] =
+    useLazyGetMyItemsQuery();
+  const [getRfxItems, { data: itemsList, isLoading }] =
+    useLazyGetRfxItemsQuery();
   const router = useRouter();
 
   const { rfxId } = useParams();
+
   const config = {
     columns: [
       { accessor: 'name', title: 'Name', width: 300 },
@@ -71,23 +78,63 @@ export default function Items({
     ],
     isExpandable: true,
     isSearchable: true,
-    isLoading: isFetching,
+    isLoading: isFetching || isLoading,
     primaryColumn: 'name',
+    expandedRowContent: (item) => {
+      return <ItemDetail item={item} />;
+    },
   };
 
   const onRequestChange = (request: CollectionQuery) => {
-    getItems({
-      id: id ? id : rfxId?.toString() ?? '',
-      collectionQuery: request,
-    });
+    mode != 'open' &&
+      getMyItems({
+        id: id ? id : rfxId?.toString() ?? '',
+        collectionQuery: request,
+      });
+    mode == 'open' &&
+      getRfxItems({ id: id?.toString() ?? '', collectionQuery: request });
   };
 
   return (
-    <ExpandableTable
-      config={config}
-      data={itemsList?.items ?? []}
-      total={itemsList?.total}
-      onRequestChange={onRequestChange}
-    />
+    <Stack>
+      <LoadingOverlay visible={isLoading} />
+      <ExpandableTable
+        config={config}
+        data={(mode == 'open' ? itemsList?.items : myItemsList?.items) ?? []}
+        total={(mode == 'open' ? itemsList?.total : myItemsList?.total) ?? []}
+        onRequestChange={onRequestChange}
+      />
+    </Stack>
   );
 }
+
+const ItemDetail = (itemList: any) => {
+  const item = itemList?.item;
+  const ItemConfig = [
+    {
+      key: 'Description',
+      value: item?.description,
+    },
+    {
+      key: 'Item Code',
+      value: item?.itemCode,
+    },
+    {
+      key: 'Quantity',
+      value: item?.quantity,
+    },
+    {
+      key: 'Unit of measure',
+      value: item?.unitOfMeasure,
+    },
+    {
+      key: 'Unit Price',
+      value: `${item?.estimatedPriceCurrency} ${item?.estimatedPrice}`,
+    },
+    {
+      key: 'Calculated Amount',
+      value: `${(parseInt(item?.estimatedPrice ?? 0) * item?.estimatedPrice).toLocaleString('en-US', { style: 'currency', currency: item?.estimatedPriceCurrency ?? 'MKW' })}`,
+    },
+  ];
+  return <DetailTable data={ItemConfig} />;
+};

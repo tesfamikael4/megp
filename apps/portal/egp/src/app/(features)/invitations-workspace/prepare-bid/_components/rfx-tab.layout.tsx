@@ -94,6 +94,13 @@ export default function RfxDetailTabs({
       value: submissionDeadline,
     },
     {
+      key: 'Allowed Percentage Quantity Change',
+      value: `${selected?.rfxBidProcedure?.deltaPercentage}`,
+    },
+  ];
+
+  const reverseConfig = [
+    {
       key: 'Round',
       value: selected?.rfxBidProcedure?.round,
     },
@@ -110,6 +117,9 @@ export default function RfxDetailTabs({
       value: `${selected?.rfxBidProcedure?.idleTime} mins`,
     },
   ];
+
+  selected?.procuredBy == 'auctioning' &&
+    reverseConfig?.map((item) => config.push(item));
 
   useEffect(() => {
     if (

@@ -1,6 +1,6 @@
 'use client';
 import { Box, SimpleGrid, Text } from '@mantine/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMediaQuery } from '@mantine/hooks';
 import styles from './grid-display.module.scss';
 import TenderCard from '@/app/(features)/_components/tender-card';
@@ -9,11 +9,16 @@ import HeaderNav from '../header-nav-bar';
 import { useGetTendersQuery } from '../../_api/tender.api';
 import PageWrapper from '@/app/(features)/_components/page-wrapper';
 import EmptyDataPlaceholder from '@/app/(features)/_components/empty-data-placeholder';
+import { useLazyGetTendersAndRFXsQuery } from '../../_api/rms.api';
+
 const GridDisplay = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const { data: tenders, isLoading } = useGetTendersQuery({
-    where: [],
-  });
+  const [trigger, { data: tenders, isLoading: isGettingTenders }] =
+    useLazyGetTendersAndRFXsQuery();
+
+  useEffect(() => {
+    trigger({ skip: 0, take: 10 });
+  }, []);
 
   return (
     <Box className="flex">
@@ -31,7 +36,7 @@ const GridDisplay = () => {
           <HeaderNav />
           <PageWrapper
             condition={tenders?.items.length > 0}
-            isLoading={isLoading}
+            isLoading={isGettingTenders}
             placeholder={<EmptyDataPlaceholder />}
           >
             <SimpleGrid
@@ -42,13 +47,7 @@ const GridDisplay = () => {
               {tenders &&
                 tenders.items.map((tender, index) => (
                   <Box key={tender.id}>
-                    {tender && (
-                      <TenderCard
-                        key={index}
-                        color={'orange'}
-                        tender={tender}
-                      />
-                    )}
+                    {tender && <TenderCard key={index} tender={tender} />}
                   </Box>
                 ))}
             </SimpleGrid>

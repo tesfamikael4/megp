@@ -79,7 +79,7 @@ export default function BidSubmission() {
   const [createProcedure, { isLoading: isCreating }] = useCreateMutation();
   const [updateProcedure, { isLoading: isUpdating }] = useUpdateMutation();
 
-  const { status, loading } = useContext(StatusContext);
+  const { data: rfq, status, loading } = useContext(StatusContext);
 
   const onSubmit = async (data: FormSchema) => {
     try {
@@ -117,6 +117,12 @@ export default function BidSubmission() {
   useEffect(() => {
     reset(biddingProcedure?.items?.[0] ?? {});
   }, [biddingProcedure]);
+
+  useEffect(() => {
+    if (rfq?.procuredBy == 'auctioning') {
+      setValue('isReverseAuction', true);
+    }
+  }, [rfq]);
 
   useEffect(() => {
     if (!watch('isReverseAuction')) {
@@ -294,26 +300,28 @@ export default function BidSubmission() {
         </Flex>
         <Flex>
           <Stack className="w-full">
-            <Controller
-              name="isReverseAuction"
-              control={control}
-              render={({ field: { name, value, onChange } }) => (
-                <Switch
-                  name={name}
-                  label="Is Reverse Auction"
-                  checked={value}
-                  onChange={(event) =>
-                    setValue('isReverseAuction', event.currentTarget.checked)
-                  }
-                  disabled={
-                    !(
-                      status == ERfxStatus.DRAFT ||
-                      status == ERfxStatus.ADJUSTMENT
-                    )
-                  }
-                />
-              )}
-            />
+            {rfq?.procuredBy == 'auctioning' && (
+              <Controller
+                name="isReverseAuction"
+                control={control}
+                render={({ field: { name, value, onChange } }) => (
+                  <Switch
+                    name={name}
+                    label="Is Reverse Auction"
+                    checked={value}
+                    onChange={(event) =>
+                      setValue('isReverseAuction', event.currentTarget.checked)
+                    }
+                    disabled={
+                      !(
+                        status == ERfxStatus.DRAFT ||
+                        status == ERfxStatus.ADJUSTMENT
+                      )
+                    }
+                  />
+                )}
+              />
+            )}
             {watch('isReverseAuction') && (
               <Stack>
                 <Flex className="gap-2">

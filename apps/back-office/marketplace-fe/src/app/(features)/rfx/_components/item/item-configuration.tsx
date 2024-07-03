@@ -3,10 +3,10 @@ import { useParams } from 'next/navigation';
 import { DetailTable } from '../detail-table';
 import { LoadingOverlay, Stack } from '@mantine/core';
 
-export default function ItemConfiguration() {
+export default function ItemConfiguration({ id }: { id?: string }) {
   const { itemId } = useParams();
   const { data: item, isLoading: isGettingItemDetail } = useReadQuery(
-    itemId?.toString(),
+    id ? id : itemId?.toString(),
   );
   const generalDescription = [
     {
@@ -31,7 +31,7 @@ export default function ItemConfiguration() {
     },
     {
       key: 'Calculated Amount',
-      value: `${(parseInt(item?.estimatedPrice ?? 0) * item?.estimatedPrice).toLocaleString('en-US', { style: 'currency', currency: item?.estimatedPriceCurrency })}`,
+      value: `${(parseInt(item?.estimatedPrice ?? 0) * item?.quantity).toLocaleString('en-US', { style: 'currency', currency: item?.estimatedPriceCurrency ?? 'MKW' })}`,
     },
     // {
     //   key: 'Market Price',
@@ -44,7 +44,7 @@ export default function ItemConfiguration() {
   ];
 
   return (
-    <Stack className="bg-white p-4">
+    <Stack className="bg-white">
       <LoadingOverlay visible={isGettingItemDetail} />
       <DetailTable data={generalDescription} />
     </Stack>

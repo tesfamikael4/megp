@@ -35,6 +35,7 @@ export function Items({
       },
       {
         accessor: 'procurementCategory',
+        title: 'Procurment Type',
         hidden: viewMode == 'detail',
       },
       {

@@ -2,8 +2,16 @@
 import { useReadQuery } from '@/app/(features)/rfx/_api/rfx/rfx.api';
 import { useParams } from 'next/navigation';
 import { createContext } from 'react';
+import { RFQ } from '@/models/tender/rfq.model';
 
-export const StatusContext = createContext({
+type StatusContextType = {
+  data?: RFQ;
+  status: string;
+  loading: boolean;
+};
+
+export const StatusContext = createContext<StatusContextType>({
+  data: undefined,
   status: '',
   loading: false,
 });
@@ -14,7 +22,7 @@ export const StatusProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <StatusContext.Provider
-      value={{ status: data?.status, loading: isGettingDetail }}
+      value={{ data: data, status: data?.status, loading: isGettingDetail }}
     >
       {children}
     </StatusContext.Provider>
