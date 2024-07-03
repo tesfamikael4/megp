@@ -9,6 +9,7 @@ import {
   useLazyGetSpdDetailQuery,
 } from '@/store/api/tendering/tender-opening.api';
 import { useParams } from 'next/navigation';
+import Document from '@/app/(features)/opening/_components/document';
 
 export default function ChecklistDetail() {
   const [page, setPage] = useState<'teamAssessment' | 'documentPreview'>(
@@ -56,12 +57,7 @@ export default function ChecklistDetail() {
           }
         >
           {page == 'documentPreview' ? (
-            <embed
-              src={'https://arxiv.org/pdf/1708.08021'}
-              type="application/pdf"
-              width="100%"
-              height="400px"
-            />
+            <Document />
           ) : (
             <Box pos="relative">
               <LoadingOverlay visible={isLoading} />

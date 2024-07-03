@@ -1,5 +1,4 @@
 import { Box, LoadingOverlay } from '@mantine/core';
-import { PDFHighlighter } from '@/app/(features)/_components/pdf-highlighter';
 import { useLazyGetFilesQuery } from '@/app/(features)/revision/_api/bid-document.api';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
