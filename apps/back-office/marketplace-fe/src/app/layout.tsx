@@ -23,12 +23,12 @@ const roboto_mono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'M-egp | Planning',
-  description: 'Planning and budgeting application for M-egp',
+  title: 'M-egp | MarketPlace',
+  description: 'Marketplace application for M-egp',
   icons: {
-    icon: '/iam/favicon/android-chrome-512x512.png',
+    icon: '/marketplace-fe/favicon/android-chrome-512x512.png',
   },
-  manifest: '/iam/favicon/site.webmanifest',
+  manifest: '/marketplace-fe/favicon/site.webmanifest',
 };
 
 export default function RootLayout({

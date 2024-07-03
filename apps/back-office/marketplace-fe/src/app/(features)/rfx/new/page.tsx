@@ -6,18 +6,7 @@ import { ExpandableTable } from '@megp/core-fe';
 import { DetailRequisition } from '../_components/detail-requisition-list';
 import { useRouter } from 'next/navigation';
 import { IconArrowLeft } from '@tabler/icons-react';
-import { useLazyListPRsQuery } from '@/store/api/rfx/rfx.api';
-
-const fakeData = [
-  {
-    id: '234',
-    requisitionReferenceNumber: '23456',
-    title: 'Fake PR Title',
-    description: 'Fake PR Title',
-    status: 'pending',
-    calculatedAmount: '2345',
-  },
-];
+import { useLazyListPRsQuery } from '@/store/api/rfx/pr.api';
 
 export default function RFXPage() {
   const router = useRouter();
@@ -59,34 +48,6 @@ export default function RFXPage() {
   const onRequestChange = (request: any) => {
     trigger({
       ...request,
-      // where: [
-      //   [
-      //     {
-      //       column: 'isUsed',
-      //       operator: '=',
-      //       value: 'false',
-      //     },
-      //   ],
-      //   // [
-      //   //   {
-      //   //     column: 'status',
-      //   //     operator: '=',
-      //   //     value: 'APPROVED',
-      //   //   },
-      //   // ],
-      //   [
-      //     {
-      //       column: 'procurementApplication',
-      //       operator: '=',
-      //       value: 'purchasing',
-      //     },
-      //     {
-      //       column: 'procurementApplication',
-      //       operator: '=',
-      //       value: 'auctioning',
-      //     },
-      //   ],
-      // ],
       orderBy: [
         {
           column: 'createdAt',
@@ -117,7 +78,7 @@ export default function RFXPage() {
         </div>
         <ExpandableTable
           config={config}
-          data={data ? data.items : fakeData ?? []}
+          data={data?.items ?? []}
           total={data?.total ?? 0}
           onRequestChange={onRequestChange}
         />

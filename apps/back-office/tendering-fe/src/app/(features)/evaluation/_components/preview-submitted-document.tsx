@@ -18,6 +18,7 @@ import { ExpandableTable, Section, logger } from '@megp/core-fe';
 import { IconFile, IconUsers } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Document from '../../opening/_components/document';
 
 export const PreviewDocument = ({
   milestone,
@@ -152,12 +153,7 @@ export const PreviewDocument = ({
       }
     >
       {page == 'documentPreview' ? (
-        <embed
-          src={'https://arxiv.org/pdf/1708.08021'}
-          type="application/pdf"
-          width="100%"
-          height="400px"
-        />
+        <Document />
       ) : (
         <Box pos="relative">
           <LoadingOverlay

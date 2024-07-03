@@ -8,6 +8,7 @@ import { rfxOtherApi } from './api/rfx/rfx.api';
 import { itemOtherApi } from './api/rfx/item.api';
 import { evaluationApprovalApi } from './api/rfx/eval-approval.api';
 import { poApi } from './api/po-preparation/po-preparation.api';
+import { prApi } from './api/rfx/pr.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -22,6 +23,7 @@ export const store = configureStore({
     [itemOtherApi.reducerPath]: itemOtherApi.reducer,
     [evaluationApprovalApi.reducerPath]: evaluationApprovalApi.reducer,
     [poApi.reducerPath]: poApi.reducer,
+    [prApi.reducerPath]: prApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -35,6 +37,7 @@ export const store = configureStore({
       itemOtherApi.middleware,
       evaluationApprovalApi.middleware,
       poApi.middleware,
+      prApi.middleware,
     ]),
 });
 
