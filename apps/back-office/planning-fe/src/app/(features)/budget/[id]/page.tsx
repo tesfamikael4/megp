@@ -1,5 +1,5 @@
 'use client';
-import { Stack, Button, Modal, Box, Group } from '@mantine/core';
+import { Stack, Button, Modal, Group } from '@mantine/core';
 import {
   ExpandableTable,
   ExpandableTableConfig,
@@ -10,88 +10,19 @@ import {
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
-import { DetailTable } from '../../_components/detail-table';
 import { useLazyReadQuery } from '../../_api/app.api';
 import { useLazyListByIdQuery } from '../_api/budget.api';
 import {
   useBulkCreateMutation,
   useLazyGetBudgetSummationQuery,
 } from '@/store/api/budget/budget.api';
-import DataImport from '../../_components/data-import';
 
-const ModalDetail = ({ data }: { data: any }) => {
-  const detailData = [
-    {
-      key: 'Budget Code',
-      value: (data as any)?.budgetCode,
-    },
-    {
-      key: 'Description',
-      value: (data as any)?.description,
-    },
-    {
-      key: 'Allocated Budget',
-      value: parseInt((data as any)?.allocatedBudget).toLocaleString('en-US', {
-        style: 'currency',
-        currency: data.currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }),
-    },
-    {
-      key: 'Revised Budget',
-      value: parseInt((data as any)?.revisedBudget).toLocaleString('en-US', {
-        style: 'currency',
-        currency: data.currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }),
-    },
-    {
-      key: 'Obligated Budget',
-      value: parseInt((data as any)?.obligatedBudget).toLocaleString('en-US', {
-        style: 'currency',
-        currency: data.currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }),
-    },
-    {
-      key: 'Available Budget',
-      value: parseInt((data as any)?.availableBudget).toLocaleString('en-US', {
-        style: 'currency',
-        currency: data.currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }),
-    },
-    {
-      key: 'Funding Source',
-      value: (data as any)?.fundingSource,
-    },
-    {
-      key: 'Currency',
-      value: (data as any)?.currency.toLocaleString('en-US', {
-        style: 'currency',
-        currency: data.currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }),
-    },
-    {
-      key: 'Type',
-      value: (data as any)?.type,
-    },
-  ];
-  return (
-    <Box className="bg-white p-5">
-      <DetailTable data={detailData} />
-    </Box>
-  );
-};
+import DataImport from '../../_components/data-import';
+import { ModalDetail } from '../_components/modal-detail';
 
 export default function DetailPage() {
   const { id } = useParams();
+
   const [data, setData] = useState<any>([]);
   const [getBudgets, { data: list }] = useLazyListByIdQuery();
   const [create, { isLoading }] = useBulkCreateMutation();
@@ -224,19 +155,21 @@ export default function DetailPage() {
       notify('Error', 'Something went wrong');
     }
   };
+
   const TotalBudget = () => {
     let totalBudget = 'Total Budget MKW 0.00';
 
     if (budgetSummation && Object.keys(budgetSummation).length !== 0) {
       let msg = 'Total Budget ';
       Object.entries(budgetSummation).map(([key, value]) => {
-        msg += `${parseFloat(value as string).toLocaleString('en-US', { style: 'currency', currency: key, minimumFractionDigits: 2, maximumFractionDigits: 2, currencyDisplay: 'code' })} `;
+        msg += `${parseFloat(value as string).toLocaleString('en-US', { style: 'currency', currency: key, minimumFractionDigits: 2, maximumFractionDigits: 2, currencyDisplay: 'code' })}`;
       });
       // logger.log({ msg });
       totalBudget = msg;
     }
     return <p>{totalBudget}</p>;
   };
+
   return (
     <Stack>
       <Modal opened={opened} onClose={close} title="Import File" centered>
