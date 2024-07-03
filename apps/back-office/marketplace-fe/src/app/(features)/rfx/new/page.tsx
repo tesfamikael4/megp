@@ -8,17 +8,6 @@ import { useRouter } from 'next/navigation';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useLazyListPRsQuery } from '@/store/api/rfx/pr.api';
 
-const fakeData = [
-  {
-    id: '234',
-    requisitionReferenceNumber: '23456',
-    title: 'Fake PR Title',
-    description: 'Fake PR Title',
-    status: 'pending',
-    calculatedAmount: '2345',
-  },
-];
-
 export default function RFXPage() {
   const router = useRouter();
   const [trigger, { data, isLoading }] = useLazyListPRsQuery();
@@ -89,7 +78,7 @@ export default function RFXPage() {
         </div>
         <ExpandableTable
           config={config}
-          data={data ? data.items : fakeData ?? []}
+          data={data?.items ?? []}
           total={data?.total ?? 0}
           onRequestChange={onRequestChange}
         />
