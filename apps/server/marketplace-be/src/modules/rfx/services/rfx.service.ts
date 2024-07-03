@@ -25,6 +25,7 @@ import {
 import { RfxProcurementMechanism } from 'src/entities/rfx-procurement-mechanism.entity';
 import {
   DataSource,
+  DeepPartial,
   EntityManager,
   In,
   Repository,
@@ -41,6 +42,7 @@ import {
   ERfxItemStatus,
   ERfxOpenProductsStatus,
   EInvitationStatus,
+  ERfxProcuredBy,
 } from 'src/utils/enums';
 import { WorkflowHandlerService } from './workflow-handler.service';
 import { ClientProxy } from '@nestjs/microservices';
@@ -100,20 +102,23 @@ export class RfxService extends EntityCrudService<RFX> {
 
       if (!prResponse) throw new BadRequestException('pr not found');
 
-      // if (prResponse.procurementApplication != 'marketplace')
-      //   throw new BadRequestException('wrong pr procurement application');
+      if (
+        prResponse.procurementApplication != ERfxProcuredBy.AUCTIONING &&
+        prResponse.procurementApplication != ERfxProcuredBy.PURCHASING
+      )
+        throw new BadRequestException('wrong pr procurement application');
 
-      const rfxPayload = {
+      const rfxPayload: DeepPartial<RFX> = {
         name: prResponse?.name,
         description: prResponse?.description,
         procurementCategory: prResponse?.procurementMechanisms?.procurementType,
         procurementReferenceNumber: prResponse?.procurementReference,
+        calculatedAmount: Number(prResponse?.calculatedAmount),
         budgetAmount: Number(prResponse?.totalEstimatedAmount),
         budgetAmountCurrency: prResponse?.currency,
         budgetCode: prResponse?.budget?.budgetCode,
+        procuredBy: prResponse?.procurementApplication,
         prId: prId,
-        marketEstimate: Number(prResponse?.calculatedAmount),
-        marketEstimateCurrency: prResponse?.currency,
         status: ERfxStatus.DRAFT,
         organizationId:
           req?.user?.organization.id || prResponse?.organizationId,

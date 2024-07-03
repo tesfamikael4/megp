@@ -26,7 +26,7 @@ import {
   TeamMember,
   EvalApproval
 } from '.';
-import { ERfxStatus } from 'src/utils/enums';
+import { ERfxProcuredBy, ERfxStatus } from 'src/utils/enums';
 
 @Entity({ name: 'rfxes' })
 export class RFX extends Audit {
@@ -45,8 +45,14 @@ export class RFX extends Audit {
   @Column({ nullable: true })
   description: string;
 
+  @Column({ type: 'enum', enum: ERfxProcuredBy })
+  procuredBy: ERfxProcuredBy;
+
   @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
   budgetAmount: number;
+
+  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
+  calculatedAmount: number;
 
   @Column()
   budgetAmountCurrency: string;

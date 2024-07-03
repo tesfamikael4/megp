@@ -37,7 +37,7 @@ export class RfxBidProcedure extends Audit {
   @Column({ nullable: true, type: 'timestamptz' })
   reviewDeadline: Date;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
   deltaPercentage: number;
 
   @Column({ default: false })
