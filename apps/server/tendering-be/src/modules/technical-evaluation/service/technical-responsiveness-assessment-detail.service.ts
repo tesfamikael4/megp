@@ -372,6 +372,9 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
         tenderMilestones: {
           isCurrent: true,
         },
+        lots: {
+          id: lotId,
+        },
       },
       relations: {
         tenderMilestones: true,
