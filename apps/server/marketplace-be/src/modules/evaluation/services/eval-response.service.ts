@@ -334,7 +334,10 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
 
     if (isTeamEvaluation) {
       const [items, procedure] = await this.filterItems(rfx, 0);
-      await this.calculateRoundWinner(items, procedure.deltaPercentage);
+      await this.calculateRoundWinner(
+        items,
+        procedure.minimumBidDecrementPercentage,
+      );
       await this.sendToEvaluators(rfx);
       await this.evalApprovalService.createApprovalsOnSubmission(
         rfx.id,
@@ -816,7 +819,7 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         .getMany(),
       procedureRepo.findOne({
         where: { rfxId: rfx.id },
-        select: { id: true, deltaPercentage: true },
+        select: { id: true, minimumBidDecrementPercentage: true },
       }),
     ]);
 

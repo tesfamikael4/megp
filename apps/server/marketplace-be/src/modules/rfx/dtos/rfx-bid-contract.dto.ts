@@ -17,13 +17,11 @@ export class CreateRfxBidContractConditionDTO {
   rfxId: string;
 
   @ApiProperty()
-  @IsInt()
   @Min(0)
   @Max(100)
   liquidityDamage: number;
 
   @ApiProperty()
-  @IsInt()
   @Min(0)
   @Max(100)
   liquidityDamageLimit: number;

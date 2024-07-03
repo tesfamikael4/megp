@@ -20,10 +20,10 @@ export class SolRoundAward extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({ type: 'numeric', nullable: true })
   winnerPrice: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({ type: 'numeric', nullable: true })
   nextRoundStartingPrice: number;
 
   @Column({ type: 'uuid' })

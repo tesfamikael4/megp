@@ -21,7 +21,7 @@ export class AwardItem extends Audit {
   @Column()
   vendorName: string;
 
-  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
+  @Column({ type: 'numeric' })
   calculatedPrice: number;
 
   @Column({

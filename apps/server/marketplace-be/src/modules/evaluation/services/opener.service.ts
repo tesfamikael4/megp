@@ -117,7 +117,7 @@ export class OpenerService {
           where: { rfxId: payload.rfxId },
           select: {
             id: true,
-            deltaPercentage: true,
+            minimumBidDecrementPercentage: true,
             submissionDeadline: true,
             round: true,
           },
@@ -252,7 +252,9 @@ export class OpenerService {
         const minPriceOffer = sortedOffers[0];
 
         const decrement =
-          (minPriceOffer.price * rfxBidProcedure.deltaPercentage) / 100;
+          (minPriceOffer.price *
+            rfxBidProcedure.minimumBidDecrementPercentage) /
+          100;
         const nextRoundStartingPrice = minPriceOffer.price - decrement;
 
         solRoundAwards.push({

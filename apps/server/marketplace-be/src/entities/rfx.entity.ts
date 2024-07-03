@@ -24,7 +24,7 @@ import {
   SolResponse,
   SolRound,
   TeamMember,
-  EvalApproval
+  EvalApproval,
 } from '.';
 import { ERfxProcuredBy, ERfxStatus } from 'src/utils/enums';
 
@@ -48,10 +48,10 @@ export class RFX extends Audit {
   @Column({ type: 'enum', enum: ERfxProcuredBy })
   procuredBy: ERfxProcuredBy;
 
-  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
+  @Column({ type: 'numeric' })
   budgetAmount: number;
 
-  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
+  @Column({ type: 'numeric' })
   calculatedAmount: number;
 
   @Column()
@@ -160,7 +160,7 @@ export class RFX extends Audit {
 
   @OneToOne(() => AwardNote, (award) => award.rfx)
   awardNote: AwardNote;
-  
+
   @OneToMany(() => EvalApproval, (approval) => approval.rfx)
   evalApprovals: EvalApproval[];
 }

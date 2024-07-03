@@ -37,7 +37,7 @@ export class RfxBidProcedure extends Audit {
   @Column({ nullable: true, type: 'timestamptz' })
   reviewDeadline: Date;
 
-  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
+  @Column({ type: 'numeric' })
   deltaPercentage: number;
 
   @Column({ default: false })
@@ -46,8 +46,8 @@ export class RfxBidProcedure extends Audit {
   @Column({ default: 0 })
   round: number;
 
-  @Column({ nullable: true })
-  minimumBidDecrementPercentage: number;
+  @Column({ type: 'numeric', nullable: true })
+  minimumBidDecrementPercentage: number; // For Auction
 
   @Column({ nullable: true })
   roundDuration: number; // in minutes

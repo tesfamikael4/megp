@@ -416,7 +416,7 @@ export class WorkflowHandlerService {
     // const [items, procedure] = await this.filterItems(rfxId, 0, entityManager);
     // await this.calculateRoundWinner(
     //   items,
-    //   procedure.deltaPercentage,
+    //   procedure.minimumBidDecrementPercentage,
     //   entityManager,
     // );
 
@@ -462,7 +462,7 @@ export class WorkflowHandlerService {
         .getMany(),
       procedureRepo.findOne({
         where: { rfxId },
-        select: { id: true, deltaPercentage: true },
+        select: { id: true, minimumBidDecrementPercentage: true },
       }),
     ]);
 

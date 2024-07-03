@@ -16,10 +16,10 @@ export class RfxBidContractCondition extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ default: 0 })
+  @Column({ type: 'numeric', default: 0 })
   liquidityDamage: number;
 
-  @Column()
+  @Column({ type: 'numeric' })
   liquidityDamageLimit: number;
 
   @Column({ default: false })

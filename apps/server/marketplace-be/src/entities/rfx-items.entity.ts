@@ -20,7 +20,7 @@ import {
   SolItemResponse,
   SolOffer,
   SolRoundAward,
-  EvalApprovalDetail
+  EvalApprovalDetail,
 } from '.';
 import { ERfxItemStatus } from 'src/utils/enums';
 
@@ -56,17 +56,11 @@ export class RFXItem extends Audit {
   @Column({ nullable: true })
   warrantyPeriod: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: 'numeric', default: 0 })
   estimatedPrice: number;
 
   @Column()
   estimatedPriceCurrency: string;
-
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  marketPrice: number;
-
-  @Column({ nullable: true })
-  marketPriceCurrency: string;
 
   @Column({ type: 'jsonb', nullable: true })
   metadata: any;
