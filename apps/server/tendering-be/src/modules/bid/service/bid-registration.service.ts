@@ -253,16 +253,10 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
       const rate = bidRegistrationDetail.bidResponseItems.find(
         (x) => x.itemId == element && x.key == 'rate',
       );
-      const billOfMaterial = bidRegistrationDetail.bidResponseItems.find(
-        (x) => x.itemId == element && x.key == 'billOfMaterial',
-      );
       const specification = bidRegistrationDetail.bidResponseItems.find(
         (x) => x.itemId == element && x.key == 'specification',
       );
-      const procurementCategory = bidRegistrationDetail.bidResponseItems.find(
-        (x) => x.itemId == element && x.key == 'procurementCategory',
-      );
-      if (!rate || !billOfMaterial || !specification || !procurementCategory) {
+      if (!rate || !specification) {
         throw new BadRequestException('required_values_not_filled');
       }
     });

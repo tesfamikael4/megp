@@ -364,14 +364,17 @@ export class BidResponseItemService {
       };
     }
 
-    const [result, total] = await manager.getRepository(Item).findAndCount({
-      where: {
-        id: In(itemId),
-      },
-      relations: {
-        bidResponseItems: true,
-      },
-    });
+    const [result, total] = await manager
+      .getRepository(Item)
+      .createQueryBuilder('items')
+      .leftJoinAndSelect(
+        'items.bidResponseItems',
+        'bidResponseItems',
+        'bidResponseItems.bidRegistrationDetailId =:bidRegistrationDetailId',
+        { bidRegistrationDetailId: bidRegistrationDetail.id },
+      )
+      .where('items.id IN (:...ids)', { ids: itemId })
+      .getManyAndCount();
 
     const newResult = result.map((item) => {
       let i: any = { ...item };
