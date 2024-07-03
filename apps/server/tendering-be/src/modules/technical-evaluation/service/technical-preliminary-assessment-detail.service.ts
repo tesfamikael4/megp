@@ -495,6 +495,9 @@ export class TechnicalPreliminaryAssessmentDetailService extends ExtraCrudServic
         tenderMilestones: {
           isCurrent: true,
         },
+        lots: {
+          id: lotId,
+        },
       },
       relations: {
         tenderMilestones: true,

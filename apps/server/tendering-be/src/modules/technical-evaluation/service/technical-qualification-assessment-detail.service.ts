@@ -255,6 +255,9 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
         tenderMilestones: {
           isCurrent: true,
         },
+        lots: {
+          id: lotId,
+        },
       },
       relations: {
         tenderMilestones: true,
