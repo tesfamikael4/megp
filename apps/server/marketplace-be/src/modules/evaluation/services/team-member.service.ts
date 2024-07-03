@@ -41,6 +41,9 @@ export class TeamMemberService extends ExtraCrudService<TeamMember> {
 
     if (!rfx) throw new Error('RFQ Not Found');
 
+    const hasTeamLead = itemData.members.some((item) => item.isTeamLead);
+    if (!hasTeamLead) throw new Error('Team Lead Not Assigned');
+
     const members = itemData.members.map((item: any) => {
       item.rfxId = itemData.rfxId;
       item.organizationId = req.user.organization.id;

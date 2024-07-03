@@ -65,6 +65,6 @@ export enum ERfxRevisionApprovalStatusEnum {
 }
 
 export enum ERfxProcuredBy {
-  AUCTIONING = 'AUCTIONING',
-  PURCHASING = 'PURCHASING',
+  PURCHASING = 'purchasing',
+  AUCTIONING = 'auctioning',
 }
