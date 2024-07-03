@@ -348,23 +348,7 @@ export class BidResponseItemService {
       ...(bidRegistrationDetail?.technicalItems ?? []),
     ];
 
-    if (itemId.length < 1) {
-      const [result, total] = await manager.getRepository(Item).findAndCount({
-        where: {
-          lotId: inputDto.lotId,
-        },
-        relations: {
-          bidResponseItems: true,
-        },
-      });
-
-      return {
-        total,
-        items: result,
-      };
-    }
-
-    const [result, total] = await manager
+    const query = manager
       .getRepository(Item)
       .createQueryBuilder('items')
       .leftJoinAndSelect(
@@ -372,7 +356,20 @@ export class BidResponseItemService {
         'bidResponseItems',
         'bidResponseItems.bidRegistrationDetailId =:bidRegistrationDetailId',
         { bidRegistrationDetailId: bidRegistrationDetail.id },
-      )
+      );
+
+    if (itemId.length < 1) {
+      const [result, total] = await query
+        .where('items.lotId =:lotId', { lotId: inputDto.lotId })
+        .getManyAndCount();
+
+      return {
+        total,
+        items: result,
+      };
+    }
+
+    const [result, total] = await query
       .where('items.id IN (:...ids)', { ids: itemId })
       .getManyAndCount();
 
@@ -428,15 +425,20 @@ export class BidResponseItemService {
       ...(bidRegistrationDetail?.technicalItems ?? []),
     ];
 
+    const query = manager
+      .getRepository(Item)
+      .createQueryBuilder('items')
+      .leftJoinAndSelect(
+        'items.bidResponseItems',
+        'bidResponseItems',
+        'bidResponseItems.bidRegistrationDetailId =:bidRegistrationDetailId',
+        { bidRegistrationDetailId: bidRegistrationDetail.id },
+      );
+
     if (itemId.length < 1) {
-      const [result, total] = await manager.getRepository(Item).findAndCount({
-        where: {
-          lotId: inputDto.lotId,
-        },
-        relations: {
-          bidResponseItems: true,
-        },
-      });
+      const [result, total] = await query
+        .where('items.lotId =:lotId', { lotId: inputDto.lotId })
+        .getManyAndCount();
 
       return {
         total,
@@ -444,11 +446,9 @@ export class BidResponseItemService {
       };
     }
 
-    const [result, total] = await manager.getRepository(Item).findAndCount({
-      where: {
-        id: In(itemId),
-      },
-    });
+    const [result, total] = await query
+      .where('items.id IN (:...ids)', { ids: itemId })
+      .getManyAndCount();
 
     return {
       total,
