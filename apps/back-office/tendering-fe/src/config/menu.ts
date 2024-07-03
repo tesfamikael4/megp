@@ -23,7 +23,16 @@ export const Menu: MenuItem[] = [
   {
     label: 'Bid Opening',
     icon: IconFolderOpen,
-    link: '/opening',
+    links: [
+      {
+        label: 'Technical Opening',
+        link: '/opening',
+      },
+      {
+        label: 'Financial Opening',
+        link: '/financial-opening',
+      },
+    ],
   },
   {
     label: 'Bid Evaluation',

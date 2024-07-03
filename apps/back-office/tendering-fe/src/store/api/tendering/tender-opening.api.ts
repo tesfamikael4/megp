@@ -135,6 +135,18 @@ export const tenderOpeningApi = createApi({
     getSpdDetail: builder.query<any, any>({
       query: (spdId) => `/spd-opening-checklists/${spdId}`,
     }),
+    getFinancialLots: builder.query<any, any>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `/opening/get-financial-opening${q}`,
+        };
+      },
+    }),
   }),
 });
 
@@ -152,4 +164,5 @@ export const {
   useLazyGetOpeningAssessmentsQuery,
   useLazyGetMembersAssesmentResultQuery,
   useLazyGetSpdDetailQuery,
+  useLazyGetFinancialLotsQuery,
 } = tenderOpeningApi;
