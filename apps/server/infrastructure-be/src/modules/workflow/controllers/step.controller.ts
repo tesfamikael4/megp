@@ -39,10 +39,10 @@ export class StepController extends ExtraCrudController<Step>(options) {
   }
 
   @AllowAnonymous()
-  @UseGuards(ApiKeyGuard)
+  // @UseGuards(ApiKeyGuard)
   @Get('get-by-activity-name/:activityName/:organizationId')
   async getStepByActivityName(
-    @Param('activityId') activityName: string,
+    @Param('activityName') activityName: string,
     @Param('organizationId') organizationId: string,
   ): Promise<any> {
     return await this.stepService.getStepByActivityName(
