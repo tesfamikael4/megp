@@ -62,7 +62,7 @@ export class AccountsService {
     private readonly helper: AuthHelper,
     private readonly emailService: EmailService,
     @Inject(REQUEST) private readonly request: Request,
-  ) { }
+  ) {}
 
   public async createAccount(
     createAccountDto: CreateAccountDto,
@@ -248,6 +248,16 @@ export class AccountsService {
       throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
     }
 
+    const account = await this.repository.findOne({
+      where: {
+        id: changePassword.accountId,
+      },
+    });
+
+    if (!account) {
+      throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
+    }
+
     const entityManager = this.request[ENTITY_MANAGER_KEY];
 
     const isSameOrganization = await entityManager.getRepository(User).findOne({
@@ -260,24 +270,13 @@ export class AccountsService {
       throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
     }
 
-    const account = await this.repository.findOne({
-      where: {
-        id: changePassword.accountId,
+    await entityManager.getRepository(AccountCredential).upsert(
+      {
+        accountId: account.id,
+        password: this.helper.encodePassword(changePassword.password),
       },
-      relations: {
-        accountCredential: true,
-      },
-    });
-
-    if (!account) {
-      throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
-    }
-
-    account.accountCredential.password = this.helper.encodePassword(
-      changePassword.password,
+      ['accountId'],
     );
-
-    await this.repository.update(account.id, account);
 
     return account;
   }
