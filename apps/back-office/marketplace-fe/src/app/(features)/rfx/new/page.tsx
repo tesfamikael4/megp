@@ -6,7 +6,7 @@ import { ExpandableTable } from '@megp/core-fe';
 import { DetailRequisition } from '../_components/detail-requisition-list';
 import { useRouter } from 'next/navigation';
 import { IconArrowLeft } from '@tabler/icons-react';
-import { useLazyListPRsQuery } from '@/store/api/rfx/rfx.api';
+import { useLazyListPRsQuery } from '@/store/api/rfx/pr.api';
 
 const fakeData = [
   {
@@ -59,34 +59,6 @@ export default function RFXPage() {
   const onRequestChange = (request: any) => {
     trigger({
       ...request,
-      // where: [
-      //   [
-      //     {
-      //       column: 'isUsed',
-      //       operator: '=',
-      //       value: 'false',
-      //     },
-      //   ],
-      //   // [
-      //   //   {
-      //   //     column: 'status',
-      //   //     operator: '=',
-      //   //     value: 'APPROVED',
-      //   //   },
-      //   // ],
-      //   [
-      //     {
-      //       column: 'procurementApplication',
-      //       operator: '=',
-      //       value: 'purchasing',
-      //     },
-      //     {
-      //       column: 'procurementApplication',
-      //       operator: '=',
-      //       value: 'auctioning',
-      //     },
-      //   ],
-      // ],
       orderBy: [
         {
           column: 'createdAt',
