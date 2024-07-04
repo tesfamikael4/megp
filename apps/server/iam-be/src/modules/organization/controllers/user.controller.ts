@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Param, Get, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Param,
+  Get,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
 import { User } from '@entities';
@@ -7,7 +15,7 @@ import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { decodeCollectionQuery } from 'src/shared/collection-query/query-mapper';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { AllowAnonymous } from 'src/shared/authorization';
+import { AllowAnonymous, ApiKeyGuard } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'organizationId',
@@ -111,7 +119,7 @@ export class UserController extends ExtraCrudController<User>(options) {
 
   @Get('get-user-for-infrastructure/:id')
   @AllowAnonymous()
-  @
+  @UseGuards(ApiKeyGuard)
   async getUserForInfrastructure(@Param('id') id: string) {
     return await this.userService.getUserForInfrastructure(id);
   }
