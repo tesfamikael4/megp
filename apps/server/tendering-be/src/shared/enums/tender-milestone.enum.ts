@@ -58,7 +58,7 @@ export enum TenderMilestoneEnum {
   Unknown = 9901,
 }
 
-const MilestoneLabels: { [key in TenderMilestoneEnum]: string } = {
+export const MilestoneLabels: { [key in TenderMilestoneEnum]: string } = {
   [TenderMilestoneEnum.Initiation]: 'Initiation',
   [TenderMilestoneEnum.Configuration]: 'Configuration',
   [TenderMilestoneEnum.Preparation]: 'Preparation',

@@ -19,7 +19,7 @@ import {
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { BidResponseOpeningService } from 'src/modules/bid/service';
-import { DocumentTypeEnum } from 'src/shared/enums';
+import { DocumentTypeEnum, EnvelopTypeEnum } from 'src/shared/enums';
 
 @Injectable()
 export class OpeningService extends ExtraCrudService<Opening> {
@@ -63,16 +63,49 @@ export class OpeningService extends ExtraCrudService<Opening> {
           tenderId: itemData.tenderId,
         },
       },
+      relations: {
+        bidRegistration: true,
+      },
     });
 
-    keySharedBidders.map(async (x) => {
+    const tender = await manager.getRepository(Tender).findOne({
+      where: {
+        id: itemData.tenderId,
+        tenderMilestones: {
+          isCurrent: true,
+        },
+      },
+      relations: {
+        bdsSubmission: true,
+        tenderMilestones: true,
+      },
+      select: {
+        id: true,
+        bdsSubmission: {
+          id: true,
+          envelopType: true,
+        },
+        tenderMilestones: {
+          milestoneNum: true,
+        },
+      },
+    });
+    const documentType =
+      tender.bdsSubmission.envelopType == EnvelopTypeEnum.TWO_ENVELOP
+        ? tender.tenderMilestones[0].milestoneNum <=
+          TenderMilestoneEnum.TechnicalOpening
+          ? DocumentTypeEnum.TECHNICAL_RESPONSE
+          : DocumentTypeEnum.FINANCIAL_RESPONSE
+        : DocumentTypeEnum.RESPONSE;
+
+    for (const x of keySharedBidders) {
       await this.bidResponseOpeningService.openBidResponse({
         tenderId: itemData.tenderId,
         bidderId: x.bidRegistration.bidderId,
-        documentType: DocumentTypeEnum.RESPONSE,
-        password: 'P@ssw0rd',
+        documentType,
+        password: x.privateKey,
       });
-    });
+    }
 
     await this.createMilestoneRecord(manager, itemData);
 
@@ -95,18 +128,19 @@ export class OpeningService extends ExtraCrudService<Opening> {
     });
 
     const milestone = [];
-    lots.forEach((lot) => {
-      milestone.push(
-        manager.getRepository(TenderMilestone).create({
-          tenderId: itemData.tenderId,
-          lotId: lot.id,
-          milestoneNum: TenderMilestoneEnum.TechnicalOpening,
-          milestoneTxt: 'TechnicalOpening',
-          isCurrent: true,
-        }),
-      );
-    });
-    await manager.getRepository(TenderMilestone).save(milestone);
+    lots.forEach((lot) =>
+      milestone.push({
+        tenderId: itemData.tenderId,
+        lotId: lot.id,
+        milestoneNum: TenderMilestoneEnum.TechnicalOpening,
+        milestoneTxt: 'TechnicalOpening',
+        isCurrent: true,
+      }),
+    );
+    const createdMilestone = manager
+      .getRepository(TenderMilestone)
+      .create(milestone);
+    await manager.getRepository(TenderMilestone).insert(createdMilestone);
   }
 
   async complete(itemData: CompleteOpeningDto) {
