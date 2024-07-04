@@ -166,9 +166,8 @@ export default function InvitationDetail({
     },
   ];
 
-  (selected?.isOpen && selected?.activeRound?.round == 0
-    ? product?.id
-    : product?.rfxItem?.id) &&
+  selected?.isOpen &&
+    selected?.activeRound?.round == 0 &&
     specificationDetails?.map((item) => config.push(item));
 
   !selected?.isOpen && deliveryConfig?.map((item) => config.push(item));
