@@ -19,6 +19,7 @@ import {
   Flex,
   Group,
   LoadingOverlay,
+  NumberFormatter,
   Select,
 } from '@mantine/core';
 import {
@@ -172,7 +173,8 @@ export default function BiderDetail() {
                         : rule.name}
                     </p>
                     <p className="text-end">
-                      {rule.type === 'DEDUCTION' && '-'} {rule.result}
+                      {rule.type === 'DEDUCTION' && '-'}{' '}
+                      <NumberFormatter value={rule.result} thousandSeparator />
                     </p>
                   </Flex>
                 ))}
