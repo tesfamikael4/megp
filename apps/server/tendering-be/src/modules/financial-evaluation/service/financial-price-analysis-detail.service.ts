@@ -302,6 +302,7 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
         organizationName: req.user.organization.name,
       });
     } else {
+      //!TODO: item based
       throw new BadRequestException('Item Based not implemented yet');
     }
   }

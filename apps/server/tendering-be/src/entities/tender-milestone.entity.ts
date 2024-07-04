@@ -6,6 +6,7 @@ import {
   JoinColumn,
   Unique,
   Check,
+  BeforeInsert,
 } from 'typeorm';
 import { Audit } from 'src/shared/entities';
 import { Lot } from './lot.entity';
