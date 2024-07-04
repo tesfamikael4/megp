@@ -1,26 +1,24 @@
 import { Controller } from '@nestjs/common';
-import { NoticeRegistration } from 'src/entities';
+import { SavedNotice } from 'src/entities';
 import {
   AllowAnonymous,
   ExtraCrudController,
   ExtraCrudOptions,
 } from 'megp-shared-be';
 import { ApiTags } from '@nestjs/swagger';
-import { NoticeRegistrationService } from '../services/notice-registration.service';
+import { SavedNoticeService } from '../services/saved-notice.service';
 import { EventPattern } from '@nestjs/microservices';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'noticeId',
 };
 
-@Controller('notice-registrations')
-@ApiTags('Notice Registrations')
-export class NoticeRegistrationController extends ExtraCrudController<NoticeRegistration>(
+@Controller('saved-notices')
+@ApiTags('Saved Notices')
+export class SavedNoticeController extends ExtraCrudController<SavedNotice>(
   options,
 ) {
-  constructor(
-    private readonly noticeRegistrationService: NoticeRegistrationService,
-  ) {
+  constructor(private readonly noticeRegistrationService: SavedNoticeService) {
     super(noticeRegistrationService);
   }
 
