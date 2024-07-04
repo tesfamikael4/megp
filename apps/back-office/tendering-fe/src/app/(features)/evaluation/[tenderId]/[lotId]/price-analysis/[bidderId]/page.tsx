@@ -5,7 +5,7 @@ import {
   useLazyGetBidderItemsQuery,
   useSaveMarketPriceAnalysisMutation,
 } from '@/store/api/tendering/price-analysis.api';
-import { Box, Button, Group, Select, TextInput, Textarea } from '@mantine/core';
+import { Box, Button, Group, Select, TextInput } from '@mantine/core';
 import {
   ExpandableTable,
   ExpandableTableConfig,
