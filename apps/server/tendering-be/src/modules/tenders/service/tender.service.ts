@@ -122,7 +122,7 @@ export class TenderService extends EntityCrudService<Tender> {
         lots: [
           {
             number: 1,
-            name: `Lot 1`,
+            name: 'Lot 1',
             status: LotStatusEnum.ACTIVE,
             items: prResponse.procurementRequisitionItems?.map((item: any) => {
               return {
