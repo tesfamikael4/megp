@@ -131,6 +131,7 @@ export const LotOverview = ({
           tenderId: tenderId as string,
         }).unwrap();
       }
+      router.push(basePath);
       notify('Success', 'Evaluation successfully completed');
     } catch (err) {
       if (err.status == 430) {

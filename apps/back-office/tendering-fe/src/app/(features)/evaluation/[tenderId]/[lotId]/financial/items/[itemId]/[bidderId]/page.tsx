@@ -165,19 +165,28 @@ export default function BiderDetail() {
 
               <p className="text-center my-5 font-semibold text-2xl">Summary</p>
               <Alert className="mt-2 w-1/2 p-5 mx-auto mb-10" color="gray">
-                {bidderSummary?.map((rule) => (
-                  <Flex justify="space-between" className="mt-1" key={rule.id}>
-                    <p className="text-end">
-                      {rule.name === 'unit_price'
-                        ? 'Offered Unit Price'
-                        : rule.name}
-                    </p>
-                    <p className="text-end">
-                      {rule.type === 'DEDUCTION' && '-'}{' '}
-                      <NumberFormatter value={rule.result} thousandSeparator />
-                    </p>
-                  </Flex>
-                ))}
+                {bidderSummary
+                  ?.filter((b) => b.name !== 'Total')
+                  .map((rule) => (
+                    <Flex
+                      justify="space-between"
+                      className="mt-1"
+                      key={rule.id}
+                    >
+                      <p className="text-end">
+                        {rule.name === 'unit_price'
+                          ? 'Offered Unit Price'
+                          : rule.name}
+                      </p>
+                      <p className="text-end">
+                        {rule.type === 'DEDUCTION' && '-'}{' '}
+                        <NumberFormatter
+                          value={rule.result}
+                          thousandSeparator
+                        />
+                      </p>
+                    </Flex>
+                  ))}
                 <Divider className="my-2" />
                 <Flex justify="space-between">
                   <p className="text-end font-semibold">
