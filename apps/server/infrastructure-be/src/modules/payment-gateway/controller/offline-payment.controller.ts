@@ -33,6 +33,7 @@ export class OfflinePaymentController {
   }
 
   @Post()
+  @UseGuards(ApiKeyGuard)
   async initiatePayment(@Body() payload: InitiatePaymentDto) {
     return await this.mpgsPaymentService.initiatePayment(payload);
   }
