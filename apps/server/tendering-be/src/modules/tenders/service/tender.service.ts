@@ -117,8 +117,7 @@ export class TenderService extends EntityCrudService<Tender> {
             },
           ),
         procurementMechanism: {
-          PRProcurementMechanisms:
-            prResponse?.procurementMechanisms?.PRProcurementMechanisms,
+          PRProcurementMechanisms: prResponse?.procurementMechanisms,
         },
         lots: [
           {
