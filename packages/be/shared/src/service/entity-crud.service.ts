@@ -1,4 +1,9 @@
-import { Repository, DeepPartial, ObjectLiteral } from 'typeorm';
+import {
+  Repository,
+  DeepPartial,
+  ObjectLiteral,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   CollectionQuery,
@@ -104,5 +109,20 @@ export class EntityCrudService<T extends ObjectLiteral> {
       throw new NotFoundException(`not_found`);
     }
     return item;
+  }
+
+  async giveQueryResponse<T>(
+    query: CollectionQuery,
+    dataQuery: SelectQueryBuilder<T>,
+  ) {
+    const response = new DataResponseFormat<T>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }
