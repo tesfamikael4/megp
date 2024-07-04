@@ -66,7 +66,7 @@ export const PreviewDocument = ({
         const temp = res.map((e) => ({
           name: e.technicalPreliminaryAssessment.evaluatorName,
           assessment: e.qualified,
-          remark: e.remark === '' ? 'N/A' : e.remark,
+          remark: e.remark === '' ? '' : e.remark,
         }));
         setTeamMembersAssessment(temp);
       } else if (milestone === 'technicalQualification') {
@@ -79,7 +79,7 @@ export const PreviewDocument = ({
         const temp = res.map((e) => ({
           name: e.technicalQualificationAssessment.evaluatorName,
           assessment: e.qualified,
-          remark: e.remark === '' ? 'N/A' : e.remark,
+          remark: e.remark === '' ? '' : e.remark,
         }));
         setTeamMembersAssessment(temp);
       } else if (milestone === 'technicalResponsiveness') {
@@ -93,7 +93,7 @@ export const PreviewDocument = ({
         const temp = res.map((e) => ({
           name: e.technicalResponsivenessAssessment.evaluatorName,
           assessment: e.qualified,
-          remark: e.remark === '' ? 'N/A' : e.remark,
+          remark: e.remark === '' ? '' : e.remark,
         }));
         setTeamMembersAssessment(temp);
       }
