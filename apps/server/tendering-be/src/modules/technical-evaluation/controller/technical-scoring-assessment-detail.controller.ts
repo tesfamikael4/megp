@@ -25,7 +25,7 @@ const options: ExtraCrudOptions = {
   // createDto: CreateTechnicalScoringAssessmentDetailDto,
 };
 
-@UseGuards(GroupMemberGuard(TeamRoleEnum.FINANCIAL_EVALUATOR))
+@UseGuards(GroupMemberGuard())
 @Controller('technical-scoring-assessment-detail')
 @ApiTags('Technical Scoring Assessment Detail Controller')
 export class TechnicalScoringAssessmentDetailController extends ExtraCrudController<TechnicalScoringAssessmentDetail>(

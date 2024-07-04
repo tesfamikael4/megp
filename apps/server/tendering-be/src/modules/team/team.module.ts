@@ -18,5 +18,6 @@ import { MilestonesTrackerController } from './controller/milestones-tracker.con
     TeamMembersController,
     MilestonesTrackerController,
   ],
+  exports: [TeamService],
 })
 export class TeamModule {}

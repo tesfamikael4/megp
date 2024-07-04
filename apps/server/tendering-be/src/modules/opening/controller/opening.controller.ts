@@ -31,6 +31,12 @@ export class OpeningController extends ExtraCrudController<Opening>(options) {
     return await this.openingService.closedTender(query, req);
   }
 
+  @Get('get-financial-opening')
+  async getFinancialOpening(@Query('q') q: string, @Req() req) {
+    const query = decodeCollectionQuery(q);
+    return await this.openingService.getFinancialOpening(query, req);
+  }
+
   @Get('get-tender-detail/:tenderId')
   @AllowAnonymous()
   async getTenderDetail(@Param('tenderId') tenderId: string) {

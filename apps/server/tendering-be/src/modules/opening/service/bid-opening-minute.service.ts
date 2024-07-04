@@ -8,7 +8,6 @@ import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { REQUEST } from '@nestjs/core';
 import { TeamMember } from 'src/entities/team-member.entity';
-import { BidOpeningChecklistAssessmentDetail } from 'src/entities';
 import { BidOpeningChecklistAssessment } from 'src/entities/bid-opening-checklist-assessment.entity';
 
 @Injectable()
