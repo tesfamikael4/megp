@@ -3,10 +3,18 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { OrganizationMandate, User, UserRoleSystem, UserUnit } from '@entities';
+import { EntityManager, Repository } from 'typeorm';
+import {
+  OrganizationMandate,
+  User,
+  UserGroup,
+  UserRole,
+  UserRoleSystem,
+  UserUnit,
+} from '@entities';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
 import { CreateUserDto, InviteUserDto, UserResponseDto } from '../dto/user.dto';
 import { AccountsService } from 'src/modules/account/services/account.service';
@@ -18,9 +26,11 @@ import {
   QueryConstructor,
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { MandateService } from 'src/modules/mandate/services/mandate.service';
 import { OrganizationService } from './organization.service';
 import { OrganizationStatus } from 'src/shared/enums';
+import { Request } from 'express';
+import { REQUEST } from '@nestjs/core';
+import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 
 @Injectable()
 export class UserService extends ExtraCrudService<User> {
@@ -33,6 +43,7 @@ export class UserService extends ExtraCrudService<User> {
     private readonly accountsService: AccountsService,
     private readonly unitService: UnitService,
     private readonly roleSystemService: RoleSystemService,
+    @Inject(REQUEST) private request: Request,
   ) {
     super(repositoryUser);
   }
@@ -352,5 +363,32 @@ export class UserService extends ExtraCrudService<User> {
       relations: { account: true },
     });
     return UserResponseDto.toDto(result);
+  }
+
+  async getUserForInfrastructure(id: string): Promise<any> {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const [roleIds, groupIds] = await Promise.all([
+      manager.getRepository(UserRole).find({
+        where: { userId: id },
+        select: {
+          roleId: true,
+        },
+      }),
+      manager.getRepository(UserGroup).find({
+        where: {
+          userId: id,
+        },
+        select: {
+          groupId: true,
+        },
+      }),
+    ]);
+
+    return {
+      id: id,
+      roleIds: roleIds?.map((item) => item.roleId),
+      groupIds: groupIds?.map((item) => item.groupId),
+    };
   }
 }

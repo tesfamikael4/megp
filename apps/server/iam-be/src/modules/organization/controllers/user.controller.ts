@@ -108,4 +108,11 @@ export class UserController extends ExtraCrudController<User>(options) {
     console.log(q);
     return decodeCollectionQuery(q);
   }
+
+  @Get('get-user-for-infrastructure/:id')
+  @AllowAnonymous()
+  @
+  async getUserForInfrastructure(@Param('id') id: string) {
+    return await this.userService.getUserForInfrastructure(id);
+  }
 }

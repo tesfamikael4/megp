@@ -1,22 +1,19 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   BadRequestException,
-  ForbiddenException,
   HttpException,
   Inject,
   Injectable,
   NotFoundException,
-  Scope,
 } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
-import { Mandate, Organization, Role, Unit, User } from '@entities';
+import { Organization, Role, Unit, User } from '@entities';
 import {
   CreateOrganizationDto,
   OrganizationResponseDto,
   UpdateAddressOrLogoDto,
   VendorRegistrationCompletedEvent,
 } from '../dto/organization.dto';
-
 import { EntityCrudService } from 'src/shared/service';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from '@interceptors';
