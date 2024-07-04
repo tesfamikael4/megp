@@ -13,6 +13,8 @@ import {
   SolResponse,
   SolRound,
   TeamMember,
+  WorkflowItem,
+  WorkflowItemDetail,
 } from 'src/entities';
 import { ReSchedulerService } from './services/re-scheduler.service';
 import { EncryptionHelperService } from '../../utils/services/encryption-helper.service';
@@ -31,6 +33,10 @@ import { EvalApprovalController } from './controllers/eval-approval.controller';
 import { EvalApprovalDetailController } from './controllers/eval-approval-detail.controller';
 import { EvalApprovalDetailService } from './services/eval-approval-detail.service';
 import { EvalApprovalService } from './services/eval-approval.service';
+import { WorkflowItemController } from 'src/utils/controllers/workflow-item.controller';
+import { WorkflowItemDetailController } from 'src/utils/controllers/workflow-item-detail.controller';
+import { WorkflowItemDetailService } from 'src/utils/services/workflow-item-detail.service';
+import { WorkflowItemService } from 'src/utils/services/workflow-item.service';
 
 @Module({
   imports: [
@@ -48,6 +54,8 @@ import { EvalApprovalService } from './services/eval-approval.service';
       EvalAssessment,
       EvalApproval,
       EvalApprovalDetail,
+      WorkflowItemDetail,
+      WorkflowItem,
     ]),
     ScheduleModule.forRoot(),
     MinIOModule,
@@ -72,6 +80,8 @@ import { EvalApprovalService } from './services/eval-approval.service';
     TeamMemberController,
     EvalApprovalController,
     EvalApprovalDetailController,
+    WorkflowItemController,
+    WorkflowItemDetailController,
   ],
   providers: [
     ReSchedulerService,
@@ -82,6 +92,8 @@ import { EvalApprovalService } from './services/eval-approval.service';
     TeamMemberService,
     EvalApprovalService,
     EvalApprovalDetailService,
+    WorkflowItemDetailService,
+    WorkflowItemService,
   ],
   exports: [OpenerService, ReSchedulerService],
 })
