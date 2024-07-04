@@ -262,7 +262,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     });
 
     const bdsSubmission = await manager.getRepository(BdsSubmission).findOneBy({
-      tenantId: bidRegistrationDetail.bidRegistration.tenantId,
+      tenderId: bidRegistrationDetail.bidRegistration.tenderId,
     });
     if (!bdsSubmission) {
       throw new BadRequestException('bds_submission_not_found');

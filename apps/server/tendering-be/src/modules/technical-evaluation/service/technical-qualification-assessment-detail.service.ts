@@ -21,6 +21,7 @@ import { TenderMilestone } from 'src/entities/tender-milestone.entity';
 import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
+import { TeamService } from 'src/modules/team/service/team.service';
 
 @Injectable()
 export class TechnicalQualificationAssessmentDetailService extends ExtraCrudService<TechnicalQualificationAssessmentDetail> {
@@ -28,6 +29,7 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
     @InjectRepository(TechnicalQualificationAssessmentDetail)
     private readonly technicalQualificationAssessmentDetailRepository: Repository<TechnicalQualificationAssessmentDetail>,
 
+    private readonly teamService: TeamService,
     @Inject(REQUEST) private request: Request,
   ) {
     super(technicalQualificationAssessmentDetailRepository);
@@ -250,27 +252,8 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
       canTeamAssess: false,
     };
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const tender = await manager.getRepository(Tender).findOne({
-      where: {
-        tenderMilestones: {
-          isCurrent: true,
-        },
-        lots: {
-          id: lotId,
-        },
-      },
-      relations: {
-        tenderMilestones: true,
-        bdsSubmission: true,
-      },
-    });
+    const teamType: TeamRoleEnum = await this.teamService.getTeamType(lotId);
 
-    const teamType =
-      tender.bdsSubmission.envelopType == 'single envelop'
-        ? TeamRoleEnum.FINANCIAL_EVALUATOR
-        : tender.tenderMilestones[0].milestoneNum < 320
-          ? TeamRoleEnum.TECHNICAL_EVALUATOR
-          : TeamRoleEnum.FINANCIAL_EVALUATOR;
     const evaluatorId = req.user.userId;
     const [
       isTeamLead,
@@ -364,9 +347,7 @@ export class TechnicalQualificationAssessmentDetailService extends ExtraCrudServ
     response.canTeamAssess =
       qualificationDetailCount.length == 0 ? false : !canTeam;
     response.canTeamAssess =
-      teamMemberCount != qualificationCount
-        ? false
-        : teamMemberCount * biddersCount == qualificationCount;
+      teamMemberCount * biddersCount == qualificationCount;
 
     if (isTeamLead) {
       const [teamCompleted, qualificationDetailCount] = await Promise.all([

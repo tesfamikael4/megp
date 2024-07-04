@@ -7,6 +7,7 @@ import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { Lot, Tender } from 'src/entities';
 import { CreateTeamDto } from '../dto/team.dto';
+import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 
 @Injectable()
 export class TeamService extends ExtraCrudService<Team> {
@@ -83,5 +84,30 @@ export class TeamService extends ExtraCrudService<Team> {
       .where('teams.tenderId = :tenderId', { tenderId })
       .getMany();
     return queryBuilder;
+  }
+
+  async getTeamType(lotId: string) {
+    const manager = this.request[ENTITY_MANAGER_KEY];
+
+    const tender = await manager.getRepository(Tender).findOne({
+      where: {
+        tenderMilestones: {
+          isCurrent: true,
+        },
+        lots: {
+          id: lotId,
+        },
+      },
+      relations: {
+        tenderMilestones: true,
+        bdsSubmission: true,
+      },
+    });
+
+    return tender.bdsSubmission.envelopType == 'single envelop'
+      ? TeamRoleEnum.FINANCIAL_EVALUATOR
+      : tender.tenderMilestones[0].milestoneNum < 320
+        ? TeamRoleEnum.TECHNICAL_EVALUATOR
+        : TeamRoleEnum.FINANCIAL_EVALUATOR;
   }
 }
