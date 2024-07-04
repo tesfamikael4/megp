@@ -273,9 +273,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     }
     return null;
   }
-  async getInvoiceActiveById(invoceId: string): Promise<InvoiceEntity> {
+  async getActiveInvoiceById(invoiceId: string): Promise<InvoiceEntity> {
     const invoice = await this.invoiceRepository.findOne({
-      where: { id: invoceId, paymentStatus: PaymentStatus.PENDING },
+      where: { id: invoiceId },
     });
 
     return invoice;
