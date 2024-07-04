@@ -11,40 +11,33 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { Observable } from 'rxjs';
 import { TeamMember } from 'src/entities/team-member.entity';
 import { Tender } from 'src/entities/tender.entity';
+import { TeamService } from 'src/modules/team/service/team.service';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { EntityManager } from 'typeorm';
 
-export function GroupMemberGuard(teamType: TeamRoleEnum): Type<CanActivate> {
+export function GroupMemberGuard(): Type<CanActivate> {
   class GroupMemberGuardMixin implements CanActivate {
     constructor(
+      private readonly teamService: TeamService,
       @Inject(REQUEST) private req: Request,
       @InjectEntityManager() private readonly entityManager: EntityManager,
     ) {}
     async canActivate(context: ExecutionContext) {
-      //   const requiredTeamTypes = teamTypes.split('|');
-      //   if (requiredTeamTypes.length < 1) {
-      //     return true;
-      //   }
-
-      const request = context.switchToHttp().getRequest();
-
       return await this.isUserMemberOfGroup(this.req);
-
-      //   return requiredTeamTypes.some((requiredTeamType) =>
-      //     requiredTeamType?.find((x: any) => x.key == requiredPermission.trim()),
-      //   );
     }
 
     private async isUserMemberOfGroup(request: any): Promise<boolean> {
       const userId: any = request.user.userId;
       const lotId = request.params.lotId;
 
-      const manager = this.req[ENTITY_MANAGER_KEY];
       const tender = await this.entityManager.getRepository(Tender).findOne({
         where: {
           tenderMilestones: {
             isCurrent: true,
+          },
+          lots: {
+            id: lotId,
           },
         },
         relations: {
@@ -53,12 +46,14 @@ export function GroupMemberGuard(teamType: TeamRoleEnum): Type<CanActivate> {
         },
       });
 
-      const teamType =
+      const teamType: TeamRoleEnum =
         tender.bdsSubmission.envelopType == 'single envelop'
           ? TeamRoleEnum.FINANCIAL_EVALUATOR
           : tender.tenderMilestones[0].milestoneNum < 320
             ? TeamRoleEnum.TECHNICAL_EVALUATOR
             : TeamRoleEnum.FINANCIAL_EVALUATOR;
+
+      // const teamType: TeamRoleEnum = await this.teamService.getTeamType(lotId);
       const exists = await this.entityManager.getRepository(TeamMember).exists({
         where: {
           team: {

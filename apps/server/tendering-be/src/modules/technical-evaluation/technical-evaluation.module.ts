@@ -30,6 +30,7 @@ import { TechnicalEndorsementController } from './controller/technical-endorseme
 import { MinIOModule } from 'src/shared/min-io';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UtilityModule } from '../utility/utility.module';
+import { TeamModule } from '../team/team.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { UtilityModule } from '../utility/utility.module';
         },
       },
     ]),
+    TeamModule,
   ],
   providers: [
     TechnicalPreliminaryAssessmentDetailService,

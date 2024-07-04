@@ -25,6 +25,7 @@ import {
   PaymentReceiptCommand,
 } from '../dto/payment-command.dto';
 import { BusinessInterestAreaDto } from '../dto/AdditionalService.dto';
+import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 
 @Controller('invoices')
 @ApiTags('Invoices')
@@ -32,12 +33,56 @@ import { BusinessInterestAreaDto } from '../dto/AdditionalService.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class InvoicesController {
   constructor(private invoiceService: InvoiceService) { }
-  @Post('pay/:invoiceId')
-  async pay(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
+  @Post('pay-online/:invoiceId')
+  async payOnline(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
     const PaymentGateway =
       process.env.MEGP_PAYMENT_GATEWAY ?? '/infrastructure/api/';
     const url = PaymentGateway + 'mpgs-payments';
-    const invoice = await this.invoiceService.getInvoiceActiveById(invoiceId);
+    const invoice = await this.invoiceService.getActiveInvoiceById(invoiceId);
+    if (invoice?.paymentStatus == PaymentStatus.PENDING) {
+      const payload = new PaymentCommand();
+      payload.invoiceReference = invoice.refNumber;
+      //payload.status = "Pending";
+      payload.currency = 'MWK';
+      payload.applicationKey = 'Vendor';
+      payload.amount = Number(invoice.amount);
+      payload.service = invoice.remark;
+      payload.description = invoice.refNumber;
+      const vendorBaseURL = process.env.VENDOR_API ?? '/vendors/api'
+      const callBackUrl = vendorBaseURL + '/invoices/update-payment-status';
+      payload.callbackUrl = callBackUrl;
+      const headers = {
+        'Content-Type': 'application/json',
+        // 'x-api-key': process.env.MEGP_PAYMENT_GATEWAY_API_KEY ?? 'qywteqajdfhasdfagsdhfasdfkdfgdkfg',
+      };
+      try {
+        const response = await axios.post(url, payload, { headers });
+        console.log('response-----', response);
+        if (response.status === 201) {
+          const responseData = response.data;
+          invoice.paymentLink = response.data.paymentLink;
+          invoice.paymentMethod = "Electronic";
+          await this.invoiceService.update(invoice.id, invoice);
+          return responseData;
+        } else {
+          return null;
+        }
+      } catch (error) {
+        throw new Error('Error making API request' + error);
+      }
+
+    } else {
+      throw new NotFoundException('Invoice Not found');
+    }
+  }
+  //under construction
+  //will be updated latter
+  @Post('pay-offline/:invoiceId')
+  async payOffline(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
+    const PaymentGateway =
+      process.env.MEGP_PAYMENT_GATEWAY ?? '/infrastructure/api/';
+    const url = PaymentGateway + 'mpgs-payments';
+    const invoice = await this.invoiceService.getActiveInvoiceById(invoiceId);
     if (invoice) {
       const payload = new PaymentCommand();
       payload.invoiceReference = invoice.refNumber;
@@ -72,6 +117,7 @@ export class InvoicesController {
       throw new NotFoundException('Invoice Not found');
     }
   }
+
   //open for testing purpose only 
   @AllowAnonymous()
   @Post('update-payment-status')

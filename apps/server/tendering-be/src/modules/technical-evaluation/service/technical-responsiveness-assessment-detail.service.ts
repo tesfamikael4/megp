@@ -36,13 +36,14 @@ import { TenderMilestoneEnum } from 'src/shared/enums/tender-milestone.enum';
 import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
+import { TeamService } from 'src/modules/team/service/team.service';
 
 @Injectable()
 export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudService<TechnicalResponsivenessAssessmentDetail> {
   constructor(
     @InjectRepository(TechnicalResponsivenessAssessmentDetail)
     private readonly technicalResponsivenessAssessmentDetailRepository: Repository<TechnicalResponsivenessAssessmentDetail>,
-
+    private readonly teamService: TeamService,
     @Inject(REQUEST) private request: Request,
   ) {
     super(technicalResponsivenessAssessmentDetailRepository);
@@ -367,27 +368,8 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       canTeamAssess: false,
     };
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const tender = await manager.getRepository(Tender).findOne({
-      where: {
-        tenderMilestones: {
-          isCurrent: true,
-        },
-        lots: {
-          id: lotId,
-        },
-      },
-      relations: {
-        tenderMilestones: true,
-        bdsSubmission: true,
-      },
-    });
+    const teamType: TeamRoleEnum = await this.teamService.getTeamType(lotId);
 
-    const teamType =
-      tender.bdsSubmission.envelopType == 'single envelop'
-        ? TeamRoleEnum.FINANCIAL_EVALUATOR
-        : tender.tenderMilestones[0].milestoneNum < 320
-          ? TeamRoleEnum.TECHNICAL_EVALUATOR
-          : TeamRoleEnum.FINANCIAL_EVALUATOR;
     const evaluatorId = req.user.userId;
     const [
       isTeamLead,
@@ -395,7 +377,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
       evaluationChecklist,
       canTeam,
       responsivenessDetailCount,
-      scoringCount,
+      responsivenessCount,
       teamMemberCount,
     ] = await Promise.all([
       manager.getRepository(TeamMember).exists({
@@ -480,9 +462,7 @@ export class TechnicalResponsivenessAssessmentDetailService extends ExtraCrudSer
     response.canTeamAssess =
       responsivenessDetailCount.length == 0 ? false : !canTeam;
     response.canTeamAssess =
-      teamMemberCount != scoringCount
-        ? false
-        : teamMemberCount * biddersCount == scoringCount;
+      teamMemberCount * biddersCount == responsivenessCount;
 
     if (isTeamLead) {
       const [teamCompleted, responsivenessDetailCount] = await Promise.all([

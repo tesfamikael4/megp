@@ -222,6 +222,20 @@ export class OpeningService extends ExtraCrudService<Opening> {
     return response;
   }
 
+  async getFinancialOpening(query: any, req: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const [item, total] = await manager.getRepository(Tender).findAndCount({
+      where: {
+        // organizationId: req.user.organization.id,
+        tenderMilestones: {
+          milestoneNum: TenderMilestoneEnum.FinancialOpening,
+          isCurrent: true,
+        },
+      },
+    });
+    return { item, total };
+  }
+
   async getTenderDetails(id: string) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const tender = await manager.getRepository(Tender).findOne({
