@@ -58,3 +58,5 @@ export * from './shipment-and-handling.entity';
 export * from './receiving-item.entity';
 export * from './receiving-attachment.entity';
 
+export * from './workflow-item.entity';
+export * from './workflow-item-detail.entity';
