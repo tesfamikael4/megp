@@ -45,11 +45,11 @@ export class FormulaUnitService extends ExtraCrudService<FormulaUnit> {
       throw new BadRequestException(e.message);
     }
   }
+  // create(itemData: any, req?: any): Promise<any> {
 
-  async create(
-    formulaUnit: CreateFormulaUnitDto,
-    req: any,
-  ): Promise<FormulaUnit> {
+  // }
+
+  async create(formulaUnit: CreateFormulaUnitDto, req: any): Promise<any> {
     const availableFormulaUnitSet = await this.getAvailableFormulaUnitSet(
       formulaUnit.lotId,
     );

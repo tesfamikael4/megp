@@ -49,6 +49,7 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
     const availableFormulaImplementationSet =
       await this.getAvailableFormulaImplementationSet(
         formulaImplementation.lotId,
+        formulaImplementation.bidderId,
       );
 
     try {
@@ -69,6 +70,7 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
     const availableFormulaImplementationSet =
       await this.getAvailableFormulaImplementationSet(
         formulaImplementation.lotId,
+        formulaImplementation.bidderId,
       );
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
@@ -121,8 +123,8 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
         lotId: formulaImplementation.lotId,
         itemId: formulaImplementation.itemId,
         bidderId: formulaImplementation.bidderId,
-        representation: `100`,
-        // representation: unitPrice,
+        // representation: `100`,
+        representation: unitPrice,
         organizationId: req.user.organization.id,
         organizationName: req.user.organization.name,
         type: PriceAdjustingFactorEnum.ADDITION,
@@ -151,7 +153,7 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
     if (!response) {
       throw new BadRequestException('Rate is required');
     }
-    return response.value?.vale?.rate;
+    return response.value?.value?.rate;
   }
 
   async formulaImplementationStatus(
@@ -326,7 +328,7 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
       },
     );
 
-    // const unitPrice = await this.getOfferedUnitPrice(manager, itemData);
+    const unitPrice = await this.getOfferedUnitPrice(manager, itemData);
 
     const financialBidPriceAssessment = await manager
       .getRepository(FinancialBidPriceAssessment)
@@ -339,8 +341,8 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
         evaluatorId: req.user.userId,
         evaluatorName: req.user.firstName + ' ' + req.user.lastName,
         isTeamLead: true,
-        offeredUnitPrice: 100, // change with actual
-        // offeredUnitPrice: unitPrice,
+        // offeredUnitPrice: 100, // change with actual
+        offeredUnitPrice: unitPrice,
         calculatedBidUnitPrice: totalResult,
         formulaImplementationId: totalFormula.id,
       });
@@ -359,6 +361,7 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
     const availableFormulaImplementationSet =
       await this.getAvailableFormulaImplementationSet(
         originalFormulaImplementation.lotId,
+        originalFormulaImplementation.bidderId,
       );
 
     try {
@@ -386,6 +389,7 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
     const availableFormulaImplementationSet =
       await this.getAvailableFormulaImplementationSet(
         formulaImplementation.lotId,
+        formulaImplementation.bidderId,
       );
 
     try {
@@ -406,12 +410,19 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
     return formulaImplementation;
   }
 
-  async findByGroup(lotId: string): Promise<FormulaImplementation[]> {
-    return this.formulaImplementationRepository.find({ where: { lotId } });
+  async findByGroup(
+    lotId: string,
+    bidderId: string,
+  ): Promise<FormulaImplementation[]> {
+    const group = await this.formulaImplementationRepository.find({
+      where: { lotId, bidderId },
+    });
+    return group;
   }
 
   async getAvailableFormulaImplementationSet(
     lotId: string,
+    bidderId: string,
   ): Promise<Record<string, string>> {
     /**
          * Schema for formulaImplementation set <name: mathematical expression>
@@ -422,7 +433,7 @@ export class FormulaImplementationService extends ExtraCrudService<FormulaImplem
         */
     const formulaSet: Record<string, string> = {};
 
-    (await this.findByGroup(lotId)).forEach((f) => {
+    (await this.findByGroup(lotId, bidderId)).forEach((f) => {
       formulaSet[f.name] = f.representation;
     });
 

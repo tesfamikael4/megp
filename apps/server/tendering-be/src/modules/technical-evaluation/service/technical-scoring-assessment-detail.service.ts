@@ -33,6 +33,10 @@ import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 import { BidderStatusEnum } from 'src/shared/enums/bidder-status.enum';
 import { TechnicalEndorsementService } from './technical-endorsement.service';
 import { EndorsementTypeEnum } from 'src/shared/enums/endorsement-type.enum';
+import { FormulaUnitService } from 'src/modules/utility/formula/service/formula-unit.service';
+import { CreateFormulaUnitDto } from 'src/modules/utility/formula/dto/formula.dto';
+import { PriceAdjustingFactorEnum } from 'src/shared/enums/price-adjusting-factor.enum';
+import { EnvelopTypeEnum } from 'src/shared/enums';
 
 @Injectable()
 export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<TechnicalScoringAssessmentDetail> {
@@ -41,6 +45,8 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
     private readonly technicalScoringAssessmentDetailRepository: Repository<TechnicalScoringAssessmentDetail>,
 
     private readonly technicalEndorsementService: TechnicalEndorsementService,
+
+    private readonly formulaUnitService: FormulaUnitService,
 
     @Inject(REQUEST) private request: Request,
   ) {
@@ -720,7 +726,12 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
     );
 
     if (!assessments && members * biddersCount == assessmentCount) {
-      await this.changeMilestone(manager, itemData, bdsSubmission.envelopType);
+      await this.changeMilestone(
+        manager,
+        itemData,
+        bdsSubmission.envelopType,
+        req,
+      );
       await this.technicalEndorsementService.initiateWorkflow({
         tenderId: itemData.tenderId,
         lotId: itemData.lotId,
@@ -735,6 +746,7 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
     manager: EntityManager,
     itemData: any,
     envelopType,
+    req,
   ) {
     await manager.getRepository(TenderMilestone).update(
       {
@@ -749,15 +761,25 @@ export class TechnicalScoringAssessmentDetailService extends ExtraCrudService<Te
       lotId: itemData.lotId,
       tenderId: itemData.tenderId,
       milestoneNum:
-        envelopType === 'two envelop'
+        envelopType === EnvelopTypeEnum.TWO_ENVELOP
           ? TenderMilestoneEnum.TechnicalEndorsement
           : TenderMilestoneEnum.FinancialCompliance,
       milestoneTxt:
-        envelopType === 'two envelop'
+        envelopType === EnvelopTypeEnum.TWO_ENVELOP
           ? 'TechnicalEndorsement'
           : 'FinancialCompliance',
       isCurrent: true,
     };
+
+    if (envelopType === EnvelopTypeEnum.SINGLE_ENVELOP) {
+      const x: CreateFormulaUnitDto = {
+        name: 'unit_price',
+        representation: '1',
+        lotId: itemData.lotId,
+        type: PriceAdjustingFactorEnum.ADDITION,
+      };
+      await this.formulaUnitService.create(x, req);
+    }
 
     await manager.getRepository(TenderMilestone).insert(milestoneData);
 

@@ -10,6 +10,7 @@ import { FinancialPriceAnalysisDetailService } from './service/financial-price-a
 import { FinancialPriceAnalysisDetail } from 'src/entities/financial-price-analysis-detail.entity';
 import { FinancialPriceAnalysisController } from './controller/financial-price-analysis.controller';
 import { EvaluationModule } from '../technical-evaluation/technical-evaluation.module';
+import { FormulaModule } from '../utility/formula/formula.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { EvaluationModule } from '../technical-evaluation/technical-evaluation.m
       FinancialPriceAnalysisDetail,
     ]),
     EvaluationModule,
+    FormulaModule,
   ],
   providers: [
     FinancialBidPriceAssessmentService,
