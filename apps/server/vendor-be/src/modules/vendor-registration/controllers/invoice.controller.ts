@@ -26,13 +26,15 @@ import {
 } from '../dto/payment-command.dto';
 import { BusinessInterestAreaDto } from '../dto/AdditionalService.dto';
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
+import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
+import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 
 @Controller('invoices')
 @ApiTags('Invoices')
 @UseGuards(JwtGuard)
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class InvoicesController {
-  constructor(private invoiceService: InvoiceService) { }
+  constructor(private invoiceService: InvoiceService, private commonService: HandlingCommonService) { }
   @Post('pay-online/:invoiceId')
   async payOnline(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
     const PaymentGateway =
@@ -48,7 +50,7 @@ export class InvoicesController {
       payload.amount = Number(invoice.amount);
       payload.service = invoice.remark;
       payload.description = invoice.refNumber;
-      const vendorBaseURL = process.env.VENDOR_API ?? '/vendors/api'
+      const vendorBaseURL = process.env.VENDOR_API_DEV ?? '/vendors/api'
       const callBackUrl = vendorBaseURL + '/invoices/update-payment-status';
       payload.callbackUrl = callBackUrl;
       const headers = {
@@ -56,9 +58,18 @@ export class InvoicesController {
         // 'x-api-key': process.env.MEGP_PAYMENT_GATEWAY_API_KEY ?? 'qywteqajdfhasdfagsdhfasdfkdfgdkfg',
       };
       try {
-        const response = await axios.post(url, payload, { headers });
+        let response;
+        if (!invoice.paymentLink) {
+          response = await axios.post(url, payload, { headers });
+        } else {
+          invoice.refNumber = this.commonService.generateRandomString(10);
+          await this.invoiceService.update(invoice.id, invoice);
+          payload.invoiceReference = invoice.refNumber;
+          response = await axios.post(url, payload, { headers });
+        }
+
         console.log('response-----', response);
-        if (response.status === 201) {
+        if (response?.status === 201) {
           const responseData = response.data;
           invoice.paymentLink = response.data.paymentLink;
           invoice.paymentMethod = "Electronic";
@@ -77,35 +88,29 @@ export class InvoicesController {
   }
   //under construction
   //will be updated latter
-  @Post('pay-offline/:invoiceId')
+  @Get('pay-offline/:invoiceId')
   async payOffline(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
     const PaymentGateway =
       process.env.MEGP_PAYMENT_GATEWAY ?? '/infrastructure/api/';
-    const url = PaymentGateway + 'mpgs-payments';
+
     const invoice = await this.invoiceService.getActiveInvoiceById(invoiceId);
     if (invoice) {
-      const payload = new PaymentCommand();
-      payload.invoiceReference = invoice.refNumber;
-      //payload.status = "Pending";
-      payload.currency = 'MWK';
-      payload.applicationKey = 'Vendor';
-      payload.amount = Number(invoice.amount);
-      payload.service = invoice.remark;
-      payload.description = invoice.refNumber;
-      const vendorBaseURL = process.env.VENDOR_API ?? '/vendors/api'
-      const url = vendorBaseURL + '/invoices/update-payment-status';
-      payload.callbackUrl = url;
+      const invoiceReference = invoice.refNumber;
+      //25bc1622e5fb42cca3d3e62e90a3a20f
       const headers = {
         'Content-Type': 'application/json',
-        // 'x-api-key': process.env.MEGP_PAYMENT_GATEWAY_API_KEY ?? 'qywteqajdfhasdfagsdhfasdfkdfgdkfg',
+        'x-api-key': process.env.MEGP_PAYMENT_GATEWAY_API_KEY ?? '25bc1622e5fb42cca3d3e62e90a3a20f',
       };
+
       try {
-        const response = await axios.post(url, payload, { headers });
+        const url = `${PaymentGateway}offline-payments/${invoiceReference}`;
+        const response = await axios.get(url, { headers: headers });
         console.log('response-----', response);
-        if (response.status === 201) {
-          const responseData = response.data;
-          invoice.paymentLink = response.data.paymentLink;
-          await this.invoiceService.update(invoice.id, invoice);
+        if (response.status === 200) {
+          const responseData = JSON.stringify(response.data);
+          invoice.paymentStatus = PaymentStatus.PAID;
+          invoice.remark = responseData,
+            await this.invoiceService.update(invoice.id, invoice);
           return responseData;
         } else {
           return null;
