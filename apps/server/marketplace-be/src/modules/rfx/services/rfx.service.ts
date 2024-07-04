@@ -662,11 +662,11 @@ export class RfxService extends EntityCrudService<RFX> {
       })
       .andWhere('rfxes.organizationId = :organizationId', {
         organizationId: user.organization.id,
-      })
-      .leftJoin('rfxes.evalApprovals', 'evalApproval')
-      .andWhere('evalApproval.evaluatorId = :userId', {
-        userId: user.userId,
       });
+    // .leftJoin('rfxes.evalApprovals', 'evalApproval')
+    // .andWhere('evalApproval.evaluatorId = :userId', {
+    //   userId: user.userId,
+    // });
 
     return await this.giveQueryResponse<RFX>(query, dataQuery);
   }

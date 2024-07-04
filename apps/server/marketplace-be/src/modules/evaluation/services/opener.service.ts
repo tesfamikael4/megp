@@ -69,7 +69,7 @@ export class OpenerService {
               await calculateRoundWinner(items, rfxBidProcedure, entityManager);
             }
 
-            await endRound(entityManager);
+            await endRound(rfx, entityManager);
           } catch (error) {
             if (error.status == 430) {
               Logger.error(error, 'OpenerService');
@@ -195,7 +195,7 @@ export class OpenerService {
       }
       return activeRfx;
     }
-    async function endRound(entityManager: EntityManager) {
+    async function endRound(rfx: RFX, entityManager: EntityManager) {
       const roundRepo = entityManager.getRepository(SolRound);
       const rfxRepo = entityManager.getRepository(RFX);
 
@@ -214,9 +214,23 @@ export class OpenerService {
       });
 
       if (payload.round != 0 && !nextRound) {
-        await rfxRepo.update(payload.rfxId, {
-          status: ERfxStatus.ENDED,
+        const awardNoteRepo = entityManager.getRepository(AwardNote);
+
+        const awardNote: CreateAwardNoteDTO = awardNoteRepo.create({
+          name: rfx.name,
+          prId: rfx.prId,
+          rfxId: rfx.id,
+          description: rfx.description,
+          procurementReferenceNumber: rfx.procurementReferenceNumber,
+          organizationId: rfx.organizationId,
+          organizationName: rfx.organizationName,
         });
+        await Promise.all([
+          awardNoteRepo.insert(awardNote),
+          rfxRepo.update(payload.rfxId, {
+            status: ERfxStatus.ENDED,
+          }),
+        ]);
       }
     }
 

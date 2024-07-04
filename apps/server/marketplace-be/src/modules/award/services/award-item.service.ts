@@ -30,38 +30,46 @@ export class AwardItemService extends ExtraCrudService<AwardItem> {
   async create(itemData: CreateAwardItemDTO, req: any) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const [registration, openedOffer, otherVendorAccepted] = await Promise.all([
-      entityManager.getRepository(SolRegistration).findOne({
-        where: {
-          id: itemData.solRegistrationId,
-        },
-        select: {
-          id: true,
-          vendorId: true,
-          vendorName: true,
-        },
-      }),
-      entityManager.getRepository(OpenedOffer).findOne({
-        where: {
-          id: itemData.openedOfferId,
-        },
-      }),
-      entityManager.getRepository(AwardItem).exist({
-        where: {
-          status: EAwardItemStatus.ACCEPTED,
-          awardNoteId: itemData.awardNoteId,
-        },
-      }),
-    ]);
+    const [registration, openedOffer, otherVendorAccepted, awardNote] =
+      await Promise.all([
+        entityManager.getRepository(SolRegistration).findOne({
+          where: {
+            id: itemData.solRegistrationId,
+          },
+          select: {
+            id: true,
+            vendorId: true,
+            vendorName: true,
+          },
+        }),
+        entityManager.getRepository(OpenedOffer).findOne({
+          where: {
+            id: itemData.openedOfferId,
+          },
+        }),
+        entityManager.getRepository(AwardItem).exists({
+          where: {
+            status: EAwardItemStatus.ACCEPTED,
+            rfxItemId: itemData.rfxItemId,
+          },
+        }),
+        entityManager.getRepository(AwardNote).findOne({
+          where: {
+            rfxId: itemData.rfxId,
+          },
+        }),
+      ]);
 
     if (!registration) throw new BadRequestException('Registration not found');
     if (!openedOffer) throw new BadRequestException('Opened Offer not found');
+    if (!awardNote) throw new BadRequestException('Award Note not found');
     if (otherVendorAccepted)
       throw new BadRequestException('Other vendor already accepted this offer');
 
     itemData.vendorId = registration.vendorId;
     itemData.vendorName = registration.vendorName;
     itemData.calculatedPrice = openedOffer.calculatedPrice;
+    itemData.awardNoteId = awardNote.id;
 
     const awardItem = this.awardItemRepository.create(itemData);
     await this.awardItemRepository.insert(awardItem);

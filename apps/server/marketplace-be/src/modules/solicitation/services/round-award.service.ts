@@ -91,6 +91,7 @@ export class SolRoundAwardService extends ExtraCrudService<SolRoundAward> {
       .andWhere('solRound.round = :round', {
         round: finalRoundOffer.solRound.round,
       })
+      .leftJoinAndSelect('opened_offers.awardItem', 'awardItem')
       .leftJoinAndSelect('opened_offers.solRegistration', 'solRegistration')
       .orderBy('opened_offers.rank', 'ASC');
 
