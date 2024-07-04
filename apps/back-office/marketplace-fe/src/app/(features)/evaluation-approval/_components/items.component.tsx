@@ -15,6 +15,9 @@ import { useParams } from 'next/navigation';
 import { ItemDetailSpec } from '../../evaluation/_component/item-specification.component';
 import { StatusContext } from '@/contexts/rfx-status.context';
 import { useLazyGetItemsForEvaluationQuery } from '@/store/api/rfx/eval-approval.api';
+import { useGetCurrentWorkflowInstanceQuery } from '@/store/api/rfx-approval/workflow.api';
+import { useLazyGetGroupQuery } from '@/store/api/rfx-approval/rfx-iam';
+import { useAuth } from '@megp/auth';
 
 const perPage = 10;
 function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
@@ -29,6 +32,13 @@ export default function Items() {
   const [listById, { data: itemsList, isLoading: isItemsLoading }] =
     useLazyGetItemsForEvaluationQuery();
   const { id } = useParams();
+  const { user, userCall } = useAuth();
+  const { data: currentStep } = useGetCurrentWorkflowInstanceQuery({
+    itemId: id?.toString(),
+    key: 'RFQEvaluationApproval',
+  });
+
+  const [getGroup, { data: groupData }] = useLazyGetGroupQuery();
 
   const totalPages = calculateTotalPages(itemsList?.total ?? 0, perPage);
   const [page, setPage] = useState(1);
@@ -42,16 +52,37 @@ export default function Items() {
     });
   }, [id, page]);
 
+  useEffect(() => {
+    if (user) {
+      getGroup({ userId: user?.organizations?.[0].userId });
+    }
+  }, [user]);
+
+  const checkIsApprover = () => {
+    return (
+      groupData?.items?.some(
+        (entry) => entry.groupId === currentStep?.instanceStep?.approvers[0].id,
+      ) ||
+      userCall?.organizations?.[0]?.roles?.some(
+        (role) => role?.id == currentStep?.instanceStep?.approvers?.[0]?.id,
+      ) ||
+      user?.organizations?.[0].userId ===
+        currentStep?.instanceStep?.approvers[0].id
+    );
+  };
+
   return (
     <Stack>
       <LoadingOverlay visible={isItemsLoading} />
       {itemsList?.items?.map((item, index) => (
         <Section key={index} title={item.description} defaultCollapsed>
           <Stack className="p-4">
-            <Flex className="gap-2 ml-auto">
-              <Button className="bg-green-600">Accept</Button>
-              <Button className="bg-red-600">Reject</Button>
-            </Flex>
+            {checkIsApprover() && (
+              <Flex className="gap-2 ml-auto">
+                <Button className="bg-green-600">Accept</Button>
+                <Button className="bg-red-600">Reject</Button>
+              </Flex>
+            )}
             <ItemConfiguration id={item?.id} />
             <Box>
               {data?.isOpen ? null : (

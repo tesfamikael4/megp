@@ -36,7 +36,7 @@ export default function PriceSchedulePage() {
 
   useEffect(() => {
     const from = (page - 1) * perPage;
-    if (!rfx?.isOpen) {
+    if (rfx?.isOpen) {
       getItems({
         rfxId: rfxId?.toString() ?? '',
         collectionQuery: { skip: from, take: perPage },
@@ -61,6 +61,7 @@ export default function PriceSchedulePage() {
           itemsList?.items?.map((product, index) => (
             <InvitationDetail key={index} product={product} />
           ))}
+
         <Group className="mt-2" justify="end">
           <Pagination
             onChange={setPage}

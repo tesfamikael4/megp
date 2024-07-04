@@ -95,7 +95,7 @@ export default function RfxDetailTabs({
     },
     {
       key: 'Allowed Percentage Quantity Change',
-      value: `${selected?.rfxBidProcedure?.deltaPercentage}`,
+      value: `${selected?.rfxBidProcedure?.deltaPercentage} %`,
     },
   ];
 
