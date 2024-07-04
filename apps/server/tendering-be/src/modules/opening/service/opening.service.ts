@@ -100,7 +100,7 @@ export class OpeningService extends ExtraCrudService<Opening> {
 
     for (const x of keySharedBidders) {
       await this.bidResponseOpeningService.openBidResponse({
-        tenderId: itemData.tenderId,
+        lotId: itemData.tenderId,
         bidderId: x.bidRegistration.bidderId,
         documentType,
         password: x.privateKey,

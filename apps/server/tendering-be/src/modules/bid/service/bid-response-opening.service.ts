@@ -1,17 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { EntityManager } from 'typeorm';
 import { OpenBidResponseDto } from '../dto/bid-response.dto';
 import { BidResponseItem } from 'src/entities/bid-response-item.entity';
 import { EncryptionHelperService } from './encryption-helper.service';
-import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { BidResponseTender } from 'src/entities/bid-response-tender.entity';
 import { BidResponseLot } from 'src/entities/bid-response-lot.entity';
 import { BidResponseDocument } from 'src/entities/bid-response-document.entity';
 import { OpenedBidResponseItem } from 'src/entities/opened-bid-response-item.entity';
 import { OpenedBidResponseTender } from 'src/entities/opened-bid-response-tender.entity';
 import { OpenedBidResponseLot } from 'src/entities/opened-bid-response-lot.entity';
+import { BidRegistrationDetail } from 'src/entities';
 
 @Injectable()
 export class BidResponseOpeningService {
@@ -23,30 +23,37 @@ export class BidResponseOpeningService {
   async openBidResponse(payload: OpenBidResponseDto) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const bidRegistration = await manager
-      .getRepository(BidRegistration)
+    const bidRegistrationDetail = await manager
+      .getRepository(BidRegistrationDetail)
       .findOne({
         where: {
-          bidderId: payload.bidderId,
-          tenderId: payload.tenderId,
+          lotId: payload.lotId,
+          bidRegistration: {
+            bidderId: payload.bidderId,
+          },
+        },
+        relations: {
+          bidRegistration: true,
         },
       });
+
+    if (!bidRegistrationDetail) {
+      throw new BadRequestException('bid_registration_not_found');
+    }
 
     const openedBidResponseItems: OpenedBidResponseItem[] = [];
     const bidResponseItems = await manager
       .getRepository(BidResponseItem)
       .findBy({
         documentType: payload.documentType,
-        bidRegistrationDetail: {
-          bidRegistrationId: bidRegistration.id,
-        },
+        bidRegistrationDetailId: bidRegistrationDetail.id,
       });
 
     for (const bidResponseItem of bidResponseItems) {
       const decryptedValue = this.encryptionHelperService.decryptedData(
         bidResponseItem.value,
         payload.password,
-        bidRegistration.salt,
+        bidRegistrationDetail.bidRegistration.salt,
       );
 
       openedBidResponseItems.push(
@@ -63,7 +70,9 @@ export class BidResponseOpeningService {
       .getRepository(BidResponseTender)
       .findBy({
         documentType: payload.documentType,
-        bidRegistrationId: bidRegistration.id,
+        bidRegistration: {
+          id: bidRegistrationDetail.bidRegistrationId,
+        },
       });
     for (const bidResponseTender of bidResponseTenders) {
       const decryptedValue = this.encryptionHelperService.decryptedData(
@@ -84,15 +93,13 @@ export class BidResponseOpeningService {
     const openedBidResponseLots: OpenedBidResponseLot[] = [];
     const bidResponseLots = await manager.getRepository(BidResponseLot).findBy({
       documentType: payload.documentType,
-      bidRegistrationDetail: {
-        bidRegistrationId: bidRegistration.id,
-      },
+      bidRegistrationDetailId: bidRegistrationDetail.id,
     });
     for (const bidResponseLot of bidResponseLots) {
       const decryptedValue = this.encryptionHelperService.decryptedData(
         bidResponseLot.value,
         payload.password,
-        bidRegistration.salt,
+        bidRegistrationDetail.bidRegistration.salt,
       );
 
       openedBidResponseLots.push(
@@ -109,15 +116,13 @@ export class BidResponseOpeningService {
       .getRepository(BidResponseDocument)
       .findBy({
         documentType: payload.documentType,
-        bidRegistrationDetail: {
-          bidRegistrationId: bidRegistration.id,
-        },
+        bidRegistrationDetailId: bidRegistrationDetail.id,
       });
     for (const bidResponseDocument of bidResponseDocuments) {
       const decryptedValue = this.encryptionHelperService.decryptedData(
         bidResponseDocument.value,
         payload.password,
-        bidRegistration.salt,
+        bidRegistrationDetail.bidRegistration.salt,
       );
 
       openedBidResponseDocuments.push({

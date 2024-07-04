@@ -325,7 +325,7 @@ export class OpenBidResponseDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  tenderId: string;
+  lotId: string;
 
   @ApiProperty()
   @IsUUID()
