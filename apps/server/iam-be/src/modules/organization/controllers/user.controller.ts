@@ -111,12 +111,6 @@ export class UserController extends ExtraCrudController<User>(options) {
     return this.userService.getInvitation(id);
   }
 
-  @Get('test')
-  async test(@Query('q') q: string) {
-    console.log(q);
-    return decodeCollectionQuery(q);
-  }
-
   @Get('get-user-for-infrastructure/:id')
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
