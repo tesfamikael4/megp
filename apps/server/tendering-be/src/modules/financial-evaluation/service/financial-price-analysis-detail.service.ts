@@ -24,6 +24,8 @@ import {
   submitPriceAnalysisDto,
 } from '../dto/financial-assessment.dto';
 import { EndorsementTypeEnum } from 'src/shared/enums/endorsement-type.enum';
+import { FormulaImplementation } from 'src/entities/formula-implementation.entity';
+import { PriceAdjustingFactorEnum } from 'src/shared/enums/price-adjusting-factor.enum';
 
 @Injectable()
 export class FinancialPriceAnalysisDetailService extends ExtraCrudService<FinancialPriceAnalysisDetail> {
@@ -92,6 +94,12 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
         id: In(offeredItems.financialItems),
         openedBidResponseItems: {
           key: 'rate',
+          bidRegistrationDetail: {
+            lotId,
+            bidRegistration: {
+              bidderId,
+            },
+          },
         },
       },
       relations: {
@@ -107,6 +115,16 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
           itemId: In(items.map((item) => item.id)),
         },
       });
+
+    const calculatedBidUnitPrice = await manager
+      .getRepository(FormulaImplementation)
+      .findOne({
+        where: {
+          lotId: lotId,
+          bidderId: bidderId,
+          type: PriceAdjustingFactorEnum.TOTAL,
+        },
+      });
     const response = items.map((item) => {
       const analysis = priceAnalysis.find((x) => x.itemId === item.id);
       return {
@@ -114,9 +132,9 @@ export class FinancialPriceAnalysisDetailService extends ExtraCrudService<Financ
         name: item.name,
         offeredUnitPrice: item.openedBidResponseItems[0].value?.value?.rate,
         marketPrice: analysis ? analysis.marketUnitPrice : false,
-        calculatedBidUnitPrice: analysis.calculatedBidUnitPrice,
-        remark: analysis.remark,
-        accept: analysis.accept,
+        calculatedBidUnitPrice: calculatedBidUnitPrice.result,
+        remark: analysis && analysis.remark,
+        accept: analysis?.accept,
       };
     });
     return response;

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsObject, IsOptional, IsString, IsUUID } from 'class-validator';
 import { OrgAudit } from 'src/shared/entities';
 
-export class CreateFormulaDto extends OrgAudit {
+export class CreateFormulaDto {
   @ApiProperty({
     description: 'Group name.',
   })
@@ -18,10 +18,14 @@ export class UpdateFormulaDto {
   name: string;
 }
 
-export class CreateFormulaUnitDto extends OrgAudit {
+export class CreateFormulaUnitDto {
   @ApiProperty()
   @IsString()
   name: string;
+
+  @ApiProperty()
+  @IsString()
+  type: string;
 
   @ApiProperty({
     description:

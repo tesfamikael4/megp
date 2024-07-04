@@ -31,6 +31,7 @@ import { MinIOModule } from 'src/shared/min-io';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UtilityModule } from '../utility/utility.module';
 import { TeamModule } from '../team/team.module';
+import { FormulaModule } from '../utility/formula/formula.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { TeamModule } from '../team/team.module';
       },
     ]),
     TeamModule,
+    FormulaModule,
   ],
   providers: [
     TechnicalPreliminaryAssessmentDetailService,
