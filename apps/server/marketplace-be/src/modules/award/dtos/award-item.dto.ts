@@ -10,6 +10,10 @@ export class CreateAwardItemDTO {
 
   @ApiProperty()
   @IsUUID()
+  rfxId: string;
+
+  @ApiProperty()
+  @IsUUID()
   awardNoteId: string;
 
   @ApiProperty()

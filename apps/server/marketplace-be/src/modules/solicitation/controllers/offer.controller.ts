@@ -38,13 +38,15 @@ export class SolOfferController extends ExtraCrudController<SolOffer>(options) {
     );
   }
 
-  @Get('my-latest-offer/:rfxProductInvitationId')
+  @Get('my-latest-offer/:rfxProductInvitationId/:rfxId')
   async getLatestOfferWithOrganizationId(
     @Param('rfxProductInvitationId') rfxProductInvitationId: string,
+    @Param('rfxId') rfxId: string,
     @CurrentUser() user: any,
   ) {
     return await this.solOfferService.getLatestOfferWithOrganizationId(
       rfxProductInvitationId,
+      rfxId,
       user,
     );
   }

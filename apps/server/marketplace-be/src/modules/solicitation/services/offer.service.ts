@@ -140,12 +140,14 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
 
   async getLatestOfferWithOrganizationId(
     rfxProductInvitationId: string,
+    rfxId: string,
     user: any,
   ) {
-    const previousRound = await this.solRoundRepository.findOne({
+    const currentRound = await this.solRoundRepository.findOne({
       where: {
-        endingTime: LessThanOrEqual(new Date()),
-        status: ESolRoundStatus.COMPLETED,
+        startingTime: LessThanOrEqual(new Date()),
+        status: ESolRoundStatus.PENDING,
+        rfxId,
       },
       order: {
         round: 'DESC',
@@ -155,12 +157,12 @@ export class SolOfferService extends ExtraCrudService<SolOffer> {
       },
     });
 
-    if (!previousRound) return { round: null };
+    if (!currentRound) return { round: null };
 
     const offer = await this.solOfferRepository.findOne({
       where: {
         rfxProductInvitationId,
-        solRoundId: previousRound.id,
+        solRoundId: currentRound.id,
         solRegistration: {
           vendorId: user.organization.id,
         },

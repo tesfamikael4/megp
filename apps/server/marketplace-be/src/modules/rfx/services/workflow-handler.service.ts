@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
+  AwardNote,
   OpenedOffer,
   RFX,
   RFXItem,
@@ -17,6 +18,7 @@ import {
   TeamMember,
 } from 'src/entities';
 import { EvalAssessment } from 'src/entities/eval-assessment.entity';
+import { CreateAwardNoteDTO } from 'src/modules/award/dtos/award-note.dto';
 import { OpenerService } from 'src/modules/evaluation/services/opener.service';
 import {
   CreateRoundDto,
@@ -341,7 +343,7 @@ export class WorkflowHandlerService {
     const productInvitationRepo =
       entityManager.getRepository(RfxProductInvitation);
 
-    const [assessments, rfxExists] = await Promise.all([
+    const [assessments, rfx] = await Promise.all([
       evalAssessmentRepo.find({
         where: {
           rfxId,
@@ -363,7 +365,7 @@ export class WorkflowHandlerService {
           },
         },
       }),
-      rfxRepo.exists({
+      rfxRepo.findOne({
         where: {
           id: rfxId,
           status: ERfxStatus.SUBMITTED_EVALUATION,
@@ -371,7 +373,7 @@ export class WorkflowHandlerService {
       }),
     ]);
 
-    if (!rfxExists)
+    if (!rfx)
       throw new BadRequestException(
         'RFQ on submitted evaluation status not found',
       );
@@ -423,9 +425,24 @@ export class WorkflowHandlerService {
     const rounds = await this.scheduleNextRounds(rfxId, entityManager);
     if (Array.isArray(rounds)) {
       if (rounds.length == 0) {
-        await rfxRepo.update(rfxId, {
-          status: ERfxStatus.ENDED,
+        const awardNoteRepo = entityManager.getRepository(AwardNote);
+
+        const awardNote: CreateAwardNoteDTO = awardNoteRepo.create({
+          name: rfx.name,
+          prId: rfx.prId,
+          rfxId: rfx.id,
+          description: rfx.description,
+          procurementReferenceNumber: rfx.procurementReferenceNumber,
+          organizationId: rfx.organizationId,
+          organizationName: rfx.organizationName,
         });
+
+        await Promise.all([
+          awardNoteRepo.insert(awardNote),
+          rfxRepo.update(rfxId, {
+            status: ERfxStatus.ENDED,
+          }),
+        ]);
       } else {
         await rfxRepo.update(rfxId, {
           status: ERfxStatus.AUCTION,

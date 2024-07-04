@@ -339,10 +339,10 @@ export class EvalResponseService extends ExtraCrudService<EvalResponse> {
         procedure.minimumBidDecrementPercentage,
       );
       await this.sendToEvaluators(rfx);
-      await this.evalApprovalService.createApprovalsOnSubmission(
-        rfx.id,
-        user.organization.id,
-      );
+      // await this.evalApprovalService.createApprovalsOnSubmission(
+      //   rfx.id,
+      //   user.organization.id,
+      // );
     }
   }
 
