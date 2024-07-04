@@ -325,7 +325,7 @@ export class OpenBidResponseDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  lotId: string;
+  tenderId: string;
 
   @ApiProperty()
   @IsUUID()
@@ -343,6 +343,27 @@ export class OpenBidResponseDto {
   password: string;
 }
 
+export class OpenFinancialBidResponseDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidderId: string;
+
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
+  @IsString()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
 export class GenerateBidDeclarationDto {
   @ApiProperty()
   @IsUUID()
