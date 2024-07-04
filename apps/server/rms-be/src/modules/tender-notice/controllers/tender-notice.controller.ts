@@ -14,8 +14,6 @@ import {
   CreateTenderNoticeDto,
   UpdateTenderNoticeDto,
 } from '../dto/tender-notice.dto';
-import { NoticeBookmarkService } from '../services/notice-bookmark.service';
-import { NoticeRegistrationService } from '../services/notice-registration.service';
 import { EventPattern } from '@nestjs/microservices';
 
 const options: EntityCrudOptions = {
@@ -28,11 +26,7 @@ const options: EntityCrudOptions = {
 export class TenderNoticeController extends EntityCrudController<TenderNotice>(
   options,
 ) {
-  constructor(
-    private readonly noticeService: TenderNoticeService,
-    private readonly bookmarkService: NoticeBookmarkService,
-    private readonly registrationService: NoticeRegistrationService,
-  ) {
+  constructor(private readonly noticeService: TenderNoticeService) {
     super(noticeService);
   }
 
@@ -55,6 +49,6 @@ export class TenderNoticeController extends EntityCrudController<TenderNotice>(
     @Req() req?: any,
   ): Promise<DataResponseFormat<TenderNotice>> {
     const query = decodeCollectionQuery(q);
-    return this.service.findAll(query);
+    return this.noticeService.findAll(query);
   }
 }

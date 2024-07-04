@@ -1,8 +1,7 @@
 import { Audit } from 'megp-shared-be';
 import { ETenderNoticeType } from 'src/utils/enums/tender-notice.enum';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { NoticeBookmark } from './notice-bookmark.entity';
-import { NoticeRegistration } from './notice-registration.entity';
+import { SavedNotice } from './saved-notice.entity';
 
 @Entity({ name: 'tender_notices' })
 export class TenderNotice extends Audit {
@@ -33,6 +32,9 @@ export class TenderNotice extends Audit {
   @Column()
   prId: string;
 
+  @Column({ type: 'boolean', default: true })
+  isOpen: boolean;
+
   @Column()
   status: string;
 
@@ -51,9 +53,6 @@ export class TenderNotice extends Audit {
   @Column('timestamptz')
   closingDate: Date;
 
-  @OneToMany(() => NoticeBookmark, (bookmark) => bookmark.tenderNotice)
-  noticeBookmarks: NoticeBookmark[];
-
-  @OneToMany(() => NoticeRegistration, (bookmark) => bookmark.tenderNotice)
-  noticeRegistrations: NoticeRegistration[];
+  @OneToMany(() => SavedNotice, (bookmark) => bookmark.tenderNotice)
+  savedNotices: SavedNotice[];
 }

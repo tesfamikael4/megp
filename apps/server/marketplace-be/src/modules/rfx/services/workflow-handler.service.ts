@@ -103,19 +103,15 @@ export class WorkflowHandlerService {
             },
           );
 
-          if (rfx.isOpen) {
-            const now = new Date();
-            const deadline = new Date(rfx.rfxBidProcedure.submissionDeadline);
-
-            const approvePayload = {
-              ...rfx,
-              publishmentDate: now,
-              closingDate: deadline,
-              objectType: 'RFX',
-            };
-            this.rmsRMQClient.emit('record-notice', approvePayload);
-            // this.emitEvent('rms', 'record-notice', approvePayload);
-          }
+          const deadline = new Date(rfx.rfxBidProcedure.submissionDeadline);
+          const approvePayload = {
+            ...rfx,
+            publishmentDate: now,
+            closingDate: deadline,
+            isOpen: rfx.isOpen,
+            objectType: 'RFX',
+          };
+          this.rmsRMQClient.emit('record-notice', approvePayload);
 
           if (status == 'APPROVED') {
             await this.createZeroSolicitationRound(

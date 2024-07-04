@@ -5,12 +5,16 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
-import { ETenderNoticeType } from 'src/utils/enums/tender-notice.enum';
+import {
+  ESaveType,
+  ETenderNoticeType,
+} from 'src/utils/enums/tender-notice.enum';
 import { TenderNotice } from './tender-notice.entity';
 
-@Entity({ name: 'notice_bookmarks' })
-export class NoticeBookmark extends Audit {
+@Entity({ name: 'saved_notices' })
+export class SavedNotice extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -20,13 +24,19 @@ export class NoticeBookmark extends Audit {
   })
   objectType: ETenderNoticeType;
 
+  @Column({
+    type: 'enum',
+    enum: ESaveType,
+  })
+  saveType: ESaveType;
+
   @Column()
   userId: string;
 
   @Column('uuid')
   noticeId: string;
 
-  @ManyToOne(() => TenderNotice, (notice) => notice.noticeBookmarks)
+  @ManyToOne(() => TenderNotice, (notice) => notice.savedNotices)
   @JoinColumn({ name: 'noticeId' })
   tenderNotice: TenderNotice;
 }
