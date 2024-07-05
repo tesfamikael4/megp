@@ -88,7 +88,7 @@ export default function AwardedItemDetail({ item }: { item: any }) {
   return (
     <Paper className="bg-neutral-100 rounded-sm p-4" withBorder>
       <Stack>
-        {item?.awardItem?.status == 'PENDING' && (
+        {item?.openedOffer?.status == 'PENDING' && (
           <Flex className="ml-auto flex-col">
             <Flex className="items-center gap-2">
               <Text>Deadline to accept or reject Award:</Text>
@@ -117,12 +117,12 @@ export default function AwardedItemDetail({ item }: { item: any }) {
             </Flex>
           </Flex>
         )}
-        {item?.awardItem?.status == 'ACCEPTED' && (
+        {item?.openedOffer?.status == 'ACCEPTED' && (
           <Button disabled className="bg-green-600">
             Accepted Award
           </Button>
         )}
-        {item?.awardItem?.status == 'CANCELLED' && (
+        {item?.openedOffer?.status == 'CANCELLED' && (
           <Button disabled className="bg-red-600">
             Rejected Award
           </Button>
