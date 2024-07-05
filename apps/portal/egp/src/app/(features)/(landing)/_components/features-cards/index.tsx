@@ -18,7 +18,7 @@ const InfoCards = () => {
       </Flex>
       <Flex className={styles.cardContainer}>
         <SimpleGrid
-          spacing={{ base: 10, sm: 'xl' }}
+          spacing={{ base: 10, sm: 'xl', lg: 64 }}
           verticalSpacing={{ base: 'md', sm: 'xl' }}
           cols={{ base: 1, sm: 2, md: 3 }}
           mb={'md'}

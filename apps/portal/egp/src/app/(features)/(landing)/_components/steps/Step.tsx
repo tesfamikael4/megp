@@ -64,7 +64,7 @@ const Step = (props: StepProps) => {
           >
             {props.title}
           </Text>
-          <Text size="xs" c="white" ta="center" maw={350}>
+          <Text size="xs" c="white" ta="center" maw={200}>
             {props.description}
           </Text>
         </Flex>

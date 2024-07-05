@@ -27,7 +27,7 @@
 
 .content {
   /* @apply py-[79px] px-[60px] ; */
-  @apply w-full p-4 md:py-[79px] md:px-[60px];
+  @apply w-auto p-4 md:py-[79px] md:px-[60px] ml-[4%];
 }
 
 .title {

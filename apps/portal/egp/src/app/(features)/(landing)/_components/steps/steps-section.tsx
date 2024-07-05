@@ -50,7 +50,8 @@ const steps: StepProps[] = [
 export function StepsSection() {
   return (
     <Flex className={classes.root}>
-      <Container size="xl" className="">
+      <div className={classes.shadow}></div>
+      <Container size="xl" className={classes.content}>
         <Flex className="items-center justify-between flex-col w-full md:gap-8 p-6">
           <Text
             className={'text-lg md:mb-16  my-6'}
@@ -65,9 +66,11 @@ export function StepsSection() {
           >
             Steps To Be A Vendor
           </Text>
-          <Flex className="flex-col md:flex-row w-full gap-4">
+          <Flex className="flex-col md:flex-row w-full gap-14">
             {steps.map((step, index) => (
-              <Step key={index} {...step} />
+              <>
+                <Step key={index} {...step} />
+              </>
             ))}
           </Flex>
         </Flex>
