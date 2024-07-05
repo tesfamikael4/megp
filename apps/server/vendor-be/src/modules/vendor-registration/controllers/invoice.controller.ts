@@ -38,8 +38,8 @@ export class InvoicesController {
   @Post('pay-online/:invoiceId')
   async payOnline(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
     const PaymentGateway =
-      process.env.MEGP_PAYMENT_GATEWAY ?? 'https://dev-bo.megp.peragosystems.com/infrastructure/api/';
-    const url = PaymentGateway + 'mpgs-payments';
+      process.env.MEGP_PAYMENT_GATEWAY ?? 'https://dev-bo.megp.peragosystems.com/infrastructure/api';
+    const url = `${PaymentGateway}/mpgs-payments`;
     const invoice = await this.invoiceService.getActiveInvoiceById(invoiceId);
     if (invoice?.paymentStatus == PaymentStatus.PENDING) {
       const payload = new PaymentCommand();
@@ -50,12 +50,12 @@ export class InvoicesController {
       payload.amount = Number(invoice.amount);
       payload.service = invoice.remark;
       payload.description = invoice.refNumber;
-      const vendorBaseURL = process.env.VENDOR_API_DEV ?? '/vendors/api'
-      const callBackUrl = vendorBaseURL + '/invoices/update-payment-status';
+      const vendorBaseURL = process.env.VENDOR_API_DEV ?? 'https://dev-bo.megp.peragosystems.com/vendors/api'
+      const callBackUrl = `${vendorBaseURL}/invoices/update-payment-status`;
       payload.callbackUrl = callBackUrl;
       const headers = {
         'Content-Type': 'application/json',
-        // 'x-api-key': process.env.MEGP_PAYMENT_GATEWAY_API_KEY ?? 'qywteqajdfhasdfagsdhfasdfkdfgdkfg',
+        'x-api-key': process.env.MEGP_PAYMENT_GATEWAY_API_KEY ?? '25bc1622e5fb42cca3d3e62e90a3a20f',
       };
       try {
         let response;
