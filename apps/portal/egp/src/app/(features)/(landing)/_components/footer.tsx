@@ -100,36 +100,40 @@ export default function Footer() {
             </Group>
           </Flex>
 
-          <Flex direction={'column'} gap={'xl'} px="md">
-            <Flex direction={'column'} gap={5}>
-              <Text fw={500}>CONTACT US</Text>
-              <Flex direction={'column'}>
-                <Flex fz={'xs'} gap={2} className=" items-center">
-                  <IconPhone size={12} />
-                  <Link href="tel:+(265) 887 083 261">+(265) 887 083 261</Link>
-                </Flex>
-                <Flex fz={'xs'} gap={2} className=" items-center">
-                  <IconMail size={12} />
-                  <Link href="mailto:info@ppda.mw">info@ppda.mw</Link>/
-                  <Link href="mailto:dg@ppda.mw">dg@ppda.mw</Link>
+          <Flex direction={'row'} gap={'xl'} px="md">
+            <Flex direction={'column'} gap={'xl'} px="md">
+              <Flex direction={'column'} gap={5}>
+                <Text fw={500}>CONTACT US</Text>
+                <Flex direction={'column'}>
+                  <Flex fz={'xs'} gap={2} className=" items-center">
+                    <IconPhone size={12} />
+                    <Link href="tel:+(265) 887 083 261">
+                      +(265) 887 083 261
+                    </Link>
+                  </Flex>
+                  <Flex fz={'xs'} gap={2} className=" items-center">
+                    <IconMail size={12} />
+                    <Link href="mailto:info@ppda.mw">info@ppda.mw</Link>/
+                    <Link href="mailto:dg@ppda.mw">dg@ppda.mw</Link>
+                  </Flex>
                 </Flex>
               </Flex>
-            </Flex>
-            <Flex direction={'column'} gap={5}>
-              <Text fw={500}>LOCATION</Text>
-              <Flex fz={12} className=" items-top">
-                <Link
-                  href="https://maps.google.com/maps?q=2QXG+8FV, Lilongwe, Malawi"
-                  target="blank"
-                >
-                  Public Procurement and Disposal of Assets Authority,
-                  <br />
-                  Jireh Bible House Area 3,
-                  <br />
-                  Private Bag 383
-                  <br />
-                  Lilongwe 3
-                </Link>
+              <Flex direction={'column'} gap={5}>
+                <Text fw={500}>LOCATION</Text>
+                <Flex fz={12} className=" items-top">
+                  <Link
+                    href="https://maps.google.com/maps?q=2QXG+8FV, Lilongwe, Malawi"
+                    target="blank"
+                  >
+                    Public Procurement and Disposal of Assets Authority,
+                    <br />
+                    Jireh Bible House Area 3,
+                    <br />
+                    Private Bag 383
+                    <br />
+                    Lilongwe 3
+                  </Link>
+                </Flex>
               </Flex>
             </Flex>
 
