@@ -12,7 +12,11 @@ import {
 } from '@nestjs/common';
 import { InvoiceService } from '../services/invoice.service';
 import { ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AllowAnonymous, CurrentUser, JwtGuard } from 'src/shared/authorization';
+import {
+  AllowAnonymous,
+  CurrentUser,
+  JwtGuard,
+} from 'src/shared/authorization';
 import { UpgradeInfoDTO } from '../dto/vendor-upgrade.dto';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
 import { InvoiceResponseDto } from '../dto/invoice.dto';
@@ -34,11 +38,18 @@ import { ApplicationStatus } from 'src/modules/handling/enums/application-status
 @UseGuards(JwtGuard)
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class InvoicesController {
-  constructor(private invoiceService: InvoiceService, private commonService: HandlingCommonService) { }
+  constructor(
+    private invoiceService: InvoiceService,
+    private commonService: HandlingCommonService,
+  ) { }
   @Post('pay-online/:invoiceId')
-  async payOnline(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
+  async payOnline(
+    @CurrentUser() user: any,
+    @Param('invoiceId') invoiceId: string,
+  ) {
     const PaymentGateway =
-      process.env.MEGP_PAYMENT_GATEWAY ?? 'https://dev-bo.megp.peragosystems.com/infrastructure/api';
+      process.env.MEGP_PAYMENT_GATEWAY ??
+      'https://dev-bo.megp.peragosystems.com/infrastructure/api';
     const url = `${PaymentGateway}/mpgs-payments`;
     const invoice = await this.invoiceService.getActiveInvoiceById(invoiceId);
     if (invoice?.paymentStatus == PaymentStatus.PENDING) {
@@ -50,21 +61,27 @@ export class InvoicesController {
       payload.amount = Number(invoice.amount);
       payload.service = invoice.remark;
       payload.description = invoice.refNumber;
-      const vendorBaseURL = process.env.VENDOR_API_DEV ?? 'https://dev-bo.megp.peragosystems.com/vendors/api'
+      const vendorBaseURL =
+        process.env.VENDOR_API_DEV ??
+        'https://dev-bo.megp.peragosystems.com/vendors/api';
       const callBackUrl = `${vendorBaseURL}/invoices/update-payment-status`;
       payload.callbackUrl = callBackUrl;
       const headers = {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.MEGP_PAYMENT_GATEWAY_API_KEY ?? '25bc1622e5fb42cca3d3e62e90a3a20f',
+        'x-api-key':
+          process.env.MEGP_PAYMENT_GATEWAY_API_KEY ??
+          '25bc1622e5fb42cca3d3e62e90a3a20f',
       };
       try {
         let response;
         if (!invoice.paymentLink) {
+          console.log('🚀 ~ InvoicesController ~ payOnline ~ url:', url);
           response = await axios.post(url, payload, { headers });
         } else {
           invoice.refNumber = this.commonService.generateRandomString(10);
           await this.invoiceService.update(invoice.id, invoice);
           payload.invoiceReference = invoice.refNumber;
+          console.log('🚀 ~ InvoicesController ~ payOnline ~ url:', url);
           response = await axios.post(url, payload, { headers });
         }
 
@@ -72,7 +89,7 @@ export class InvoicesController {
         if (response?.status === 201) {
           const responseData = response.data;
           invoice.paymentLink = response.data.paymentLink;
-          invoice.paymentMethod = "Electronic";
+          invoice.paymentMethod = 'Electronic';
           await this.invoiceService.update(invoice.id, invoice);
           return responseData;
         } else {
@@ -81,7 +98,6 @@ export class InvoicesController {
       } catch (error) {
         throw new Error('Error making API request' + error);
       }
-
     } else {
       throw new NotFoundException('Invoice Not found');
     }
@@ -89,9 +105,13 @@ export class InvoicesController {
   //under construction
   //will be updated latter
   @Get('pay-offline/:invoiceId')
-  async payOffline(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
+  async payOffline(
+    @CurrentUser() user: any,
+    @Param('invoiceId') invoiceId: string,
+  ) {
     const PaymentGateway =
-      process.env.MEGP_PAYMENT_GATEWAY ?? 'https://dev-bo.megp.peragosystems.com/infrastructure/api/';
+      process.env.MEGP_PAYMENT_GATEWAY ??
+      'https://dev-bo.megp.peragosystems.com/infrastructure/api/';
 
     const invoice = await this.invoiceService.getActiveInvoiceById(invoiceId);
     if (invoice) {
@@ -99,7 +119,9 @@ export class InvoicesController {
       //25bc1622e5fb42cca3d3e62e90a3a20f
       const headers = {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.MEGP_PAYMENT_GATEWAY_API_KEY ?? '25bc1622e5fb42cca3d3e62e90a3a20f',
+        'x-api-key':
+          process.env.MEGP_PAYMENT_GATEWAY_API_KEY ??
+          '25bc1622e5fb42cca3d3e62e90a3a20f',
       };
 
       try {
@@ -109,7 +131,7 @@ export class InvoicesController {
         if (response.status === 200) {
           const responseData = JSON.stringify(response.data);
           invoice.paymentStatus = PaymentStatus.PAID;
-          invoice.remark = responseData,
+          (invoice.remark = responseData),
             await this.invoiceService.update(invoice.id, invoice);
           return responseData;
         } else {
@@ -123,7 +145,7 @@ export class InvoicesController {
     }
   }
 
-  //open for testing purpose only 
+  //open for testing purpose only
   @AllowAnonymous()
   @Post('update-payment-status')
   async updateStatus(@Body() receipt: PaymentReceiptCommand) {
