@@ -69,7 +69,8 @@ export default function InvitationDetail({
   const lastEntryForOpen = product?.rfxProductInvitations?.length - 1;
 
   const { data: itemOffer } = useGetItemOfferQuery({
-    id: product?.id.toString(),
+    id: product?.id?.toString(),
+    rfxId: rfxId?.toString(),
   });
   const [createItemOffer, { isLoading: isCreatingItemOffer }] =
     useAddItemOfferMutation();
@@ -99,7 +100,7 @@ export default function InvitationDetail({
           ...data,
           rfxProductInvitationId: selected?.isOpen
             ? product?.rfxProductInvitations?.[lastEntryForOpen]?.id
-            : product?.id.toString(),
+            : product?.id?.toString(),
           rfxItemId:
             selected?.isOpen && selected?.activeRound?.round == 0
               ? product?.id
@@ -110,7 +111,7 @@ export default function InvitationDetail({
           ...data,
           rfxProductInvitationId: selected?.isOpen
             ? product?.rfxProductInvitations?.[lastEntryForOpen]?.id
-            : product?.id.toString(),
+            : product?.id?.toString(),
           rfxItemId:
             selected?.isOpen && selected?.activeRound?.round == 0
               ? product?.id

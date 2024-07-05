@@ -2,6 +2,7 @@
 import {
   Badge,
   Box,
+  Button,
   Container,
   Flex,
   LoadingOverlay,
@@ -18,14 +19,22 @@ import { useReadQuery } from '@/app/(features)/rfx/_api/rfx/items.api';
 import { useState } from 'react';
 import { ExpandableTable, Section } from '@megp/core-fe';
 import ItemConfiguration from '@/app/(features)/rfx/_components/item/item-configuration';
-import { useLazyGetWinnersQuery } from '@/store/api/rfx/rfx.api';
+import {
+  useCanSendAwardQuery,
+  useLazyGetWinnersQuery,
+  useSendAwardMutation,
+} from '@/store/api/rfx/rfx.api';
 
 export default function ItemDetail() {
   const router = useRouter();
-  const { itemId } = useParams();
+  const { rfxId, itemId } = useParams();
   const [showItemDetail, setShowItemDetail] = useState(false);
   const { data, isLoading: isGettingDetail } = useReadQuery(itemId?.toString());
   const [trigger, { data: winnersList, isFetching }] = useLazyGetWinnersQuery();
+  const [sendAward, { isLoading: isSending }] = useSendAwardMutation();
+  const { data: canSendAward } = useCanSendAwardQuery({
+    itemId: itemId?.toString(),
+  });
 
   const config = {
     columns: [
@@ -38,7 +47,36 @@ export default function ItemDetail() {
       {
         accessor: 'calculatedPrice',
         title: 'Price',
-        render: (value) => <> MKW {value?.calculatedPrice}</>,
+        render: (value) => (
+          <> MKW {parseFloat(value?.calculatedPrice)?.toFixed(2)}</>
+        ),
+      },
+      {
+        accessor: '',
+        title: 'Actions',
+        width: 200,
+        render: (value) =>
+          value?.id == canSendAward?.id ? (
+            <Button
+              onClick={async () =>
+                await sendAward({
+                  rfxItemId: value?.rfxItemId,
+                  openedOfferId: value?.id,
+                  solRegistrationId: value?.solRegistration?.id,
+                  rfxId: rfxId.toString(),
+                })
+              }
+              loading={isSending}
+            >
+              Send Award
+            </Button>
+          ) : value?.awardItem?.status == 'PENDING' ? (
+            <Button disabled={true}>Pending Award Acceptance</Button>
+          ) : value?.awardItem?.status == 'CANCELLED' ? (
+            <Button disabled={true} className="bg-red-500">
+              Rejected Award
+            </Button>
+          ) : null,
       },
     ],
     isExpandable: false,
