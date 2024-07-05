@@ -18,7 +18,8 @@ import {
   SolRoundAward,
 } from 'src/entities';
 import { EInvitationStatus, ERfxItemStatus, ERfxStatus } from 'src/utils/enums';
-import { EntityManager, Repository } from 'typeorm';
+import { EAwardItemStatus } from 'src/utils/enums/award.enum';
+import { EntityManager, In, IsNull, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class SolRoundAwardService extends ExtraCrudService<SolRoundAward> {
@@ -55,6 +56,70 @@ export class SolRoundAwardService extends ExtraCrudService<SolRoundAward> {
       });
 
     return await this.giveQueryResponse<RFX>(query, dataQuery);
+  }
+
+  async canSendAwardTo(rfxItemId: string) {
+    const openedOffer = await this.openedOfferRepository.findOne({
+      where: {
+        rfxItemId,
+        awardItem: {
+          id: Not(IsNull()),
+        },
+      },
+      select: {
+        id: true,
+        rank: true,
+        awardItem: {
+          id: true,
+          status: true,
+        },
+      },
+      relations: {
+        awardItem: true,
+      },
+      order: {
+        rank: 'DESC',
+      },
+    });
+
+    if (!openedOffer) {
+      const winner = await this.openedOfferRepository.findOne({
+        where: {
+          rfxItemId,
+          rank: 1,
+        },
+        select: {
+          id: true,
+          rank: true,
+          solRegistrationId: true,
+          vendorId: true,
+        },
+      });
+      return winner;
+    }
+
+    if (
+      openedOffer.awardItem.status === EAwardItemStatus.PENDING ||
+      openedOffer.awardItem.status === EAwardItemStatus.ACCEPTED
+    ) {
+      return null;
+    }
+
+    if (openedOffer.awardItem.status === EAwardItemStatus.CANCELLED) {
+      const nextWinner = await this.openedOfferRepository.findOne({
+        where: {
+          rfxItemId,
+          rank: openedOffer.rank + 1,
+        },
+        select: {
+          id: true,
+          rank: true,
+          solRegistrationId: true,
+          vendorId: true,
+        },
+      });
+      return nextWinner;
+    }
   }
 
   async getAwardWinner(rfxItemId: string, query: CollectionQuery) {

@@ -125,6 +125,26 @@ export class RFXItemService extends ExtraCrudService<RFXItem> {
     });
   }
 
+  async myAwardItems(rfxId: string, user: any, query: CollectionQuery) {
+    const dataQuery = QueryConstructor.constructQuery<RFXItem>(
+      this.repositoryRFXItem,
+      query,
+    );
+    dataQuery
+      .where('rfx_items.rfxId = :rfxId', { rfxId })
+      .leftJoinAndSelect('rfx_items.awardItem', 'awardItem')
+      .leftJoinAndSelect(
+        'rfx_items.technicalRequirement',
+        'technicalRequirement',
+      )
+      .andWhere('awardItem.vendorId = :vendorId', {
+        vendorId: user.organization.id,
+      })
+      .leftJoinAndSelect('awardItem.openedOffer', 'openedOffer');
+
+    return await this.giveQueryResponse<RFXItem>(query, dataQuery);
+  }
+
   private async giveQueryResponse<T>(
     query: CollectionQuery,
     dataQuery: SelectQueryBuilder<T>,

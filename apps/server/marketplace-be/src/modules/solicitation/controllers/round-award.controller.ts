@@ -25,6 +25,11 @@ export class SolRoundAwardController extends ExtraCrudController<SolRoundAward>(
     super(rfxResponseItemService);
   }
 
+  @Get('can-send-award-to/:rfxItemId')
+  async getNextWinner(@Param('rfxItemId') rfxItemId: string) {
+    return await this.rfxResponseItemService.canSendAwardTo(rfxItemId);
+  }
+
   @Get('my-awards')
   @ApiQuery({
     name: 'q',
