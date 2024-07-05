@@ -10,13 +10,11 @@ import {
   Text,
 } from '@mantine/core';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import React, { ReactNode, use, useEffect, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useReadQuery } from '../../_api/rfx/rfx.api';
-import { logger } from '@megp/core-fe';
 import {
   useCancelRFXMutation,
-  useLazyCanSubmitForReviewQuery,
   useMakeRFXOpenMutation,
   useSubmitForReviewMutation,
 } from '@/store/api/rfx/rfx.api';
@@ -41,7 +39,6 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
   // const [submitStatus, { data: canSubmitForReview }] =
   //   useLazyCanSubmitForReviewQuery();
   const [opened, { open, close }] = useDisclosure(false);
-  const [rfxType, setRfxType] = useState('invitation');
   const [reviewDeadline, setReviewDeadline] = useState<Date | null>(null);
   const [cancelRFX, { isLoading: isCancelling }] = useCancelRFXMutation();
   const [makeRFXOpen, { isLoading: isMakingRFXOpen }] =
@@ -55,20 +52,19 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
 
   const handleSubmit = async ({ mode }: { mode: string }) => {
     try {
-      if (mode == 'submit' && rfxType == 'invitation')
+      if (mode == 'submit') {
         await submitForReview({ id: id.toString(), reviewDeadline }).unwrap();
-      else if (mode == 'cancel')
+      } else if (mode == 'cancel')
         await cancelRFX({ rfxId: id.toString() }).unwrap();
-      else if (mode == 'submit' && rfxType == 'open')
-        await makeRFXOpen({ rfxId: id.toString() });
+      else if (mode == 'open') await makeRFXOpen({ rfxId: id.toString() });
       else if (mode == 'close')
         await makeRFXClosed({ rfxId: id.toString() }).unwrap();
       notifications.show({
         title: 'Success',
         color: 'green',
-        message: `RFQ ${mode == 'submit' && rfxType == 'invitation' ? 'Submitted' : mode == 'cancel' ? 'Cancelled' : mode == 'close' ? 'Made Closed' : mode == 'submit' && rfxType == 'open' ? 'Made Open' : ''} Successfully`,
+        message: `RFQ ${mode == 'submit' ? 'Submitted' : mode == 'cancel' ? 'Cancelled' : mode == 'close' ? 'Made Closed' : mode == 'submit' ? 'Made Open' : ''} Successfully`,
       });
-      mode == 'submit' && router.push('/revision');
+      mode == 'submit' || (mode == 'open' && router.push('/revision'));
     } catch (err: any) {
       notifications.show({
         title: 'Error',
@@ -121,9 +117,8 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
                 <Button
                   variant={'outline'}
                   loading={isMakingRFXOpen}
-                  onClick={() => {
-                    setRfxType('open');
-                    open();
+                  onClick={async () => {
+                    await handleSubmit({ mode: 'open' });
                   }}
                   disabled={
                     !(
@@ -155,7 +150,6 @@ export default function RFXTabs({ children }: { children: ReactNode }) {
               <Button
                 loading={isSubmitting}
                 onClick={() => {
-                  setRfxType('invitation');
                   open();
                 }}
                 disabled={

@@ -78,10 +78,10 @@ export const invitationItemsApi = createApi({
       },
       invalidatesTags: ['invitation-items'],
     }),
-    getItemOffer: builder.query<any, { id: string }>({
-      query: ({ id }) => {
+    getItemOffer: builder.query<any, { id: string; rfxId: string }>({
+      query: ({ id, rfxId }) => {
         return {
-          url: `sol-offers/my-latest-offer/${id}`,
+          url: `/sol-offers/my-latest-offer/${id}/${rfxId}`,
           method: 'GET',
         };
       },
@@ -175,6 +175,33 @@ export const invitationItemsApi = createApi({
       },
       providesTags: ['invitation-items'],
     }),
+    getMyAwardedItems: builder.query<
+      any,
+      { rfxId: string; collectionQuery: CollectionQuery }
+    >({
+      query: ({ collectionQuery, rfxId }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `/rfx-items/my-awarded-items/${rfxId}${q}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['invitation-items'],
+    }),
+    acceptOrRejectAward: builder.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: `/award-items/respond-award/${data?.id}`,
+          method: 'PATCH',
+          body: data,
+        };
+      },
+      invalidatesTags: ['invitation-items'],
+    }),
   }),
 });
 
@@ -194,4 +221,6 @@ export const {
   useLazyGetAwardedRfqsQuery,
   useGiveSpecForOpenMutation,
   useLazyGetRfxItemWithSpecQuery,
+  useLazyGetMyAwardedItemsQuery,
+  useAcceptOrRejectAwardMutation,
 } = invitationItemsApi;

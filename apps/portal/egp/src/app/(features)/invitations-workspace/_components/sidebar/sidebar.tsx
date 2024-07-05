@@ -31,7 +31,7 @@ function createNavLinks(
 }
 function Sidebar() {
   const router = useRouter();
-  const { id } = useParams();
+  const { id, rfxId } = useParams();
   const path = usePathname();
 
   return (
@@ -49,7 +49,7 @@ function Sidebar() {
         <Text className={styles.groupTitle}>Management</Text>
         {createNavLinks(
           menus.managementLinks,
-          `invitations-workspace/${id}`,
+          `invitations-workspace/${rfxId}`,
           router,
           path,
         )}

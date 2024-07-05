@@ -24,9 +24,9 @@ import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 const CheckPassword = () => {
   // State
   const router = useRouter();
-  const { id } = useParams();
+  const { rfxId } = useParams();
   const { data: selected, isLoading: isTenderDetailLoading } =
-    useGetTenderQuery(id?.toString());
+    useGetTenderQuery(rfxId?.toString());
   const prepareBidContext = useContext(PrepareBidContext);
   const schema = z.object({
     password: z.string().min(1, { message: 'this field is required' }),
@@ -43,7 +43,7 @@ const CheckPassword = () => {
   // Functions
   const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
     const payload = await checkPassword({
-      tenderId: id,
+      tenderId: rfxId,
       password: data.password,
       documentType: 'RESPONSE',
     });
@@ -51,12 +51,11 @@ const CheckPassword = () => {
       sessionStorage.setItem(
         'password',
         JSON.stringify({
-          // rfxId: id,
-          tenderId: id,
+          rfxId: rfxId,
           password: data.password,
         }),
       );
-      router.push(`/invitations-workspace/prepare-bid/${id}`);
+      router.push(`/invitations-workspace/prepare-bid/${rfxId}`);
     } else {
       notify('Error', 'Incorrect password please insert correct password');
     }
@@ -72,8 +71,8 @@ const CheckPassword = () => {
   //   }
   // }, [id, router]);
   useEffect(() => {
-    router.push(`/invitations-workspace/prepare-bid/${id}/bid-declaration`);
-  }, [id, router]);
+    router.push(`/invitations-workspace/prepare-bid/${rfxId}/bid-declaration`);
+  }, [rfxId, router]);
 
   return (
     <Box>

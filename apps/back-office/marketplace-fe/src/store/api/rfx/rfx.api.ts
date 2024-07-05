@@ -347,6 +347,26 @@ export const rfxOtherApi = createApi({
         }
         return { url: `sol-round-awards/winner/${itemId}${q}` };
       },
+      providesTags: ['eval-responses:LIST'],
+    }),
+    sendAward: builder.mutation<any, any>({
+      query(body) {
+        return {
+          url: `/award-items`,
+          method: 'POST',
+          body,
+        };
+      },
+      invalidatesTags: ['eval-responses:LIST'],
+    }),
+    canSendAward: builder.query<any, { itemId: string }>({
+      query({ itemId }) {
+        return {
+          url: `/sol-round-awards/can-send-award-to/${itemId}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['eval-responses:LIST'],
     }),
     getItemSpecificationEval: builder.query<any, { bidderId: string }>({
       query: (data) => ({
@@ -399,4 +419,7 @@ export const {
   useMakeRFXClosedMutation,
   useLazyGetWinnersQuery,
   useLazyGetItemSpecificationEvalQuery,
+  useSendAwardMutation,
+  useCanSendAwardQuery,
+  useLazyCanSendAwardQuery,
 } = rfxOtherApi;
