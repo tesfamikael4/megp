@@ -38,7 +38,7 @@ export class InvoicesController {
   @Post('pay-online/:invoiceId')
   async payOnline(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
     const PaymentGateway =
-      process.env.MEGP_PAYMENT_GATEWAY ?? '/infrastructure/api/';
+      process.env.MEGP_PAYMENT_GATEWAY ?? 'https://dev-bo.megp.peragosystems.com/infrastructure/api/';
     const url = PaymentGateway + 'mpgs-payments';
     const invoice = await this.invoiceService.getActiveInvoiceById(invoiceId);
     if (invoice?.paymentStatus == PaymentStatus.PENDING) {
@@ -91,7 +91,7 @@ export class InvoicesController {
   @Get('pay-offline/:invoiceId')
   async payOffline(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
     const PaymentGateway =
-      process.env.MEGP_PAYMENT_GATEWAY ?? '/infrastructure/api/';
+      process.env.MEGP_PAYMENT_GATEWAY ?? 'https://dev-bo.megp.peragosystems.com/infrastructure/api/';
 
     const invoice = await this.invoiceService.getActiveInvoiceById(invoiceId);
     if (invoice) {
