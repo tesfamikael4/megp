@@ -22,12 +22,16 @@ export class MpgsPaymentService {
         process.env.MPGS_PAYMENT_NOTIFICATION_URL ??
         'https://dev-bo.megp.peragosystems.com/infrastructure/api/mpgs-payments/notify';
 
+      const returnUrl =
+        process.env.MPGS_PAYMENT_RETURN_URL ??
+        'https://dev.megp.peragosystems.com';
+
       const payload = {
         apiOperation: 'INITIATE_CHECKOUT',
         interaction: {
           merchant: {
-            name: 'The Company Co',
-            url: 'https://www.merchant-site.com',
+            name: 'M-EGP',
+            url: 'https://maneps.mw',
             logo: 'https://upload.wikimedia.org/wikipedia/commons/2/21/Verlagsgruppe_Random_House_Logo_2016.png',
           },
           displayControl: {
@@ -35,8 +39,10 @@ export class MpgsPaymentService {
             // "customerEmail": "MANDATORY"
           },
           timeout: 1800,
-          timeoutUrl: 'https://www.google.com',
-          cancelUrl: 'http://www.google.com',
+          timeoutUrl: `${returnUrl}`,
+          cancelUrl: `${returnUrl}`,
+          redirectMerchantUrl: `${returnUrl}`,
+          returnUrl: `${returnUrl}/my-workspace`,
           operation: 'PURCHASE',
         },
         order: {
