@@ -2,13 +2,14 @@ import {
   Box,
   Button,
   Checkbox,
+  Flex,
   Group,
   Pagination,
   Radio,
   TextInput,
 } from '@mantine/core';
 import { useDebouncedState } from '@mantine/hooks';
-import { Table, TableConfig, logger } from '@megp/core-fe';
+import { Table, TableConfig } from '@megp/core-fe';
 import { IconSearch } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
@@ -108,32 +109,40 @@ export const CollectionSelector = ({
     });
   }, [page]);
   return (
-    <>
-      <TextInput
-        className="mb-2"
-        leftSection={<IconSearch />}
-        miw={300}
-        onChange={(event) => {
-          setSearch(event.currentTarget.value);
-        }}
-        placeholder="Search"
-        rightSectionWidth={30}
-      />
-      <Table config={castedConfig} data={data} />
-      <Group justify="end" className="mt-2">
-        <Pagination
-          onChange={setPage}
-          size="sm"
-          total={totalPages}
-          value={page}
-          withEdges
+    <Flex direction={'column'} gap={'md'} className="w-full relative h-full">
+      <Flex direction={'column'} gap={'sm'} pb={'sm'}>
+        <TextInput
+          className="mb-2"
+          leftSection={<IconSearch />}
+          miw={300}
+          onChange={(event) => {
+            setSearch(event.currentTarget.value);
+          }}
+          placeholder="Search"
+          rightSectionWidth={30}
         />
-      </Group>
-      <Group justify="end" className="mt-2">
-        <Button onClick={() => onDone(selected)}>
-          {isForSplitting ? 'Next' : 'Done'}
-        </Button>
-      </Group>
-    </>
+        <Table config={castedConfig} data={data} />
+      </Flex>
+      <Flex
+        direction={'column'}
+        gap={'md'}
+        className="w-full bg-white sticky bottom-0 right-0 py-3 px-6"
+      >
+        <Group justify="end" className="mt-2">
+          <Pagination
+            onChange={setPage}
+            size="sm"
+            total={totalPages}
+            value={page}
+            withEdges
+          />
+        </Group>
+        <Group justify="end" className="mt-2">
+          <Button onClick={() => onDone(selected)}>
+            {isForSplitting ? 'Next' : 'Done'}
+          </Button>
+        </Group>
+      </Flex>
+    </Flex>
   );
 };

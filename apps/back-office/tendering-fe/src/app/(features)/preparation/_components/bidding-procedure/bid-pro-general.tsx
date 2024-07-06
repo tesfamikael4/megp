@@ -17,7 +17,7 @@ import {
   useUpdateMutation,
 } from '@/app/(features)/preparation/_api/tender/bid-pro-general.api';
 import { useParams } from 'next/navigation';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { DateInput } from '@mantine/dates';
 
@@ -79,16 +79,18 @@ export default function BidProGeneral() {
       return;
     } else {
       setIsPreBidDateError(false);
-      try {
-        await create({
-          ...data,
-          tenderId: id,
-          spdId: id,
+      await create({
+        ...data,
+        tenderId: id,
+        spdId: id,
+      })
+        .unwrap()
+        .then(() => {
+          notify('Success', 'Bid Procurement General created successfully');
+        })
+        .catch(() => {
+          notify('Error', 'Error in creating bid procurement general');
         });
-        notify('Success', 'Bid Procurement General created successfully');
-      } catch (err) {
-        notify('Error', 'Error in creating bid procurement general');
-      }
     }
   };
 
@@ -98,16 +100,18 @@ export default function BidProGeneral() {
       return;
     } else {
       setIsPreBidDateError(false);
-      try {
-        await update({
-          ...data,
-          tenderId: id,
-          id: id?.toString(),
+      await update({
+        ...data,
+        tenderId: id,
+        id: id?.toString(),
+      })
+        .unwrap()
+        .then(() => {
+          notify('Success', 'Bid Procurement General updated successfully');
+        })
+        .catch(() => {
+          notify('Error', 'Error in updating bid procurement general');
         });
-        notify('Success', 'Bid Procurement General updated successfully');
-      } catch {
-        notify('Error', 'Error in updating bid procurement general');
-      }
     }
   };
 

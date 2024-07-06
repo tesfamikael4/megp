@@ -3,14 +3,7 @@ export interface ITenderEvaluation {
   tenderId: string;
   bidEvaluationCurrency: any[];
   evaluationMethod: 'point system' | 'compliance';
-  selectionMethod:
-    | 'lowest price'
-    | 'meat'
-    | 'lcs'
-    | 'qcbs'
-    | 'fbs'
-    | 'cqs'
-    | 'sss';
+  selectionMethod: 'LCS' | 'QCBS' | 'QBS' | 'FBS' | 'CQS' | 'SSS' | 'LPS';
   awardType: 'item based' | 'lot based';
   technicalWeight: number;
   financialWeight: number;

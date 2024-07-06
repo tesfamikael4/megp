@@ -21,6 +21,37 @@ import {
 import { useParams } from 'next/navigation';
 import { useListQuery } from '../../_api/scc/curencies.api';
 
+const SelectionMethodEnum = [
+  {
+    label: 'Least Cost-based Selection ',
+    value: 'LCS',
+  },
+  {
+    label: 'Quality and Cost-based Selection ',
+    value: 'QCBS',
+  },
+  {
+    label: 'Quality Based Selection',
+    value: 'QBS',
+  },
+  {
+    label: 'Fixed Budget-based Selection ',
+    value: 'FBS',
+  },
+  {
+    label: 'Consultant’s Qualification-based Selection',
+    value: 'CQS',
+  },
+  {
+    label: 'Direct Selection or Single source selection',
+    value: 'SSS',
+  },
+  {
+    label: 'Least Price Selection',
+    value: 'LPS',
+  },
+];
+
 export default function BidProEvaluation() {
   const { id } = useParams();
   const [technicalRequired, setTechnicalRequired] = useState<boolean>(false);
@@ -34,15 +65,7 @@ export default function BidProEvaluation() {
       }),
     ),
     evaluationMethod: z.enum(['point system', 'compliance']),
-    selectionMethod: z.enum([
-      'lowest price',
-      'meat',
-      'lcs',
-      'qcbs',
-      'fbs',
-      'cqs',
-      'sss',
-    ]),
+    selectionMethod: z.enum(['LCS', 'QCBS', 'QBS', 'FBS', 'CQS', 'SSS', 'LPS']),
     awardType: z.enum(['item based', 'lot based']),
     technicalWeight: z.number().optional(),
     financialWeight: z.number().optional(),
@@ -110,16 +133,18 @@ export default function BidProEvaluation() {
   };
 
   const onUpdate = async (data) => {
-    try {
-      await update({
-        ...data,
-        tenderId: id,
-        id: id?.toString(),
+    await update({
+      ...data,
+      tenderId: id,
+      id: id?.toString(),
+    })
+      .unwrap()
+      .then(() => {
+        notify('Success', 'Bid Procurement General updated successfully');
+      })
+      .catch(() => {
+        notify('Error', 'Error in updating bid procurement general');
       });
-      notify('Success', 'Bid Procurement General updated successfully');
-    } catch {
-      notify('Error', 'Error in updating bid procurement general');
-    }
   };
 
   useEffect(() => {
@@ -219,15 +244,7 @@ export default function BidProEvaluation() {
           name="selectionMethod"
           render={({ field: { value, name, onChange } }) => (
             <Select
-              data={[
-                'lowest price',
-                'meat',
-                'lcs',
-                'qcbs',
-                'fbs',
-                'cqs',
-                'sss',
-              ]}
+              data={SelectionMethodEnum}
               error={
                 errors['selectionMethod']
                   ? errors['selectionMethod']?.message?.toString()
