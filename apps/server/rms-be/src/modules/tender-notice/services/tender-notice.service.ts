@@ -77,9 +77,41 @@ export class TenderNoticeService extends EntityCrudService<TenderNotice> {
       query,
     )
       .leftJoin('tender_notices.savedNotices', 'savedNotices')
-      .where('"savedNotices"."bidderId" = :bidderId', {
-        bidderId: user?.id,
-      });
+      .where(
+        '"savedNotices"."bidderId" = :bidderId AND "savedNotices"."saveType" = :saveType',
+        {
+          bidderId: user?.id,
+          saveType: ESaveType.INVITATION,
+        },
+      );
+
+    return await this.giveQueryResponse(query, dataQuery);
+  }
+
+  async findRegisteredTenders(
+    query: CollectionQuery,
+    user: any,
+  ): Promise<DataResponseFormat<TenderNotice>> {
+    query.where.push([
+      {
+        column: 'isOpen',
+        operator: FilterOperators.EqualTo,
+        value: true,
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<TenderNotice>(
+      this.tenderNoticeRepository,
+      query,
+    )
+      .leftJoin('tender_notices.savedNotices', 'savedNotices')
+      .where(
+        '"savedNotices"."bidderId" = :bidderId AND "savedNotices"."saveType" = :saveType',
+        {
+          bidderId: user?.id,
+          saveType: ESaveType.REGISTERED,
+        },
+      );
 
     return await this.giveQueryResponse(query, dataQuery);
   }

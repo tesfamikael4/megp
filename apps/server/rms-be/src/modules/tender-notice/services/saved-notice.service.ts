@@ -12,4 +12,10 @@ export class SavedNoticeService extends ExtraCrudService<SavedNotice> {
   ) {
     super(savedNoticeRepository);
   }
+
+  async create(itemData: any, req?: any): Promise<any> {
+    const item = this.savedNoticeRepository.create(itemData);
+    await this.savedNoticeRepository.upsert(item, ['bidderId', 'noticeId']);
+    return item;
+  }
 }

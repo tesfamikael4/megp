@@ -7,13 +7,11 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import {
-  ESaveType,
-  ETenderNoticeType,
-} from 'src/utils/enums/tender-notice.enum';
+import { ESaveType } from 'src/utils/enums/tender-notice.enum';
 import { TenderNotice } from './tender-notice.entity';
 
 @Entity({ name: 'saved_notices' })
+@Unique(['bidderId', 'noticeId'])
 export class SavedNotice extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

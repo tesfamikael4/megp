@@ -69,4 +69,20 @@ export class TenderNoticeController extends EntityCrudController<TenderNotice>(
     const query = decodeCollectionQuery(q);
     return this.noticeService.findInvitedTenders(query, user);
   }
+
+  @Get('registered')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  @IgnoreTenantInterceptor()
+  async findRegisteredTenders(
+    @Query('q') q?: string,
+    @CurrentUser() user?: any,
+  ): Promise<DataResponseFormat<TenderNotice>> {
+    const query = decodeCollectionQuery(q);
+    return this.noticeService.findRegisteredTenders(query, user);
+  }
 }
