@@ -8,6 +8,7 @@ import { AwardItemController } from './controllers/award-item.controller';
 import { AwardNoteController } from './controllers/award-note.controller';
 import { AwardItemService } from './services/award-item.service';
 import { AwardNoteService } from './services/award-note.service';
+import { ReSchedulerService } from './services/re-scheduler.service';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { AwardNoteService } from './services/award-note.service';
     UtilityModule,
   ],
   controllers: [AwardItemController, AwardNoteController],
-  providers: [AwardItemService, AwardNoteService],
+  providers: [AwardItemService, AwardNoteService, ReSchedulerService],
   exports: [],
 })
 export class AwardModule {}
