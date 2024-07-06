@@ -71,5 +71,5 @@ export class TenderNotice extends Audit {
     (bookmark) => bookmark.tenderNotice,
     { cascade: true, onDelete: 'CASCADE' },
   )
-  tenderProcurementMechanisms: TenderProcurementMechanism[];
+  tenderProcurementMechanism: TenderProcurementMechanism;
 }

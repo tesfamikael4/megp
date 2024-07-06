@@ -16,7 +16,7 @@ export class TenderProcurementMechanism extends Audit {
   @Column()
   tenderId: string;
 
-  @OneToOne(() => TenderNotice, (tender) => tender.tenderProcurementMechanisms)
+  @OneToOne(() => TenderNotice, (tender) => tender.tenderProcurementMechanism)
   @JoinColumn({ name: 'tenderId' })
   tenderNotice: TenderNotice;
 
