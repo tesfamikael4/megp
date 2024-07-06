@@ -26,6 +26,7 @@ import {
 import { DataResponseFormat } from 'src/shared/api-data';
 import * as crypto from 'crypto';
 import { EncryptionHelperService } from './encryption-helper.service';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
@@ -33,6 +34,8 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     @InjectRepository(BidRegistration)
     private readonly bidRegistrationRepository: Repository<BidRegistration>,
     private readonly encryptionHelperService: EncryptionHelperService,
+    @Inject('RMS_RMQ_SERVICE')
+    private readonly rmsRMQClient: ClientProxy,
     @Inject(REQUEST) private request: Request,
   ) {
     super(bidRegistrationRepository);
@@ -150,6 +153,15 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
       .getRepository(BidRegistrationDetail)
       .insert(bidRegistrationDetails);
 
+    const registrationPayload = {
+      id: bidRegistration.id,
+      noticeId: bidRegistration.tenantId,
+      saveType: 'REGISTERED',
+      bidderId: bidRegistration.bidderId,
+      bidderName: bidRegistration.bidderName,
+    };
+
+    this.rmsRMQClient.emit('record-registration', registrationPayload);
     return {
       ...bidRegistration,
       paymentLink,

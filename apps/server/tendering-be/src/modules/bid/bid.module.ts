@@ -62,6 +62,7 @@ import { BidResponseDocumentaryEvidence } from 'src/entities/bid-response-docume
 import { BidResponseDocumentaryEvidenceService } from './service/bid-response-documentary-evidence.service';
 import { BidResponseDocumentaryEvidenceController } from './controller/bid-response-documentary-evidence.controller';
 import { DocumentManipulatorModule } from 'src/shared/document-manipulator/document-manipulator.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -88,6 +89,19 @@ import { DocumentManipulatorModule } from 'src/shared/document-manipulator/docum
     DocxModule,
     MinIOModule,
     DocumentManipulatorModule,
+    ClientsModule.register([
+      {
+        name: 'RMS_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'rms',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
   ],
   controllers: [
     BidBookmarkController,
