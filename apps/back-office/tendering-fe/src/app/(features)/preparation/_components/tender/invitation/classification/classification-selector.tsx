@@ -1,15 +1,6 @@
 import { CollectionQuery, RelationConfig } from '@megp/entity';
-import { useState } from 'react';
 import { CollectionSelector } from '@/app/(features)/_components/collection-selector';
-import {
-  Divider,
-  Flex,
-  LoadingOverlay,
-  Select,
-  Button,
-  TextInput,
-  Box,
-} from '@mantine/core';
+import { LoadingOverlay } from '@mantine/core';
 import { logger, notify } from '@megp/core-fe';
 import { useCreateMutation } from '@/app/(features)/preparation/_api/tender/classification.api';
 import { useLazyGetClassificationsQuery } from '@/app/(features)/preparation/_api/tender/get-classification.api';
@@ -71,6 +62,7 @@ export default function ClassificationSelector({
 
   const onRequestChange = (request: CollectionQuery) => {
     trigger({
+      ...request,
       where: [
         [
           {
