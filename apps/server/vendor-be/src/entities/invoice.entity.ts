@@ -36,7 +36,8 @@ export class InvoiceEntity extends Audit {
   createdOn: Date;
   @Column({ nullable: true })
   paymentLink: string;
-
+  @Column({ nullable: true, unique: true })
+  orderId: string
   @ManyToOne(() => BpServiceEntity, (service) => service.invoices)
   service: BpServiceEntity;
 }

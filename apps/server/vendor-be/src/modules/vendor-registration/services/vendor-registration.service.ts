@@ -712,9 +712,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: ApplicationStatus.DRAFT,
       };
     }
-
-    if (bas.some((ba) => ba.status == ApplicationStatus.PENDING))
+    const onprogressApp = await this.workflowService.getRequestedAppByVendorId(data.id);
+    if (bas.some((ba) => ba.status == ApplicationStatus.PENDING) && onprogressApp !== null) {
       return { status: ApplicationStatus.SUBMITTED };
+    }
+
+
     else if (bas.some((ba) => ba.status == ApplicationStatus.ADJUSTMENT))
       return { status: ApplicationStatus.ADJUSTMENT };
     else if (
@@ -724,8 +727,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           ba.status == ApplicationStatus.OUTDATED ||
           ba.status == ApplicationStatus.CANCELED,
       )
-    )
+    ) {
       return { status: ApplicationStatus.APPROVED };
+    }
+
   }
   fromInitialValue = async (data: any) => {
     let vendorsEntity = new IsrVendorsEntity();

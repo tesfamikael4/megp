@@ -30,8 +30,9 @@ import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { BusinessCategories } from 'src/modules/handling/enums/business-category.enum';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
-import { PaymentReceiptCommand } from '../dto/payment-command.dto';
+import { PaymentCommand, PaymentReceiptCommand } from '../dto/payment-command.dto';
 import { BusinessInterestAreaDto } from '../dto/AdditionalService.dto';
+import axios from 'axios';
 
 @Injectable()
 export class InvoiceService extends EntityCrudService<InvoiceEntity> {
@@ -52,9 +53,116 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     super(invoiceRepository);
   }
 
-  async updateStatus(dto: PaymentReceiptCommand) {
+
+  async payOnline(invoiceId: string) {
+    const PaymentGateway =
+      process.env.MEGP_PAYMENT_GATEWAY ??
+      'https://dev-bo.megp.peragosystems.com/infrastructure/api';
+    const url = `${PaymentGateway}/mpgs-payments`;
+    const invoice = await this.getActiveInvoiceById(invoiceId);
+    if (invoice?.paymentStatus == PaymentStatus.PENDING) {
+      const payload = new PaymentCommand();
+      payload.invoiceReference = invoice.refNumber;
+      //payload.status = "Pending";
+      payload.currency = 'MWK';
+      payload.applicationKey = 'Vendor';
+      payload.amount = Number(invoice.amount);
+      payload.service = invoice.remark;
+      payload.description = invoice.refNumber;
+      const vendorBaseURL =
+        process.env.VENDOR_API_DEV ??
+        'https://dev-bo.megp.peragosystems.com/vendors/api';
+      const callBackUrl = `${vendorBaseURL}/invoices/update-payment-status`;
+      payload.callbackUrl = callBackUrl;
+      const headers = {
+        'Content-Type': 'application/json',
+        'x-api-key':
+          process.env.MEGP_PAYMENT_GATEWAY_API_KEY ??
+          '25bc1622e5fb42cca3d3e62e90a3a20f',
+      };
+      try {
+        let response;
+        if (!invoice.paymentLink) {
+          console.log('🚀 ~ InvoicesController ~ payOnline ~ url:', url);
+          response = await axios.post(url, payload, { headers });
+        } else {
+          invoice.refNumber = this.commonService.generateRandomString(10);
+          await this.update(invoice.id, invoice);
+          payload.invoiceReference = invoice.refNumber;
+          console.log('🚀 ~ InvoicesController ~ payOnline ~ url:', url);
+          response = await axios.post(url, payload, { headers });
+        }
+        console.log('response-----', response);
+        if (response?.status === 201) {
+          const responseData = response.data;
+          invoice.paymentLink = response.data.paymentLink;
+          invoice.paymentMethod = 'Electronic';
+          invoice.orderId = responseData.orderId;
+          await this.update(invoice.id, invoice);
+          return responseData;
+        } else {
+          return null;
+        }
+      } catch (error) {
+        throw new Error('Error making API request' + error);
+      }
+    } else {
+      throw new NotFoundException('Invoice Not found');
+    }
+
+  }
+  async payOffline(invoiceId: string) {
+    const PaymentGateway =
+      process.env.MEGP_PAYMENT_GATEWAY ??
+      'https://dev-bo.megp.peragosystems.com/infrastructure/api';
+    const url = `${PaymentGateway}/offline-payments`;
+    const invoice = await this.getActiveInvoiceById(invoiceId);
+    if (invoice?.paymentStatus == PaymentStatus.PENDING) {
+      const payload = new PaymentCommand();
+      payload.invoiceReference = invoice.refNumber;
+      //payload.status = "Pending";
+      payload.currency = 'MWK';
+      payload.applicationKey = 'Vendor';
+      payload.amount = Number(invoice.amount);
+      payload.service = invoice.remark;
+      payload.description = invoice.refNumber;
+      const vendorBaseURL =
+        process.env.VENDOR_API_DEV ??
+        'https://dev-bo.megp.peragosystems.com/vendors/api';
+      const callBackUrl = `${vendorBaseURL}/invoices/update-payment-status`;
+      payload.callbackUrl = callBackUrl;
+      const headers = {
+        'Content-Type': 'application/json',
+        'x-api-key':
+          process.env.MEGP_PAYMENT_GATEWAY_API_KEY ??
+          '25bc1622e5fb42cca3d3e62e90a3a20f',
+      };
+      try {
+        let response;
+        if (invoice.paymentMethod == "Manual") {
+          console.log('🚀 ~ InvoicesController ~ payOnline ~ url:', url);
+          response = await axios.post(url, payload, { headers });
+          if (response?.status === 201) {
+            const responseData = response.data;
+            invoice.paymentMethod = "Bank";
+            invoice.orderId = responseData.orderId;
+            await this.update(invoice.id, invoice);
+            return responseData;
+          }
+        } else {
+          throw new HttpException("Invoice_already_sent_to_bank", HttpStatus.BAD_REQUEST)
+        }
+      } catch (error) {
+        throw new Error('Error making API request' + error);
+      }
+    } else {
+      throw new NotFoundException('Invoice Not found');
+    }
+  }
+
+  async updateStatus(dto: PaymentCommand) {
     const invoice = await this.invoiceRepository.findOne({
-      where: { refNumber: dto.referenceNo },
+      where: { refNumber: dto.invoiceReference },
     });
     if (invoice && dto.status == 'Success') {
       invoice.paymentStatus = PaymentStatus.COMPLETED;
@@ -345,7 +453,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       where: {
         userId: userId,
         createdOn: MoreThanOrEqual(oneWeekAgo),
-        paymentStatus: In([PaymentStatus.PENDING, PaymentStatus.PAID]),
+        //  paymentStatus: In([PaymentStatus.PENDING, PaymentStatus.PAID]),
         serviceId: serviceId
       },
       relations: { service: true },
