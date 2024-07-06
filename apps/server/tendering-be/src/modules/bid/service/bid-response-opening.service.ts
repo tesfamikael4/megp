@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { EntityManager } from 'typeorm';
@@ -15,6 +15,7 @@ import { BidResponseDocument } from 'src/entities/bid-response-document.entity';
 import { OpenedBidResponseItem } from 'src/entities/opened-bid-response-item.entity';
 import { OpenedBidResponseTender } from 'src/entities/opened-bid-response-tender.entity';
 import { OpenedBidResponseLot } from 'src/entities/opened-bid-response-lot.entity';
+import { BidRegistrationDetail } from 'src/entities';
 
 @Injectable()
 export class BidResponseOpeningService {
@@ -210,7 +211,7 @@ export class BidResponseOpeningService {
       const decryptedValue = this.encryptionHelperService.decryptedData(
         bidResponseTender.value,
         payload.password,
-        bidRegistration.salt,
+        bidRegistrationDetail.bidRegistration.salt,
       );
 
       openedBidResponseTenders.push(

@@ -25,8 +25,13 @@ export enum EvaluationMethodEnum {
 }
 
 export enum SelectionMethodEnum {
-  LOWEST_PRICE = 'lowest price',
-  LOT_BASED = 'highest price',
+  LEAST_COST_BASED_SELECTION = 'LCS',
+  QUALITY_AND_COST_BASED_SELECTION = 'QCBS',
+  QUALITY_BASED_SELECTION = 'QBS',
+  FIXED_BUDGET_BASED_SELECTION = 'FBS',
+  CONSULTANT_QUALIFICATION_BASED_SELECTION = 'CQS',
+  DIRECT_SELECTION_OR_SINGLE_SOURCE_SELECTION = 'SSS',
+  LEAST_PRICE_SELECTION = 'LPS',
 }
 
 export enum BidGuaranteeStatusEnum {
