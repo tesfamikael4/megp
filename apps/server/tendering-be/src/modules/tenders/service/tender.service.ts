@@ -414,7 +414,7 @@ export class TenderService extends EntityCrudService<Tender> {
 
       const approvePayload = {
         ...tender,
-        publishmentDate: new Date(),
+        publishedDate: new Date(),
         closingDate: deadline,
         objectType: 'TENDER',
       };
