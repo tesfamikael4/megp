@@ -60,6 +60,13 @@ export class TenderService extends EntityCrudService<Tender> {
 
       const prId = itemData.prId;
 
+      const prExists = await this.tenderRepository.existsBy({
+        prId,
+      });
+
+      if (prExists) {
+        throw new Error('pr_already_used');
+      }
       const PR_BASE_ENDPOINT =
         process.env.PR_BASE_ENDPOINT ??
         'https://dev-bo.megp.peragosystems.com/planning/api/';

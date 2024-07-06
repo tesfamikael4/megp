@@ -58,7 +58,7 @@ export class Tender extends Audit {
   @Column()
   budgetCode: string;
 
-  @Column({ unique: true })
+  @Column()
   prId: string;
 
   @Column({ type: 'numeric', default: 0 })
