@@ -627,6 +627,7 @@ export class TenderService extends EntityCrudService<Tender> {
 
     const newTender = manager.getRepository(Tender).create({
       ...rest,
+      id: undefined,
       status: TenderStatusEnum.DRAFT,
       tenderDocument: null,
       tenderInvitation: null,
