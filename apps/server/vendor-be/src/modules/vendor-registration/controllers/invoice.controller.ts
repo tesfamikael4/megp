@@ -39,73 +39,19 @@ import { ApplicationStatus } from 'src/modules/handling/enums/application-status
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class InvoicesController {
   constructor(
-    private invoiceService: InvoiceService,
-    private commonService: HandlingCommonService,
+    private invoiceService: InvoiceService
   ) { }
   @Post('pay-online/:invoiceId')
   async payOnline(
     @CurrentUser() user: any,
     @Param('invoiceId') invoiceId: string,
   ) {
-    const PaymentGateway =
-      process.env.MEGP_PAYMENT_GATEWAY ??
-      'https://dev-bo.megp.peragosystems.com/infrastructure/api';
-    const url = `${PaymentGateway}/mpgs-payments`;
-    const invoice = await this.invoiceService.getActiveInvoiceById(invoiceId);
-    if (invoice?.paymentStatus == PaymentStatus.PENDING) {
-      const payload = new PaymentCommand();
-      payload.invoiceReference = invoice.refNumber;
-      //payload.status = "Pending";
-      payload.currency = 'MWK';
-      payload.applicationKey = 'Vendor';
-      payload.amount = Number(invoice.amount);
-      payload.service = invoice.remark;
-      payload.description = invoice.refNumber;
-      const vendorBaseURL =
-        process.env.VENDOR_API_DEV ??
-        'https://dev-bo.megp.peragosystems.com/vendors/api';
-      const callBackUrl = `${vendorBaseURL}/invoices/update-payment-status`;
-      payload.callbackUrl = callBackUrl;
-      const headers = {
-        'Content-Type': 'application/json',
-        'x-api-key':
-          process.env.MEGP_PAYMENT_GATEWAY_API_KEY ??
-          '25bc1622e5fb42cca3d3e62e90a3a20f',
-      };
-      try {
-        let response;
-        if (!invoice.paymentLink) {
-          console.log('🚀 ~ InvoicesController ~ payOnline ~ url:', url);
-          response = await axios.post(url, payload, { headers });
-        } else {
-          invoice.refNumber = this.commonService.generateRandomString(10);
-          await this.invoiceService.update(invoice.id, invoice);
-          payload.invoiceReference = invoice.refNumber;
-          console.log('🚀 ~ InvoicesController ~ payOnline ~ url:', url);
-          response = await axios.post(url, payload, { headers });
-        }
-
-        console.log('response-----', response);
-        if (response?.status === 201) {
-          const responseData = response.data;
-          invoice.paymentLink = response.data.paymentLink;
-          invoice.paymentMethod = 'Electronic';
-          await this.invoiceService.update(invoice.id, invoice);
-          return responseData;
-        } else {
-          return null;
-        }
-      } catch (error) {
-        throw new Error('Error making API request' + error);
-      }
-    } else {
-      throw new NotFoundException('Invoice Not found');
-    }
+    return await this.invoiceService.payOnline(invoiceId);
   }
   //under construction
   //will be updated latter
   @Get('pay-offline/:invoiceId')
-  async payOffline(
+  async payOffline1(
     @CurrentUser() user: any,
     @Param('invoiceId') invoiceId: string,
   ) {
@@ -126,7 +72,7 @@ export class InvoicesController {
 
       try {
         const url = `${PaymentGateway}offline-payments/${invoiceReference}`;
-        const response = await axios.get(url, { headers: headers });
+        const response = await axios.post(url, { headers: headers });
         console.log('response-----', response);
         if (response.status === 200) {
           const responseData = JSON.stringify(response.data);
@@ -144,11 +90,18 @@ export class InvoicesController {
       throw new NotFoundException('Invoice Not found');
     }
   }
+  @Post('pay-offline/:invoiceId')
+  async payOffline(
+    @CurrentUser() user: any,
+    @Param('invoiceId') invoiceId: string,
+  ) {
+    return await this.invoiceService.payOffline(invoiceId);
+  }
 
   //open for testing purpose only
   @AllowAnonymous()
   @Post('update-payment-status')
-  async updateStatus(@Body() receipt: PaymentReceiptCommand) {
+  async updateStatus(@Body() receipt: PaymentCommand) {
     return this.invoiceService.updateStatus(receipt);
   }
 
