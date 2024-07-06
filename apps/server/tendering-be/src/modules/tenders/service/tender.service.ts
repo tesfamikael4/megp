@@ -365,6 +365,7 @@ export class TenderService extends EntityCrudService<Tender> {
         spd: true,
         bdsSubmission: true,
         procurementMechanism: true,
+        tenderInvitees: true,
       },
     });
 
