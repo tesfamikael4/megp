@@ -12,10 +12,11 @@ import {
   SolOffer,
   SolRegistration,
 } from 'src/entities';
-import { EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { CreateAwardItemDTO } from '../dtos/award-item.dto';
 import { REQUEST } from '@nestjs/core';
 import { EAwardItemStatus } from 'src/utils/enums/award.enum';
+import { SchedulerService } from 'src/utils/services/scheduler.service';
 
 @Injectable()
 export class AwardItemService extends ExtraCrudService<AwardItem> {
@@ -23,6 +24,7 @@ export class AwardItemService extends ExtraCrudService<AwardItem> {
     @InjectRepository(AwardItem)
     private readonly awardItemRepository: Repository<AwardItem>,
     @Inject(REQUEST) private request: Request,
+    private readonly schedulerService: SchedulerService,
   ) {
     super(awardItemRepository);
   }
@@ -73,6 +75,15 @@ export class AwardItemService extends ExtraCrudService<AwardItem> {
 
     const awardItem = this.awardItemRepository.create(itemData);
     await this.awardItemRepository.insert(awardItem);
+
+    const oneDayFromNow = new Date();
+    oneDayFromNow.setDate(oneDayFromNow.getDate() + 1);
+    await this.schedulerService.schedule(
+      this.cancelUnAcceptedAward,
+      oneDayFromNow,
+      { awardItemId: awardItem.id },
+    );
+
     return awardItem;
   }
 
@@ -95,5 +106,24 @@ export class AwardItemService extends ExtraCrudService<AwardItem> {
     await this.awardItemRepository.update(awardItemId, { status });
     award.status = status;
     return award;
+  }
+
+  async cancelUnAcceptedAward(
+    dataSource: DataSource,
+    payload: { awardItemId: string },
+  ) {
+    const awardItemRepo = dataSource.getRepository(AwardItem);
+    const unacceptedAwardItem = await awardItemRepo.exists({
+      where: {
+        id: payload.awardItemId,
+        status: EAwardItemStatus.PENDING,
+      },
+    });
+
+    if (unacceptedAwardItem) {
+      await awardItemRepo.update(payload.awardItemId, {
+        status: EAwardItemStatus.CANCELLED,
+      });
+    }
   }
 }
