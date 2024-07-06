@@ -219,6 +219,14 @@ export class TenderService extends EntityCrudService<Tender> {
       },
     ]);
 
+    query.where.push([
+      {
+        column: 'status',
+        operator: FilterOperators.NotEqualTo,
+        value: TenderStatusEnum.RE_ADVERTISED,
+      },
+    ]);
+
     const dataQuery = QueryConstructor.constructQuery<Tender>(
       this.tenderRepository,
       query,
