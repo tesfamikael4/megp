@@ -17,6 +17,7 @@ import {
   ChangeTenderStatusDto,
   CreateTenderDto,
   GenerateTenderDocumentDto,
+  InviteTenderParticipantDto,
   ReAdvertiseTenderDto,
 } from '../dto/tender.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
@@ -57,6 +58,18 @@ export class TenderController extends EntityCrudController<Tender>(options) {
   async getActiveTenders(@Query('q') q?: string) {
     const query = decodeCollectionQuery(q);
     return await this.tenderService.getActiveTenders(query);
+  }
+
+  @Get('get-tenders-as-team-member')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getTenderAssignedToUser(@Query('q') q?: string, @Req() req?: any) {
+    const query = decodeCollectionQuery(q);
+    return await this.tenderService.getTenderAssignedToUser(query, req);
   }
 
   @Get('closed-tenders')
@@ -112,5 +125,10 @@ export class TenderController extends EntityCrudController<Tender>(options) {
   @AllowAnonymous()
   async downloadInvitationDocument(@Param('id') id: string) {
     return await this.tenderService.downloadTenderInvitation(id);
+  }
+
+  @Post('invite-tender-participant')
+  async inviteTenderParticipant(@Body() itemData: InviteTenderParticipantDto) {
+    return this.tenderService.inviteTenderParticipant(itemData);
   }
 }

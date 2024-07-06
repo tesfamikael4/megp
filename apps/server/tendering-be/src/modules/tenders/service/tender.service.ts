@@ -22,6 +22,7 @@ import {
   ChangeTenderStatusDto,
   CreateTenderDto,
   GenerateTenderDocumentDto,
+  InviteTenderParticipantDto,
   ReAdvertiseTenderDto,
 } from '../dto';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
@@ -35,6 +36,7 @@ import {
 } from 'src/shared/enums/tender-status.enum';
 import { ClientProxy } from '@nestjs/microservices';
 import { SpdTemplateTypeEnum } from 'src/shared/enums';
+import { TenderInvitee } from 'src/entities/tender-invitee.entity';
 
 @Injectable()
 export class TenderService extends EntityCrudService<Tender> {
@@ -168,6 +170,30 @@ export class TenderService extends EntityCrudService<Tender> {
   }
 
   async findAll(query: CollectionQuery, req?: any) {
+    query.where.push([
+      {
+        column: 'procurementTechnicalTeams.isTeamLead',
+        operator: FilterOperators.EqualTo,
+        value: true,
+      },
+    ]);
+
+    return await this.getTenders(query, req);
+  }
+
+  async getTenderAssignedToUser(query: CollectionQuery, req: any) {
+    query.where.push([
+      {
+        column: 'procurementTechnicalTeams.isTeamLead',
+        operator: FilterOperators.EqualTo,
+        value: false,
+      },
+    ]);
+
+    return await this.getTenders(query, req);
+  }
+
+  async getTenders(query: CollectionQuery, req: any) {
     query.includes.push('procurementTechnicalTeams');
 
     query.where.push([
@@ -201,7 +227,6 @@ export class TenderService extends EntityCrudService<Tender> {
     }
     return response;
   }
-
   async findOne(id: any, req?: any) {
     return await this.tenderRepository.findOne({
       where: { id },
@@ -339,6 +364,7 @@ export class TenderService extends EntityCrudService<Tender> {
       relations: {
         spd: true,
         bdsSubmission: true,
+        procurementMechanism: true,
       },
     });
 
@@ -677,6 +703,23 @@ export class TenderService extends EntityCrudService<Tender> {
     await manager.getRepository(Tender).update(id, {
       status: TenderStatusEnum.RE_ADVERTISED,
     });
+  }
+
+  async inviteTenderParticipant(payload: InviteTenderParticipantDto) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const invitees = payload.bidders?.map((bidder) => {
+      return {
+        ...bidder,
+        tenderId: payload.tenderId,
+      };
+    });
+    const tenderInvitees = manager
+      .getRepository(TenderInvitee)
+      .create(invitees);
+
+    await manager.getRepository(TenderInvitee).save(tenderInvitees);
+
+    return tenderInvitees;
   }
 
   private async downloadAndConvert(fileInfo: any, data: any) {

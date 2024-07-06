@@ -27,13 +27,13 @@ import { BidBookmark } from './bid-bookmark.entity';
 import { BidRegistration } from './bid-registration.entity';
 import { TenderPersonal } from './tender-personal.entity';
 import { Opening } from './opening.entity';
-import { BidOpeningChecklistAssessmentDetail } from './bid-opening-checklist-assessment-detail.entity';
 import { Team } from './team.entity';
 import { Note } from './note.entity';
 import { TenderMilestone } from './tender-milestone.entity';
 import { RevisionApproval } from './revision-approval.entity';
 import { TenderStatusEnum } from 'src/shared/enums/tender-status.enum';
 import { BidOpeningChecklistAssessment } from './bid-opening-checklist-assessment.entity';
+import { TenderInvitee } from './tender-invitee.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -222,4 +222,7 @@ export class Tender extends Audit {
 
   @OneToMany(() => Note, (note) => note.tender)
   notes: Note[];
+
+  @OneToMany(() => TenderInvitee, (note) => note.tender)
+  tenderInvitees: TenderInvitee[];
 }

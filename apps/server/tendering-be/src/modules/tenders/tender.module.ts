@@ -45,6 +45,7 @@ import {
 } from './service';
 import { TenderApprovalService } from './service/tender-approval.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { TenderInvitee } from 'src/entities/tender-invitee.entity';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       TenderClassification,
       TenderParticipationFee,
       TenderPersonal,
+      TenderInvitee,
     ]),
     MinIOModule,
     DocxModule,
