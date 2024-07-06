@@ -20,18 +20,15 @@ export class SavedNotice extends Audit {
 
   @Column({
     type: 'enum',
-    enum: ETenderNoticeType,
-  })
-  objectType: ETenderNoticeType;
-
-  @Column({
-    type: 'enum',
     enum: ESaveType,
   })
   saveType: ESaveType;
 
   @Column()
-  userId: string;
+  bidderId: string;
+
+  @Column()
+  bidderName: string;
 
   @Column('uuid')
   noticeId: string;

@@ -1,7 +1,14 @@
 import { Audit } from 'megp-shared-be';
 import { ETenderNoticeType } from 'src/utils/enums/tender-notice.enum';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { SavedNotice } from './saved-notice.entity';
+import { TenderProcurementMechanism } from './tender-procurement-mechanism.entity';
 
 @Entity({ name: 'tender_notices' })
 export class TenderNotice extends Audit {
@@ -48,11 +55,21 @@ export class TenderNotice extends Audit {
   organizationName: string;
 
   @Column('timestamptz')
-  publishmentDate: Date;
+  publishedDate: Date;
 
   @Column('timestamptz')
   closingDate: Date;
 
-  @OneToMany(() => SavedNotice, (bookmark) => bookmark.tenderNotice)
+  @OneToMany(() => SavedNotice, (bookmark) => bookmark.tenderNotice, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   savedNotices: SavedNotice[];
+
+  @OneToOne(
+    () => TenderProcurementMechanism,
+    (bookmark) => bookmark.tenderNotice,
+    { cascade: true, onDelete: 'CASCADE' },
+  )
+  tenderProcurementMechanisms: TenderProcurementMechanism[];
 }
