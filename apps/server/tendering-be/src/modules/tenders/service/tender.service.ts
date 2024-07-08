@@ -772,7 +772,7 @@ export class TenderService extends EntityCrudService<Tender> {
       'sccGuarantees',
       'sccLiabilities',
       'tenderClassifications',
-      'tenderParticipationFee',
+      // 'tenderParticipationFee',
     ];
 
     const tender = await this.tenderRepository.findOne({
