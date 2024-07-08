@@ -13,6 +13,11 @@ import { MenuLinks } from '../models';
 
 export const infomationLinks: MenuLinks.SidebarLinks[] = [
   {
+    label: 'Tender Document',
+    icon: IconFolderPlus,
+    link: `tender-document`,
+  },
+  {
     label: 'Tender Preparation',
     icon: IconFolderPlus,
     link: `check-password`,

@@ -38,6 +38,8 @@ import { invitationItemsApi } from '@/app/(features)/invitations-workspace/_api/
 import { getRfxsApi } from '@/app/(features)/procurement-notice/_api/rfx.api';
 import { rmsApi } from '@/app/(features)/procurement-notice/_api/rms.api';
 import { guaranteeDocumentApi } from './api/guarantee-document/guarantee-document.api';
+import { bidDocumentApi } from '@/app/(features)/tender-workspace/_api/bid-document.api';
+import { submitApi } from '@/app/(features)/tender-workspace/_api/submit-response.api';
 
 export const store = configureStore({
   reducer: {
@@ -77,6 +79,8 @@ export const store = configureStore({
     [getRfxsApi.reducerPath]: getRfxsApi.reducer,
     [rmsApi.reducerPath]: rmsApi.reducer,
     [guaranteeDocumentApi.reducerPath]: guaranteeDocumentApi.reducer,
+    [bidDocumentApi.reducerPath]: bidDocumentApi.reducer,
+    [submitApi.reducerPath]: submitApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) => {
@@ -87,6 +91,7 @@ export const store = configureStore({
       getCatalogApi.middleware,
       itemMasterApi.middleware,
       guaranteeDocumentApi.middleware,
+      bidDocumentApi.middleware,
     );
   },
 });
