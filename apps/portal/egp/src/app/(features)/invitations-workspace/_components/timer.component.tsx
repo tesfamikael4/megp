@@ -24,11 +24,15 @@ export const Timer = ({ targetDate }: { targetDate: Date }) => {
   }, [targetDate, timeLeft]);
 
   const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(seconds / 3600);
+    const remainingMinutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
-    const formattedMinutes = minutes.toString().padStart(2, '0');
+
+    const formattedHours = hours.toString().padStart(2, '0');
+    const formattedMinutes = remainingMinutes.toString().padStart(2, '0');
     const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
-    return `${formattedMinutes} mins: ${formattedSeconds} secs`;
+
+    return `${formattedHours} hrs : ${formattedMinutes} mins : ${formattedSeconds} secs`;
   };
 
   return <div>{formatTime(timeLeft)}</div>;

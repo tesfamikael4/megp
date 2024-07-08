@@ -85,21 +85,26 @@ export default function AwardedItemDetail({ item }: { item: any }) {
       });
     }
   };
+
+  const createdAtDate = new Date(item?.awardItem?.createdAt);
+  const createdAtPlus24Hrs = new Date(
+    createdAtDate.getTime() + 24 * 60 * 60 * 1000,
+  );
+
   return (
     <Paper className="bg-neutral-100 rounded-sm p-4" withBorder>
       <Stack>
-        {item?.openedOffer?.status == 'PENDING' && (
+        {item?.awardItem?.status == 'PENDING' && (
           <Flex className="ml-auto flex-col">
             <Flex className="items-center gap-2">
               <Text>Deadline to accept or reject Award:</Text>
-              <Timer
-                targetDate={
-                  item?.awardItem?.openedOffer?.createdAt ??
-                  new Date().toISOString()
-                }
-              />
+              {item?.awardItem?.createdAt && (
+                <Timer
+                  targetDate={new Date(createdAtPlus24Hrs) ?? new Date()}
+                />
+              )}
             </Flex>
-            <Flex className="gap-2">
+            <Flex className="gap-2 ml-auto">
               <Button
                 className="bg-green-600"
                 onClick={async () => handleSubmit('accept')}
@@ -117,13 +122,13 @@ export default function AwardedItemDetail({ item }: { item: any }) {
             </Flex>
           </Flex>
         )}
-        {item?.openedOffer?.status == 'ACCEPTED' && (
-          <Button disabled className="bg-green-600">
+        {item?.awardItem?.status == 'ACCEPTED' && (
+          <Button disabled className="bg-green-600 ml-auto">
             Accepted Award
           </Button>
         )}
-        {item?.openedOffer?.status == 'CANCELLED' && (
-          <Button disabled className="bg-red-600">
+        {item?.awardItem?.status == 'CANCELLED' && (
+          <Button disabled className="bg-red-600 ml-auto">
             Rejected Award
           </Button>
         )}
