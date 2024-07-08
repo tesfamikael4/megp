@@ -29,9 +29,11 @@ import {
 export function WorkflowHandling({
   itemId,
   itemKey,
+  isDisabled,
 }: {
   itemId: string;
   itemKey: string;
+  isDisabled?: boolean;
 }) {
   const { userCall, user } = useAuth();
   const [active, setActive] = useState(0);
@@ -232,7 +234,7 @@ export function WorkflowHandling({
                   return (
                     <Stepper.Step
                       key={index}
-                      label={step.name}
+                      label={step.title}
                       allowStepSelect={false}
                       className="w-full"
                       description={
@@ -309,6 +311,7 @@ export function WorkflowHandling({
                                       onClick={async () => {
                                         await handleApprove();
                                       }}
+                                      disabled={isDisabled}
                                       loading={isApproving}
                                       className="bg-green-500"
                                     >
@@ -319,6 +322,7 @@ export function WorkflowHandling({
                                       onClick={async () => {
                                         await handleAdjust();
                                       }}
+                                      disabled={isDisabled}
                                     >
                                       Adjust
                                     </Button>

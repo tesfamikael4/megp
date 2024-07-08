@@ -46,7 +46,7 @@ export default function Revision() {
     isExpandable: true,
     isSearchable: true,
     primaryColumn: 'name',
-    isFetching: isFetching,
+    isLoading: isFetching,
     expandedRowContent: (rfx) => {
       return <RFXDetail rfx={rfx} />;
     },

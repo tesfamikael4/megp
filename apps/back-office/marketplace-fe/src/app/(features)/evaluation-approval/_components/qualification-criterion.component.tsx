@@ -46,7 +46,7 @@ export default function QualificationCriterion() {
         render: (value) => (
           <Menu shadow="md" width={200}>
             <Menu.Target>
-              <IconDots />
+              <IconDots className="cursor-pointer" />
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item
@@ -81,7 +81,7 @@ export default function QualificationCriterion() {
     <Stack>
       {criterion?.items?.map((criteria) => (
         <Stack key={criteria.id}>
-          <Modal opened={opened} onClose={close} title="Document">
+          <Modal opened={opened} onClose={close} title="Document" size="lg">
             <LoadingOverlay visible={isGettingAttachemnt} />
             <embed
               src={

@@ -46,6 +46,40 @@ export const evaluationApprovalApi = createApi({
         return { url: `get-items-for-evaluation/${id}${q}` };
       },
     }),
+    canCompleteEvaluation: builder.query<any, { rfxId: string }>({
+      query: (data) => ({
+        url: `/rfxs/can-complete-evaluation-approval/${data.rfxId}`,
+        method: 'GET',
+      }),
+    }),
+    giveItemResponse: builder.mutation<
+      any,
+      { itemId: string; status: string; objectId: string; step: number }
+    >({
+      query: (data) => ({
+        url: `workflow-item-details`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['evaluationApproval'],
+    }),
+    getPreviousEvluationHistory: builder.query<
+      any,
+      { itemId: string; step: number }
+    >({
+      query: (data) => ({
+        url: `workflow-item-details/previous-step-result/${data?.itemId}/${data?.step}`,
+        method: 'GET',
+      }),
+    }),
+    getMyLatestEvaluation: builder.query<any, { itemId: string; step: number }>(
+      {
+        query: (data) => ({
+          url: `workflow-item-details/my-latest-response/${data?.itemId}/${data?.step}`,
+          method: 'GET',
+        }),
+      },
+    ),
   }),
 });
 
@@ -54,4 +88,8 @@ export const {
   useLazyGetPresignedForQualUploadQuery,
   useLazyGetItemsForEvaluationQuery,
   useLazyGetBiddersWithQualPriceQuery,
+  useCanCompleteEvaluationQuery,
+  useGiveItemResponseMutation,
+  useLazyGetPreviousEvluationHistoryQuery,
+  useLazyGetMyLatestEvaluationQuery,
 } = evaluationApprovalApi;

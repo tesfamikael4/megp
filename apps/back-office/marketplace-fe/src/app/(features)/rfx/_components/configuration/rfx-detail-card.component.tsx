@@ -11,16 +11,16 @@ export default function RFXDetailCard() {
   const { data: selectedRFX } = useReadQuery(id?.toString());
   const rfxDetail = [
     {
+      key: 'Procurement Reference Number',
+      value: selectedRFX?.procurementReferenceNumber,
+    },
+    {
       key: 'Name',
       value: selectedRFX?.name,
     },
     {
       key: 'Description',
       value: selectedRFX?.description,
-    },
-    {
-      key: 'Procurement Reference',
-      value: selectedRFX?.procurementReferenceNumber,
     },
     {
       key: 'Budget Amount',
