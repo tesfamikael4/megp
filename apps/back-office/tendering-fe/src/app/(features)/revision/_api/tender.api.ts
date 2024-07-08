@@ -1,21 +1,37 @@
-import { Tender } from '@/models/tender/tender.model';
-import entityApi from '@/store/entity/api';
-import { createEntitySlice, EntitySliceApi } from '@megp/entity';
+import { baseQuery } from '@/store/base-query';
+import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
+import { createApi } from '@reduxjs/toolkit/query/react';
 
-// get base tender api
-const tenderApi = entityApi.entitySliceApi['tenders'];
+export const tenderApi = createApi({
+  reducerPath: 'tenderApi',
+  tagTypes: ['tenders'],
+  refetchOnFocus: true,
+  baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
+  endpoints: (builder) => ({
+    listTenders: builder.query<any, any>({
+      query: (collectionQuery: CollectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `/tenders/get-tenders-as-team-member/${q}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['tenders'],
+    }),
+    detailTender: builder.query<any, any>({
+      query: (id: string) => {
+        return {
+          url: `/tenders/${id}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['tenders'],
+    }),
+  }),
+});
 
-export const tenderSliceApi: typeof EntitySliceApi = createEntitySlice<Tender>(
-  tenderApi,
-  'tenders',
-);
-
-export const {
-  useListQuery,
-  useLazyListQuery,
-  useReadQuery,
-  useLazyReadQuery,
-  useCreateMutation,
-  useUpdateMutation,
-  useDeleteMutation,
-} = tenderSliceApi;
+export const { useLazyListTendersQuery, useDetailTenderQuery } = tenderApi;
