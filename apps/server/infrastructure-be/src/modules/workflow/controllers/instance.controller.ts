@@ -6,6 +6,8 @@ import {
   Injectable,
   Param,
   Post,
+  Query,
+  Req,
   Scope,
 } from '@nestjs/common';
 import {
@@ -16,7 +18,11 @@ import {
 } from '@nestjs/microservices';
 import { InstanceService } from '../services/instance.service';
 import { Instance } from '../../../entities/instance.entity';
-import { AllowAnonymous, EntityCrudController } from 'megp-shared-be';
+import {
+  AllowAnonymous,
+  EntityCrudController,
+  decodeCollectionQuery,
+} from 'megp-shared-be';
 import { ApiTags } from '@nestjs/swagger';
 import { EntityCrudOptions, ExtraCrudOptions } from 'megp-shared-be';
 import { StateService } from '../services/state.service';
@@ -83,5 +89,16 @@ export class InstanceController extends EntityCrudController<Instance>(
   @Get('canSubmit/:key')
   async canSubmit(@Param('key') key: string, @CurrentUser() user) {
     return this.instanceService.canSubmit(key, user.organization.id);
+  }
+
+  @Get('get-workflow-list/:key')
+  async getWorkflowList(
+    @Param('key') key: string,
+    @Query('q') q?: string,
+    @Req() req?: any,
+  ) {
+    const query = decodeCollectionQuery(q);
+
+    return this.instanceService.getWorkflowList(key, query, req);
   }
 }

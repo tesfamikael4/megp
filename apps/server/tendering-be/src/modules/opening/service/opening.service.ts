@@ -6,7 +6,13 @@ import { Opening } from 'src/entities/opening.entity';
 import { CompleteOpeningDto, CreateOpeningDto } from '../dto/opening.dto';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
-import { BdsEvaluation, Lot, SharedBidderKey, Tender } from 'src/entities';
+import {
+  BdsEvaluation,
+  BidRegistration,
+  Lot,
+  SharedBidderKey,
+  Tender,
+} from 'src/entities';
 import { TeamMember } from 'src/entities/team-member.entity';
 import { MilestonesTracker } from 'src/entities/milestones-tracker.entity';
 import { OpeningStatusEnum } from 'src/shared/enums/opening.enum';
@@ -57,16 +63,31 @@ export class OpeningService extends ExtraCrudService<Opening> {
     itemData.teamId = teamMember.team.id;
     itemData.openingType = teamMember.team.tender.bdsSubmission.envelopType;
 
-    const keySharedBidders = await manager.getRepository(SharedBidderKey).find({
-      where: {
-        bidRegistration: {
+    const [keySharedBidders, bidders] = await Promise.all([
+      manager.getRepository(SharedBidderKey).find({
+        where: {
+          bidRegistration: {
+            tenderId: itemData.tenderId,
+          },
+        },
+        relations: {
+          bidRegistration: true,
+        },
+      }),
+      manager.getRepository(BidRegistration).find({
+        where: {
           tenderId: itemData.tenderId,
         },
-      },
-      relations: {
-        bidRegistration: true,
-      },
-    });
+      }),
+    ]);
+
+    // validate the shared key
+    if (keySharedBidders.length == 0) {
+      throw new Error('No bidders shared key');
+    }
+    if (bidders.length !== keySharedBidders.length) {
+      throw new Error('Not all bidders are shared key');
+    }
 
     const tender = await manager.getRepository(Tender).findOne({
       where: {

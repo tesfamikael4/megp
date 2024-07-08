@@ -22,7 +22,7 @@ export function GroupMemberGuard(): Type<CanActivate> {
       private readonly teamService: TeamService,
       @Inject(REQUEST) private req: Request,
       @InjectEntityManager() private readonly entityManager: EntityManager,
-    ) {}
+    ) { }
     async canActivate(context: ExecutionContext) {
       return await this.isUserMemberOfGroup(this.req);
     }
