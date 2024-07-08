@@ -6,6 +6,7 @@ import {
   LoadingOverlay,
   Select,
   Button,
+  Flex,
 } from '@mantine/core';
 import {
   useParams,
@@ -23,6 +24,8 @@ import {
   useTenderDetailQuery,
 } from '../../../_api/registration.api';
 import { PrepareBidContext } from '@/contexts/prepare-bid.context';
+import { useSubmitMutation } from '../../_api/submit-response.api';
+import { logger, notify } from '@megp/core-fe';
 
 export default function TenderDetail() {
   const router = useRouter();
@@ -38,6 +41,7 @@ export default function TenderDetail() {
   const { data: lots, isLoading: lotLoading } = useGetAllLotsQuery(
     tenderId?.toString(),
   );
+  const [submit, { isLoading: isSubmitting }] = useSubmitMutation();
   const prepareBidContext = useContext(PrepareBidContext);
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -47,6 +51,19 @@ export default function TenderDetail() {
     },
     [searchParams],
   );
+  const onSubmit = async () => {
+    await submit({ lotId: searchParams.get('lot') })
+      .unwrap()
+      .then(() => {
+        notify('Success', 'Bid Submitted successfully');
+      })
+      .catch((err) => {
+        notify(
+          'Error',
+          'error while submitting please both technical and financial information are added appropriately',
+        );
+      });
+  };
   return (
     <>
       <LoadingOverlay visible={isLoading || lotLoading} />
@@ -162,27 +179,43 @@ export default function TenderDetail() {
         </div>
       </div>
       <Box className="w-full flex flex-row justify-between items-center my-2 container mx-auto">
-        <Box className="text-lg font-semibold">
-          <Select
-            placeholder="Pick Lot"
-            value={searchParams.get('lot')}
-            data={
-              lots
-                ? lots.items.map((single) => {
-                    const value = { ...single };
-                    value['label'] = value.name;
-                    value['value'] = value.id;
-                    return value;
-                  })
-                : []
-            }
-            onChange={(value) => {
-              router.push(
-                pathname + '?' + createQueryString('lot', value as string),
-              );
-            }}
-          />
-        </Box>
+        <Flex justify={'space-between'} className="w-full">
+          <Box className="text-lg font-semibold">
+            <Select
+              placeholder="Pick Lot"
+              value={searchParams.get('lot')}
+              data={
+                lots
+                  ? lots.items.map((single) => {
+                      const value = { ...single };
+                      value['label'] = value.name;
+                      value['value'] = value.id;
+                      return value;
+                    })
+                  : []
+              }
+              onChange={(value) => {
+                router.push(
+                  pathname + '?' + createQueryString('lot', value as string),
+                );
+              }}
+            />
+          </Box>
+          <Box className="my-auto">
+            {searchParams.get('lot') && (
+              <Button
+                variant="filled"
+                className="my-auto"
+                loading={isSubmitting}
+                onClick={() => {
+                  onSubmit();
+                }}
+              >
+                Submit
+              </Button>
+            )}
+          </Box>
+        </Flex>
       </Box>
       <Box className="container mx-auto">
         {searchParams.get('tab') === 'bid-declaration' && (

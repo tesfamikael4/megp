@@ -35,6 +35,7 @@ import { getInvitationsApi } from '@/app/(features)/my-workspace/_api/invitation
 import { invitationItemsApi } from '@/app/(features)/invitations-workspace/_api/items.api';
 import { getRfxsApi } from '@/app/(features)/procurement-notice/_api/rfx.api';
 import { rmsApi } from '@/app/(features)/procurement-notice/_api/rms.api';
+import { submitApi } from '@/app/(features)/tender-workspace/_api/submit-response.api';
 
 const middleware = [
   vendorRegistrationApi.middleware,
@@ -69,6 +70,7 @@ const middleware = [
   invitationItemsApi.middleware,
   getRfxsApi.middleware,
   rmsApi.middleware,
+  submitApi.middleware,
 ];
 
 export { middleware };
