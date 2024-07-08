@@ -4,7 +4,10 @@ import { useRouter } from 'next/navigation';
 import { notify } from '@megp/core-fe';
 import ProcurmentMechanism from './procurment-mechanism.component';
 import { useCreateMutation } from '../preparation/_api/tender/tender.api';
-import { useLazyGetPRDetailQuery } from '../preparation/_api/tender/procurement-requisition.api';
+import {
+  useCreateFromTenderMutation,
+  useLazyGetPRDetailQuery,
+} from '../preparation/_api/tender/procurement-requisition.api';
 import { useEffect, useState } from 'react';
 import { Tender, TenderStatusEnum } from '@/models/tender/tender.model';
 import Lot from './lots';
@@ -60,11 +63,23 @@ export const DetailRequisition = ({
   }, [requisition]);
 
   const [convert, { isLoading: isConverting }] = useCreateMutation();
+  const [convertTender, { isLoading: isTenderConverting }] =
+    useCreateFromTenderMutation();
   const router = useRouter();
 
   const onClickPRSelection = async () => {
     try {
       const result = await convert({ prId: requisition?.id }).unwrap();
+      if (result) router.push(`/preparation/${result?.id}?tab=configuration`);
+      notify('Success', 'Converted to Tender successfully.');
+    } catch (err) {
+      notify('Error', err?.data?.message ?? 'Error while creating Tender.');
+    }
+  };
+
+  const onClickTenderSelection = async () => {
+    try {
+      const result = await convertTender({ id: tender?.id }).unwrap();
       if (result) router.push(`/preparation/${result?.id}?tab=configuration`);
       notify('Success', 'Converted to Tender successfully.');
     } catch (err) {
@@ -78,8 +93,12 @@ export const DetailRequisition = ({
       {((tender && tender.status === TenderStatusEnum.CANCELED) || !tender) && (
         <Button
           className="ml-auto"
-          onClick={onClickPRSelection}
-          loading={isConverting}
+          onClick={
+            tender && tender.status === TenderStatusEnum.CANCELED
+              ? onClickTenderSelection
+              : onClickPRSelection
+          }
+          loading={isConverting || isTenderConverting}
         >
           Convert to Tender
         </Button>

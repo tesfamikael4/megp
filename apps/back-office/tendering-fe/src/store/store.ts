@@ -30,6 +30,7 @@ import { bidPriceEvaluation } from './api/tendering/bid-price-evaluation.api';
 import { invitationDocumentApi } from '@/app/(features)/preparation/_api/tender/invitation-document.api';
 import { priceAnalysis } from './api/tendering/price-analysis.api';
 import { technicalEndorsement } from './api/tendering/technical-endorsement.api';
+import { tenderApi } from '@/app/(features)/revision/_api/tender.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -64,6 +65,7 @@ export const store = configureStore({
     [readvertTendersApi.reducerPath]: readvertTendersApi.reducer,
     [getSubmittedBiddersApi.reducerPath]: getSubmittedBiddersApi.reducer,
     [invitationDocumentApi.reducerPath]: invitationDocumentApi.reducer,
+    [tenderApi.reducerPath]: tenderApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -97,6 +99,7 @@ export const store = configureStore({
       readvertTendersApi.middleware,
       getSubmittedBiddersApi.middleware,
       invitationDocumentApi.middleware,
+      tenderApi.middleware,
     ]),
 });
 

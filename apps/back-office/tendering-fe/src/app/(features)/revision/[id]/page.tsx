@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
-import { useReadQuery as useGetTenderById } from '../_api/tender.api';
+import { useDetailTenderQuery } from '../_api/tender.api';
 import { logger, notify } from '@megp/core-fe';
 import { useCreateMutation, useReadQuery } from '../_api/revision.api';
 import { useEffect } from 'react';
@@ -21,7 +21,7 @@ export default function DocumentPage() {
   const RevisionApprovalEnum = RevisionApprovalStatusEnum;
   const { id } = useParams();
   const router = useRouter();
-  const { data: selected, isLoading: isTenderLoading } = useGetTenderById(
+  const { data: selected, isLoading: isTenderLoading } = useDetailTenderQuery(
     id?.toString(),
   );
 
