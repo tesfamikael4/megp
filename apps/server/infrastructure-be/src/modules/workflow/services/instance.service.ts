@@ -7,10 +7,18 @@ import { Instance } from 'src/entities/instance.entity';
 import { Activity } from 'src/entities/activity.entity';
 import { StateService } from './state.service';
 import { State } from 'src/entities/state.entity';
-import { ENTITY_MANAGER_KEY, EntityCrudService } from 'megp-shared-be';
+import {
+  CollectionQuery,
+  DataResponseFormat,
+  ENTITY_MANAGER_KEY,
+  EntityCrudService,
+  FilterOperators,
+  QueryConstructor,
+} from 'megp-shared-be';
 import { InstanceStep } from 'src/entities/instance-step.entity';
 import { REQUEST } from '@nestjs/core';
 import { InstanceStepService } from './instance-step.service';
+import axios from 'axios';
 
 @Injectable()
 export class InstanceService extends EntityCrudService<Instance> {
@@ -224,5 +232,81 @@ export class InstanceService extends EntityCrudService<Instance> {
       return true;
     }
     return false;
+  }
+
+  async getWorkflowList(
+    activityName: string,
+    query: CollectionQuery,
+    req: any,
+  ) {
+    const IAM_BASE_ENDPOINT =
+      process.env.PR_BASE_ENDPOINT ??
+      'https://dev-bo.megp.peragosystems.com/iam/api/';
+
+    const request = await axios.get(
+      `${IAM_BASE_ENDPOINT}users/get-user-for-infrastructure/${req.user.id}`,
+      {
+        headers: {
+          'X-API-KEY':
+            process.env.API_KEY ?? '25bc1622e5fb42cca3d3e62e90a3a20f',
+        },
+      },
+    );
+
+    const userDetailId = request.data;
+    query.where.push([
+      {
+        column: 'metadata@>id',
+        operator: FilterOperators.In,
+        value: userDetailId.id,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'status',
+        operator: FilterOperators.NotIn,
+        value: ['Approved', 'Rejected'],
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'activity.name',
+        operator: FilterOperators.EqualTo,
+        value: activityName,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'instanceStep.approvers@>id',
+        operator: FilterOperators.EqualTo,
+        value: req.user.id,
+      },
+      {
+        column: 'instanceStep.approvers@>id',
+        operator: FilterOperators.In,
+        value: userDetailId?.groupIds,
+      },
+      {
+        column: 'instanceStep.approvers@>id',
+        operator: FilterOperators.In,
+        value: userDetailId?.rolesIds,
+      },
+    ]);
+    query.includes.push('activity');
+    query.includes.push('instanceStep');
+    const dataQuery = QueryConstructor.constructQuery<Instance>(
+      this.repositoryInstance,
+      query,
+    );
+
+    const response = new DataResponseFormat<Instance>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }

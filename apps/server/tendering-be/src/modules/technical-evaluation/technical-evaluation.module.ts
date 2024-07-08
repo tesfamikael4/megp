@@ -88,4 +88,4 @@ import { FormulaModule } from '../utility/formula/formula.module';
   ],
   exports: [TechnicalEndorsementService],
 })
-export class EvaluationModule {}
+export class EvaluationModule { }

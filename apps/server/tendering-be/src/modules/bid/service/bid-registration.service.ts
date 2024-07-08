@@ -222,7 +222,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
 
   async submitLot(payload: CreateBidRegistrationStatusDto, user: any) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const bidderId = user.organization.id;
+    const bidderId = 'a36e0420-d585-4e24-b514-5d2ea0a515f4';
 
     const bidRegistrationDetail = await manager
       .getRepository(BidRegistrationDetail)
