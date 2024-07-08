@@ -40,7 +40,7 @@ function Sidebar() {
         <Text className={styles.groupTitle}>Solicitation</Text>
         {createNavLinks(
           menus.infomationLinks,
-          `invitations-workspace/${id}`,
+          `invitations-workspace/${rfxId}`,
           router,
           path,
         )}

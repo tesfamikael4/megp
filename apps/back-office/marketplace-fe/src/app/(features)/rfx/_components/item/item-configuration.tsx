@@ -18,12 +18,12 @@ export default function ItemConfiguration({ id }: { id?: string }) {
       value: item?.itemCode,
     },
     {
-      key: 'Quantity',
-      value: item?.quantity,
-    },
-    {
       key: 'Unit of measure',
       value: item?.unitOfMeasure,
+    },
+    {
+      key: 'Quantity',
+      value: item?.quantity,
     },
     {
       key: 'Unit Price',

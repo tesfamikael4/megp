@@ -133,7 +133,7 @@ const ItemDetail = (itemList: any) => {
     },
     {
       key: 'Calculated Amount',
-      value: `${(parseInt(item?.estimatedPrice ?? 0) * item?.estimatedPrice).toLocaleString('en-US', { style: 'currency', currency: item?.estimatedPriceCurrency ?? 'MKW' })}`,
+      value: `${(parseInt(item?.estimatedPrice ?? 0) * item?.quantity).toLocaleString('en-US', { style: 'currency', currency: item?.estimatedPriceCurrency ?? 'MKW' })}`,
     },
   ];
   return <DetailTable data={ItemConfig} />;
