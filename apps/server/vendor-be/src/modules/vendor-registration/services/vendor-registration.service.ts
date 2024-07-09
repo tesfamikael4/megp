@@ -62,6 +62,7 @@ import { MBRSResponseDto, RecordDTO } from '../dto/api-mbrs.dto';
 import { NCICResponseDTO } from '../dto/api-ncic.dto';
 import { Readable } from 'typeorm/platform/PlatformTools';
 import { NcicMockData } from '../ncic.mock';
+import { userInfo } from 'os';
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
   constructor(
@@ -1287,6 +1288,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             { status: VendorStatusEnum.REJECTED },
           );
         }
+        const submittedPTs = await this.ptService.getSubmittedPTByUserId(vendorStatusDto.userId);
+        submittedPTs.map(async (item) => {
+          item.status = ApplicationStatus.REJECTED;
+          await this.ptService.update(item.id, item);
+        })
         return await this.changeBusinessAreasStatus(
           vendorStatusDto.instanceId,
           VendorStatusEnum.REJECTED,
