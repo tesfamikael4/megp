@@ -245,4 +245,13 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
       await queryRunner.release();
     }
   }
+  async update(id: string, itemData: any) {
+    //
+    const existingData = await this.findByActivityId(id);
+    if (itemData.estimatedAmount !== existingData.estimatedAmount) {
+      throw new HttpException(`You can not update estimated amount`, 430);
+    }
+    await this.repositoryPostBudgetPlanActivity.update(id, itemData);
+    return this.findOne(id);
+  }
 }
