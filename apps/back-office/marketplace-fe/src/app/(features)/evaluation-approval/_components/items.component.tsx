@@ -8,14 +8,16 @@ import {
   Menu,
   Pagination,
   Stack,
+  Timeline,
 } from '@mantine/core';
-import { ExpandableTable, Section, logger } from '@megp/core-fe';
+import { ExpandableTable, Section } from '@megp/core-fe';
 import { useContext, useEffect, useState } from 'react';
 import ItemConfiguration from '../../rfx/_components/item/item-configuration';
 import { useParams } from 'next/navigation';
 import { ItemDetailSpec } from '../../evaluation/_component/item-specification.component';
 import { StatusContext } from '@/contexts/rfx-status.context';
 import {
+  useAdjustItemResponseMutation,
   useGiveItemResponseMutation,
   useLazyGetItemsForEvaluationQuery,
   useLazyGetMyLatestEvaluationQuery,
@@ -24,8 +26,9 @@ import {
 import { useGetCurrentWorkflowInstanceQuery } from '@/store/api/rfx-approval/workflow.api';
 import { useLazyGetGroupQuery } from '@/store/api/rfx-approval/rfx-iam';
 import { useAuth } from '@megp/auth';
-import { IconHistory } from '@tabler/icons-react';
+import { IconCircleCheck, IconCircleX, IconHistory } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { timeAgo } from './time-ago-convert.component';
 
 const perPage = 10;
 function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
@@ -36,34 +39,17 @@ function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
   return Math.ceil(totalItems / itemsPerPage);
 }
 
-export default function Items() {
+export default function Items({ isComplete }: { isComplete: boolean }) {
   const { id } = useParams();
   const [listById, { data: itemsList, isLoading: isItemsLoading }] =
     useLazyGetItemsForEvaluationQuery();
-  const [getPreviousHistory, { isLoading: isGettingHistory }] =
-    useLazyGetPreviousEvluationHistoryQuery();
-
-  const { data: currentStep } = useGetCurrentWorkflowInstanceQuery({
-    itemId: id?.toString(),
-    key: 'RFQEvaluationApproval',
-  });
+  const [
+    getPreviousHistory,
+    { data: previousHistory, isLoading: isGettingHistory },
+  ] = useLazyGetPreviousEvluationHistoryQuery();
 
   const totalPages = calculateTotalPages(itemsList?.total ?? 0, perPage);
   const [page, setPage] = useState(1);
-
-  const itemHistory = {
-    columns: [
-      {
-        accessor: 'name',
-      },
-      {
-        accessor: 'assessment',
-      },
-    ],
-    isExpandable: false,
-    isSearchable: false,
-    primaryColumn: 'name',
-  };
 
   useEffect(() => {
     const from = (page - 1) * perPage;
@@ -82,7 +68,7 @@ export default function Items() {
           defaultCollapsed
           key={index}
           action={
-            <Menu shadow="md" width={300} position="left-start">
+            <Menu shadow="md" width={400} position="left-start">
               <Menu.Target>
                 <IconHistory
                   color="gray"
@@ -90,27 +76,45 @@ export default function Items() {
                   onClick={() =>
                     getPreviousHistory({
                       itemId: item?.id,
-                      step: currentStep?.instanceStep?.order,
                     })
                   }
                 />
               </Menu.Target>
               <Menu.Dropdown>
-                <Box>
+                <Box className="p-4">
                   <LoadingOverlay visible={isGettingHistory} />
-                  <ExpandableTable
-                    config={itemHistory}
-                    data={[
-                      { name: 'Abebe', assessment: 'Accept' },
-                      { name: 'Abebe', assessment: 'Accept' },
-                    ]}
-                  />
+                  <Timeline
+                    active={previousHistory?.length - 1}
+                    bulletSize={24}
+                    lineWidth={2}
+                  >
+                    {previousHistory?.map((history) => (
+                      <Timeline.Item
+                        key={history?.id}
+                        bullet={
+                          history?.status == 'APPROVE' ? (
+                            <IconCircleCheck size={12} />
+                          ) : (
+                            <IconCircleX size={12} color="red" />
+                          )
+                        }
+                        title={history?.workflowItem?.approverName ?? 'Bek PA'}
+                      >
+                        <p className="text-sm text-gray-400">
+                          {history?.status}
+                        </p>
+                        <p className="mt-4 text-xs">
+                          {timeAgo(new Date(history?.workflowItem?.updatedAt))}
+                        </p>
+                      </Timeline.Item>
+                    ))}
+                  </Timeline>
                 </Box>
               </Menu.Dropdown>
             </Menu>
           }
         >
-          <ItemBody key={index} item={item} />
+          <ItemBody key={index} item={item} isComplete={isComplete} />
         </Section>
       ))}
       <Group className="mt-2" justify="end">
@@ -162,7 +166,7 @@ const BidderList = (bidders: any) => {
   );
 };
 
-const ItemBody = ({ item }: any) => {
+const ItemBody = ({ item, isComplete }: any) => {
   const { id } = useParams();
   const { user, userCall } = useAuth();
 
@@ -174,14 +178,13 @@ const ItemBody = ({ item }: any) => {
     useGiveItemResponseMutation();
   const [rejectItem, { isLoading: isRejecting }] =
     useGiveItemResponseMutation();
+  const [adjustResponse, { isLoading: isAdjusting }] =
+    useAdjustItemResponseMutation();
 
   const [
     getMyLatestEvaluation,
     { data: myLatestResponse, isLoading: isGettingMyResponse },
   ] = useLazyGetMyLatestEvaluationQuery();
-
-  logger.log('myLatestResponse', myLatestResponse);
-  logger.log('myLatestResponse', isGettingMyResponse);
 
   const [getGroup, { data: groupData }] = useLazyGetGroupQuery();
 
@@ -217,20 +220,36 @@ const ItemBody = ({ item }: any) => {
     itemId: string;
   }) => {
     try {
-      response?.status == 'ACCEPT' &&
-        (await acceptItem({
+      if (response?.status == 'ACCEPT' && !myLatestResponse?.status)
+        await acceptItem({
           objectId: id.toString(),
           itemId: response?.itemId,
           status: 'APPROVE',
           step: currentStep?.instanceStep?.order,
-        }).unwrap());
-      response?.status == 'REJECT' &&
-        (await rejectItem({
+        }).unwrap();
+      else if (response?.status == 'ACCEPT' && myLatestResponse?.status)
+        await adjustResponse({
+          id: myLatestResponse?.id,
+          objectId: id.toString(),
+          itemId: response?.itemId,
+          status: 'APPROVE',
+          step: currentStep?.instanceStep?.order,
+        }).unwrap();
+      else if (response?.status == 'REJECT' && !myLatestResponse?.status)
+        await rejectItem({
           objectId: id.toString(),
           itemId: response?.itemId,
           status: 'REJECT',
           step: currentStep?.instanceStep?.order,
-        }).unwrap());
+        }).unwrap();
+      else if (response?.status == 'REJECT' && myLatestResponse?.status)
+        await adjustResponse({
+          id: myLatestResponse?.id,
+          objectId: id.toString(),
+          itemId: response?.itemId,
+          status: 'REJECT',
+          step: currentStep?.instanceStep?.order,
+        }).unwrap();
       notifications.show({
         title: 'Success',
         message: 'Response submitted successfully',
@@ -248,32 +267,44 @@ const ItemBody = ({ item }: any) => {
   return (
     <Stack className="p-4">
       {checkIsApprover() && (
-        <Flex className="gap-2 ml-auto">
-          <Button
-            className="bg-green-600"
-            loading={isAccepting}
-            onClick={async () =>
-              await handleSubmitResponse({
-                status: 'ACCEPT',
-                itemId: item?.id,
-              })
-            }
-          >
-            Accept
-          </Button>
-          <Button
-            className="bg-red-600"
-            loading={isRejecting}
-            onClick={async () =>
-              await handleSubmitResponse({
-                status: 'REJECT',
-                itemId: item?.id,
-              })
-            }
-          >
-            Reject
-          </Button>
-        </Flex>
+        <Stack>
+          <LoadingOverlay visible={isGettingMyResponse} />
+          {myLatestResponse?.status && (
+            <p className="ml-auto">
+              {myLatestResponse?.status == 'APPROVE' ? 'APPROVED' : 'REJECTED'}
+            </p>
+          )}
+          <Flex className="gap-2 ml-auto">
+            {myLatestResponse?.status != 'APPROVE' && !isComplete && (
+              <Button
+                className="bg-green-600"
+                loading={isAccepting || isAdjusting}
+                onClick={async () =>
+                  await handleSubmitResponse({
+                    status: 'ACCEPT',
+                    itemId: item?.id,
+                  })
+                }
+              >
+                Accept
+              </Button>
+            )}
+            {myLatestResponse?.status != 'REJECT' && !isComplete && (
+              <Button
+                className="bg-red-600"
+                loading={isRejecting || isAdjusting}
+                onClick={async () =>
+                  await handleSubmitResponse({
+                    status: 'REJECT',
+                    itemId: item?.id,
+                  })
+                }
+              >
+                Reject
+              </Button>
+            )}
+          </Flex>
+        </Stack>
       )}
       <ItemConfiguration id={item?.id} />
       <Box>

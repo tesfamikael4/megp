@@ -5,7 +5,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 export const evaluationApprovalApi = createApi({
   reducerPath: 'evaluationApprovalApi',
   refetchOnFocus: true,
-  tagTypes: ['evaluationApproval'],
+  tagTypes: ['evaluationApproval', 'completeEvaluation'],
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_RFX_API ?? '/marketplace/api/'),
   endpoints: (builder) => ({
     getCriterionWithBidders: builder.query<any, { id: string }>({
@@ -46,11 +46,32 @@ export const evaluationApprovalApi = createApi({
         return { url: `get-items-for-evaluation/${id}${q}` };
       },
     }),
-    canCompleteEvaluation: builder.query<any, { rfxId: string }>({
+    getEvaluationStatus: builder.query<any, { objectId: string; step: number }>(
+      {
+        query: (data) => ({
+          url: `workflow-items/${data?.objectId}/${data?.step}`,
+          method: 'GET',
+        }),
+        providesTags: ['completeEvaluation'],
+      },
+    ),
+    completeEvaluation: builder.mutation<
+      any,
+      { objectId: string; step: number }
+    >({
       query: (data) => ({
-        url: `/rfxs/can-complete-evaluation-approval/${data.rfxId}`,
+        url: `workflow-items/complete-evaluation-approval/${data?.objectId}/${data?.step}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['completeEvaluation'],
+    }),
+    canCompleteEvaluation: builder.query<any, { rfxId: string; step: number }>({
+      query: (data) => ({
+        url: `/rfxs/can-complete-evaluation-approval/${data.rfxId}/${data?.step}`,
         method: 'GET',
       }),
+      providesTags: ['evaluationApproval', 'completeEvaluation'],
     }),
     giveItemResponse: builder.mutation<
       any,
@@ -63,14 +84,29 @@ export const evaluationApprovalApi = createApi({
       }),
       invalidatesTags: ['evaluationApproval'],
     }),
-    getPreviousEvluationHistory: builder.query<
+    adjustItemResponse: builder.mutation<
       any,
-      { itemId: string; step: number }
+      {
+        id: string;
+        itemId: string;
+        status: string;
+        objectId: string;
+        step: number;
+      }
     >({
       query: (data) => ({
-        url: `workflow-item-details/previous-step-result/${data?.itemId}/${data?.step}`,
+        url: `workflow-item-details/${data?.id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['evaluationApproval'],
+    }),
+    getPreviousEvluationHistory: builder.query<any, { itemId: string }>({
+      query: (data) => ({
+        url: `workflow-item-details/previous-results/${data?.itemId}`,
         method: 'GET',
       }),
+      providesTags: ['evaluationApproval'],
     }),
     getMyLatestEvaluation: builder.query<any, { itemId: string; step: number }>(
       {
@@ -78,6 +114,7 @@ export const evaluationApprovalApi = createApi({
           url: `workflow-item-details/my-latest-response/${data?.itemId}/${data?.step}`,
           method: 'GET',
         }),
+        providesTags: ['evaluationApproval'],
       },
     ),
   }),
@@ -90,6 +127,9 @@ export const {
   useLazyGetBiddersWithQualPriceQuery,
   useCanCompleteEvaluationQuery,
   useGiveItemResponseMutation,
+  useAdjustItemResponseMutation,
   useLazyGetPreviousEvluationHistoryQuery,
   useLazyGetMyLatestEvaluationQuery,
+  useCompleteEvaluationMutation,
+  useLazyGetEvaluationStatusQuery,
 } = evaluationApprovalApi;

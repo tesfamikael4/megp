@@ -332,6 +332,7 @@ export function WorkflowHandling({
                                           <Button
                                             leftSection={<IconArrowBackUp />}
                                             loading={isGoing}
+                                            disabled={isDisabled}
                                           >
                                             Go to
                                           </Button>
