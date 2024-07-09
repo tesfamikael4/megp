@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Patch, Query } from '@nestjs/common';
 import {
   CurrentUser,
-  decodeCollectionQuery,
   ExtraCrudController,
+  decodeCollectionQuery,
 } from 'megp-shared-be';
 import { RFXItem } from 'src/entities';
 import { RFXItemService } from '../services/rfx-items.service';
@@ -40,5 +40,19 @@ export class RFXItemController extends ExtraCrudController<RFXItem>({
   ) {
     const query = decodeCollectionQuery(q);
     return await this.rfxItemService.myAwardItems(rfxId, user, query);
+  }
+
+  @Get('items-for-evaluation/:rfxId')
+  async itemsForEvaluation(
+    @Param('rfxId') rfxId: string,
+    @CurrentUser() user: any,
+    @Query('q') q: any,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.rfxItemService.myRfxItemsForEvaluation(
+      rfxId,
+      query,
+      user,
+    );
   }
 }

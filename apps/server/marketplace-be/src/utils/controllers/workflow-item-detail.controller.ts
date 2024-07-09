@@ -1,6 +1,8 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Put, Query, Req } from '@nestjs/common';
+import { ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import {
+  BaseAPIDto,
+  CurrentUser,
   ExtraCrudController,
   ExtraCrudOptions,
   decodeCollectionQuery,
@@ -23,27 +25,37 @@ const options: ExtraCrudOptions = {
 export class WorkflowItemDetailController extends ExtraCrudController<WorkflowItemDetail>(
   options,
 ) {
-  constructor(private readonly documentService: WorkflowItemDetailService) {
-    super(documentService);
+  constructor(
+    private readonly workflowItemDetailService: WorkflowItemDetailService,
+  ) {
+    super(workflowItemDetailService);
   }
 
-  @Get('previous-step-result/:itemId/:currentStep')
-  @ApiQuery({
-    name: 'q',
-    type: String,
-    description: 'Collection Query Parameter. Optional',
-    required: false,
-  })
-  async getPreviousStepResult(
+  @Put(':id')
+  @ApiBody({ type: UpdateWorkflowItemDetailDto })
+  async update(
+    @Param('id') id: string,
+    @Body() itemData: UpdateWorkflowItemDetailDto,
+    @Req() req?: any,
+  ): Promise<WorkflowItemDetail | undefined> {
+    return this.workflowItemDetailService.updateItem(id, itemData, req);
+  }
+
+  @Get('previous-results/:itemId')
+  async getPreviousStepResult(@Param('itemId') itemId: string) {
+    return await this.workflowItemDetailService.getPreviousResult(itemId);
+  }
+
+  @Get('my-latest-response/:itemId/:step')
+  async getMyLatestResponse(
     @Param('itemId') itemId: string,
-    @Param('currentStep') currentStep: number,
-    @Query('q') q?: string,
+    @Param('step') step: number,
+    @CurrentUser() user: any,
   ) {
-    const query = decodeCollectionQuery(q);
-    return await this.documentService.getPreviousStepResult(
+    return await this.workflowItemDetailService.getMyLatestResponse(
       itemId,
-      currentStep,
-      query,
+      step,
+      user,
     );
   }
 }

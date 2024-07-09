@@ -1,5 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import {
   CollectionQuery,
@@ -10,7 +15,10 @@ import {
   QueryConstructor,
 } from 'megp-shared-be';
 import { WorkflowItem, WorkflowItemDetail } from 'src/entities';
-import { CreateWorkflowItemDetailDto } from '../dtos/workflow-item-detail.dto';
+import {
+  CreateWorkflowItemDetailDto,
+  UpdateWorkflowItemDetailDto,
+} from '../dtos/workflow-item-detail.dto';
 import { REQUEST } from '@nestjs/core';
 
 @Injectable()
@@ -33,6 +41,7 @@ export class WorkflowItemDetailService extends ExtraCrudService<WorkflowItemDeta
         organizationId: req.user.organization.id,
         approverId: req.user.userId,
         objectId: itemData.objectId,
+        step: itemData.step,
       },
     });
 
@@ -44,6 +53,7 @@ export class WorkflowItemDetailService extends ExtraCrudService<WorkflowItemDeta
       });
       const workflowItemParent = workflowItemRepo.create({
         approverId: req.user.userId,
+        approverName: `${req.user.firstName} ${req.user.lastName}`,
         objectId: itemData.objectId,
         organizationId: req.user.organization.id,
         organizationName: req.user.organization.name,
@@ -63,40 +73,92 @@ export class WorkflowItemDetailService extends ExtraCrudService<WorkflowItemDeta
     }
   }
 
-  async getPreviousStepResult(
-    itemId: string,
-    currentStep: number,
-    query: CollectionQuery,
-  ) {
-    query.where.push(
-      [
-        {
-          column: 'itemId',
-          operator: FilterOperators.EqualTo,
-          value: itemId,
-        },
-      ],
-      [
-        {
-          column: 'step',
-          operator: FilterOperators.EqualTo,
-          value: currentStep - 1,
-        },
-      ],
-    );
+  async updateItem(
+    id: string,
+    itemData: UpdateWorkflowItemDetailDto,
+    req: any,
+  ): Promise<WorkflowItemDetail | undefined> {
+    const item = await this.repositoryWorkflowItem.findOne({
+      where: {
+        objectId: itemData.objectId,
+        step: itemData.step,
+        isCurrent: true,
+        approverId: req.user.userId,
+      },
+      select: {
+        id: true,
+        isComplete: true,
+      },
+    });
 
-    const dataQuery = QueryConstructor.constructQuery<WorkflowItemDetail>(
-      this.repositoryWorkflowItemDetails,
-      query,
-    );
-
-    const response = new DataResponseFormat<WorkflowItemDetail>();
-    if (query.count) {
-      response.total = await dataQuery.getCount();
-    } else {
-      const [result, total] = await dataQuery.getManyAndCount();
-      response.total = total;
-      response.items = result;
+    if (!item) {
+      throw new BadRequestException('Workflow Item Not Found');
     }
+
+    if (item.isComplete) {
+      throw new BadRequestException('Workflow Item Already Completed');
+    }
+    const itemDetail = await this.repositoryWorkflowItemDetails.findOne({
+      where: {
+        id,
+        workflowItemId: item.id,
+      },
+    });
+
+    if (!itemDetail) {
+      throw new BadRequestException('Workflow Item Detail Not Found');
+    }
+
+    const createdItemDetail =
+      this.repositoryWorkflowItemDetails.create(itemData);
+    await this.repositoryWorkflowItemDetails.update(id, createdItemDetail);
+    return createdItemDetail;
+  }
+
+  async getMyLatestResponse(itemId: string, step: number, user: any) {
+    return await this.repositoryWorkflowItemDetails.findOne({
+      where: {
+        itemId,
+        workflowItem: {
+          step,
+          approverId: user.userId,
+        },
+      },
+    });
+  }
+
+  async getPreviousResult(itemId: string) {
+    return await this.repositoryWorkflowItemDetails.find({
+      where: {
+        itemId,
+      },
+      relations: {
+        workflowItem: true,
+      },
+      select: {
+        id: true,
+        status: true,
+        workflowItem: {
+          id: true,
+          updatedAt: true,
+          step: true,
+          approverId: true,
+          approverName: true,
+        },
+      },
+    });
+  }
+
+  async getLatestPendingDetails(objectId: string, approverId: string) {
+    return await this.repositoryWorkflowItemDetails.find({
+      where: {
+        workflowItem: {
+          approverId,
+          id: objectId,
+          isCurrent: true,
+          isComplete: false,
+        },
+      },
+    });
   }
 }

@@ -1,9 +1,12 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  CollectionQuery,
+  DataResponseFormat,
   ENTITY_MANAGER_KEY,
   ExtraCrudService,
   IgnoreTenantInterceptor,
+  QueryConstructor,
 } from 'megp-shared-be';
 import {
   AwardItem,
@@ -12,7 +15,12 @@ import {
   SolOffer,
   SolRegistration,
 } from 'src/entities';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { CreateAwardItemDTO } from '../dtos/award-item.dto';
 import { REQUEST } from '@nestjs/core';
 import { EAwardItemStatus } from 'src/utils/enums/award.enum';
@@ -125,5 +133,63 @@ export class AwardItemService extends ExtraCrudService<AwardItem> {
         status: EAwardItemStatus.CANCELLED,
       });
     }
+  }
+
+  async myAwardItem(rfxId: string, user: any, query: CollectionQuery) {
+    const dataQuery = QueryConstructor.constructQuery<AwardItem>(
+      this.awardItemRepository,
+      query,
+    );
+
+    dataQuery
+      .leftJoin('award_items.awardNote', 'awardNote')
+      .where('awardNote.rfxId = :rfxId', { rfxId })
+      .andWhere('award_items.vendorId = :vendorId', {
+        vendorId: user.organization.id,
+      })
+      .select([
+        'award_items.id',
+        'award_items.status',
+        'award_items.vendorId',
+        'award_items.vendorName',
+        'award_items.calculatedPrice',
+      ])
+      .getMany();
+
+    return await this.giveQueryResponse<AwardItem>(query, dataQuery);
+  }
+
+  async awardedVendors(rfxId: string, user: any, query: CollectionQuery) {
+    const dataQuery = QueryConstructor.constructQuery<AwardItem>(
+      this.awardItemRepository,
+      query,
+    );
+
+    dataQuery
+      .where('award_items.status = :status', {
+        status: EAwardItemStatus.ACCEPTED,
+      })
+      .leftJoin('award_items.awardNote', 'awardNote')
+      .andWhere('awardNote.rfxId = :rfxId', { rfxId })
+      .andWhere('awardNote.organizationId = :organizationId', {
+        organizationId: user.organization.id,
+      });
+
+    return await this.giveQueryResponse(query, dataQuery);
+  }
+
+  private async giveQueryResponse<T>(
+    query: CollectionQuery,
+    dataQuery: SelectQueryBuilder<T>,
+  ) {
+    const response = new DataResponseFormat<T>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }

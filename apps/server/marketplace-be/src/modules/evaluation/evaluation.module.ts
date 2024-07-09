@@ -33,11 +33,6 @@ import { EvalApprovalController } from './controllers/eval-approval.controller';
 import { EvalApprovalDetailController } from './controllers/eval-approval-detail.controller';
 import { EvalApprovalDetailService } from './services/eval-approval-detail.service';
 import { EvalApprovalService } from './services/eval-approval.service';
-import { WorkflowItemController } from 'src/utils/controllers/workflow-item.controller';
-import { WorkflowItemDetailController } from 'src/utils/controllers/workflow-item-detail.controller';
-import { WorkflowItemDetailService } from 'src/utils/services/workflow-item-detail.service';
-import { WorkflowItemService } from 'src/utils/services/workflow-item.service';
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -80,8 +75,6 @@ import { WorkflowItemService } from 'src/utils/services/workflow-item.service';
     TeamMemberController,
     EvalApprovalController,
     EvalApprovalDetailController,
-    WorkflowItemController,
-    WorkflowItemDetailController,
   ],
   providers: [
     ReSchedulerService,
@@ -92,8 +85,6 @@ import { WorkflowItemService } from 'src/utils/services/workflow-item.service';
     TeamMemberService,
     EvalApprovalService,
     EvalApprovalDetailService,
-    WorkflowItemDetailService,
-    WorkflowItemService,
   ],
   exports: [OpenerService, ReSchedulerService],
 })

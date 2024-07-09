@@ -11,6 +11,9 @@ export class WorkflowItem extends OrgAudit {
   @Column('uuid')
   approverId: string;
 
+  @Column()
+  approverName: string;
+
   @Column('uuid')
   objectId: string;
 

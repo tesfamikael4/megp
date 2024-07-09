@@ -41,7 +41,7 @@ export class AwardItem extends Audit {
   @Column({ type: 'uuid' })
   rfxItemId: string;
 
-  @OneToOne(() => RFXItem, (rfx) => rfx.awardItem)
+  @ManyToOne(() => RFXItem, (rfx) => rfx.awardItem)
   @JoinColumn({ name: 'rfxItemId' })
   rfxItem: RFXItem;
 
