@@ -21,5 +21,5 @@ export class RfxProcurementMechanism extends Audit {
   rfx: RFX;
 
   @Column({ type: 'json', nullable: true })
-  PRRfxProcurementMechanisms: any;
+  PRProcurementMechanisms: any;
 }
