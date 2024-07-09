@@ -83,7 +83,7 @@ export default function InvitationDetail({
   const [showDetail, setShowDetail] = useState(false);
 
   const specificationDetails = Object.entries(
-    selected?.isOpen
+    selected?.isOpen && product?.technicalRequirement?.technicalSpecification
       ? product?.technicalRequirement?.technicalSpecification
       : product?.catalogueSpecificationValues || {},
   )
