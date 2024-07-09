@@ -121,7 +121,7 @@ export class RFXItem extends Audit {
   @OneToMany(() => SolRoundAward, (roundAward) => roundAward.rfxItem)
   solRoundAwards: SolRoundAward[];
 
-  @OneToOne(() => AwardItem, (awardItem) => awardItem.rfxItem)
+  @OneToMany(() => AwardItem, (awardItem) => awardItem.rfxItem)
   awardItem: AwardItem;
   @OneToMany(
     () => EvalApprovalDetail,

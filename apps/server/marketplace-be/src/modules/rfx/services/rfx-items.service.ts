@@ -14,9 +14,15 @@ import {
   FilterOperators,
   QueryConstructor,
 } from 'megp-shared-be';
-import { RFXItem, SolRound } from 'src/entities';
+import { RFXItem, SolRegistration, SolRound } from 'src/entities';
 import { EInvitationStatus, ERfxItemStatus } from 'src/utils/enums';
-import { EntityManager, In, Repository, SelectQueryBuilder } from 'typeorm';
+import {
+  EntityManager,
+  In,
+  LessThan,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { RfxService } from './rfx.service';
 import { REQUEST } from '@nestjs/core';
 
@@ -38,34 +44,37 @@ export class RFXItemService extends ExtraCrudService<RFXItem> {
   ) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const finalRound = await entityManager.getRepository(SolRound).findOne({
-      where: {
-        rfxId,
-        round: 0,
-      },
-      select: {
-        id: true,
-      },
-    });
-
     const dataQuery = QueryConstructor.constructQuery<RFXItem>(
       entityManager.getRepository(RFXItem),
       query,
     )
       .where('rfx_items.rfxId = :rfxId', { rfxId })
       .leftJoinAndSelect(
-        'rfx_items.openedOffers',
-        'openedOffer',
-        'openedOffer.vendorId = :vendorId',
-        {
-          vendorId: user.organization.id,
-        },
-      )
-      .leftJoinAndSelect(
         'rfx_items.technicalRequirement',
-        'rfxTechnicalRequirement',
+        'technicalRequirement',
       )
-      .leftJoinAndSelect('rfx_items.rfxItemDocuments', 'rfxItemDocuments');
+      .leftJoinAndSelect('rfx_items.openedOffers', 'openedOffer')
+      .leftJoin('openedOffer.solRound', 'solRound')
+      .andWhere('solRound.round = :round', { round: 0 })
+      .leftJoinAndSelect('openedOffer.solRegistration', 'solRegistration')
+      .select([
+        'rfx_items.id',
+        'rfx_items.name',
+        'rfx_items.description',
+        'rfx_items.status',
+        'technicalRequirement.id',
+        'technicalRequirement.technicalSpecification',
+        'technicalRequirement.deliverySpecification',
+        'openedOffer.id',
+        'openedOffer.price',
+        'openedOffer.tax',
+        'openedOffer.rank',
+        'openedOffer.calculatedPrice',
+        'openedOffer.status',
+        'solRegistration.id',
+        'solRegistration.vendorId',
+        'solRegistration.vendorName',
+      ]);
 
     return await this.giveQueryResponse<RFXItem>(query, dataQuery);
   }

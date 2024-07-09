@@ -4,8 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ExtraCrudService } from 'megp-shared-be';
-import { Repository } from 'typeorm';
+import {
+  CollectionQuery,
+  DataResponseFormat,
+  ExtraCrudService,
+  QueryConstructor,
+} from 'megp-shared-be';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { RfxDocumentaryEvidence } from 'src/entities/rfx-documentary-evidence.entity';
 import {
   CreateRfxDocumetaryEvidenceDto,
@@ -24,6 +29,43 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
     private readonly rfxService: RfxService,
   ) {
     super(rfxDocumentaryEvidenceRepository);
+  }
+
+  async getEvidencesWithVendors(
+    rfxId: string,
+    user: any,
+    query: CollectionQuery,
+  ) {
+    const dataQuery = QueryConstructor.constructQuery<RfxDocumentaryEvidence>(
+      this.rfxDocumentaryEvidenceRepository,
+      query,
+    )
+      .where('rfx_documentary_evidences.rfxId = :rfxId', { rfxId })
+      .leftJoinAndSelect(
+        'rfx_documentary_evidences.openedResponses',
+        'openedResponse',
+      )
+      .leftJoinAndSelect('openedResponse.solRegistration', 'solReg')
+      .leftJoinAndSelect(
+        'solReg.evaluationAssessments',
+        'assessment',
+        'assessment.isTeamAssessment = true',
+      )
+      .select([
+        'rfx_documentary_evidences.id',
+        'rfx_documentary_evidences.documentTitle',
+        'rfx_documentary_evidences.description',
+        'rfx_documentary_evidences.order',
+        'openedResponse.id',
+        'openedResponse.value',
+        'solReg.id',
+        'solReg.vendorId',
+        'solReg.vendorName',
+        'assessment.id',
+        'assessment.qualified',
+      ]);
+
+    return await this.giveQueryResponse(query, dataQuery);
   }
 
   async create(itemData: CreateRfxDocumetaryEvidenceDto, req?: any) {
@@ -90,5 +132,20 @@ export class RfxDocumentaryEvidenceService extends ExtraCrudService<RfxDocumenta
 
   async softDelete(id: string, req?: any): Promise<void> {
     await this.rfxDocumentaryEvidenceRepository.delete({ id });
+  }
+
+  private async giveQueryResponse<T>(
+    query: CollectionQuery,
+    dataQuery: SelectQueryBuilder<T>,
+  ) {
+    const response = new DataResponseFormat<T>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }

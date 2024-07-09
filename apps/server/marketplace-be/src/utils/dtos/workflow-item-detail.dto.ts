@@ -23,7 +23,7 @@ export class CreateWorkflowItemDetailDto {
   objectId?: string; // parent id
 
   @ApiProperty()
-  @IsString()
+  @IsInt()
   @IsOptional()
   step?: number;
 }

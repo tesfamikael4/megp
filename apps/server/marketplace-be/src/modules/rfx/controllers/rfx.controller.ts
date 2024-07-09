@@ -33,6 +33,15 @@ export class RfxController extends EntityCrudController<RFX>(options) {
     super(rfxService);
   }
 
+  @Get('can-complete-evaluation-approval/:rfxId/:step')
+  async canComplete(
+    @Param('rfxId') rfxId: string,
+    @Param('step') step: number,
+    @CurrentUser() user: any,
+  ) {
+    return await this.rfxService.canSubmitEvaluationApproval(rfxId, step, user);
+  }
+
   @Get('preparation')
   @ApiQuery({
     name: 'q',

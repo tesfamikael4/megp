@@ -48,6 +48,8 @@ import { WorkflowHandlerService } from './workflow-handler.service';
 import { ClientProxy } from '@nestjs/microservices';
 import currentTime from 'src/utils/services/time-provider';
 import { EMarketplaceBucketName } from 'src/utils/enums/bucket.enum';
+import { WorkflowItemService } from 'src/utils/services/workflow-item.service';
+import { WorkflowItemDetailService } from 'src/utils/services/workflow-item-detail.service';
 
 @Injectable()
 export class RfxService extends EntityCrudService<RFX> {
@@ -67,6 +69,7 @@ export class RfxService extends EntityCrudService<RFX> {
     private readonly minIOService: MinIOService,
     private readonly solRoundService: SolRoundService,
     private readonly workflowHandlerService: WorkflowHandlerService,
+    private readonly workflowItemService: WorkflowItemService,
   ) {
     super(rfxRepository);
   }
@@ -669,6 +672,52 @@ export class RfxService extends EntityCrudService<RFX> {
     // });
 
     return await this.giveQueryResponse<RFX>(query, dataQuery);
+  }
+
+  async canSubmitEvaluationApproval(rfxId: string, step: number, user: any) {
+    const rfx = await this.rfxRepository.findOne({
+      where: {
+        id: rfxId,
+        status: ERfxStatus.SUBMITTED_EVALUATION,
+      },
+      loadRelationIds: {
+        relations: ['items'],
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!rfx) throw new BadRequestException('RFQ for evaluation not found');
+
+    const workflowItem =
+      await this.workflowItemService.getCurrentItemWithDetails(
+        rfxId,
+        step,
+        user.userId,
+      );
+
+    const canComplete = rfx.items.every((itemId: any) =>
+      workflowItem?.workflowItemDetails.some(
+        (detail) => detail.itemId == itemId,
+      ),
+    );
+
+    if (workflowItem?.isComplete) {
+      return {
+        canSubmit: false,
+        reason: 'You have already submitted evaluation',
+      };
+    }
+
+    if (!canComplete) {
+      return {
+        canSubmit: false,
+        reason: 'You have not completed all items evaluation',
+      };
+    }
+
+    return { canSubmit: true };
   }
 
   private async giveQueryResponse<T>(
