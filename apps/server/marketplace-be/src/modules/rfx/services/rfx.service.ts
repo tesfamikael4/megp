@@ -163,8 +163,7 @@ export class RfxService extends EntityCrudService<RFX> {
       } = prResponse.procurementMechanisms;
 
       const procurementMechanism = new RfxProcurementMechanism();
-      procurementMechanism.PRRfxProcurementMechanisms =
-        PRRfxProcurementMechanisms;
+      procurementMechanism.PRProcurementMechanisms = PRRfxProcurementMechanisms;
       procurementMechanism.rfxId = rfx.id;
       await manager
         .getRepository(RfxProcurementMechanism)

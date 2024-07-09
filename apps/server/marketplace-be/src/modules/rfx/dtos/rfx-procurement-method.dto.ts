@@ -4,7 +4,7 @@ import { IsNotEmpty, IsObject, IsString, IsUUID } from 'class-validator';
 export class CreateRfxProcurementMechanismsDto {
   @ApiProperty()
   @IsObject()
-  PRRfxProcurementMechanisms: any;
+  PRProcurementMechanisms: any;
 }
 
 export class UpdateRfxProcurementMechanismsDto extends CreateRfxProcurementMechanismsDto {

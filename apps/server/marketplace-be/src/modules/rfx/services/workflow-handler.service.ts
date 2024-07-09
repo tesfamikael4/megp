@@ -84,6 +84,7 @@ export class WorkflowHandlerService {
             },
             relations: {
               rfxBidProcedure: true,
+              rfxProcurementMechanism: true,
             },
           });
 
@@ -106,7 +107,8 @@ export class WorkflowHandlerService {
           const deadline = new Date(rfx.rfxBidProcedure.submissionDeadline);
           const approvePayload = {
             ...rfx,
-            publishmentDate: now,
+            procurementMechanism: rfx.rfxProcurementMechanism,
+            publishedDate: now,
             closingDate: deadline,
             isOpen: rfx.isOpen,
             objectType: 'RFX',
