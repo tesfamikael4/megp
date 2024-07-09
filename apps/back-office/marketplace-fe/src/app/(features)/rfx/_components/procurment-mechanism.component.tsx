@@ -22,7 +22,7 @@ export default function ProcurmentMechanism({
       value:
         mode != 'rfq'
           ? mechanism?.items[0]?.procurementType
-          : rfq?.rfxProcurementMechanism?.PRRfxProcurementMechanisms
+          : rfq?.rfxProcurementMechanism?.PRProcurementMechanisms
               .procurementType,
     },
     {
@@ -30,7 +30,7 @@ export default function ProcurmentMechanism({
       value:
         mode != 'rfq'
           ? mechanism?.items[0]?.procurementMethod
-          : rfq?.rfxProcurementMechanism?.PRRfxProcurementMechanisms
+          : rfq?.rfxProcurementMechanism?.PRProcurementMechanisms
               ?.procurementMethod,
     },
     {
@@ -38,7 +38,7 @@ export default function ProcurmentMechanism({
       value:
         mode != 'rfq'
           ? mechanism?.items[0]?.fundingSource
-          : rfq?.rfxProcurementMechanism?.PRRfxProcurementMechanisms
+          : rfq?.rfxProcurementMechanism?.PRProcurementMechanisms
               ?.fundingSource,
     },
     {
@@ -46,7 +46,7 @@ export default function ProcurmentMechanism({
       value: (
         mode != 'rfq'
           ? mechanism?.items[0]?.isOnline
-          : rfq?.rfxProcurementMechanism?.PRRfxProcurementMechanisms?.isOnline
+          : rfq?.rfxProcurementMechanism?.PRProcurementMechanisms?.isOnline
       )
         ? 'Online'
         : 'Offline',
@@ -56,7 +56,7 @@ export default function ProcurmentMechanism({
       value:
         mode != 'rfq'
           ? mechanism?.items[0]?.targetGroup.join(', ')
-          : rfq?.rfxProcurementMechanism?.PRRfxProcurementMechanisms.targetGroup.join(
+          : rfq?.rfxProcurementMechanism?.PRProcurementMechanisms.targetGroup.join(
               ', ',
             ),
     },

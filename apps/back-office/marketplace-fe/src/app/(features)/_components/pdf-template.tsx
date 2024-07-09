@@ -86,19 +86,19 @@ export const rfxPdf = async ({ rfx }: any) => {
                 {
                   key: 'Procurment Type',
                   value:
-                    rfx?.rfxProcurementMechanism?.PRRfxProcurementMechanisms
+                    rfx?.rfxProcurementMechanism?.PRProcurementMechanisms
                       ?.procurementType,
                 },
                 {
                   key: 'Procurment Method',
                   value:
-                    rfx?.rfxProcurementMechanism?.PRRfxProcurementMechanisms
+                    rfx?.rfxProcurementMechanism?.PRProcurementMechanisms
                       ?.procurementMethod,
                 },
                 {
                   key: 'Funding Source',
                   value:
-                    rfx?.rfxProcurementMechanism?.PRRfxProcurementMechanisms
+                    rfx?.rfxProcurementMechanism?.PRProcurementMechanisms
                       ?.fundingSource,
                 },
               ]}
