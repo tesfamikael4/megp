@@ -34,7 +34,7 @@ export class EqcTechnicalScoring extends Audit {
   children: EqcTechnicalScoring[];
 
   @TreeParent()
-  parent: EqcTechnicalScoring[];
+  parent: EqcTechnicalScoring;
 
   @Column()
   requirement: string;
