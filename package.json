@@ -1,5 +1,6 @@
 {
   "private": true,
+  "name": "megp",
   "scripts": {
     "turbo": "turbo",
     "build": "turbo run build",
@@ -22,6 +23,5 @@
     "rimraf": "^3.0.2",
     "turbo": "^2.0.4"
   },
-  "name": "megp",
   "packageManager": "pnpm@9.2.0"
 }
